@@ -1,5 +1,5 @@
-& choco install --x86 xsltproc
-& choco install plantuml make sed gnuwin32-coreutils.install
+& choco install --no-progress --x86 xsltproc
+& choco install --no-progress plantuml make sed gnuwin32-coreutils.install
 & npm i -g puppeteer
 
 Set-Content $Env:ChocolateyInstall\bin\xml2-config.bat "@ECHO OFF" -Encoding ASCII
@@ -9,6 +9,7 @@ $XsltDist = ${Env:ChocolateyInstall} + "\lib\xsltproc\dist"
 $XsltInclude = $XsltDist + "\include"
 $XsltLib = $XsltDist + "\lib"
 
+# FIXME remove once ruby-xslt will be elimiated from our dependencies
 if ($Env:RUBY_VERSION -eq "23") {
 	Copy-Item -Force $XsltDist\bin\lib*.dll C:\Ruby${Env:RUBY_VERSION}\bin\
 } else {
