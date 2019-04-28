@@ -12,6 +12,14 @@ errx() {
 SOURCE_BRANCH="master"
 TARGET_BRANCH="gh-pages"
 KEY_NAME=$(pwd)/deploy_key
+ENCRYPTION_KEY="$(encrypted_$(ENCRYPTION_LABEL)_key)"
+ENCRYPTION_IV="$(encrypted_$(ENCRYPTION_LABEL)_iv)"
+
+decrypt_deploy_key() {
+	openssl aes-256-cbc -K ${ENCRYPTION_KEY} \
+		-iv ${ENCRYPTION_IV} -in $1 -out $2 -d && \
+	chmod 600 $2
+}
 
 main() {
 
@@ -25,7 +33,14 @@ main() {
     errx "No COMMIT_AUTHOR_EMAIL provided; it must be set."
 
   if [ ! -f ${KEY_NAME} ]; then
-    errx "No ${KEY_NAME} file detected; is ${KEY_NAME}.enc decrypted?"
+    echo "No ${KEY_NAME} file detected." >&2
+    if [ ! -f "${KEYNAME}.enc" ]; then
+      errx "No ${KEY_NAME}.enc found, aborted."
+    fi
+
+    echo "${KEYNAME}.enc found; attempting to decrypt ${KEY_NAME}.enc..." >&2
+    decrypt_deploy_key ${KEY_NAME}.enc ${KEY_NAME} ||
+      errx "Unable to decrypt ${KEY_NAME}.enc; please re-run with proper ${KEY_NAME} or ${KEY_NAME}.enc."
   fi
 
   # Save some useful information
