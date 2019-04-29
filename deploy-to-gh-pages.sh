@@ -4,8 +4,8 @@
 set -e # Exit with nonzero exit code if anything fails
 
 errx() {
-  readonly __progname=$(basename ${BASH_SOURCE})
-  echo -e "[${__progname}] $@" >&2
+  # readonly __progname=$(basename ${BASH_SOURCE})
+  echo -e "[deploy-to-gh-pages.sh] $@" >&2
   exit 1
 }
 
@@ -22,10 +22,10 @@ decrypt_deploy_key() {
     errx "No ${ENCRYPTED_KEY_NAME} found, aborted."
   fi
 
-  [ -z "${ENCRYPTION_KEY}"] &&
+  [ -z "${ENCRYPTION_KEY}" ] &&
     errx "No `encrypted_.*_key` provided; it must be set."
 
-  [ -z "${ENCRYPTION_IV}"] &&
+  [ -z "${ENCRYPTION_IV}" ] &&
     errx "No `encrypted_.*_iv` provided; it must be set."
 
   echo "${ENCRYPTED_KEY_NAME} found; attempting to decrypt ${ENCRYPTED_KEY_NAME}..." >&2
