@@ -12,10 +12,22 @@ errx() {
 SOURCE_BRANCH="master"
 TARGET_BRANCH="gh-pages"
 KEY_NAME=$(pwd)/deploy_key
-ENCRYPTION_KEY="$(encrypted_$(ENCRYPTION_LABEL)_key)"
-ENCRYPTION_IV="$(encrypted_$(ENCRYPTION_LABEL)_iv)"
+#ENCRYPTION_LABEL=$(env | grep -e 'encrypted_.*_key' | cut -d '_' -f 2)
+ENCRYPTION_KEY="$(env | grep -e 'encrypted_.*_key' | cut -d '=' -f 2-)"
+ENCRYPTION_IV="$(env | grep -e 'encrypted_.*_iv' | cut -d '=' -f 2-)"
 
 decrypt_deploy_key() {
+  if [ ! -f "${KEYNAME}.enc" ]; then
+    errx "No ${KEY_NAME}.enc found, aborted."
+  fi
+
+  [ -z "${ENCRYPTION_KEY}"] &&
+    errx "No `encrypted_.*_key` provided; it must be set."
+
+  [ -z "${ENCRYPTION_IV}"] &&
+    errx "No `encrypted_.*_iv` provided; it must be set."
+
+  echo "${KEYNAME}.enc found; attempting to decrypt ${KEY_NAME}.enc..." >&2
 	openssl aes-256-cbc -K ${ENCRYPTION_KEY} \
 		-iv ${ENCRYPTION_IV} -in $1 -out $2 -d && \
 	chmod 600 $2
@@ -34,11 +46,7 @@ main() {
 
   if [ ! -f ${KEY_NAME} ]; then
     echo "No ${KEY_NAME} file detected." >&2
-    if [ ! -f "${KEYNAME}.enc" ]; then
-      errx "No ${KEY_NAME}.enc found, aborted."
-    fi
 
-    echo "${KEYNAME}.enc found; attempting to decrypt ${KEY_NAME}.enc..." >&2
     decrypt_deploy_key ${KEY_NAME}.enc ${KEY_NAME} ||
       errx "Unable to decrypt ${KEY_NAME}.enc; please re-run with proper ${KEY_NAME} or ${KEY_NAME}.enc."
   fi
