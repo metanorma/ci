@@ -1,0 +1,88 @@
+#!/usr/bin/env ruby
+
+require 'optparse'
+require 'net/http'
+require 'json'
+
+require 'rexml/document'
+
+options = OpenStruct.new
+options.organization = 'metanorma'
+
+OptionParser.new do |opts|
+  opts.banner = "Usage: gh-repo-manifest [options]"
+
+  opts.on("-oORG", "--organization=ORG", "GitHub organization") do |org|
+    options.organization = org
+  end
+
+  opts.on("-h", "--help", "Prints this help") do
+    puts opts
+    exit
+  end
+end.parse!
+
+doc = REXML::Document.new
+doc.context[:attribute_quote] = :quote
+doc.context[:prologue_quote] = :quote
+
+doc << REXML::XMLDecl.new('1.0', 'UTF-8')
+
+manifest = doc.add_element 'manifest'
+
+remote = manifest.add_element 'remote'
+remote.attributes['name'] = 'github'
+remote.attributes['fetch'] = 'git://github.com'
+
+default = manifest.add_element 'default'
+default.attributes['revision'] = 'master'
+default.attributes['remote'] = 'github'
+default.attributes['sync-j'] = '4'
+
+groups_matchers = {
+	'processor': /^metanorma-\w*$/,
+	'model': /^metanorma-model-/,
+	'style': /-style$/,
+	'bibitem': /\wbib$/,
+	'templates': /^mn-templates-\w/,
+	'setup': /\w-setup$/
+}
+
+begin
+	page=1
+	repos=[]
+
+	loop do 
+	  uri = URI("https://api.github.com/orgs/#{options.organization}/repos?page=#{page}&per_page=100")
+	  response = Net::HTTP.get(uri)
+	  result_set = JSON.parse(response)
+
+	  if !result_set.kind_of?(Array) then
+	  	manifest << REXML::Comment.new(result_set.to_json)
+	  	break
+	  end
+
+	  result_set.each do |repo|
+	    if repo['size'] > 0 then
+				project = manifest.add_element 'project'
+				project.attributes['name'] = repo['full_name']
+				project.attributes['path'] = repo['name']
+
+				groups=['all']
+				groups_matchers.each do |group, regexp|
+				  groups << group if repo['name'].match(regexp)
+				end
+
+				project.attributes['groups'] = groups.join(",")
+	    end
+	  end
+
+	  break if result_set.empty?
+
+	  page += 1
+	end
+rescue Interrupt => e
+	manifest << REXML::Comment.new('interrupted with Ctrl+C, output may be incomplete')
+end
+
+doc.write($stdout, 2)
