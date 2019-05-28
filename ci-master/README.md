@@ -6,10 +6,35 @@ Main propose of this gem to manage CI configuration accross all repos in [metano
 
 Highly likelly this gem will not be published, because it's only for internal usage
 
+### Prerequisites
+
+- `pip install git-plus`
+- `brew install hub`
+
 ## Usage
 
-bin/ci-master --help
-bin/gh-repo-manifest --help
+### Checkout all repos
+
+- `mkdir mn-root`
+- `cd mn-root`
+- `repo init -u https://github.com/metanorma/metanorma-build-scripts`
+- `repo sync`
+
+### Make sure repos up-to-date
+
+- `git -C ../../ multi checkout master`
+- `git -C ../../ multi pull`
+
+### Propogate changes from ci-master
+
+- `cd metanorma-build-scripts/ci-master`
+- `bin/ci-master sync -r ../../ -c config`
+- `git multi -c checkout -b feature/xxx`
+- `git multi -c add -u .travis.yml appveyor.yml`
+- `git multi commit -m "Update CI configuration due to XXX feature"`
+- `git multi push --set-upstream github feature/xxx`
+- `for hub pull-request -b master -r ronaldtse -a CAMOBAP795 --no-edit`
+- `for f in */; do if [ -d "$f/.git" ]; then cd $f; hub pull-request -b master -r ronaldtse -a CAMOBAP795 --no-edit; cd ..; fi; done`
 
 ## Development
 

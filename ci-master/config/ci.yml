@@ -119,7 +119,7 @@ repos:
     appveyor.yml: appveyor/master.yml
   itubib:
     .travis.yml: travis/master.yml
-    appveyor.yml: appveyor/master.yml.yml
+    appveyor.yml: appveyor/master.yml
   omml2mathml:
     .travis.yml: travis/master.yml
     appveyor.yml: appveyor/master.yml

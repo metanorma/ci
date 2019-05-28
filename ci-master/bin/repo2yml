@@ -84,6 +84,4 @@ Pathname.new(repo_root).children.each do |path|
 	result['repos'][path.basename.to_s] = repo unless repo.empty?
 end
 
-
-
 puts result.to_yaml

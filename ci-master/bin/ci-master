@@ -1,0 +1,67 @@
+#!/usr/bin/env ruby
+
+require 'pathname'
+require 'optparse'
+
+require_relative '../lib/ci/master/cli/command'
+
+options = {
+  :dry_run => false,
+  :verbose => false
+}
+
+top_help = <<HELP
+Commonly used command are:
+   sync :     do update ci configurations for all repos described in config
+   lint :     do lint for ci configurations
+See 'ci-master COMMAND --help' for more information on a specific command.
+HELP
+
+global = OptionParser.new do |opts|
+  opts.banner = "Usage: ci-master [options] [subcommand [options]]"
+  opts.on("-v", "--[no-]verbose", "Run verbosely") do |v|
+    options[:verbose] = v
+  end
+  opts.on("-d", "--dry-run", "Run verbosely") do |v|
+    options[:dry_run] = v
+  end
+  opts.separator ""
+  opts.separator top_help
+end
+
+subcommands = { 
+  'sync' => OptionParser.new do |opts|
+    opts.banner = "Usage: ci-master sync [options]"
+
+    opts.on("-rREPO_DIR_PATH", "--repo-path=REPO_DIR_PATH", "Repo root dir path") do |path|
+      options[:repo_dir_path] = Pathname.getwd + path
+    end
+
+    opts.on("-cCONFIG_DIR_PATH", "--config-path=CONFIG_DIR_PATH", "Config dir path") do |path|
+      options[:config_dir_path] = Pathname.getwd + path
+    end
+  end,
+  'lint' => OptionParser.new do |opts|
+    opts.banner = "Usage: ci-master lint [options]"
+
+    opts.on("-cCONFIG_DIR_PATH", "--config-path=CONFIG_DIR_PATH", "Config dir path") do |path|
+      options[:config_dir_path] = Pathname.getwd + path
+    end
+
+    opts.on("-a", "--appveyor-bearer=APPVEYOR_BEARER", "Appveyor API Bearer token") do |token|
+      options[:appveyor_token] = token
+    end
+  end
+}
+
+global.order!
+command = ARGV.shift
+subcommands[command].order!
+
+begin
+  Ci::Master::Cli::Command.new.send(command, options)
+  exit 0
+rescue => e
+  puts "Error: #{e.message}"
+  exit 1
+end
