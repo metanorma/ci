@@ -1,6 +1,6 @@
 <?xml version='1.0' encoding='UTF-8'?>
 <manifest>
-  <remote name="github" fetch="git://github.com"/>
+  <remote name="github" fetch="ssh://git@github.com"/>
   <default revision="master" remote="github" sync-j="4"/>
   <project name="metanorma/asciidoctor-rfc" path="asciidoctor-rfc" groups="all"/>
   <project name="metanorma/rfc-asciidoc-rfc" path="rfc-asciidoc-rfc" groups="all"/>
