@@ -8,6 +8,7 @@ Highly likelly this gem will not be published, because it's only for internal us
 
 ### Prerequisites
 
+- [`repo`](https://source.android.com/setup/build/downloading#installing-repo)
 - `pip install git-plus`
 - `brew install hub`
 
@@ -19,6 +20,8 @@ Highly likelly this gem will not be published, because it's only for internal us
 - `cd mn-root`
 - `repo init -u https://github.com/metanorma/metanorma-build-scripts`
 - `repo sync`
+- `echo 'metanorma-build-scripts' > .multigit_ignore`
+- `cd metanorma-build-scripts/ci-master`
 
 ### Make sure repos up-to-date
 
@@ -27,13 +30,12 @@ Highly likelly this gem will not be published, because it's only for internal us
 
 ### Propogate changes from ci-master
 
-- `cd metanorma-build-scripts/ci-master`
 - `bin/ci-master sync -r ../../ -c config`
-- `git multi -c checkout -b feature/xxx`
-- `git multi -c add -u .travis.yml`
-- `git multi -c add -u appveyor.yml`
-- `git multi commit -m "Update CI configuration due to XXX feature"`
-- `git multi push --set-upstream github feature/xxx`
+- `git -C ../../ multi -c checkout -b feature/xxx`
+- `git -C ../../ multi -c add -u .travis.yml`
+- `git -C ../../ multi -c add -u appveyor.yml`
+- `git -C ../../ multi commit -m "Update CI configuration due to XXX feature"`
+- `git -C ../../ multi push --set-upstream github feature/xxx`
 - `for f in */; do if [ -d "$f/.git" ]; then cd $f; hub pull-request -b master -r ronaldtse -a CAMOBAP795 --no-edit; cd ..; fi; done`
 
 ## Development
