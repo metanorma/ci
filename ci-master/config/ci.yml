@@ -20,7 +20,7 @@ repos:
   unece-cefact-plenary-2018-6:
     .travis.yml: travis/plantuml.puppeteer.ruby.make.yml
   metanorma-m3d:
-    .travis.yml: travis/master.yml
+    .travis.yml: travis/puppeteer.yml
     appveyor.yml: appveyor/master.yml
   metanorma-model-unece:
     .travis.yml: travis/plantuml.make.all.yml
