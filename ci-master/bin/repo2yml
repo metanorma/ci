@@ -1,0 +1,87 @@
+#!/usr/bin/env ruby
+
+repo_root='/Users/camobap/Developers/Projects/riboseinc/master'
+output_dir='/Users/camobap/Developers/Projects/riboseinc/_ci-master_'
+
+require 'json'
+require 'yaml'
+require 'pathname'
+require 'fileutils'
+require 'digest/md5'
+
+travisci_configs = {}
+appveyor_configs = {}
+result = {}
+result['repos'] = {}
+
+travis_out = File.join(output_dir, 'travis')
+appveyor_out = File.join(output_dir, 'appveyor')
+
+unless File.directory?(output_dir)
+  FileUtils.mkdir_p(travis_out)
+  FileUtils.mkdir_p(appveyor_out)
+end
+
+Pathname.new(repo_root).children.each do |path|
+	travisci = Pathname.new(path).join('.travis.yml')
+	appveyor = Pathname.new(path).join('appveyor.yml')
+
+	repo = {}
+
+	if travisci.exist? then
+		sha256 = Digest::SHA256.file(travisci).hexdigest
+
+		travisci_configs[sha256] = [] unless travisci_configs.key? sha256
+		travisci_configs[sha256] << travisci
+
+		repo['.travis.yml'] = File.join('travis', "#{sha256}.yml")
+
+		FileUtils.cp travisci, File.join(travis_out, "#{sha256}.yml")
+	end
+
+	if appveyor.exist? then
+		sha256 = Digest::SHA256.file(appveyor).hexdigest
+
+		appveyor_configs[sha256] = [] unless appveyor_configs.key? sha256
+		appveyor_configs[sha256] << appveyor
+
+		repo['appveyor.yml'] = File.join('appveyor', "#{sha256}.yml")
+
+		FileUtils.cp appveyor, File.join(appveyor_out, "#{sha256}.yml")
+	end
+
+	result['repos'][path.basename.to_s] = repo unless repo.empty?
+end
+
+Pathname.new(repo_root).children.each do |path|
+	travisci = Pathname.new(path).join('.travis.yml')
+	appveyor = Pathname.new(path).join('appveyor.yml')
+
+	repo = {}
+
+	if travisci.exist? then
+		sha256 = Digest::SHA256.file(travisci).hexdigest
+
+		travisci_configs[sha256] = [] unless travisci_configs.key? sha256
+		travisci_configs[sha256] << travisci
+
+		repo['.travis.yml'] = File.join('travis', "#{sha256}.yml")
+
+		FileUtils.cp travisci, File.join(travis_out, "#{sha256}.yml")
+	end
+
+	if appveyor.exist? then
+		sha256 = Digest::SHA256.file(appveyor).hexdigest
+
+		appveyor_configs[sha256] = [] unless appveyor_configs.key? sha256
+		appveyor_configs[sha256] << appveyor
+
+		repo['appveyor.yml'] = File.join('appveyor', "#{sha256}.yml")
+
+		FileUtils.cp appveyor, File.join(appveyor_out, "#{sha256}.yml")
+	end
+
+	result['repos'][path.basename.to_s] = repo unless repo.empty?
+end
+
+puts result.to_yaml

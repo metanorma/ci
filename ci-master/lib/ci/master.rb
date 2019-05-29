@@ -1,0 +1,1 @@
+require "ci/master/cli/version"
