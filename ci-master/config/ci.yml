@@ -18,7 +18,7 @@ repos:
   metanorma-model-iso:
     .travis.yml: travis/plantuml.make.all.yml
   unece-cefact-plenary-2018-6:
-    .travis.yml: travis/plantuml.puppeteer.ruby.make.yml
+    .travis.yml: travis/linux.publish.yml
   metanorma-m3d:
     .travis.yml: travis/puppeteer.yml
     appveyor.yml: appveyor/master.yml
@@ -33,7 +33,7 @@ repos:
     .travis.yml: travis/puppeteer.yml
     appveyor.yml: appveyor/master.yml
   csd-public-documents:
-    .travis.yml: travis/plantuml.puppeteer.ruby.make.yml
+    .travis.yml: travis/linux.publish.yml
   metanorma-rsd:
     .travis.yml: travis/plantuml.yml
     appveyor.yml: appveyor/master.yml
@@ -63,7 +63,7 @@ repos:
     .travis.yml: travis/master.yml
     appveyor.yml: appveyor/master.yml
   ogc-wfs:
-    .travis.yml: travis/plantuml.puppeteer.ruby.make.yml
+    .travis.yml: travis/linux.publish.yml
   metanorma-model-nist:
     .travis.yml: travis/plantuml.make.all.yml
   basicdoc-models:
@@ -96,7 +96,7 @@ repos:
     .travis.yml: travis/master.yml
     appveyor.yml: appveyor/master.yml
   isodoc-rice:
-    .travis.yml: travis/plantuml.puppeteer.ruby.make.yml
+    .travis.yml: travis/linux.publish.yml
   gbbib:
     .travis.yml: travis/master.yml
     appveyor.yml: appveyor/master.yml
@@ -126,7 +126,7 @@ repos:
   metanorma-model-rsd:
     .travis.yml: travis/plantuml.make.all.yml
   mn-ogc-documents:
-    .travis.yml: travis/plantuml.puppeteer.ruby.make.yml
+    .travis.yml: travis/linux.publish.yml
   metanorma-acme:
     .travis.yml: travis/puppeteer.yml
     appveyor.yml: appveyor/master.yml
