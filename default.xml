@@ -109,6 +109,7 @@
   <project name="metanorma/mn-templates-iso" path="mn-templates-iso" groups="all,templates"/>
   <project name="metanorma/relaton-bib" path="relaton-bib" groups="all"/>
   <project name="metanorma/relaton-iso" path="relaton-iso" groups="all"/>
+  <project name="metanorma/relaton-iso-bib" path="relaton-iso-bib" groups="all"/>
   <project name="metanorma/csa-caiq" path="csa-caiq" groups="all"/>
   <project name="metanorma/csa-ccm-tools" path="csa-ccm-tools" groups="all"/>
 </manifest>
