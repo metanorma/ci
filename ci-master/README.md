@@ -36,7 +36,7 @@ Highly likelly this gem will not be published, because it's only for internal us
 - `git -C ../../ multi -c add -u appveyor.yml`
 - `git -C ../../ multi commit -m "Update CI configuration due to XXX feature"`
 - `git -C ../../ multi push --set-upstream github feature/xxx`
-- `for f in */; do if [ -d "$f/.git" ]; then cd $f; hub pull-request -b master -r ronaldtse -a CAMOBAP795 --no-edit; cd ..; fi; done`
+- `cd -C ../../ && for f in */; do if [ -d "$f/.git" ]; then cd $f; hub pull-request -b master -r ronaldtse -a CAMOBAP795 --no-edit; cd ..; fi; done`
 
 ## Development
 
