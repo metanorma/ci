@@ -19,6 +19,7 @@ repos:
     .travis.yml: travis/plantuml.make.all.yml
   unece-cefact-plenary-2018-6:
     .travis.yml: travis/linux.publish.yml
+    appveyor.yml: appveyor/publish.yml
   metanorma-m3d:
     .travis.yml: travis/puppeteer.yml
     appveyor.yml: appveyor/master.yml
@@ -34,6 +35,7 @@ repos:
     appveyor.yml: appveyor/master.yml
   csd-public-documents:
     .travis.yml: travis/linux.publish.yml
+    appveyor.yml: appveyor/publish.yml
   metanorma-rsd:
     .travis.yml: travis/plantuml.yml
     appveyor.yml: appveyor/master.yml
@@ -64,6 +66,7 @@ repos:
     appveyor.yml: appveyor/master.yml
   ogc-wfs:
     .travis.yml: travis/linux.publish.yml
+    appveyor.yml: appveyor/publish.yml
   metanorma-model-nist:
     .travis.yml: travis/plantuml.make.all.yml
   basicdoc-models:
@@ -97,6 +100,7 @@ repos:
     appveyor.yml: appveyor/master.yml
   isodoc-rice:
     .travis.yml: travis/linux.publish.yml
+    appveyor.yml: appveyor/publish.yml
   gbbib:
     .travis.yml: travis/master.yml
     appveyor.yml: appveyor/master.yml
@@ -127,6 +131,7 @@ repos:
     .travis.yml: travis/plantuml.make.all.yml
   mn-ogc-documents:
     .travis.yml: travis/linux.publish.yml
+    appveyor.yml: appveyor/publish.yml
   metanorma-acme:
     .travis.yml: travis/puppeteer.yml
     appveyor.yml: appveyor/master.yml
@@ -144,5 +149,8 @@ repos:
   nistbib:
     .travis.yml: travis/master.yml
     appveyor.yml: appveyor/master.yml
+  ogc-tcpnp:
+    .travis.yml: travis/linux.publish.yml
+    appveyor.yml: appveyor/publish.yml
 settings:
   pr: true
