@@ -9,6 +9,7 @@ repos:
   metanorma-model-standoc:
     .travis.yml: travis/plantuml.make.all.yml
   relaton-bib:
+    appveyor.yml: appveyor/master.yml
     .travis.yml: travis/master.yml
   metanorma-model-gb:
     .travis.yml: travis/plantuml.make.all.yml
@@ -26,6 +27,7 @@ repos:
   metanorma-model-unece:
     .travis.yml: travis/plantuml.make.all.yml
   cnccs:
+    appveyor.yml: appveyor/master.yml
     .travis.yml: travis/master.yml
   metanorma-csd:
     .travis.yml: travis/puppeteer.yml
@@ -37,7 +39,7 @@ repos:
     .travis.yml: travis/linux.publish.yml
     appveyor.yml: appveyor/publish.yml
   metanorma-rsd:
-    .travis.yml: travis/plantuml.yml
+    .travis.yml: travis/puppeteer.plantuml.yml
     appveyor.yml: appveyor/master.yml
   relaton-models:
     .travis.yml: travis/plantuml.make.all.yml
@@ -46,8 +48,10 @@ repos:
     appveyor.yml: appveyor/master.yml
   isoics:
     .travis.yml: travis/master.yml
+    appveyor.yml: appveyor/master.yml
   iso690render:
     .travis.yml: travis/master.yml
+    appveyor.yml: appveyor/master.yml
   metanorma-mpfd:
     .travis.yml: travis/puppeteer.yml
     appveyor.yml: appveyor/master.yml
@@ -86,7 +90,9 @@ repos:
     appveyor.yml: appveyor/master.yml
   metanorma-ietf:
     .travis.yml: travis/xml2rfc.yml
+    appveyor.yml: appveyor/xml2rfc.yml
   metanorma-iso:
+    .travis.yml: travis/puppeteer.plantuml.yml
     appveyor.yml: appveyor/master.yml
   metanorma-unece:
     .travis.yml: travis/master.yml
@@ -105,6 +111,7 @@ repos:
     .travis.yml: travis/master.yml
     appveyor.yml: appveyor/master.yml
   gb-agencies:
+    appveyor.yml: appveyor/master.yml
     .travis.yml: travis/master.yml
   relaton-cli:
     .travis.yml: travis/master.yml
@@ -131,7 +138,6 @@ repos:
     .travis.yml: travis/plantuml.make.all.yml
   mn-ogc-documents:
     .travis.yml: travis/linux.publish.yml
-    appveyor.yml: appveyor/publish.yml
   metanorma-acme:
     .travis.yml: travis/puppeteer.yml
     appveyor.yml: appveyor/master.yml
@@ -144,7 +150,7 @@ repos:
     .travis.yml: travis/master.yml
     appveyor.yml: appveyor/master.yml
   metanorma-csand:
-    .travis.yml: travis/plantuml.yml
+    .travis.yml: travis/puppeteer.plantuml.yml
     appveyor.yml: appveyor/master.yml
   nistbib:
     .travis.yml: travis/master.yml

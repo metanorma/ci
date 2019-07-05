@@ -8,7 +8,7 @@ rvm:
 - 2.4
 - ruby-head
 before_install:
-- gem install bundler -v 2.0.1
+- gem install bundler -v "~> 2"
 - bundle update
 - curl -L https://raw.githubusercontent.com/metanorma/metanorma-build-scripts/master/travis.sh | bash
 matrix:

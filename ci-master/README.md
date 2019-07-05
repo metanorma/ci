@@ -29,13 +29,13 @@ Highly likelly this gem will not be published, because it's only for internal us
 
 ### Propogate changes from ci-master
 
-- `git -C ../../ multi -c checkout -b feature/xxx`
 - `bin/ci-master sync -r ../../ -c config`
+- `git -C ../../ multi -c checkout -b feature/xxx`
 - `git -C ../../ multi -c add -u .travis.yml`
 - `git -C ../../ multi -c add -u appveyor.yml`
 - `git -C ../../ multi commit -m "Update CI configuration due to XXX feature"` or `git -C ../../ multi commit --amend --no-edit`
 - `git -C ../../ multi push --set-upstream github feature/xxx` or `git -C ../../ multi -c push -f`
-- `for f in ../../*/; do if [ -d "$f/.git" ]; then hub -C $f pull-request -b master -r ronaldtse -a CAMOBAP795 --no-edit; fi; done`
+- `cd ../../ && for f in ./*/; do if [ -d "$f/.git" ]; then cd $f; hub pull-request -b master -r ronaldtse -a CAMOBAP795 --no-edit; cd ..; fi; done`
 
 ## Development
 
