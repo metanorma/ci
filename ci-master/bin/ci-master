@@ -7,7 +7,8 @@ require_relative '../lib/ci/master/cli/command'
 
 options = {
   :dry_run => false,
-  :verbose => false
+  :verbose => false,
+  :groups => ['all']
 }
 
 top_help = <<HELP
@@ -39,6 +40,10 @@ subcommands = {
 
     opts.on("-cCONFIG_DIR_PATH", "--config-path=CONFIG_DIR_PATH", "Config dir path") do |path|
       options[:config_dir_path] = Pathname.getwd + path
+    end
+
+    opts.on("-gGROUP1,GROUP2,GROUPX", Array, "Groups to update") do |groups|
+      options[:groups] = groups
     end
   end,
   'lint' => OptionParser.new do |opts|
