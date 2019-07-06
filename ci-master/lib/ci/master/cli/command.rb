@@ -4,6 +4,9 @@ require 'net/http'
 
 require 'travis/client/session'
 
+require 'rexml/document'
+include REXML
+
 module Ci
   module Master
 	  module Cli
@@ -11,16 +14,23 @@ module Ci
 	      def sync(options)
 					config_path = options[:config_dir_path]
 					repos_path = options[:repo_dir_path]
+					groups = options[:groups]
+					repo_manifest_path = repos_path + '.repo/manifest.xml'
 
 					raise OptionParser::MissingArgument, "Missing -r/--repo-path value" if repos_path.nil? || !repos_path.exist?
+					raise OptionParser::MissingArgument, "Wrong -c/--config-path value, no manifest #{repo_manifest_path} found" if !repo_manifest_path.exist?
 					raise OptionParser::MissingArgument, "Missing -c/--config-path value" if config_path.nil? || !config_path.exist?
 
 					config = YAML.load_file(File.join(config_path, 'ci.yml'))
 
+					manifest = Document.new(File.new(repo_manifest_path))
+
 					config['repos'].each do |repo_name, repo_ci|
 					  repo_path = File.join(repos_path, repo_name)
-					  next unless File.exist?(repo_path)
+					  groups_xpath = %(/manifest/project[@name="metanorma/#{repo_name}"]/@groups)
+					  repo_groups = XPath.first(manifest, groups_xpath).value.split(',')
 
+					  next unless File.exist?(repo_path) && !(groups & repo_groups).empty?
 						travisci, appveyor = repo_ci.values_at('.travis.yml', 'appveyor.yml')
 
 						if travisci then
