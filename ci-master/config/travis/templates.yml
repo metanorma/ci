@@ -1,0 +1,16 @@
+language: ruby
+os:
+- linux
+- osx
+rvm:
+- 2.5
+before_install:
+- gem install metanorma-cli
+script:
+- |
+  source doctypes.env
+  for template in $DOCTYPES
+  do
+    metanorma new test/$template --type $TYPE --doctype $template --template . --overwrite
+    metanorma compile test/$template/document.adoc
+  done

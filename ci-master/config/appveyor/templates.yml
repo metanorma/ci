@@ -1,0 +1,27 @@
+version: '{build}'
+
+environment:
+  matrix:
+    - RUBY_VERSION: 25
+
+install:
+  - ps: . { iwr -useb https://raw.githubusercontent.com/metanorma/metanorma-build-scripts/master/appveyor.ps1 } | iex
+  - refreshenv
+  - set PATH=C:\Ruby%RUBY_VERSION%\bin;%PATH%
+  - gem install metanorma-cli
+  - FOR /F "tokens=1,2 delims==" %%G IN (doctypes.env) DO (set %%G=%%H)
+
+before_build:
+  - ruby -v
+  - gem -v
+
+build_script:
+  - for %%t in (%DOCTYPES%) do (
+      metanorma new result\%%t --type %TYPE% --doctype %%t --template . --overwrite &
+      metanorma compile %APPVEYOR_BUILD_FOLDER%\result\%%t\document.adoc
+    )
+  - 7z a %APPVEYOR_BUILD_FOLDER%\result.zip %APPVEYOR_BUILD_FOLDER%\result
+
+artifacts:
+  - path: result.zip
+    name: result.zip
