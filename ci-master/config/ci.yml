@@ -158,5 +158,17 @@ repos:
   ogc-tcpnp:
     .travis.yml: travis/linux.publish.yml
     appveyor.yml: appveyor/publish.yml
+  mn-templates-csd:
+    .travis.yml: travis/templates.yml
+    appveyor.yml: appveyor/templates.yml
+  mn-templates-ogc:
+    .travis.yml: travis/templates.yml
+    appveyor.yml: appveyor/templates.yml
+  mn-templates-iso:
+    .travis.yml: travis/templates.yml
+    appveyor.yml: appveyor/templates.yml
+  mn-templates-ietf:
+    .travis.yml: travis/templates.yml
+    appveyor.yml: appveyor/templates.yml
 settings:
   pr: true
