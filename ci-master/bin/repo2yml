@@ -23,65 +23,65 @@ unless File.directory?(output_dir)
 end
 
 Pathname.new(repo_root).children.each do |path|
-	travisci = Pathname.new(path).join('.travis.yml')
-	appveyor = Pathname.new(path).join('appveyor.yml')
+  travisci = Pathname.new(path).join('.travis.yml')
+  appveyor = Pathname.new(path).join('appveyor.yml')
 
-	repo = {}
+  repo = {}
 
-	if travisci.exist? then
-		sha256 = Digest::SHA256.file(travisci).hexdigest
+  if travisci.exist? then
+    sha256 = Digest::SHA256.file(travisci).hexdigest
 
-		travisci_configs[sha256] = [] unless travisci_configs.key? sha256
-		travisci_configs[sha256] << travisci
+    travisci_configs[sha256] = [] unless travisci_configs.key? sha256
+    travisci_configs[sha256] << travisci
 
-		repo['.travis.yml'] = File.join('travis', "#{sha256}.yml")
+    repo['.travis.yml'] = File.join('travis', "#{sha256}.yml")
 
-		FileUtils.cp travisci, File.join(travis_out, "#{sha256}.yml")
-	end
+    FileUtils.cp travisci, File.join(travis_out, "#{sha256}.yml")
+  end
 
-	if appveyor.exist? then
-		sha256 = Digest::SHA256.file(appveyor).hexdigest
+  if appveyor.exist? then
+    sha256 = Digest::SHA256.file(appveyor).hexdigest
 
-		appveyor_configs[sha256] = [] unless appveyor_configs.key? sha256
-		appveyor_configs[sha256] << appveyor
+    appveyor_configs[sha256] = [] unless appveyor_configs.key? sha256
+    appveyor_configs[sha256] << appveyor
 
-		repo['appveyor.yml'] = File.join('appveyor', "#{sha256}.yml")
+    repo['appveyor.yml'] = File.join('appveyor', "#{sha256}.yml")
 
-		FileUtils.cp appveyor, File.join(appveyor_out, "#{sha256}.yml")
-	end
+    FileUtils.cp appveyor, File.join(appveyor_out, "#{sha256}.yml")
+  end
 
-	result['repos'][path.basename.to_s] = repo unless repo.empty?
+  result['repos'][path.basename.to_s] = repo unless repo.empty?
 end
 
 Pathname.new(repo_root).children.each do |path|
-	travisci = Pathname.new(path).join('.travis.yml')
-	appveyor = Pathname.new(path).join('appveyor.yml')
+  travisci = Pathname.new(path).join('.travis.yml')
+  appveyor = Pathname.new(path).join('appveyor.yml')
 
-	repo = {}
+  repo = {}
 
-	if travisci.exist? then
-		sha256 = Digest::SHA256.file(travisci).hexdigest
+  if travisci.exist? then
+    sha256 = Digest::SHA256.file(travisci).hexdigest
 
-		travisci_configs[sha256] = [] unless travisci_configs.key? sha256
-		travisci_configs[sha256] << travisci
+    travisci_configs[sha256] = [] unless travisci_configs.key? sha256
+    travisci_configs[sha256] << travisci
 
-		repo['.travis.yml'] = File.join('travis', "#{sha256}.yml")
+    repo['.travis.yml'] = File.join('travis', "#{sha256}.yml")
 
-		FileUtils.cp travisci, File.join(travis_out, "#{sha256}.yml")
-	end
+    FileUtils.cp travisci, File.join(travis_out, "#{sha256}.yml")
+  end
 
-	if appveyor.exist? then
-		sha256 = Digest::SHA256.file(appveyor).hexdigest
+  if appveyor.exist? then
+    sha256 = Digest::SHA256.file(appveyor).hexdigest
 
-		appveyor_configs[sha256] = [] unless appveyor_configs.key? sha256
-		appveyor_configs[sha256] << appveyor
+    appveyor_configs[sha256] = [] unless appveyor_configs.key? sha256
+    appveyor_configs[sha256] << appveyor
 
-		repo['appveyor.yml'] = File.join('appveyor', "#{sha256}.yml")
+    repo['appveyor.yml'] = File.join('appveyor', "#{sha256}.yml")
 
-		FileUtils.cp appveyor, File.join(appveyor_out, "#{sha256}.yml")
-	end
+    FileUtils.cp appveyor, File.join(appveyor_out, "#{sha256}.yml")
+  end
 
-	result['repos'][path.basename.to_s] = repo unless repo.empty?
+  result['repos'][path.basename.to_s] = repo unless repo.empty?
 end
 
 puts result.to_yaml
