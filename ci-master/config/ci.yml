@@ -11,9 +11,12 @@ repos:
   relaton-bib:
     appveyor.yml: appveyor/master.yml
     .travis.yml: travis/master.yml
+  relaton-iso-bib:
+    appveyor.yml: appveyor/master.yml
+    .travis.yml: travis/master.yml
   metanorma-model-gb:
     .travis.yml: travis/plantuml.make.all.yml
-  isobib:
+  relaton-iso:
     .travis.yml: travis/master.yml
     appveyor.yml: appveyor/master.yml
   metanorma-model-iso:
@@ -82,7 +85,7 @@ repos:
     appveyor.yml: appveyor/master.yml
   metanorma-model-m3d:
     .travis.yml: travis/plantuml.make.all.yml
-  iecbib:
+  relaton-iec:
     .travis.yml: travis/master.yml
     appveyor.yml: appveyor/master.yml
   metanorma-nist:
@@ -91,6 +94,9 @@ repos:
   metanorma-ietf:
     .travis.yml: travis/xml2rfc.yml
     appveyor.yml: appveyor/xml2rfc.yml
+  metanorma-standoc:
+    .travis.yml: travis/puppeteer.plantuml.yml
+    appveyor.yml: appveyor/master.yml
   metanorma-iso:
     .travis.yml: travis/puppeteer.plantuml.yml
     appveyor.yml: appveyor/master.yml
@@ -107,7 +113,7 @@ repos:
   isodoc-rice:
     .travis.yml: travis/linux.publish.yml
     appveyor.yml: appveyor/publish.yml
-  gbbib:
+  relaton-gb:
     .travis.yml: travis/master.yml
     appveyor.yml: appveyor/master.yml
   gb-agencies:
@@ -128,7 +134,7 @@ repos:
   metanorma:
     .travis.yml: travis/puppeteer.yml
     appveyor.yml: appveyor/master.yml
-  itubib:
+  relaton-itu:
     .travis.yml: travis/master.yml
     appveyor.yml: appveyor/master.yml
   omml2mathml:
@@ -146,13 +152,16 @@ repos:
     appveyor.yml: appveyor/master.yml
   metanorma-cli:
     appveyor.yml: appveyor/master.yml
-  ietfbib:
+  relaton-ietf:
     .travis.yml: travis/master.yml
     appveyor.yml: appveyor/master.yml
   metanorma-csand:
     .travis.yml: travis/puppeteer.plantuml.yml
     appveyor.yml: appveyor/master.yml
-  nistbib:
+  relaton-nist:
+    .travis.yml: travis/master.yml
+    appveyor.yml: appveyor/master.yml
+  rfc2mn:
     .travis.yml: travis/master.yml
     appveyor.yml: appveyor/master.yml
   ogc-tcpnp:
