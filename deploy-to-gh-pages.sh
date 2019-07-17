@@ -77,7 +77,8 @@ main() {
   printf "\e[0m\n"
 
   # Clean out existing contents in $TARGET_BRANCH clone while keeping .git/
-  git ls-files -z | xargs -0 sh -c 'for l; do echo "rm -rf $l"; rm -rf $l; done' || errx "Cleanup of all files failed."
+  # while-loop technique URL: https://stackoverflow.com/a/7039579
+  git ls-files -z | while IFS= read -d $'\0' -r l; do echo "rm -rf $l"; rm -rf "$l"; done || errx "Cleanup of all files failed."
   popd
 
   # Adding contents within published/ to $DEST_DIR.
