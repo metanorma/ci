@@ -67,7 +67,7 @@ main() {
   git checkout "$TARGET_BRANCH" || git checkout --orphan "$TARGET_BRANCH" || errx "Unable to checkout git."
 
   # Clean out existing contents in $TARGET_BRANCH clone while keeping .git/
-  git ls-files -z | xargs -0 sh -c 'for l; do rm -rf $l; done' || errx "Cleanup of all files failed."
+  git ls-files -z | xargs -0 sh -c 'for l; do echo "rm -rf $l"; rm -rf $l; done' || errx "Cleanup of all files failed."
   popd
 
   # Adding contents within published/ to $DEST_DIR.
@@ -90,11 +90,14 @@ main() {
   git status
   git commit -m "Deploy to GitHub Pages: ${SHA}"
 
-  printf "\e[37m"
+  printf "\n\e[37m"
+  echo "git ls-files:"
   git ls-files
-  printf "\e[0m"
+  printf "\e[0m\n"
 
+  echo ".gitignore:"
   cat .gitignore
+  echo
 
   eval "$(ssh-agent -s)"
   ssh-add "${KEY_NAME}"
