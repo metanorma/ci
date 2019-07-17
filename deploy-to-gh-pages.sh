@@ -112,7 +112,7 @@ main() {
   printf "\e[0m\n"
 
   echo ".gitignore:"
-  cat .gitignore
+  cat .gitignore || true
   echo
 
   eval "$(ssh-agent -s)"
