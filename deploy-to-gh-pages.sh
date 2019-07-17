@@ -88,9 +88,12 @@ main() {
   git add .
   git status
   git commit -m "Deploy to GitHub Pages: ${SHA}"
+
   printf "\e[37m"
   git ls-files
   printf "\e[0m"
+
+  cat .gitignore
 
   eval `ssh-agent -s`
   ssh-add ${KEY_NAME}
