@@ -67,13 +67,11 @@ main() {
 
   # Clean out existing contents in $TARGET_BRANCH clone while keeping .git/
   git ls-files -z | xargs -0 sh -c 'for l; do rm -rf $l; done' || errx "Cleanup of all files failed."
-  popd
 
   # Adding contents within published/ to $DEST_DIR.
   cp -a published/* $DEST_DIR/ || exit 0
 
   # Now let's go have some fun with the cloned repo
-  pushd $DEST_DIR
   git config user.name "Travis CI"
   git config user.email "$COMMIT_AUTHOR_EMAIL"
 
@@ -100,6 +98,7 @@ main() {
 
   # Now that we're all set up, we can push.
   git push $SSH_REPO $TARGET_BRANCH || errx "Unable to push to git."
+  popd
 }
 
 main "$@"
