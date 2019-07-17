@@ -64,10 +64,10 @@ main() {
   git clone $REPO $DEST_DIR || errx "Unable to clone Git."
   pushd $DEST_DIR
   git checkout $TARGET_BRANCH || git checkout --orphan $TARGET_BRANCH || errx "Unable to checkout git."
-  popd
 
-  # Clean out existing contents in $TARGET_BRANCH clone
-  rm -rf $DEST_DIR/* || exit 0
+  # Clean out existing contents in $TARGET_BRANCH clone while keeping .git/
+  git ls-files -z | xargs -0 sh -c 'for l; do rm -rf $l; done' || errx "Cleanup of all files failed."
+  popd
 
   # Adding contents within published/ to $DEST_DIR.
   cp -a published/* $DEST_DIR/ || exit 0
