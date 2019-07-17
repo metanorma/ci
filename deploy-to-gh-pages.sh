@@ -83,11 +83,10 @@ main() {
     exit 0
   fi
 
-  git status
-
   # Commit the "changes", i.e. the new version.
   # The delta will show diffs between new and old versions.
   git add .
+  git status
   git commit -m "Deploy to GitHub Pages: ${SHA}"
 
   eval `ssh-agent -s`
