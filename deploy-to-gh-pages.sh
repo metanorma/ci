@@ -66,6 +66,16 @@ main() {
   pushd "$DEST_DIR"
   git checkout "$TARGET_BRANCH" || git checkout --orphan "$TARGET_BRANCH" || errx "Unable to checkout git."
 
+  printf "\n\e[37m"
+  echo "git ls-files:"
+  git ls-files
+  printf "\e[0m\n"
+
+  printf "\n\e[37m"
+  echo "ls -a:"
+  ls -a
+  printf "\e[0m\n"
+
   # Clean out existing contents in $TARGET_BRANCH clone while keeping .git/
   git ls-files -z | xargs -0 sh -c 'for l; do echo "rm -rf $l"; rm -rf $l; done' || errx "Cleanup of all files failed."
   popd
@@ -93,6 +103,11 @@ main() {
   printf "\n\e[37m"
   echo "git ls-files:"
   git ls-files
+  printf "\e[0m\n"
+
+  printf "\n\e[37m"
+  echo "ls -a:"
+  ls -a
   printf "\e[0m\n"
 
   echo ".gitignore:"
