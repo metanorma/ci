@@ -8,13 +8,20 @@ require_relative '../lib/ci/master/cli/command'
 options = {
   :dry_run => false,
   :verbose => false,
-  :groups => ['all']
+  :groups => ['all'],
+  :pull_branch => 'master',
+  :force_push => false,
+  :authors => 'CAMOBAP795',
+  :reviewers => 'ronaldtse'
 }
 
 top_help = <<HELP
 Commonly used command are:
    sync :     do update ci configurations for all repos described in config
    lint :     do lint for ci configurations
+   pull :     do pull for repos
+   push :     do push changes to repote server
+   open-prs : do PR for Github with hub utility
 See 'ci-master COMMAND --help' for more information on a specific command.
 HELP
 
@@ -56,6 +63,51 @@ subcommands = {
     opts.on("-a", "--appveyor-bearer=APPVEYOR_BEARER", "Appveyor API Bearer token") do |token|
       options[:appveyor_token] = token
     end
+  end,
+  'pull' => OptionParser.new do |opts|
+    opts.banner = "Usage: ci-master pull [options]"
+
+    opts.on("-rREPO_DIR_PATH", "--repo-path=REPO_DIR_PATH", "Repo root dir path") do |path|
+      options[:repo_dir_path] = Pathname.getwd + path
+    end
+
+    opts.on("-bBRANCH", "--pull-branch=BRANCH", "Branch to pull in all repos") do |branch|
+      options[:pull_branch] = branch
+    end
+  end,
+  'push' => OptionParser.new do |opts|
+    opts.banner = "Usage: ci-master push [options]"
+
+    opts.on("-rREPO_DIR_PATH", "--repo-path=REPO_DIR_PATH", "Repo root dir path") do |path|
+      options[:repo_dir_path] = Pathname.getwd + path
+    end
+
+    opts.on("-bBRANCH", "--push-branch=BRANCH", "Branch to push in all repos") do |branch|
+      options[:push_branch] = branch
+    end
+
+    opts.on("-mMESSAGE", "--message=MESSAGE", "Commit message") do |message|
+      options[:commit_message] = message
+    end
+
+    opts.on("-f", "--force-push", "Force push (with commit ammend)") do |force|
+      options[:force_push] = force
+    end
+  end,
+  'open-prs' => OptionParser.new do |opts|
+    opts.banner = "Usage: ci-master open-pr [options]"
+
+    opts.on("-rREPO_DIR_PATH", "--repo-path=REPO_DIR_PATH", "Repo root dir path") do |path|
+      options[:repo_dir_path] = Pathname.getwd + path
+    end
+
+    opts.on("-mREVIEWERS", "--moderator=REVIEWERS", "A comma-separated list (no spaces around the comma) of GitHub handles to request a review from") do |reviewers|
+      options[:reviewers] = reviewers
+    end
+
+    opts.on("-aAUTHORS", "--assign=AUTHORS", "A comma-separated list (no spaces around the comma) of GitHub handles to assign to this pull request.") do |authors|
+      options[:authors] = authors
+    end
   end
 }
 
@@ -64,7 +116,7 @@ command = ARGV.shift
 subcommands[command].order!
 
 begin
-  Ci::Master::Cli::Command.new.send(command, options)
+  Ci::Master::Cli::Command.new.send(command.gsub('-', '_'), options)
   exit 0
 rescue => e
   puts "Error: #{e.message}"
