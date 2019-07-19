@@ -63,8 +63,8 @@ repos:
   metanorma-model-csand:
     .travis.yml: travis/plantuml.make.all.yml
   csa-ccm-tools:
-    .travis.yml: travis/master.yml
-    appveyor.yml: appveyor/master.yml
+    .travis.yml: travis/master-2.3.yml
+    appveyor.yml: appveyor/master-2.3.yml
   unicode2latex:
     .travis.yml: travis/plantuml.yml
     appveyor.yml: appveyor/master.yml
@@ -161,9 +161,7 @@ repos:
   relaton-nist:
     .travis.yml: travis/master.yml
     appveyor.yml: appveyor/master.yml
-  rfc2mn:
-    .travis.yml: travis/master.yml
-    appveyor.yml: appveyor/master.yml
+  # rfc2mn: unique config
   ogc-tcpnp:
     .travis.yml: travis/linux.publish.yml
     appveyor.yml: appveyor/publish.yml

@@ -8,6 +8,7 @@ environment:
     - RUBY_VERSION: 26
     - RUBY_VERSION: 25
     - RUBY_VERSION: 24
+    - RUBY_VERSION: 23
     - RUBY_VERSION: _trunk
 
 matrix:
@@ -19,10 +20,9 @@ install:
   - refreshenv
 
 build_script:
-  - set PYTHON_VERSION=37
-  - set PATH=C:\Ruby%RUBY_VERSION%\bin;%USERPROFILE%\AppData\Roaming\Python\Python%PYTHON_VERSION%\Scripts;C:\Python%PYTHON_VERSION%\Scripts;C:\Python%PYTHON_VERSION%;%PATH%
-  - pip3 install --user --upgrade pip
-  - pip3 install --user xml2rfc
+  - set PATH=C:\Ruby%RUBY_VERSION%\bin;%PATH%
+  - set GIT_TERMINAL_PROMPT=0
+  - gem install bundler -v "~> 2"
   - bundle config --local path vendor/bundle
   - bundle update
   - bundle install

@@ -7,11 +7,12 @@ rvm:
 - 2.6
 - 2.5
 - 2.4
+- 2.3
 - ruby-head
-before_install:
+before_install: 
+- gem update --system
 - gem install bundler -v "~> 2"
 - bundle update
-- curl -L https://raw.githubusercontent.com/metanorma/metanorma-build-scripts/master/travis.sh | bash
 matrix:
   allow_failures:
     - rvm: ruby-head
