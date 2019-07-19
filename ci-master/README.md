@@ -25,17 +25,12 @@ Highly likelly this gem will not be published, because it's only for internal us
 
 ### Make sure repos up-to-date
 
-- `git -C ../../ multi checkout master && git -C ../../ multi pull`
+- `bin/ci-master pull -b master -r ../..`
 
 ### Propogate changes from ci-master
 
-- `bin/ci-master sync -r ../../ -c config`
-- `git -C ../../ multi -c checkout -b feature/xxx`
-- `git -C ../../ multi -c add -u .travis.yml`
-- `git -C ../../ multi -c add -u appveyor.yml`
-- `git -C ../../ multi commit -m "Update CI configuration due to XXX feature"` or `git -C ../../ multi commit --amend --no-edit`
-- `git -C ../../ multi push --set-upstream github feature/xxx` or `git -C ../../ multi -c push -f`
-- `cd ../../ && for f in ./*/; do if [ -d "$f/.git" ]; then cd $f; hub pull-request -b master -r ronaldtse -a CAMOBAP795 --no-edit; cd ..; fi; done`
+- `bin/ci-master pull -r ../.. -b feature/xxx [-m "Update CI configuration due to XXX feature" | -f]`
+- `bin/ci-master open-prs -r ../.. -e ronaldtse -a CAMOBAP795`
 
 ## Development
 
