@@ -13,7 +13,7 @@ module Ci
       class Command
         def sync(options)
           config_path = validate_config_path(options)
-          repo_path, repo_manifest_path = validate_repo_path(options)
+          repos_path, repo_manifest_path = validate_repo_path(options)
 
           config = YAML.load_file(File.join(config_path, 'ci.yml'))
 
@@ -21,16 +21,10 @@ module Ci
 
           config['repos'].each do |repo_name, repo_ci|
             repo_path = File.join(repos_path, repo_name)
-            groups_xpath = %(/manifest/project[@name="metanorma/#{repo_name}"]/@groups)
 
-            repo_groups_attr = XPath.first(manifest, groups_xpath)
-            unless repo_groups_attr
-              puts "#{repo_path} repository not found. skip it"
-              next
-            end
-            repo_groups = repo_groups_attr.value.split(',')
+            next unless File.exist?(repo_path)
+            next unless repo_in_group(manifest, repo_name, options[:groups])
 
-            next unless File.exist?(repo_path) && !(groups & repo_groups).empty?
             travisci, appveyor = repo_ci.values_at('.travis.yml', 'appveyor.yml')
 
             if travisci then
@@ -80,11 +74,25 @@ module Ci
         end
 
         def pull(options)
-          repos_path, = validate_repo_path(options)
+          repos_path, repo_manifest_path = validate_repo_path(options)
+          config_path = validate_config_path(options)
           pull_branch = options[:pull_branch]
 
-          puts "Pull may take a while ..."
-          system("git -C #{repos_path} multi checkout #{pull_branch} && git -C #{repos_path} multi pull")
+          config = YAML.load_file(File.join(config_path, 'ci.yml'))
+          manifest = Document.new(File.new(repo_manifest_path))
+
+          config['repos'].each do |repo_name, repo_ci|
+            repo_path = File.join(repos_paths, repo_name)
+
+            next unless File.exist?(repo_path)
+            next unless repo_in_group(manifest, repo_name, options[:groups])
+
+            puts "Pull #{repo_path} ..."
+            Dir.chdir(repo_path) {
+              system("git checkout #{pull_branch} && git pull")
+            }
+          end
+
           puts "Done!"
         end
 
@@ -168,6 +176,18 @@ module Ci
           raise OptionParser::MissingArgument, "Missing -c/--config-path value" if config_path.nil? || !config_path.exist?
 
           return config_path
+        end
+
+        def repo_in_group(manifest_doc, repo_name, groups)
+          groups_xpath = %(/manifest/project[@name="metanorma/#{repo_name}"]/@groups)
+
+          repo_groups_attr = XPath.first(manifest_doc, groups_xpath)
+          unless repo_groups_attr
+            return false
+          end
+          repo_groups = repo_groups_attr.value.split(',')
+
+          !(groups & repo_groups).empty?
         end
       end
     end
