@@ -94,8 +94,7 @@ repos:
   metanorma-ietf:
     .travis.yml: travis/xml2rfc.yml
     appveyor.yml: appveyor/xml2rfc.yml
-  metanorma-standoc:
-    .travis.yml: travis/puppeteer.plantuml.yml
+  # metanorma-standoc: unique config
     appveyor.yml: appveyor/master.yml
   metanorma-iso:
     .travis.yml: travis/puppeteer.plantuml.yml
@@ -177,5 +176,11 @@ repos:
   mn-templates-ietf:
     .travis.yml: travis/templates.yml
     appveyor.yml: appveyor/templates.yml
+  mpfd-documents:
+    .travis.yml: travis/templates.yml
+    appveyor.yml: appveyor/templates.yml
+  iso-bib-item:
+    .travis.yml: travis/master.yml
+    appveyor.yml: appveyor/master.yml
 settings:
   pr: true
