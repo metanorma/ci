@@ -12,7 +12,9 @@ options = {
   :pull_branch => 'master',
   :force_push => false,
   :authors => 'CAMOBAP795',
-  :reviewers => 'ronaldtse'
+  :reviewers => 'ronaldtse',
+  :repo_dir_path => Pathname.getwd + '../..',
+  :config_dir_path => Pathname.new(File.expand_path(File.join(File.dirname(__FILE__), '..', 'config')))
 }
 
 top_help = <<HELP
@@ -73,6 +75,10 @@ subcommands = {
 
     opts.on("-bBRANCH", "--pull-branch=BRANCH", "Branch to pull in all repos") do |branch|
       options[:pull_branch] = branch
+    end
+
+    opts.on("-gGROUP1,GROUP2,GROUPX", Array, "Groups to update") do |groups|
+      options[:groups] = groups
     end
   end,
   'push' => OptionParser.new do |opts|
