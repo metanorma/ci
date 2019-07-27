@@ -18,7 +18,7 @@
   <project name="metanorma/csd-html" path="csd-html" groups="all"/>
   <project name="metanorma/metanorma-model-gb" path="metanorma-model-gb" groups="all,model"/>
   <project name="metanorma/metanorma-gb" path="metanorma-gb" groups="all,processor"/>
-  <project name="metanorma/relaton-iso" path="relaton-iso" groups="all,bibitem"/>
+  <project name="metanorma/relaton-iso" path="relaton-iso" groups="all,bibitem,relaton"/>
   <project name="metanorma/gmt-0015-2012" path="gmt-0015-2012" groups="all"/>
   <project name="metanorma/iso-ics-codes" path="iso-ics-codes" groups="all"/>
   <project name="metanorma/iso-ics-codes-scripts" path="iso-ics-codes-scripts" groups="all"/>
@@ -28,7 +28,7 @@
   <project name="metanorma/csd-style" path="csd-style" groups="all,style"/>
   <project name="metanorma/asciirfc.com" path="asciirfc.com" groups="all"/>
   <project name="metanorma/relaton-models" path="relaton-models" groups="all"/>
-  <project name="metanorma/relaton-gb" path="relaton-gb" groups="all,bibitem"/>
+  <project name="metanorma/relaton-gb" path="relaton-gb" groups="all,bibitem,relaton"/>
   <project name="metanorma/metanorma-model-standoc" path="metanorma-model-standoc" groups="all,model"/>
   <project name="metanorma/basicdoc-models" path="basicdoc-models" groups="all"/>
   <project name="metanorma/metanorma-model-csand" path="metanorma-model-csand" groups="all,model"/>
@@ -53,11 +53,11 @@
   <project name="metanorma/metanorma-m3d" path="metanorma-m3d" groups="all,processor"/>
   <project name="metanorma/m3d-style" path="m3d-style" groups="all,style"/>
   <project name="metanorma/metanorma.com" path="metanorma.com" groups="all"/>
-  <project name="metanorma/relaton-ietf" path="relaton-ietf" groups="all,bibitem"/>
+  <project name="metanorma/relaton-ietf" path="relaton-ietf" groups="all,bibitem,relaton"/>
   <project name="metanorma/iev" path="iev" groups="all"/>
   <project name="metanorma/metanorma-macos-setup" path="metanorma-macos-setup" groups="all,setup"/>
   <project name="metanorma/metanorma-sample" path="metanorma-sample" groups="all,processor"/>
-  <project name="metanorma/relaton-cli" path="relaton-cli" groups="all"/>
+  <project name="metanorma/relaton-cli" path="relaton-cli" groups="all,relaton"/>
   <project name="metanorma/metanorma-cli" path="metanorma-cli" groups="all,processor"/>
   <project name="metanorma/metanorma-vsd" path="metanorma-vsd" groups="all,processor"/>
   <project name="metanorma/metanorma-acme" path="metanorma-acme" groups="all,processor"/>
@@ -65,7 +65,7 @@
   <project name="metanorma/metanorma-mpfd" path="metanorma-mpfd" groups="all,processor"/>
   <project name="metanorma/mpfd-documents" path="mpfd-documents" groups="all"/>
   <project name="metanorma/metanorma-standoc" path="metanorma-standoc" groups="all,processor"/>
-  <project name="metanorma/relaton-iec" path="relaton-iec" groups="all,bibitem"/>
+  <project name="metanorma/relaton-iec" path="relaton-iec" groups="all,bibitem,relaton"/>
   <project name="metanorma/iso690render" path="iso690render" groups="all"/>
   <project name="metanorma/mpfd-style" path="mpfd-style" groups="all,style"/>
   <project name="metanorma/metanorma-windows-setup" path="metanorma-windows-setup" groups="all,setup"/>
@@ -94,10 +94,10 @@
   <project name="metanorma/metanorma-nist-style" path="metanorma-nist-style" groups="all,style"/>
   <project name="metanorma/mn-ogc-documents" path="mn-ogc-documents" groups="all"/>
   <project name="metanorma/metanorma-mrr-samples" path="metanorma-mrr-samples" groups="all"/>
-  <project name="metanorma/relaton-nist" path="relaton-nist" groups="all,bibitem"/>
+  <project name="metanorma/relaton-nist" path="relaton-nist" groups="all,bibitem,relaton"/>
   <project name="metanorma/metanorma-itu" path="metanorma-itu" groups="all,processor"/>
   <project name="metanorma/metanorma-model-itu" path="metanorma-model-itu" groups="all,model"/>
-  <project name="metanorma/relaton-itu" path="itubib" groups="all,bibitem"/>
+  <project name="metanorma/relaton-itu" path="itubib" groups="all,bibitem,relaton"/>
   <project name="metanorma/mn-itu-docs" path="mn-itu-docs" groups="all"/>
   <project name="metanorma/metanorma-itu-style" path="metanorma-itu-style" groups="all,style"/>
   <project name="metanorma/chocolatey-latexml" path="chocolatey-latexml" groups="all"/>
@@ -109,8 +109,9 @@
   <project name="metanorma/mn-templates-iso" path="mn-templates-iso" groups="all,templates"/>
   <project name="metanorma/mn-templates-ietf" path="mn-templates-ietf" groups="all,templates"/>
   <project name="metanorma/mpfd-documents" path="mpfd-documents" groups="all,templates"/>
-  <project name="metanorma/relaton-bib" path="relaton-bib" groups="all"/>
-  <project name="metanorma/relaton-iso-bib" path="relaton-iso-bib" groups="all"/>
+  <project name="metanorma/relaton-bib" path="relaton-bib" groups="all,relaton"/>
+  <project name="metanorma/relaton-iso-bib" path="relaton-iso-bib" groups="all,relaton"/>
   <project name="metanorma/csa-caiq" path="csa-caiq" groups="all"/>
   <project name="metanorma/csa-ccm-tools" path="csa-ccm-tools" groups="all"/>
+  <project name="metanorma/relaton-iev" path="relaton-iev" groups="all,relaton"/>
 </manifest>
