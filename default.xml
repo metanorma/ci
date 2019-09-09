@@ -39,7 +39,7 @@
   <project name="metanorma/cnccs" path="cnccs" groups="all"/>
   <project name="metanorma/isodoc-rice" path="isodoc-rice" groups="all"/>
   <project name="metanorma/gbdoc-rice" path="gbdoc-rice" groups="all"/>
-  <project name="metanorma/csd-public-documents" path="csd-public-documents" groups="all"/>
+  <project name="metanorma/csd-public-documents" path="csd-public-documents" groups="all,docs"/>
   <project name="metanorma/mathml2asciimath" path="mathml2asciimath" groups="all"/>
   <project name="metanorma/isodoc-style" path="isodoc-style" groups="all,style"/>
   <project name="metanorma/metanorma-rsd" path="metanorma-rsd" groups="all,processor"/>
@@ -74,7 +74,7 @@
   <project name="metanorma/relaton-server-csd" path="relaton-server-csd" groups="all"/>
   <project name="metanorma/csd-metanorma-training" path="csd-metanorma-training" groups="all"/>
   <project name="metanorma/metanorma-unece" path="metanorma-unece" groups="all,processor"/>
-  <project name="metanorma/unece-docs" path="unece-docs" groups="all"/>
+  <project name="metanorma/unece-docs" path="unece-docs" groups="all,docs"/>
   <project name="metanorma/plantuml-install" path="plantuml-install" groups="all"/>
   <project name="metanorma/metanorma-model-unece" path="metanorma-model-unece" groups="all,model"/>
   <project name="metanorma/metanorma-document-gh-pages" path="metanorma-document-gh-pages" groups="all"/>
@@ -92,13 +92,13 @@
   <project name="metanorma/metanorma-model-nist" path="metanorma-model-nist" groups="all,model"/>
   <project name="metanorma/ogc-wfs" path="ogc-wfs" groups="all"/>
   <project name="metanorma/metanorma-nist-style" path="metanorma-nist-style" groups="all,style"/>
-  <project name="metanorma/mn-ogc-documents" path="mn-ogc-documents" groups="all"/>
+  <project name="metanorma/mn-ogc-documents" path="mn-ogc-documents" groups="all,docs"/>
   <project name="metanorma/metanorma-mrr-samples" path="metanorma-mrr-samples" groups="all"/>
   <project name="metanorma/relaton-nist" path="relaton-nist" groups="all,bibitem,relaton"/>
   <project name="metanorma/metanorma-itu" path="metanorma-itu" groups="all,processor"/>
   <project name="metanorma/metanorma-model-itu" path="metanorma-model-itu" groups="all,model"/>
   <project name="metanorma/relaton-itu" path="itubib" groups="all,bibitem,relaton"/>
-  <project name="metanorma/mn-itu-docs" path="mn-itu-docs" groups="all"/>
+  <project name="metanorma/mn-itu-docs" path="mn-itu-docs" groups="all,docs"/>
   <project name="metanorma/metanorma-itu-style" path="metanorma-itu-style" groups="all,style"/>
   <project name="metanorma/chocolatey-latexml" path="chocolatey-latexml" groups="all"/>
   <project name="metanorma/unicode2latex" path="unicode2latex" groups="all"/>
@@ -108,10 +108,11 @@
   <project name="metanorma/mn-templates-ogc" path="mn-templates-ogc" groups="all,templates"/>
   <project name="metanorma/mn-templates-iso" path="mn-templates-iso" groups="all,templates"/>
   <project name="metanorma/mn-templates-ietf" path="mn-templates-ietf" groups="all,templates"/>
-  <project name="metanorma/mpfd-documents" path="mpfd-documents" groups="all,templates"/>
+  <project name="metanorma/mpfd-documents" path="mpfd-documents" groups="all,docs"/>
   <project name="metanorma/relaton-bib" path="relaton-bib" groups="all,relaton"/>
   <project name="metanorma/relaton-iso-bib" path="relaton-iso-bib" groups="all,relaton"/>
   <project name="metanorma/csa-caiq" path="csa-caiq" groups="all"/>
   <project name="metanorma/csa-ccm-tools" path="csa-ccm-tools" groups="all"/>
   <project name="metanorma/relaton-iev" path="relaton-iev" groups="all,relaton"/>
+  <project name="metanorma/mn-iec-docs" path="mn-iec-docs" groups="all,docs"/>
 </manifest>

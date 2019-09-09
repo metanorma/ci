@@ -144,6 +144,14 @@ repos:
     .travis.yml: travis/plantuml.make.all.yml
   mn-ogc-documents:
     .travis.yml: travis/linux.publish.yml
+  mn-itu-docs:
+    .travis.yml: travis/linux.publish.yml
+  mn-iec-docs:
+    .travis.yml: travis/linux.publish.yml
+  unece-docs:
+    .travis.yml: travis/linux.publish.yml
+  mpfd-documents:
+    .travis.yml: travis/linux.publish.yml
   metanorma-acme:
     .travis.yml: travis/puppeteer.yml
     appveyor.yml: appveyor/master.yml
@@ -175,9 +183,6 @@ repos:
     .travis.yml: travis/templates.yml
     appveyor.yml: appveyor/templates.yml
   mn-templates-ietf:
-    .travis.yml: travis/templates.yml
-    appveyor.yml: appveyor/templates.yml
-  mpfd-documents:
     .travis.yml: travis/templates.yml
     appveyor.yml: appveyor/templates.yml
   iso-bib-item:

@@ -82,7 +82,7 @@ module Ci
           manifest = Document.new(File.new(repo_manifest_path))
 
           config['repos'].each do |repo_name, repo_ci|
-            repo_path = File.join(repos_paths, repo_name)
+            repo_path = File.join(repos_path, repo_name)
 
             next unless File.exist?(repo_path)
             next unless repo_in_group(manifest, repo_name, options[:groups])
