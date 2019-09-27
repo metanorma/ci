@@ -74,9 +74,9 @@ main() {
   ls -a
   printf "\e[0m\n"
 
-  echo ".gitignore:"
-  cat .gitignore || true
-  echo
+  # echo ".gitignore:"
+  # cat .gitignore || true
+  # echo
 
   # Now that we're all set up, we can push.
   git push "$REPO" "$TARGET_BRANCH" || errx "Unable to push to git."
