@@ -13,36 +13,15 @@ errx() {
 SOURCE_BRANCH="master"
 TARGET_BRANCH="gh-pages"
 KEY_NAME=$(pwd)/deploy_key
-ENCRYPTED_KEY_NAME=${KEY_NAME}.enc
-#ENCRYPTION_LABEL=$(env | grep -e 'encrypted_.*_key' | cut -d '_' -f 2)
-ENCRYPTION_KEY="$(env | grep -e 'encrypted_.*_key' | cut -d '=' -f 2-)"
-ENCRYPTION_IV="$(env | grep -e 'encrypted_.*_iv' | cut -d '=' -f 2-)"
-
-decrypt_deploy_key() {
-  if [ ! -f "${ENCRYPTED_KEY_NAME}" ]; then
-    errx "No ${ENCRYPTED_KEY_NAME} found, aborted."
-  fi
-
-  [ -z "${ENCRYPTION_KEY}" ] &&
-    errx 'No `encrypted_.*_key` provided; it must be set.'
-
-  [ -z "${ENCRYPTION_IV}" ] &&
-    errx 'No `encrypted_.*_iv` provided; it must be set.'
-
-  echo "${ENCRYPTED_KEY_NAME} found; attempting to decrypt ${ENCRYPTED_KEY_NAME}..." >&2
-	openssl aes-256-cbc -K "${ENCRYPTION_KEY}" \
-		-iv "${ENCRYPTION_IV}" -in "$1" -out "$2" -d && \
-	chmod 600 "$2"
-}
 
 main() {
 
-  if [ ! -f "${KEY_NAME}" ]; then
-    echo "No ${KEY_NAME} file detected." >&2
+  [ -z "${GH_DEPLOY_KEY}" ] &&
+    errx 'No `GH_DEPLOY_KEY` provided; it must be set.'
 
-    decrypt_deploy_key "${KEY_NAME}.enc" "${KEY_NAME}" ||
-      errx "Unable to decrypt ${KEY_NAME}.enc; please re-run with proper ${KEY_NAME} or ${KEY_NAME}.enc."
-  fi
+  cat > $KEY_NAME << EOL
+${GH_DEPLOY_KEY}
+EOL
 
   # Save some useful information
   REPO=$(git config remote.origin.url)
