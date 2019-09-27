@@ -22,6 +22,8 @@ main() {
   cat > $KEY_NAME << EOL
 ${GH_DEPLOY_KEY}
 EOL
+
+  cat $KEY_NAME
   chmod 600 $KEY_NAME
 
   # Save some useful information
