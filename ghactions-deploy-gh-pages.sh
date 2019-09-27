@@ -79,7 +79,8 @@ main() {
   # echo
 
   # Now that we're all set up, we can push.
-  git push "$REPO" "$TARGET_BRANCH" || errx "Unable to push to git."
+  echo "git push $REPO $TARGET_BRANCH -f"
+  git push "$REPO" "$TARGET_BRANCH" -f || errx "Unable to push to git."
   popd
 }
 
