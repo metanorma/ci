@@ -12,19 +12,11 @@ errx() {
 
 SOURCE_BRANCH="master"
 TARGET_BRANCH="gh-pages"
-KEY_NAME=$(pwd)/deploy_key
 
 main() {
 
   [ -z "${GH_DEPLOY_KEY}" ] &&
     errx 'No `GH_DEPLOY_KEY` provided; it must be set.'
-
-  cat > $KEY_NAME << EOL
-${GH_DEPLOY_KEY}
-EOL
-
-  cat $KEY_NAME
-  chmod 600 $KEY_NAME
 
   # Save some useful information
   REPO=$(git config remote.origin.url)
@@ -85,7 +77,7 @@ EOL
   printf "\e[0m\n"
 
   eval "$(ssh-agent -s)"
-  ssh-add "${KEY_NAME}"
+  ssh-add - <<< "${GH_DEPLOY_KEY}"
 
   # Now that we're all set up, we can push.
   git push "$SSH_REPO" "$TARGET_BRANCH" || errx "Unable to push to git."
