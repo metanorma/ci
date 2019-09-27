@@ -22,6 +22,7 @@ main() {
   cat > $KEY_NAME << EOL
 ${GH_DEPLOY_KEY}
 EOL
+  chmod 600 $KEY_NAME
 
   # Save some useful information
   REPO=$(git config remote.origin.url)
