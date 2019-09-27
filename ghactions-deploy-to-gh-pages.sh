@@ -82,10 +82,6 @@ EOL
   ls -a
   printf "\e[0m\n"
 
-  echo ".gitignore:"
-  cat .gitignore || true
-  echo
-
   eval "$(ssh-agent -s)"
   ssh-add "${KEY_NAME}"
 
