@@ -29,13 +29,10 @@ main() {
   echo "GITHUB_RESPOSITORY: ${GITHUB_REPOSITORY}" >&2
   echo "SSH_REPO: ${SSH_REPO}" >&2
 
-  if [ -d "${GITHUB_WORKSPACE}/.git" ]; then
-    # Clone the existing $TARGET_BRANCH for this repo into $DEST_DIR/
-    git clone --depth 1 -b ${TARGET_BRANCH} ${GITHUB_WORKSPACE} ${DEST_DIR}
-  else
-    # Create a new empty branch if gh-pages doesn't exist yet (should only happen on first deploy)
+  # Clone the existing $TARGET_BRANCH for this repo into $DEST_DIR/
+  # Create a new empty branch if gh-pages doesn't exist yet (should only happen on first deploy)
+  git clone --depth 1 -b ${TARGET_BRANCH} ${SSH_REPO} ${DEST_DIR} || \
     git init ${DEST_DIR}
-  fi
 
   # Adding contents within published/ to $DEST_DIR.
   cd ${GITHUB_WORKSPACE}
