@@ -18,7 +18,10 @@ main() {
   [ -z "${GH_DEPLOY_KEY}" ] &&
     errx 'No `GH_DEPLOY_KEY` provided; it must be set.'
 
-  # Save some useful information
+  # Read in the DEPLOY KEY
+  eval "$(ssh-agent -s)"
+  ssh-add - <<< "${GH_DEPLOY_KEY}"
+
   REPO=${GITHUB_REPOSITORY}
   SSH_REPO=${REPO/https:\/\/github.com\//git@github.com:}
   SHA=$(git rev-parse --verify HEAD)
@@ -74,9 +77,6 @@ main() {
   echo "ls -a:"
   ls -a
   printf "\e[0m\n"
-
-  eval "$(ssh-agent -s)"
-  ssh-add - <<< "${GH_DEPLOY_KEY}"
 
   # Now that we're all set up, we can push.
   git push "$SSH_REPO" "$TARGET_BRANCH" || errx "Unable to push to git."
