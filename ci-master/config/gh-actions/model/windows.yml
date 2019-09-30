@@ -1,0 +1,16 @@
+name: windows
+
+on: [push]
+
+jobs:
+  test-windows:
+    name: Test on PlantUML Windows
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@master
+      - name: Install PlantUML
+        run: |
+          cinst -y plantuml
+      - name: Make
+        run: |
+          make SHELL=cmd all

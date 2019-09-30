@@ -25,14 +25,8 @@ module Ci
             next unless File.exist?(repo_path)
             next unless repo_in_group(manifest, repo_name, options[:groups])
 
-            travisci, appveyor = repo_ci.values_at('.travis.yml', 'appveyor.yml')
-
-            if travisci then
-              copy_file File.join(config_path, travisci), File.join(repo_path, '.travis.yml'), options[:dry_run]
-            end
-
-            if appveyor then
-              copy_file File.join(config_path, appveyor), File.join(repo_path, 'appveyor.yml'), options[:dry_run]
+            repo_ci.keys.each do |ci_config_name|
+              copy_file File.join(config_path, repo_ci[ci_config_name]), File.join(repo_path, ci_config_name), options[:dry_run]
             end
           end
         end
@@ -142,7 +136,12 @@ module Ci
         def copy_file(from, to, dry_run)
           puts "Copy #{from} to #{to}"
           if !dry_run then
-            File.open(to, 'w') do |fo|
+            to_dir = File.dirname(to)
+            unless File.directory?(to_dir)
+              FileUtils.mkdir_p(to_dir)
+            end
+
+            File.open(to, 'w+') do |fo|
               fo.puts '# Auto-generated !!! Do not edit it manually'
               fo.puts '# use ci-master https://github.com/metanorma/metanorma-build-scripts'
               File.foreach(from) do |li|

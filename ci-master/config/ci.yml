@@ -1,195 +1,261 @@
 ---
 repos:
   isodoc:
-    .travis.yml: travis/puppeteer.yml
-    appveyor.yml: appveyor/master.yml
+    .github/workflows/macos.yml: gh-actions/puppeteer/macos.yml
+    .github/workflows/ubuntu.yml: gh-actions/puppeteer/ubuntu.yml
+    .github/workflows/windows.yml: gh-actions/puppeteer/windows.yml
   metanorma-ogc:
-    .travis.yml: travis/puppeteer.yml
-    appveyor.yml: appveyor/master.yml
+    .github/workflows/macos.yml: gh-actions/puppeteer/macos.yml
+    .github/workflows/ubuntu.yml: gh-actions/puppeteer/ubuntu.yml
+    .github/workflows/windows.yml: gh-actions/puppeteer/windows.yml
   metanorma-model-standoc:
-    .travis.yml: travis/plantuml.make.all.yml
+    .github/workflows/macos.yml: gh-actions/model/macos.yml
+    .github/workflows/ubuntu.yml: gh-actions/model/ubuntu.yml
+    .github/workflows/windows.yml: gh-actions/model/windows.yml
   relaton-bib:
-    appveyor.yml: appveyor/master.yml
-    .travis.yml: travis/master.yml
+    .github/workflows/macos.yml: gh-actions/master/macos.yml
+    .github/workflows/ubuntu.yml: gh-actions/master/ubuntu.yml
+    .github/workflows/windows.yml: gh-actions/master/windows.yml
   relaton-iso-bib:
-    appveyor.yml: appveyor/master.yml
-    .travis.yml: travis/master.yml
+    .github/workflows/macos.yml: gh-actions/master/macos.yml
+    .github/workflows/ubuntu.yml: gh-actions/master/ubuntu.yml
+    .github/workflows/windows.yml: gh-actions/master/windows.yml
   metanorma-model-gb:
-    .travis.yml: travis/plantuml.make.all.yml
+    .github/workflows/macos.yml: gh-actions/model/macos.yml
+    .github/workflows/ubuntu.yml: gh-actions/model/ubuntu.yml
+    .github/workflows/windows.yml: gh-actions/model/windows.yml
   relaton-iso:
-    .travis.yml: travis/master.yml
-    appveyor.yml: appveyor/master.yml
+    .github/workflows/macos.yml: gh-actions/master/macos.yml
+    .github/workflows/ubuntu.yml: gh-actions/master/ubuntu.yml
+    .github/workflows/windows.yml: gh-actions/master/windows.yml
   metanorma-model-iso:
-    .travis.yml: travis/plantuml.make.all.yml
+    .github/workflows/macos.yml: gh-actions/model/macos.yml
+    .github/workflows/ubuntu.yml: gh-actions/model/ubuntu.yml
+    .github/workflows/windows.yml: gh-actions/model/windows.yml
   unece-cefact-plenary-2018-6:
-    .travis.yml: travis/linux.publish.yml
-    appveyor.yml: appveyor/publish.yml
+    .github/workflows/ubuntu.yml: gh-actions/publish/ubuntu.yml
+    .github/workflows/windows.yml: gh-actions/publish/windows.yml
   metanorma-m3d:
-    .travis.yml: travis/puppeteer.yml
-    appveyor.yml: appveyor/master.yml
+    .github/workflows/macos.yml: gh-actions/puppeteer/macos.yml
+    .github/workflows/ubuntu.yml: gh-actions/puppeteer/ubuntu.yml
+    .github/workflows/windows.yml: gh-actions/puppeteer/windows.yml
   metanorma-model-unece:
-    .travis.yml: travis/plantuml.make.all.yml
+    .github/workflows/macos.yml: gh-actions/model/macos.yml
+    .github/workflows/ubuntu.yml: gh-actions/model/ubuntu.yml
+    .github/workflows/windows.yml: gh-actions/model/windows.yml
   cnccs:
-    appveyor.yml: appveyor/master.yml
-    .travis.yml: travis/master.yml
+    .github/workflows/macos.yml: gh-actions/master/macos.yml
+    .github/workflows/ubuntu.yml: gh-actions/master/ubuntu.yml
+    .github/workflows/windows.yml: gh-actions/master/windows.yml
   metanorma-csd:
-    .travis.yml: travis/puppeteer.yml
-    appveyor.yml: appveyor/master.yml
+    .github/workflows/macos.yml: gh-actions/puppeteer/macos.yml
+    .github/workflows/ubuntu.yml: gh-actions/puppeteer/ubuntu.yml
+    .github/workflows/windows.yml: gh-actions/puppeteer/windows.yml
   metanorma-vsd:
-    .travis.yml: travis/puppeteer.yml
-    appveyor.yml: appveyor/master.yml
+    .github/workflows/macos.yml: gh-actions/puppeteer/macos.yml
+    .github/workflows/ubuntu.yml: gh-actions/puppeteer/ubuntu.yml
+    .github/workflows/windows.yml: gh-actions/puppeteer/windows.yml
   csd-public-documents:
-    .travis.yml: travis/linux.publish.yml
-    appveyor.yml: appveyor/publish.yml
+    .github/workflows/ubuntu.yml: gh-actions/publish/ubuntu.yml
+    .github/workflows/windows.yml: gh-actions/publish/windows.yml
   metanorma-rsd:
-    .travis.yml: travis/puppeteer.plantuml.yml
-    appveyor.yml: appveyor/master.yml
+    .github/workflows/macos.yml: gh-actions/plantuml/macos.yml
+    .github/workflows/ubuntu.yml: gh-actions/plantuml/ubuntu.yml
+    .github/workflows/windows.yml: gh-actions/plantuml/windows.yml
   relaton-models:
-    .travis.yml: travis/plantuml.make.all.yml
+    .github/workflows/macos.yml: gh-actions/model/macos.yml
+    .github/workflows/ubuntu.yml: gh-actions/model/ubuntu.yml
+    .github/workflows/windows.yml: gh-actions/model/windows.yml
   metanorma-sample:
-    .travis.yml: travis/puppeteer.yml
-    appveyor.yml: appveyor/master.yml
+    .github/workflows/macos.yml: gh-actions/puppeteer/macos.yml
+    .github/workflows/ubuntu.yml: gh-actions/puppeteer/ubuntu.yml
+    .github/workflows/windows.yml: gh-actions/puppeteer/windows.yml
   isoics:
-    .travis.yml: travis/master.yml
-    appveyor.yml: appveyor/master.yml
+    .github/workflows/macos.yml: gh-actions/master/macos.yml
+    .github/workflows/ubuntu.yml: gh-actions/master/ubuntu.yml
+    .github/workflows/windows.yml: gh-actions/master/windows.yml
   iso690render:
-    .travis.yml: travis/master.yml
-    appveyor.yml: appveyor/master.yml
+    .github/workflows/macos.yml: gh-actions/master/macos.yml
+    .github/workflows/ubuntu.yml: gh-actions/master/ubuntu.yml
+    .github/workflows/windows.yml: gh-actions/master/windows.yml
   metanorma-mpfd:
-    .travis.yml: travis/puppeteer.yml
-    appveyor.yml: appveyor/master.yml
+    .github/workflows/macos.yml: gh-actions/puppeteer/macos.yml
+    .github/workflows/ubuntu.yml: gh-actions/puppeteer/ubuntu.yml
+    .github/workflows/windows.yml: gh-actions/puppeteer/windows.yml
   metanorma-model-itu:
-    .travis.yml: travis/plantuml.make.all.yml
+    .github/workflows/macos.yml: gh-actions/model/macos.yml
+    .github/workflows/ubuntu.yml: gh-actions/model/ubuntu.yml
+    .github/workflows/windows.yml: gh-actions/model/windows.yml
   metanorma-model-csand:
-    .travis.yml: travis/plantuml.make.all.yml
+    .github/workflows/macos.yml: gh-actions/model/macos.yml
+    .github/workflows/ubuntu.yml: gh-actions/model/ubuntu.yml
+    .github/workflows/windows.yml: gh-actions/model/windows.yml
   csa-ccm-tools:
-    .travis.yml: travis/master-2.3.yml
-    appveyor.yml: appveyor/master-2.3.yml
+    .github/workflows/macos.yml: gh-actions/master/macos.yml
+    .github/workflows/ubuntu.yml: gh-actions/master/ubuntu.yml
+    .github/workflows/windows.yml: gh-actions/master/windows.yml
   unicode2latex:
-    .travis.yml: travis/plantuml.yml
-    appveyor.yml: appveyor/master.yml
+    .github/workflows/macos.yml: gh-actions/plantuml/macos.yml
+    .github/workflows/ubuntu.yml: gh-actions/plantuml/ubuntu.yml
+    .github/workflows/windows.yml: gh-actions/plantuml/windows.yml
   html2doc:
-    .travis.yml: travis/master.yml
-    appveyor.yml: appveyor/master.yml
+    .github/workflows/macos.yml: gh-actions/master/macos.yml
+    .github/workflows/ubuntu.yml: gh-actions/master/ubuntu.yml
+    .github/workflows/windows.yml: gh-actions/master/windows.yml
   ogc-wfs:
-    .travis.yml: travis/linux.publish.yml
-    appveyor.yml: appveyor/publish.yml
+    .github/workflows/ubuntu.yml: gh-actions/publish/ubuntu.yml
+    .github/workflows/windows.yml: gh-actions/publish/windows.yml
   metanorma-model-nist:
-    .travis.yml: travis/plantuml.make.all.yml
+    .github/workflows/macos.yml: gh-actions/model/macos.yml
+    .github/workflows/ubuntu.yml: gh-actions/model/ubuntu.yml
+    .github/workflows/windows.yml: gh-actions/model/windows.yml
   basicdoc-models:
-    .travis.yml: travis/plantuml.make.all.yml
+    .github/workflows/macos.yml: gh-actions/model/macos.yml
+    .github/workflows/ubuntu.yml: gh-actions/model/ubuntu.yml
+    .github/workflows/windows.yml: gh-actions/model/windows.yml
   metanorma-model-csd:
-    .travis.yml: travis/plantuml.make.all.yml
+    .github/workflows/macos.yml: gh-actions/model/macos.yml
+    .github/workflows/ubuntu.yml: gh-actions/model/ubuntu.yml
+    .github/workflows/windows.yml: gh-actions/model/windows.yml
   metanorma-gb:
-    .travis.yml: travis/master.yml
-    appveyor.yml: appveyor/master.yml
+    .github/workflows/macos.yml: gh-actions/master/macos.yml
+    .github/workflows/ubuntu.yml: gh-actions/master/ubuntu.yml
+    .github/workflows/windows.yml: gh-actions/master/windows.yml
   metanorma-model-m3d:
-    .travis.yml: travis/plantuml.make.all.yml
+    .github/workflows/macos.yml: gh-actions/model/macos.yml
+    .github/workflows/ubuntu.yml: gh-actions/model/ubuntu.yml
+    .github/workflows/windows.yml: gh-actions/model/windows.yml
   relaton-iec:
-    .travis.yml: travis/master.yml
-    appveyor.yml: appveyor/master.yml
+    .github/workflows/macos.yml: gh-actions/master/macos.yml
+    .github/workflows/ubuntu.yml: gh-actions/master/ubuntu.yml
+    .github/workflows/windows.yml: gh-actions/master/windows.yml
   metanorma-nist:
-    .travis.yml: travis/puppeteer.yml
-    appveyor.yml: appveyor/master.yml
+    .github/workflows/macos.yml: gh-actions/puppeteer/macos.yml
+    .github/workflows/ubuntu.yml: gh-actions/puppeteer/ubuntu.yml
+    .github/workflows/windows.yml: gh-actions/puppeteer/windows.yml
   metanorma-ietf:
-    .travis.yml: travis/xml2rfc.yml
-    appveyor.yml: appveyor/xml2rfc.yml
+    .github/workflows/macos.yml: gh-actions/xml2rfc/macos.yml
+    .github/workflows/ubuntu.yml: gh-actions/xml2rfc/ubuntu.yml
+    .github/workflows/windows.yml: gh-actions/xml2rfc/windows.yml
   metanorma-standoc:
-    .travis.yml: travis/puppeteer.plantuml.latexml.yml
-    appveyor.yml: appveyor/master.yml
+    .github/workflows/macos.yml: gh-actions/latexml/macos.yml
+    .github/workflows/ubuntu.yml: gh-actions/latexml/ubuntu.yml
+    .github/workflows/windows.yml: gh-actions/latexml/windows.yml
   metanorma-iso:
-    .travis.yml: travis/puppeteer.plantuml.yml
-    appveyor.yml: appveyor/master.yml
+    .github/workflows/macos.yml: gh-actions/plantuml/macos.yml
+    .github/workflows/ubuntu.yml: gh-actions/plantuml/ubuntu.yml
+    .github/workflows/windows.yml: gh-actions/plantuml/windows.yml
   metanorma-unece:
-    .travis.yml: travis/master.yml
-    appveyor.yml: appveyor/master.yml
+    .github/workflows/macos.yml: gh-actions/master/macos.yml
+    .github/workflows/ubuntu.yml: gh-actions/master/ubuntu.yml
+    .github/workflows/windows.yml: gh-actions/master/windows.yml
   metanorma-model-ogc:
-    .travis.yml: travis/plantuml.make.all.yml
+    .github/workflows/macos.yml: gh-actions/model/macos.yml
+    .github/workflows/ubuntu.yml: gh-actions/model/ubuntu.yml
+    .github/workflows/windows.yml: gh-actions/model/windows.yml
   relaton-server-csd:
-    .travis.yml: travis/puppeteer.yml
+    .github/workflows/macos.yml: gh-actions/puppeteer/macos.yml
+    .github/workflows/ubuntu.yml: gh-actions/puppeteer/ubuntu.yml
+    .github/workflows/windows.yml: gh-actions/puppeteer/windows.yml
   reverse_asciidoctor:
-    .travis.yml: travis/master.yml
-    appveyor.yml: appveyor/master.yml
+    .github/workflows/macos.yml: gh-actions/master/macos.yml
+    .github/workflows/ubuntu.yml: gh-actions/master/ubuntu.yml
+    .github/workflows/windows.yml: gh-actions/master/windows.yml
   isodoc-rice:
-    .travis.yml: travis/linux.publish.yml
-    appveyor.yml: appveyor/publish.yml
+    .github/workflows/ubuntu.yml: gh-actions/publish/ubuntu.yml
+    .github/workflows/windows.yml: gh-actions/publish/windows.yml
   relaton-gb:
-    .travis.yml: travis/master.yml
-    appveyor.yml: appveyor/master.yml
+    .github/workflows/macos.yml: gh-actions/master/macos.yml
+    .github/workflows/ubuntu.yml: gh-actions/master/ubuntu.yml
+    .github/workflows/windows.yml: gh-actions/master/windows.yml
   gb-agencies:
-    appveyor.yml: appveyor/master.yml
-    .travis.yml: travis/master.yml
+    .github/workflows/macos.yml: gh-actions/master/macos.yml
+    .github/workflows/ubuntu.yml: gh-actions/master/ubuntu.yml
+    .github/workflows/windows.yml: gh-actions/master/windows.yml
   relaton-cli:
-    .travis.yml: travis/master.yml
-    appveyor.yml: appveyor/master.yml
+    .github/workflows/macos.yml: gh-actions/master/macos.yml
+    .github/workflows/ubuntu.yml: gh-actions/master/ubuntu.yml
+    .github/workflows/windows.yml: gh-actions/master/windows.yml
   mathml2asciimath:
-    .travis.yml: travis/master.yml
-    appveyor.yml: appveyor/master.yml
+    .github/workflows/macos.yml: gh-actions/master/macos.yml
+    .github/workflows/ubuntu.yml: gh-actions/master/ubuntu.yml
+    .github/workflows/windows.yml: gh-actions/master/windows.yml
   metanorma-itu:
-    .travis.yml: travis/puppeteer.yml
-    appveyor.yml: appveyor/master.yml
+    .github/workflows/macos.yml: gh-actions/puppeteer/macos.yml
+    .github/workflows/ubuntu.yml: gh-actions/puppeteer/ubuntu.yml
+    .github/workflows/windows.yml: gh-actions/puppeteer/windows.yml
   relaton:
-    .travis.yml: travis/master.yml
-    appveyor.yml: appveyor/master.yml
+    .github/workflows/macos.yml: gh-actions/master/macos.yml
+    .github/workflows/ubuntu.yml: gh-actions/master/ubuntu.yml
+    .github/workflows/windows.yml: gh-actions/master/windows.yml
   metanorma:
-    .travis.yml: travis/puppeteer.yml
-    appveyor.yml: appveyor/master.yml
+    .github/workflows/macos.yml: gh-actions/puppeteer/macos.yml
+    .github/workflows/ubuntu.yml: gh-actions/puppeteer/ubuntu.yml
+    .github/workflows/windows.yml: gh-actions/puppeteer/windows.yml
   relaton-itu:
-    .travis.yml: travis/master.yml
-    appveyor.yml: appveyor/master.yml
+    .github/workflows/macos.yml: gh-actions/master/macos.yml
+    .github/workflows/ubuntu.yml: gh-actions/master/ubuntu.yml
+    .github/workflows/windows.yml: gh-actions/master/windows.yml
   omml2mathml:
-    .travis.yml: travis/master.yml
-    appveyor.yml: appveyor/master.yml
+    .github/workflows/macos.yml: gh-actions/master/macos.yml
+    .github/workflows/ubuntu.yml: gh-actions/master/ubuntu.yml
+    .github/workflows/windows.yml: gh-actions/master/windows.yml
   metanorma-model-rsd:
-    .travis.yml: travis/plantuml.make.all.yml
+    .github/workflows/macos.yml: gh-actions/model/macos.yml
+    .github/workflows/ubuntu.yml: gh-actions/model/ubuntu.yml
+    .github/workflows/windows.yml: gh-actions/model/windows.yml
   mn-ogc-documents:
-    .travis.yml: travis/linux.publish.yml
+    .github/workflows/ubuntu.yml: gh-actions/publish/ubuntu.yml
   mn-itu-docs:
-    .travis.yml: travis/linux.publish.yml
+    .github/workflows/ubuntu.yml: gh-actions/publish/ubuntu.yml
   mn-iec-docs:
-    .travis.yml: travis/linux.publish.yml
+    .github/workflows/ubuntu.yml: gh-actions/publish/ubuntu.yml
   unece-docs:
-    .travis.yml: travis/linux.publish.yml
+    .github/workflows/ubuntu.yml: gh-actions/publish/ubuntu.yml
   mpfd-documents:
-    .travis.yml: travis/linux.publish.yml
+    .github/workflows/ubuntu.yml: gh-actions/publish/ubuntu.yml
   metanorma-acme:
-    .travis.yml: travis/puppeteer.yml
-    appveyor.yml: appveyor/master.yml
+    .github/workflows/macos.yml: gh-actions/puppeteer/macos.yml
+    .github/workflows/ubuntu.yml: gh-actions/puppeteer/ubuntu.yml
+    .github/workflows/windows.yml: gh-actions/puppeteer/windows.yml
   iev:
-    .travis.yml: travis/master.yml
-    appveyor.yml: appveyor/master.yml
-  metanorma-cli:
-    appveyor.yml: appveyor/master.yml
+    .github/workflows/macos.yml: gh-actions/master/macos.yml
+    .github/workflows/ubuntu.yml: gh-actions/master/ubuntu.yml
+    .github/workflows/windows.yml: gh-actions/master/windows.yml
+  # metanorma-cli: unique config
   relaton-ietf:
-    .travis.yml: travis/master.yml
-    appveyor.yml: appveyor/master.yml
+    .github/workflows/macos.yml: gh-actions/master/macos.yml
+    .github/workflows/ubuntu.yml: gh-actions/master/ubuntu.yml
+    .github/workflows/windows.yml: gh-actions/master/windows.yml
   metanorma-csand:
-    .travis.yml: travis/puppeteer.plantuml.yml
-    appveyor.yml: appveyor/master.yml
+    .github/workflows/macos.yml: gh-actions/plantuml/macos.yml
+    .github/workflows/ubuntu.yml: gh-actions/plantuml/ubuntu.yml
+    .github/workflows/windows.yml: gh-actions/plantuml/windows.yml
   relaton-nist:
-    .travis.yml: travis/master.yml
-    appveyor.yml: appveyor/master.yml
+    .github/workflows/macos.yml: gh-actions/master/macos.yml
+    .github/workflows/ubuntu.yml: gh-actions/master/ubuntu.yml
+    .github/workflows/windows.yml: gh-actions/master/windows.yml
   # rfc2mn: unique config
   ogc-tcpnp:
-    .travis.yml: travis/linux.publish.yml
-    appveyor.yml: appveyor/publish.yml
+    .github/workflows/ubuntu.yml: gh-actions/publish/ubuntu.yml
+    .github/workflows/windows.yml: gh-actions/publish/windows.yml
   mn-templates-csd:
-    .travis.yml: travis/templates.yml
-    appveyor.yml: appveyor/templates.yml
+    .github/workflows/defaults.yml: gh-actions/templates/defaults.yml
+    .github/workflows/windows.yml: gh-actions/templates/windows.yml
   mn-templates-ogc:
-    .travis.yml: travis/templates.yml
-    appveyor.yml: appveyor/templates.yml
+    .github/workflows/defaults.yml: gh-actions/templates/defaults.yml
+    .github/workflows/windows.yml: gh-actions/templates/windows.yml
   mn-templates-iso:
-    .travis.yml: travis/templates.yml
-    appveyor.yml: appveyor/templates.yml
+    .github/workflows/defaults.yml: gh-actions/templates/defaults.yml
+    .github/workflows/windows.yml: gh-actions/templates/windows.yml
   mn-templates-ietf:
-    .travis.yml: travis/templates.yml
-    appveyor.yml: appveyor/templates.yml
+    .github/workflows/defaults.yml: gh-actions/templates/defaults.yml
+    .github/workflows/windows.yml: gh-actions/templates/windows.yml
   iso-bib-item:
-    .travis.yml: travis/master.yml
-    appveyor.yml: appveyor/master.yml
+    .github/workflows/defaults.yml: gh-actions/templates/defaults.yml
+    .github/workflows/windows.yml: gh-actions/templates/windows.yml
   relaton-iev:
-    .travis.yml: travis/master.yml
-    appveyor.yml: appveyor/master.yml
+    .github/workflows/defaults.yml: gh-actions/templates/defaults.yml
+    .github/workflows/windows.yml: gh-actions/templates/windows.yml
 settings:
   pr: true
