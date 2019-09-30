@@ -19,15 +19,14 @@ main() {
     errx 'No `GH_DEPLOY_KEY` provided; it must be set.'
 
   # Save some useful information
-  REPO=$(git config remote.origin.url)
+  REPO=${GITHUB_REPOSITORY}
   SSH_REPO=${REPO/https:\/\/github.com\//git@github.com:}
   SHA=$(git rev-parse --verify HEAD)
   DEST_DIR=out
 
   # Clone the existing $TARGET_BRANCH for this repo into $DEST_DIR/
   # Create a new empty branch if gh-pages doesn't exist yet (should only happen on first deploy)
-  #  git clone $REPO $DEST_DIR
-  git clone "$REPO" "$DEST_DIR" || errx "Unable to clone Git."
+  git clone "$SSH_REPO" "$DEST_DIR" || errx "Unable to clone Git."
   pushd "$DEST_DIR"
   git checkout "$TARGET_BRANCH" || git checkout --orphan "$TARGET_BRANCH" || errx "Unable to checkout git."
 
