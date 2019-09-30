@@ -22,9 +22,7 @@ main() {
   eval "$(ssh-agent -s)"
   ssh-add - <<< "${GH_DEPLOY_KEY}"
 
-  REPO=${GITHUB_REPOSITORY}
-  SSH_REPO=${REPO/https:\/\/github.com\//git@github.com:}
-  SHA=$(git rev-parse --verify HEAD)
+  SSH_REPO=git@github.com:${GITHUB_REPOSITORY}
   DEST_DIR=out
 
   echo "GITHUB_RESPOSITORY: ${GITHUB_REPOSITORY}" >&2
@@ -34,6 +32,7 @@ main() {
   # Create a new empty branch if gh-pages doesn't exist yet (should only happen on first deploy)
   git clone "$SSH_REPO" "$DEST_DIR" || errx "Unable to clone Git."
   pushd "$DEST_DIR"
+
   git checkout "$TARGET_BRANCH" || git checkout --orphan "$TARGET_BRANCH" || errx "Unable to checkout git."
 
   printf "\n\e[37m" >&2
@@ -69,7 +68,7 @@ main() {
   # The delta will show diffs between new and old versions.
   git add .
   git status
-  git commit -m "Deploy to GitHub Pages: ${SHA}"
+  git commit -m "Deploy to GitHub Pages: ${GITHUB_SHA}"
 
   printf "\n\e[37m" >&2
   echo "git ls-files:" >&2
