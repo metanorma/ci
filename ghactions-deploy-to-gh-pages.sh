@@ -27,8 +27,8 @@ main() {
   SHA=$(git rev-parse --verify HEAD)
   DEST_DIR=out
 
-  echo "GITHUB_RESPOSITORY: ${GITHUB_REPOSITORY}"
-  echo "SSH_REPO: ${SSH_REPO}"
+  echo "GITHUB_RESPOSITORY: ${GITHUB_REPOSITORY}" >&2
+  echo "SSH_REPO: ${SSH_REPO}" >&2
 
   # Clone the existing $TARGET_BRANCH for this repo into $DEST_DIR/
   # Create a new empty branch if gh-pages doesn't exist yet (should only happen on first deploy)
@@ -36,15 +36,15 @@ main() {
   pushd "$DEST_DIR"
   git checkout "$TARGET_BRANCH" || git checkout --orphan "$TARGET_BRANCH" || errx "Unable to checkout git."
 
-  printf "\n\e[37m"
-  echo "git ls-files:"
-  git ls-files
+  printf "\n\e[37m" >&2
+  echo "git ls-files:" >&2
+  git ls-files >&2
   printf "\e[0m\n"
 
-  printf "\n\e[37m"
-  echo "ls -a:"
-  ls -a
-  printf "\e[0m\n"
+  printf "\n\e[37m" >&2
+  echo "ls -a:" >&2
+  ls -a >&2
+  printf "\e[0m\n" >&2
 
   # Clean out existing contents in $TARGET_BRANCH clone while keeping .git/
   # while-loop technique URL: https://stackoverflow.com/a/7039579
@@ -61,7 +61,7 @@ main() {
 
   # If there are no changes to the compiled out (e.g. this is a README update) then just bail.
   if [[ -z $(git status -s) ]]; then
-    echo "No changes to the output on this push; exiting."
+    echo "No changes to the output on this push; exiting." >&2
     exit 0
   fi
 
@@ -71,15 +71,15 @@ main() {
   git status
   git commit -m "Deploy to GitHub Pages: ${SHA}"
 
-  printf "\n\e[37m"
-  echo "git ls-files:"
-  git ls-files
-  printf "\e[0m\n"
+  printf "\n\e[37m" >&2
+  echo "git ls-files:" >&2
+  git ls-files >&2
+  printf "\e[0m\n" >&2
 
-  printf "\n\e[37m"
-  echo "ls -a:"
-  ls -a
-  printf "\e[0m\n"
+  printf "\n\e[37m" >&2
+  echo "ls -a:" >&2
+  ls -a >&2
+  printf "\e[0m\n" >&2
 
   # Now that we're all set up, we can push.
   git push "$SSH_REPO" "$TARGET_BRANCH" || errx "Unable to push to git."
