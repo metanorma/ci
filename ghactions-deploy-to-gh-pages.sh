@@ -27,6 +27,9 @@ main() {
   SHA=$(git rev-parse --verify HEAD)
   DEST_DIR=out
 
+  echo "GITHUB_RESPOSITORY: ${GITHUB_REPOSITORY}"
+  echo "SSH_REPO: ${SSH_REPO}"
+
   # Clone the existing $TARGET_BRANCH for this repo into $DEST_DIR/
   # Create a new empty branch if gh-pages doesn't exist yet (should only happen on first deploy)
   git clone "$SSH_REPO" "$DEST_DIR" || errx "Unable to clone Git."
