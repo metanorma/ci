@@ -29,13 +29,12 @@ main() {
   echo "GITHUB_RESPOSITORY: ${GITHUB_REPOSITORY}" >&2
   echo "SSH_REPO: ${SSH_REPO}" >&2
 
-
-  # Clone the existing $TARGET_BRANCH for this repo into $DEST_DIR/
-  # Create a new empty branch if gh-pages doesn't exist yet (should only happen on first deploy)
-  git init ${DEST_DIR}
-
   if [ -d "${GITHUB_WORKSPACE}/.git" ]; then
+    # Clone the existing $TARGET_BRANCH for this repo into $DEST_DIR/
     git clone --depth 1 -b ${TARGET_BRANCH} ${GITHUB_WORKSPACE} ${DEST_DIR}
+  else
+    # Create a new empty branch if gh-pages doesn't exist yet (should only happen on first deploy)
+    git init ${DEST_DIR}
   fi
 
   # Adding contents within published/ to $DEST_DIR.
@@ -46,12 +45,10 @@ main() {
   git config user.name "${GITHUB_ACTOR}"
   git config user.email "${GITHUB_ACTOR}@users.noreply.github.com"
 
-  if [ -d "${GITHUB_WORKSPACE}/.git" ]; then
-    # If there are no changes to the compiled out (e.g. this is a README update) then just bail.
-    if [[ -z $(git status -s) ]]; then
-      echo "No changes to the output on this push; exiting." >&2
-      exit 0
-    fi
+  # If there are no changes to the compiled out (e.g. this is a README update) then just bail.
+  if [[ -z $(git status -s) ]]; then
+    echo "No changes to the output on this push; exiting." >&2
+    exit 0
   fi
 
   # Commit the "changes", i.e. the new version.
