@@ -13,4 +13,4 @@ jobs:
           cinst -y plantuml
       - name: Make
         run: |
-          make SHELL=cmd all
+          make clean all SHELL=cmd

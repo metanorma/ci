@@ -13,4 +13,4 @@ jobs:
           brew install plantuml
       - name: Make
         run: |
-          make all
+          make clean all
