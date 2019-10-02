@@ -133,7 +133,15 @@ repos:
     .github/workflows/macos.yml: gh-actions/puppeteer/macos.yml
     .github/workflows/ubuntu.yml: gh-actions/puppeteer/ubuntu.yml
     .github/workflows/windows.yml: gh-actions/puppeteer/windows.yml
+  metanorma-iec:
+    .github/workflows/macos.yml: gh-actions/puppeteer/macos.yml
+    .github/workflows/ubuntu.yml: gh-actions/puppeteer/ubuntu.yml
+    .github/workflows/windows.yml: gh-actions/puppeteer/windows.yml
   metanorma-ietf:
+    .github/workflows/macos.yml: gh-actions/xml2rfc/macos.yml
+    .github/workflows/ubuntu.yml: gh-actions/xml2rfc/ubuntu.yml
+    .github/workflows/windows.yml: gh-actions/xml2rfc/windows.yml
+  asciidoctor-rfc:
     .github/workflows/macos.yml: gh-actions/xml2rfc/macos.yml
     .github/workflows/ubuntu.yml: gh-actions/xml2rfc/ubuntu.yml
     .github/workflows/windows.yml: gh-actions/xml2rfc/windows.yml
