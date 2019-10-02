@@ -165,7 +165,7 @@ repos:
     .github/workflows/macos.yml: gh-actions/puppeteer/macos.yml
     .github/workflows/ubuntu.yml: gh-actions/puppeteer/ubuntu.yml
     .github/workflows/windows.yml: gh-actions/puppeteer/windows.yml
-  reverse_asciidoctor:
+  reverse_adoc:
     .github/workflows/macos.yml: gh-actions/master/macos.yml
     .github/workflows/ubuntu.yml: gh-actions/master/ubuntu.yml
     .github/workflows/windows.yml: gh-actions/master/windows.yml
@@ -212,15 +212,21 @@ repos:
     .github/workflows/macos.yml: gh-actions/model/macos.yml
     .github/workflows/ubuntu.yml: gh-actions/model/ubuntu.yml
     .github/workflows/windows.yml: gh-actions/model/windows.yml
-  mn-ogc-documents:
+  mn-samples-ogc:
     .github/workflows/ubuntu.yml: gh-actions/publish/ubuntu.yml
-  mn-itu-docs:
+  mn-samples-itu:
     .github/workflows/ubuntu.yml: gh-actions/publish/ubuntu.yml
-  mn-iec-docs:
+  mn-samples-iec:
     .github/workflows/ubuntu.yml: gh-actions/publish/ubuntu.yml
-  unece-docs:
+  mn-samples-unece:
     .github/workflows/ubuntu.yml: gh-actions/publish/ubuntu.yml
-  mpfd-documents:
+  mn-samples-mpf:
+    .github/workflows/ubuntu.yml: gh-actions/publish/ubuntu.yml
+  mn-samples-iso:
+    .github/workflows/ubuntu.yml: gh-actions/publish/ubuntu.yml
+  mn-samples-gb:
+    .github/workflows/ubuntu.yml: gh-actions/publish/ubuntu.yml
+  mn-samples-cc:
     .github/workflows/ubuntu.yml: gh-actions/publish/ubuntu.yml
   metanorma-acme:
     .github/workflows/macos.yml: gh-actions/puppeteer/macos.yml
@@ -240,6 +246,10 @@ repos:
     .github/workflows/ubuntu.yml: gh-actions/plantuml/ubuntu.yml
     .github/workflows/windows.yml: gh-actions/plantuml/windows.yml
   relaton-nist:
+    .github/workflows/macos.yml: gh-actions/master/macos.yml
+    .github/workflows/ubuntu.yml: gh-actions/master/ubuntu.yml
+    .github/workflows/windows.yml: gh-actions/master/windows.yml
+  relaton-ogc:
     .github/workflows/macos.yml: gh-actions/master/macos.yml
     .github/workflows/ubuntu.yml: gh-actions/master/ubuntu.yml
     .github/workflows/windows.yml: gh-actions/master/windows.yml
@@ -265,5 +275,10 @@ repos:
   relaton-iev:
     .github/workflows/defaults.yml: gh-actions/templates/defaults.yml
     .github/workflows/windows.yml: gh-actions/templates/windows.yml
+  csd-html:
+    .github/workflows/macos.yml: gh-actions/master/macos.yml
+    .github/workflows/ubuntu.yml: gh-actions/master/ubuntu.yml
+    .github/workflows/windows.yml: gh-actions/master/windows.yml
+
 settings:
   pr: true

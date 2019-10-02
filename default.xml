@@ -2,26 +2,6 @@
 <manifest>
   <remote name="github" fetch="git://github.com"/>
   <default revision="master" remote="github" sync-j="4"/>
-  <!-- relaton organization -->
-  <project name="relaton/relaton-iso" path="relaton-iso" groups="all,relaton"/>
-  <project name="relaton/relaton-models" path="relaton-models" groups="all,relaton"/>
-  <project name="relaton/relaton-gb" path="relaton-gb" groups="all,relaton"/>
-  <project name="relaton/iso-bib-item" path="iso-bib-item" groups="all"/>
-  <project name="relaton/relaton" path="relaton" groups="all"/>
-  <project name="relaton/relaton-ietf" path="relaton-ietf" groups="all,relaton"/>
-  <project name="relaton/relaton-cli" path="relaton-cli" groups="all,relaton"/>
-  <project name="relaton/relaton-iec" path="relaton-iec" groups="all,relaton"/>
-  <project name="relaton/relaton-server-csd" path="relaton-server-csd" groups="all,relaton"/>
-  <project name="relaton/relaton.com" path="relaton.com" groups="all,site"/>
-  <project name="relaton/relaton-nist" path="relaton-nist" groups="all,relaton"/>
-  <project name="relaton/relaton-itu" path="relaton-itu" groups="all,relaton"/>
-  <project name="relaton/relaton-bib" path="relaton-bib" groups="all,relaton"/>
-  <project name="relaton/relaton-iso-bib" path="relaton-iso-bib" groups="all,relaton"/>
-  <project name="relaton/relaton-iev" path="relaton-iev" groups="all,relaton"/>
-  <project name="relaton/relaton-ogc" path="relaton-ogc" groups="all,relaton"/>
-  <project name="relaton/api.relaton.org" path="api.relaton.org" groups="all,site"/>
-  <project name="relaton/relaton-ui-designs" path="relaton-ui-designs" groups="all,relaton"/>
-  <project name="relaton/relaton-release" path="relaton-release" groups="all,relaton"/>
   <!-- metanorma organization -->
   <project name="metanorma/rfc2md" path="rfc2md" groups="all,converter"/>
   <project name="metanorma/asciidoctor-rfc" path="asciidoctor-rfc" groups="all"/>
@@ -58,7 +38,6 @@
   <project name="metanorma/cnccs" path="cnccs" groups="all"/>
   <project name="metanorma/mn-samples-iso" path="mn-samples-iso" groups="all,samples"/>
   <project name="metanorma/mn-samples-gb" path="mn-samples-gb" groups="all,samples"/>
-  <project name="metanorma/csd-public-documents" path="csd-public-documents" groups="all"/>
   <project name="metanorma/mathml2asciimath" path="mathml2asciimath" groups="all,converter"/>
   <project name="metanorma/isodoc-style" path="isodoc-style" groups="all,style"/>
   <project name="metanorma/metanorma-rsd" path="metanorma-rsd" groups="all,processor,metanorma"/>
@@ -136,4 +115,24 @@
   <project name="metanorma/packed-mn" path="packed-mn" groups="all"/>
   <project name="metanorma/visual-diff" path="visual-diff" groups="all"/>
   <project name="metanorma/ci-master" path="ci-master" groups="all,infrastructure"/>
+  <!-- relaton organization -->
+  <project name="relaton/relaton-iso" path="relaton-iso" groups="all,relaton"/>
+  <project name="relaton/relaton-models" path="relaton-models" groups="all,relaton"/>
+  <project name="relaton/relaton-gb" path="relaton-gb" groups="all,relaton"/>
+  <project name="relaton/iso-bib-item" path="iso-bib-item" groups="all"/>
+  <project name="relaton/relaton" path="relaton" groups="all"/>
+  <project name="relaton/relaton-ietf" path="relaton-ietf" groups="all,relaton"/>
+  <project name="relaton/relaton-cli" path="relaton-cli" groups="all,relaton"/>
+  <project name="relaton/relaton-iec" path="relaton-iec" groups="all,relaton"/>
+  <project name="relaton/relaton-server-csd" path="relaton-server-csd" groups="all,relaton"/>
+  <project name="relaton/relaton.com" path="relaton.com" groups="all,site"/>
+  <project name="relaton/relaton-nist" path="relaton-nist" groups="all,relaton"/>
+  <project name="relaton/relaton-itu" path="relaton-itu" groups="all,relaton"/>
+  <project name="relaton/relaton-bib" path="relaton-bib" groups="all,relaton"/>
+  <project name="relaton/relaton-iso-bib" path="relaton-iso-bib" groups="all,relaton"/>
+  <project name="relaton/relaton-iev" path="relaton-iev" groups="all,relaton"/>
+  <project name="relaton/relaton-ogc" path="relaton-ogc" groups="all,relaton"/>
+  <project name="relaton/api.relaton.org" path="api.relaton.org" groups="all,site"/>
+  <project name="relaton/relaton-ui-designs" path="relaton-ui-designs" groups="all,relaton"/>
+  <project name="relaton/relaton-release" path="relaton-release" groups="all,relaton"/>
 </manifest>
