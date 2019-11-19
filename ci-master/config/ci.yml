@@ -154,9 +154,9 @@ repos:
     .github/workflows/ubuntu.yml: gh-actions/plantuml/ubuntu.yml
     .github/workflows/windows.yml: gh-actions/plantuml/windows.yml
   metanorma-unece:
-    .github/workflows/macos.yml: gh-actions/master/macos.yml
-    .github/workflows/ubuntu.yml: gh-actions/master/ubuntu.yml
-    .github/workflows/windows.yml: gh-actions/master/windows.yml
+    .github/workflows/macos.yml: gh-actions/puppeteer/macos.yml
+    .github/workflows/ubuntu.yml: gh-actions/puppeteer/ubuntu.yml
+    .github/workflows/windows.yml: gh-actions/puppeteer/windows.yml
   metanorma-model-ogc:
     .github/workflows/macos.yml: gh-actions/model/macos.yml
     .github/workflows/ubuntu.yml: gh-actions/model/ubuntu.yml
