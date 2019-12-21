@@ -213,21 +213,21 @@ repos:
     .github/workflows/ubuntu.yml: gh-actions/model/ubuntu.yml
     .github/workflows/windows.yml: gh-actions/model/windows.yml
   mn-samples-ogc:
-    .github/workflows/ubuntu.yml: gh-actions/publish/ubuntu.yml
+    .github/workflows/ubuntu.yml: gh-actions/samples/ubuntu.yml
   mn-samples-itu:
-    .github/workflows/ubuntu.yml: gh-actions/publish/ubuntu.yml
+    .github/workflows/ubuntu.yml: gh-actions/samples/ubuntu.yml
   mn-samples-iec:
-    .github/workflows/ubuntu.yml: gh-actions/publish/ubuntu.yml
+    .github/workflows/ubuntu.yml: gh-actions/samples/ubuntu.yml
   mn-samples-unece:
-    .github/workflows/ubuntu.yml: gh-actions/publish/ubuntu.yml
+    .github/workflows/ubuntu.yml: gh-actions/samples/ubuntu.yml
   mn-samples-mpf:
-    .github/workflows/ubuntu.yml: gh-actions/publish/ubuntu.yml
+    .github/workflows/ubuntu.yml: gh-actions/samples/ubuntu.yml
   mn-samples-iso:
-    .github/workflows/ubuntu.yml: gh-actions/publish/ubuntu.yml
+    .github/workflows/ubuntu.yml: gh-actions/samples/ubuntu.yml
   mn-samples-gb:
-    .github/workflows/ubuntu.yml: gh-actions/publish/ubuntu.yml
+    .github/workflows/ubuntu.yml: gh-actions/samples/ubuntu.yml
   mn-samples-cc:
-    .github/workflows/ubuntu.yml: gh-actions/publish/ubuntu.yml
+    .github/workflows/ubuntu.yml: gh-actions/samples/ubuntu.yml
   metanorma-acme:
     .github/workflows/macos.yml: gh-actions/puppeteer/macos.yml
     .github/workflows/ubuntu.yml: gh-actions/puppeteer/ubuntu.yml

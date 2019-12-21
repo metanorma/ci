@@ -1,6 +1,11 @@
 name: macos
 
-on: [push, pull_request]
+on:
+  push:
+    branch: master
+  pull_request:
+    branches:
+    - '**'
 
 jobs:
   test-macos:

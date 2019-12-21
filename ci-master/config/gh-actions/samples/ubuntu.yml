@@ -1,13 +1,17 @@
 name: ubuntu
 
-on: [push, pull_request]
+on:
+  push:
+    branch: master
+  pull_request:
+    branches:
+    - '**'
 
 jobs:
   test-linux:
     name: Test on Ruby ${{ matrix.ruby }} Ubuntu
     runs-on: ubuntu-latest
     strategy:
-      fail-fast: false
       matrix:
         ruby: [ '2.6', '2.5', '2.4' ]
     steps:
@@ -35,7 +39,3 @@ jobs:
         run: |
           export COMMIT_AUTHOR_EMAIL="$(yq r metanorma.yml metanorma.deploy.email)"
           make clean all publish
-      - name: Deploy
-        if: github.ref == 'refs/heads/master'
-        run: |
-          bash -c "curl -L https://raw.githubusercontent.com/metanorma/metanorma-build-scripts/master/deploy-to-gh-pages.sh | bash"
