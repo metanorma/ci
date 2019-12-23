@@ -33,8 +33,8 @@ repos:
     .github/workflows/ubuntu.yml: gh-actions/model/ubuntu.yml
     .github/workflows/windows.yml: gh-actions/model/windows.yml
   unece-cefact-plenary-2018-6:
-    .github/workflows/ubuntu.yml: gh-actions/publish/ubuntu.yml
-    .github/workflows/windows.yml: gh-actions/publish/windows.yml
+    .github/workflows/ubuntu.yml: gh-actions/samples/ubuntu.yml
+    .github/workflows/windows.yml: gh-actions/samples/windows.yml
   metanorma-m3d:
     .github/workflows/macos.yml: gh-actions/puppeteer/macos.yml
     .github/workflows/ubuntu.yml: gh-actions/puppeteer/ubuntu.yml
@@ -56,8 +56,8 @@ repos:
     .github/workflows/ubuntu.yml: gh-actions/puppeteer/ubuntu.yml
     .github/workflows/windows.yml: gh-actions/puppeteer/windows.yml
   csd-public-documents:
-    .github/workflows/ubuntu.yml: gh-actions/publish/ubuntu.yml
-    .github/workflows/windows.yml: gh-actions/publish/windows.yml
+    .github/workflows/ubuntu.yml: gh-actions/samples/ubuntu.yml
+    .github/workflows/windows.yml: gh-actions/samples/windows.yml
   metanorma-rsd:
     .github/workflows/macos.yml: gh-actions/plantuml/macos.yml
     .github/workflows/ubuntu.yml: gh-actions/plantuml/ubuntu.yml
@@ -103,8 +103,8 @@ repos:
     .github/workflows/ubuntu.yml: gh-actions/master/ubuntu.yml
     .github/workflows/windows.yml: gh-actions/master/windows.yml
   ogc-wfs:
-    .github/workflows/ubuntu.yml: gh-actions/publish/ubuntu.yml
-    .github/workflows/windows.yml: gh-actions/publish/windows.yml
+    .github/workflows/ubuntu.yml: gh-actions/samples/ubuntu.yml
+    .github/workflows/windows.yml: gh-actions/samples/windows.yml
   metanorma-model-nist:
     .github/workflows/macos.yml: gh-actions/model/macos.yml
     .github/workflows/ubuntu.yml: gh-actions/model/ubuntu.yml
@@ -170,8 +170,8 @@ repos:
     .github/workflows/ubuntu.yml: gh-actions/master/ubuntu.yml
     .github/workflows/windows.yml: gh-actions/master/windows.yml
   isodoc-rice:
-    .github/workflows/ubuntu.yml: gh-actions/publish/ubuntu.yml
-    .github/workflows/windows.yml: gh-actions/publish/windows.yml
+    .github/workflows/ubuntu.yml: gh-actions/samples/ubuntu.yml
+    .github/workflows/windows.yml: gh-actions/samples/windows.yml
   relaton-gb:
     .github/workflows/macos.yml: gh-actions/master/macos.yml
     .github/workflows/ubuntu.yml: gh-actions/master/ubuntu.yml
@@ -255,8 +255,8 @@ repos:
     .github/workflows/windows.yml: gh-actions/master/windows.yml
   # rfc2mn: unique config
   ogc-tcpnp:
-    .github/workflows/ubuntu.yml: gh-actions/publish/ubuntu.yml
-    .github/workflows/windows.yml: gh-actions/publish/windows.yml
+    .github/workflows/ubuntu.yml: gh-actions/samples/ubuntu.yml
+    .github/workflows/windows.yml: gh-actions/samples/windows.yml
   mn-templates-csd:
     .github/workflows/defaults.yml: gh-actions/templates/defaults.yml
     .github/workflows/windows.yml: gh-actions/templates/windows.yml
