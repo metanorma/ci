@@ -1,6 +1,11 @@
 name: windows
 
-on: [push, pull_request]
+on:
+  push:
+    branch: master
+  pull_request:
+    branches:
+    - '**'
 
 jobs:
   test-windows:
@@ -29,6 +34,14 @@ jobs:
         shell: pwsh
         run: |
           npm install -g puppeteer
+      - name: Use Python
+        uses: actions/setup-python@v1
+        with:
+          python-version: '2.7'
+          architecture: 'x64'
+      - name: Install xml2rfc
+        run: |
+          pip install xml2rfc
       - name: Metanorma compile
         shell: pwsh
         run: |
