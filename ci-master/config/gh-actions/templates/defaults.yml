@@ -10,6 +10,7 @@ jobs:
   test-nix:
     name: Test on Ruby ${{ matrix.ruby }} *nix
     strategy:
+      fail-fast: false
       matrix:
         os: [ macos-latest, ubuntu-latest ]
         ruby: [ '2.6', '2.5', '2.4' ]
