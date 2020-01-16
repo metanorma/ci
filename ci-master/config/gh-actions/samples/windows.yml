@@ -23,14 +23,18 @@ jobs:
       - name: Update gems
         shell: pwsh
         run: |
-          gem install bundler 
+          gem install bundler
           bundle config --local path vendor/bundle
           bundle update
           bundle install --jobs 4 --retry 3
+      - name: Use Metanorma
+        shell: pwsh
+        run: |
+          cinst -y metanorma
       - name: Install yq
         shell: pwsh
         run: |
           Invoke-WebRequest -Uri "https://github.com/mikefarah/yq/releases/download/2.4.0/yq_windows_amd64.exe " -OutFile ".\yq.exe"
       - name: Metanorma compile
         run: |
-          make -f Makefile.win clean all publish SHELL=cmd
+          make -f Makefile.win clean all SHELL=cmd
