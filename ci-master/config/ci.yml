@@ -166,9 +166,9 @@ repos:
     .github/workflows/ubuntu.yml: gh-actions/puppeteer/ubuntu.yml
     .github/workflows/windows.yml: gh-actions/puppeteer/windows.yml
   reverse_adoc:
-    .github/workflows/macos.yml: gh-actions/master/macos.yml
-    .github/workflows/ubuntu.yml: gh-actions/master/ubuntu.yml
-    .github/workflows/windows.yml: gh-actions/master/windows.yml
+    .github/workflows/macos.yml: gh-actions/libreoffice/macos.yml
+    .github/workflows/ubuntu.yml: gh-actions/libreoffice/ubuntu.yml
+    .github/workflows/windows.yml: gh-actions/libreoffice/windows.yml
   isodoc-rice:
     .github/workflows/ubuntu.yml: gh-actions/samples/ubuntu.yml
     .github/workflows/windows.yml: gh-actions/samples/windows.yml
