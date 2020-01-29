@@ -25,13 +25,13 @@
   <project name="metanorma/iso-ics-codes-scripts" path="iso-ics-codes-scripts" groups="all,infrastructure"/>
   <project name="metanorma/isoics" path="isoics" groups="all"/>
   <project name="metanorma/omml2mathml" path="omml2mathml" groups="all,converter"/>
-  <project name="metanorma/reverse_adoc" path="reverse_adoc" groups="all"/>
+  <project name="metanorma/reverse_adoc" path="reverse_adoc" groups="all,ttt"/>
   <project name="metanorma/csd-style" path="csd-style" groups="all,style"/>
   <project name="metanorma/asciirfc.com" path="asciirfc.com" groups="all,site"/>
   <project name="metanorma/metanorma-model-standoc" path="metanorma-model-standoc" groups="all,metanorma,model"/>
   <project name="metanorma/basicdoc-models" path="basicdoc-models" groups="all"/>
   <project name="metanorma/metanorma-model-csand" path="metanorma-model-csand" groups="all,metanorma,model"/>
-  <project name="metanorma/metanorma-csand" path="metanorma-csand" groups="all,processor,metanorma"/>
+  <project name="metanorma/metanorma-csa" path="metanorma-csa" groups="all,processor,metanorma"/>
   <project name="metanorma/csand-style" path="csand-style" groups="all,style"/>
   <project name="metanorma/gbdoc-style" path="gbdoc-style" groups="all,style"/>
   <project name="metanorma/cn-ccs-codes" path="cn-ccs-codes" groups="all"/>
