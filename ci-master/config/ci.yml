@@ -1,5 +1,9 @@
 ---
 repos:
+  metanorma-cli:
+    .github/workflows/ubuntu.yml: gh-actions/metanorma-cli/ubuntu.yml
+    .github/workflows/macos.yml: gh-actions/master/macos.yml
+    .github/workflows/windows.yml: gh-actions/master/windows.yml
   isodoc:
     .github/workflows/macos.yml: gh-actions/puppeteer/macos.yml
     .github/workflows/ubuntu.yml: gh-actions/puppeteer/ubuntu.yml
