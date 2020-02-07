@@ -16,6 +16,13 @@ jobs:
         ruby: [ '2.6', '2.5', '2.4' ]
     steps:
       - uses: actions/checkout@master
+      - uses: actions/checkout@v2
+      - name: Checkout submodules
+        shell: bash
+        run: |
+          auth_header="$(git config --local --get http.https://github.com/.extraheader)"
+          git submodule sync --recursive
+          git -c "http.extraheader=$auth_header" -c protocol.version=2 submodule update --init --force --recursive --depth=1
       - name: Use Ruby
         uses: actions/setup-ruby@v1
         with:
@@ -24,6 +31,7 @@ jobs:
       - name: Update gems
         run: |
           gem install bundler
+          bundle update --bundler
           bundle install --jobs 4 --retry 3
       - name: Use Metanorma
         run: |
