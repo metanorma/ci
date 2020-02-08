@@ -7,7 +7,8 @@ This repository contains:
 
 ## `default.xml`
 
-To keep `default.xml` up-to-date use [`gh-repo-manifest`](https://github.com/metanorma/ci-master/blob/master/bin/gh-repo-manifest)
+To keep `default.xml` up-to-date use [`gh-repo-manifest`](https://github.com/metanorma/ci-master/blob/master/bin/gh-repo-manifest) example:
+ - `bin/gh-repo-manifest -o metanorma,relaton > ../metanorma-build-scripts/default.xml `
 
 ## Anatomy of `ci-master`
 
