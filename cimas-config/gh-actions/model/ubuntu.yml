@@ -1,20 +1,20 @@
-name: macos
+name: ubuntu
 
 on:
   push:
     branches: [ master ]
   pull_request:
-    branches: [ '**' ]
 
 jobs:
-  test-macos:
-    name: Test on PlantUML macOS
-    runs-on: macos-latest
+  test-linux:
+    name: Test on PlantUML Ubuntu
+    runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@master
       - name: Install PlantUML
         run: |
-          brew install plantuml
+          sudo bash -c "curl -L https://github.com/riboseinc/plantuml-install/raw/master/ubuntu.sh | bash"
       - name: Make
         run: |
           make clean all
+

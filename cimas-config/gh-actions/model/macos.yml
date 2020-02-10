@@ -1,0 +1,19 @@
+name: macos
+
+on:
+  push:
+    branches: [ master ]
+  pull_request:
+
+jobs:
+  test-macos:
+    name: Test on PlantUML macOS
+    runs-on: macos-latest
+    steps:
+      - uses: actions/checkout@master
+      - name: Install PlantUML
+        run: |
+          brew install plantuml
+      - name: Make
+        run: |
+          make clean all

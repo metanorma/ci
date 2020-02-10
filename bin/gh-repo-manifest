@@ -1,0 +1,115 @@
+#!/usr/bin/env ruby
+
+require 'optparse'
+require 'net/http'
+require 'json'
+
+require 'rexml/document'
+
+options = OpenStruct.new
+options.organization = 'metanorma'
+options.include_forks = false
+options.include_archived = false
+
+OptionParser.new do |opts|
+  opts.banner = "Usage: gh-repo-manifest [options]"
+
+  opts.on("-oORG", "--organization=ORG1,ORG2", "GitHub organization(s)") do |org|
+    options.organization = org
+  end
+
+  opts.on("-i", "--include-fork", "Include fork repos") do |fork|
+    options.include_forks = fork
+  end
+
+  opts.on("-i", "--include-archived", "Include archived repos") do |archived|
+    options.include_archived = archived
+  end
+
+  opts.on("-h", "--help", "Prints this help") do
+    puts opts
+    exit
+  end
+end.parse!
+
+doc = REXML::Document.new
+doc.context[:attribute_quote] = :quote
+doc.context[:prologue_quote] = :quote
+
+doc << REXML::XMLDecl.new('1.0', 'UTF-8')
+
+manifest = doc.add_element 'manifest'
+
+remote = manifest.add_element 'remote'
+remote.attributes['name'] = 'github'
+remote.attributes['fetch'] = 'ssh://git@github.com'
+
+default = manifest.add_element 'default'
+default.attributes['revision'] = 'master'
+default.attributes['remote'] = 'github'
+default.attributes['sync-j'] = '4'
+
+groups_matchers = {
+  'processor': /^metanorma-\w*$/,
+  'metanorma': /^metanorma-.*$/,
+  'relaton': /^relaton-.*$/,
+  'model': /^metanorma-model-/,
+  'style': /-style$/,
+  'snap': /-snap$/,
+  'brew': /^homebrew-\w+/,
+  'choco': /^chocolatey-\w+/,
+  'bibitem': /\wbib$/,
+  'templates': /^mn-templates-\w/,
+  'samples': /^mn-samples-\w/,
+  'setup': /\w-setup$/,
+  'site': /(\.com|\.org)$/,
+  'converter': /[\w\d]+2[\w\d]+/,
+  'infrastructure': /(-ci|^ci-|-registry$|scripts$)/
+}
+
+begin
+  page=1
+  repos=[]
+
+  options.organization.split(',').each do |org|
+  	manifest << REXML::Comment.new(" #{org} organization ")
+  	page = 1
+    loop do 
+      uri = URI("https://api.github.com/orgs/#{org}/repos?page=#{page}&per_page=100")
+      response = Net::HTTP.get(uri)
+      result_set = JSON.parse(response)
+
+      if !result_set.kind_of?(Array) then
+        manifest << REXML::Comment.new(result_set.to_json)
+        break
+      end
+
+      result_set.each do |repo|
+        next if repo['fork'] && !options.include_forks
+        next if repo['archived'] && !options.include_archived
+
+        if repo['size'] > 0 then
+          repo_name = repo['name']
+          project = manifest.add_element 'project'
+          project.attributes['name'] = repo['full_name']
+          project.attributes['path'] = repo_name
+
+          groups=['all', repo_name]
+          groups_matchers.each do |group, regexp|
+            groups << group if repo_name.match(regexp)
+          end
+
+          project.attributes['groups'] = groups.join(",")
+        end
+      end
+
+      break if result_set.empty?
+
+      page += 1
+    end
+  end
+rescue Interrupt => e
+  manifest << REXML::Comment.new('interrupted with Ctrl+C, output may be incomplete')
+end
+
+doc.write($stdout, 2)
