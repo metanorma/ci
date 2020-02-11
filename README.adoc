@@ -61,6 +61,8 @@ export CIMAS_WD=~/src/mn/cimas-wd
 
 cimas setup -f $CIMAS_CONFIG -r $CIMAS_WD
 
+cimas pull -f $CIMAS_CONFIG -r $CIMAS_WD
+
 cimas sync -f $CIMAS_CONFIG -r $CIMAS_WD \
   -d $CIMAS_MASTER_DIR
 

@@ -398,41 +398,49 @@ repositories:
     branch: master
     files:
       .github/workflows/ubuntu.yml: gh-actions/samples/ubuntu.yml
+      .github/workflows/docker.yml: gh-actions/samples/docker.yml
   mn-samples-itu:
     remote: ssh://git@github.com/metanorma/mn-samples-itu
     branch: master
     files:
       .github/workflows/ubuntu.yml: gh-actions/samples/ubuntu.yml
+      .github/workflows/docker.yml: gh-actions/samples/docker.yml
   mn-samples-iec:
     remote: ssh://git@github.com/metanorma/mn-samples-iec
     branch: master
     files:
       .github/workflows/ubuntu.yml: gh-actions/samples/ubuntu.yml
-  mn-samples-unece:
-    remote: ssh://git@github.com/metanorma/mn-samples-unece
+      .github/workflows/docker.yml: gh-actions/samples/docker.yml
+  mn-samples-un:
+    remote: ssh://git@github.com/metanorma/mn-samples-un
     branch: master
     files:
       .github/workflows/ubuntu.yml: gh-actions/samples/ubuntu.yml
+      .github/workflows/docker.yml: gh-actions/samples/docker.yml
   mn-samples-mpf:
     remote: ssh://git@github.com/metanorma/mn-samples-mpf
     branch: master
     files:
       .github/workflows/ubuntu.yml: gh-actions/samples/ubuntu.yml
+      .github/workflows/docker.yml: gh-actions/samples/docker.yml
   mn-samples-iso:
     remote: ssh://git@github.com/metanorma/mn-samples-iso
     branch: master
     files:
       .github/workflows/ubuntu.yml: gh-actions/samples/ubuntu.yml
+      .github/workflows/docker.yml: gh-actions/samples/docker.yml
   mn-samples-gb:
     remote: ssh://git@github.com/metanorma/mn-samples-gb
     branch: master
     files:
       .github/workflows/ubuntu.yml: gh-actions/samples/ubuntu.yml
+      .github/workflows/docker.yml: gh-actions/samples/docker.yml
   mn-samples-cc:
     remote: ssh://git@github.com/metanorma/mn-samples-cc
     branch: master
     files:
       .github/workflows/ubuntu.yml: gh-actions/samples/ubuntu.yml
+      .github/workflows/docker.yml: gh-actions/samples/docker.yml
   metanorma-acme:
     remote: ssh://git@github.com/metanorma/metanorma-acme
     branch: master
@@ -618,7 +626,7 @@ groups:
   - metanorma-model-ogc
   - metanorma-model-nist
   - metanorma-model-itu
-  - metanorma-model-mpfa
+  - metanorma-model-mpf
   infrastructure:
   - iso-ics-codes-scripts
   - metanorma-registry
