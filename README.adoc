@@ -1,0 +1,76 @@
+= Metanorma Build Scripts
+
+
+== Purpose
+
+This repository is used to store scripts and configuration for
+the Git repositories belonging to https://github.com/metanorma[Metanorma].
+
+== Contents
+
+`*.[sh|ps1|bat]`:: different scripts used during build as part of CI workflow
+
+`cimas-config/`:: configuration files for https://github.com/metanorma/cimas[Cimas]
+
+`bin/gh-repo-manifest`:: (to be updated) script that generates/updates the
+  `cimas-config/cimas.yml` file for the
+  https://github.com/metanorma[GitHub metanorma organization]
+
+
+== Usage
+
+=== Updating repositories
+
+From time to time, repos are added, removed or renamed.
+To reflect these updates easily we use the `gh-repo-manifest`
+script to update `cimas-config/cimas.yml`.
+
+[source,sh]
+----
+# TODO: Needs to be fixed
+# bin/gh-repo-manifest -o metanorma,relaton
+----
+
+
+=== Managing Cimas configuration (in `cimas-config/`)
+
+The primary config file is `cimas-config/cimas.yml`.
+
+Please see the Cimas configuration file format in
+https://github.com/metanorma/cimas[Cimas' README].
+
+
+=== Running Cimas to synchronize CI configuration
+
+You have to first install Cimas using:
+
+[source,sh]
+----
+gem install cimas
+----
+
+
+These are the commands to run:
+
+[source,sh]
+----
+cd metanorma-build-scripts
+export CIMAS_CONFIG=cimas-config/cimas.yml
+export CIMAS_MASTER_DIR=cimas-config
+export CIMAS_WD=~/src/mn/cimas-wd
+
+cimas setup -f $CIMAS_CONFIG -r $CIMAS_WD
+
+cimas pull -f $CIMAS_CONFIG -r $CIMAS_WD
+
+cimas sync -f $CIMAS_CONFIG -r $CIMAS_WD \
+  -d $CIMAS_MASTER_DIR
+
+cimas diff -f $CIMAS_CONFIG -r $CIMAS_WD -d $CIMAS_MASTER_DIR # -g model
+
+cimas push -f $CIMAS_CONFIG -r $CIMAS_WD \
+  -b cimas-initial-run -m 'Cimas initial run' # -g model
+
+cimas open-prs -f $CIMAS_CONFIG -r $CIMAS_WD \
+  -b cimas-initial-run -m 'Cimas initial run' -g model
+----
