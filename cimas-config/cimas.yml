@@ -397,50 +397,74 @@ repositories:
     remote: ssh://git@github.com/metanorma/mn-samples-ogc
     branch: master
     files:
-      .github/workflows/ubuntu.yml: gh-actions/samples/ubuntu.yml
       .github/workflows/docker.yml: gh-actions/samples/docker.yml
+      .github/workflows/macos.yml: gh-actions/samples/macos.yml
+      .github/workflows/ubuntu.yml: gh-actions/samples/ubuntu.yml
+      .github/workflows/windows.yml: gh-actions/samples/windows.yml
   mn-samples-itu:
     remote: ssh://git@github.com/metanorma/mn-samples-itu
     branch: master
     files:
-      .github/workflows/ubuntu.yml: gh-actions/samples/ubuntu.yml
       .github/workflows/docker.yml: gh-actions/samples/docker.yml
+      .github/workflows/macos.yml: gh-actions/samples/macos.yml
+      .github/workflows/ubuntu.yml: gh-actions/samples/ubuntu.yml
+      .github/workflows/windows.yml: gh-actions/samples/windows.yml
   mn-samples-iec:
     remote: ssh://git@github.com/metanorma/mn-samples-iec
     branch: master
     files:
-      .github/workflows/ubuntu.yml: gh-actions/samples/ubuntu.yml
       .github/workflows/docker.yml: gh-actions/samples/docker.yml
+      .github/workflows/macos.yml: gh-actions/samples/macos.yml
+      .github/workflows/ubuntu.yml: gh-actions/samples/ubuntu.yml
+      .github/workflows/windows.yml: gh-actions/samples/windows.yml
+  mn-samples-ietf:
+    remote: ssh://git@github.com/metanorma/mn-samples-ietf
+    branch: master
+    files:
+      .github/workflows/docker.yml: gh-actions/samples/docker.yml
+      .github/workflows/macos.yml: gh-actions/samples/macos.yml
+      .github/workflows/ubuntu.yml: gh-actions/samples/ubuntu.yml
+      .github/workflows/windows.yml: gh-actions/samples/windows.yml
   mn-samples-un:
     remote: ssh://git@github.com/metanorma/mn-samples-un
     branch: master
     files:
-      .github/workflows/ubuntu.yml: gh-actions/samples/ubuntu.yml
       .github/workflows/docker.yml: gh-actions/samples/docker.yml
+      .github/workflows/macos.yml: gh-actions/samples/macos.yml
+      .github/workflows/ubuntu.yml: gh-actions/samples/ubuntu.yml
+      .github/workflows/windows.yml: gh-actions/samples/windows.yml
   mn-samples-mpf:
     remote: ssh://git@github.com/metanorma/mn-samples-mpf
     branch: master
     files:
-      .github/workflows/ubuntu.yml: gh-actions/samples/ubuntu.yml
       .github/workflows/docker.yml: gh-actions/samples/docker.yml
+      .github/workflows/macos.yml: gh-actions/samples/macos.yml
+      .github/workflows/ubuntu.yml: gh-actions/samples/ubuntu.yml
+      .github/workflows/windows.yml: gh-actions/samples/windows.yml
   mn-samples-iso:
     remote: ssh://git@github.com/metanorma/mn-samples-iso
     branch: master
     files:
-      .github/workflows/ubuntu.yml: gh-actions/samples/ubuntu.yml
       .github/workflows/docker.yml: gh-actions/samples/docker.yml
+      .github/workflows/macos.yml: gh-actions/samples/macos.yml
+      .github/workflows/ubuntu.yml: gh-actions/samples/ubuntu.yml
+      .github/workflows/windows.yml: gh-actions/samples/windows.yml
   mn-samples-gb:
     remote: ssh://git@github.com/metanorma/mn-samples-gb
     branch: master
     files:
-      .github/workflows/ubuntu.yml: gh-actions/samples/ubuntu.yml
       .github/workflows/docker.yml: gh-actions/samples/docker.yml
+      .github/workflows/macos.yml: gh-actions/samples/macos.yml
+      .github/workflows/ubuntu.yml: gh-actions/samples/ubuntu.yml
+      .github/workflows/windows.yml: gh-actions/samples/windows.yml
   mn-samples-cc:
     remote: ssh://git@github.com/metanorma/mn-samples-cc
     branch: master
     files:
-      .github/workflows/ubuntu.yml: gh-actions/samples/ubuntu.yml
       .github/workflows/docker.yml: gh-actions/samples/docker.yml
+      .github/workflows/macos.yml: gh-actions/samples/macos.yml
+      .github/workflows/ubuntu.yml: gh-actions/samples/ubuntu.yml
+      .github/workflows/windows.yml: gh-actions/samples/windows.yml
   metanorma-acme:
     remote: ssh://git@github.com/metanorma/metanorma-acme
     branch: master

@@ -4,7 +4,6 @@ on:
   push:
     branches: [ master ]
   pull_request:
-    branches: [ '**' ]
 
 jobs:
   test-windows:
@@ -31,7 +30,6 @@ jobs:
         shell: pwsh
         run: |
           gem install bundler
-          bundle update --bundler
           bundle install --jobs 4 --retry 3
       - name: Use Metanorma
         shell: pwsh
