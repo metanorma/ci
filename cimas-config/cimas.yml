@@ -33,54 +33,6 @@ repositories:
       .github/workflows/macos.yml: gh-actions/model/macos.yml
       .github/workflows/ubuntu.yml: gh-actions/model/ubuntu.yml
       .github/workflows/windows.yml: gh-actions/model/windows.yml
-  isodoc:
-    remote: ssh://git@github.com/metanorma/isodoc
-    branch: master
-    files:
-      .github/workflows/macos.yml: gh-actions/puppeteer/macos.yml
-      .github/workflows/ubuntu.yml: gh-actions/puppeteer/ubuntu.yml
-      .github/workflows/windows.yml: gh-actions/puppeteer/windows.yml
-  metanorma-ogc:
-    remote: ssh://git@github.com/metanorma/metanorma-ogc
-    branch: master
-    files:
-      .github/workflows/macos.yml: gh-actions/puppeteer/macos.yml
-      .github/workflows/ubuntu.yml: gh-actions/puppeteer/ubuntu.yml
-      .github/workflows/windows.yml: gh-actions/puppeteer/windows.yml
-  relaton-bib:
-    remote: ssh://git@github.com/relaton/relaton-bib
-    branch: master
-    files:
-      .github/workflows/macos.yml: gh-actions/master/macos.yml
-      .github/workflows/ubuntu.yml: gh-actions/master/ubuntu.yml
-      .github/workflows/windows.yml: gh-actions/master/windows.yml
-  relaton-iso-bib:
-    remote: ssh://git@github.com/relaton/relaton-iso-bib
-    branch: master
-    files:
-      .github/workflows/macos.yml: gh-actions/master/macos.yml
-      .github/workflows/ubuntu.yml: gh-actions/master/ubuntu.yml
-      .github/workflows/windows.yml: gh-actions/master/windows.yml
-  relaton-iso:
-    remote: ssh://git@github.com/relaton/relaton-iso
-    branch: master
-    files:
-      .github/workflows/macos.yml: gh-actions/master/macos.yml
-      .github/workflows/ubuntu.yml: gh-actions/master/ubuntu.yml
-      .github/workflows/windows.yml: gh-actions/master/windows.yml
-  unece-cefact-plenary-2018-6:
-    remote: ssh://git@github.com/metanorma/unece-cefact-plenary-2018-6
-    branch: master
-    files:
-      .github/workflows/ubuntu.yml: gh-actions/samples/ubuntu.yml
-      .github/workflows/windows.yml: gh-actions/samples/windows.yml
-  metanorma-m3d:
-    remote: ssh://git@github.com/metanorma/metanorma-m3d
-    branch: master
-    files:
-      .github/workflows/macos.yml: gh-actions/puppeteer/macos.yml
-      .github/workflows/ubuntu.yml: gh-actions/puppeteer/ubuntu.yml
-      .github/workflows/windows.yml: gh-actions/puppeteer/windows.yml
   metanorma-model-un:
     remote: ssh://git@github.com/metanorma/metanorma-model-un
     branch: master
@@ -95,6 +47,103 @@ repositories:
       .github/workflows/macos.yml: gh-actions/model/macos.yml
       .github/workflows/ubuntu.yml: gh-actions/model/ubuntu.yml
       .github/workflows/windows.yml: gh-actions/model/windows.yml
+  metanorma-model-itu:
+    remote: ssh://git@github.com/metanorma/metanorma-model-itu
+    branch: master
+    files:
+      .github/workflows/macos.yml: gh-actions/model/macos.yml
+      .github/workflows/ubuntu.yml: gh-actions/model/ubuntu.yml
+      .github/workflows/windows.yml: gh-actions/model/windows.yml
+  metanorma-model-csa:
+    remote: ssh://git@github.com/metanorma/metanorma-model-csa
+    branch: master
+    files:
+      .github/workflows/macos.yml: gh-actions/model/macos.yml
+      .github/workflows/ubuntu.yml: gh-actions/model/ubuntu.yml
+      .github/workflows/windows.yml: gh-actions/model/windows.yml
+  metanorma-model-nist:
+    remote: ssh://git@github.com/metanorma/metanorma-model-nist
+    branch: master
+    files:
+      .github/workflows/macos.yml: gh-actions/model/macos.yml
+      .github/workflows/ubuntu.yml: gh-actions/model/ubuntu.yml
+      .github/workflows/windows.yml: gh-actions/model/windows.yml
+  basicdoc-models:
+    remote: ssh://git@github.com/metanorma/basicdoc-models
+    branch: master
+    files:
+      .github/workflows/macos.yml: gh-actions/model/macos.yml
+      .github/workflows/ubuntu.yml: gh-actions/model/ubuntu.yml
+      .github/workflows/windows.yml: gh-actions/model/windows.yml
+  resolution-model:
+    remote: ssh://git@github.com/metanorma/resolution-model
+    branch: master
+    files:
+      .github/workflows/macos.yml: gh-actions/model/macos.yml
+      .github/workflows/ubuntu.yml: gh-actions/model/ubuntu.yml
+      .github/workflows/windows.yml: gh-actions/model/windows.yml
+  metanorma-requirements-models:
+    remote: ssh://git@github.com/metanorma/metanorma-requirements-models
+    branch: master
+    files:
+      .github/workflows/macos.yml: gh-actions/model/macos.yml
+      .github/workflows/ubuntu.yml: gh-actions/model/ubuntu.yml
+      .github/workflows/windows.yml: gh-actions/model/windows.yml
+  metanorma-model-csd:
+    remote: ssh://git@github.com/metanorma/metanorma-model-csd
+    branch: master
+    files:
+      .github/workflows/macos.yml: gh-actions/model/macos.yml
+      .github/workflows/ubuntu.yml: gh-actions/model/ubuntu.yml
+      .github/workflows/windows.yml: gh-actions/model/windows.yml
+  metanorma-model-m3d:
+    remote: ssh://git@github.com/metanorma/metanorma-model-m3d
+    branch: master
+    files:
+      .github/workflows/macos.yml: gh-actions/model/macos.yml
+      .github/workflows/ubuntu.yml: gh-actions/model/ubuntu.yml
+      .github/workflows/windows.yml: gh-actions/model/windows.yml
+  metanorma-model-ogc:
+    remote: ssh://git@github.com/metanorma/metanorma-model-ogc
+    branch: master
+    files:
+      .github/workflows/macos.yml: gh-actions/model/macos.yml
+      .github/workflows/ubuntu.yml: gh-actions/model/ubuntu.yml
+      .github/workflows/windows.yml: gh-actions/model/windows.yml
+  metanorma-model-rsd:
+    remote: ssh://git@github.com/metanorma/metanorma-model-rsd
+    branch: master
+    files:
+      .github/workflows/macos.yml: gh-actions/model/macos.yml
+      .github/workflows/ubuntu.yml: gh-actions/model/ubuntu.yml
+      .github/workflows/windows.yml: gh-actions/model/windows.yml
+  isodoc:
+    remote: ssh://git@github.com/metanorma/isodoc
+    branch: master
+    files:
+      .github/workflows/macos.yml: gh-actions/puppeteer/macos.yml
+      .github/workflows/ubuntu.yml: gh-actions/puppeteer/ubuntu.yml
+      .github/workflows/windows.yml: gh-actions/puppeteer/windows.yml
+  metanorma-ogc:
+    remote: ssh://git@github.com/metanorma/metanorma-ogc
+    branch: master
+    files:
+      .github/workflows/macos.yml: gh-actions/puppeteer/macos.yml
+      .github/workflows/ubuntu.yml: gh-actions/puppeteer/ubuntu.yml
+      .github/workflows/windows.yml: gh-actions/puppeteer/windows.yml
+  unece-cefact-plenary-2018-6:
+    remote: ssh://git@github.com/metanorma/unece-cefact-plenary-2018-6
+    branch: master
+    files:
+      .github/workflows/ubuntu.yml: gh-actions/samples/ubuntu.yml
+      .github/workflows/windows.yml: gh-actions/samples/windows.yml
+  metanorma-m3d:
+    remote: ssh://git@github.com/metanorma/metanorma-m3d
+    branch: master
+    files:
+      .github/workflows/macos.yml: gh-actions/puppeteer/macos.yml
+      .github/workflows/ubuntu.yml: gh-actions/puppeteer/ubuntu.yml
+      .github/workflows/windows.yml: gh-actions/puppeteer/windows.yml
   cnccs:
     remote: ssh://git@github.com/metanorma/cnccs
     branch: master
@@ -129,13 +178,6 @@ repositories:
       .github/workflows/macos.yml: gh-actions/plantuml/macos.yml
       .github/workflows/ubuntu.yml: gh-actions/plantuml/ubuntu.yml
       .github/workflows/windows.yml: gh-actions/plantuml/windows.yml
-  relaton-models:
-    remote: ssh://git@github.com/relaton/relaton-models
-    branch: master
-    files:
-      .github/workflows/macos.yml: gh-actions/model/macos.yml
-      .github/workflows/ubuntu.yml: gh-actions/model/ubuntu.yml
-      .github/workflows/windows.yml: gh-actions/model/windows.yml
   metanorma-sample:
     remote: ssh://git@github.com/metanorma/metanorma-sample
     branch: master
@@ -164,20 +206,6 @@ repositories:
       .github/workflows/macos.yml: gh-actions/puppeteer/macos.yml
       .github/workflows/ubuntu.yml: gh-actions/puppeteer/ubuntu.yml
       .github/workflows/windows.yml: gh-actions/puppeteer/windows.yml
-  metanorma-model-itu:
-    remote: ssh://git@github.com/metanorma/metanorma-model-itu
-    branch: master
-    files:
-      .github/workflows/macos.yml: gh-actions/model/macos.yml
-      .github/workflows/ubuntu.yml: gh-actions/model/ubuntu.yml
-      .github/workflows/windows.yml: gh-actions/model/windows.yml
-  metanorma-model-csa:
-    remote: ssh://git@github.com/metanorma/metanorma-model-csa
-    branch: master
-    files:
-      .github/workflows/macos.yml: gh-actions/model/macos.yml
-      .github/workflows/ubuntu.yml: gh-actions/model/ubuntu.yml
-      .github/workflows/windows.yml: gh-actions/model/windows.yml
   csa-ccm-tools:
     remote: ssh://git@github.com/metanorma/csa-ccm-tools
     branch: master
@@ -205,43 +233,8 @@ repositories:
     files:
       .github/workflows/ubuntu.yml: gh-actions/samples/ubuntu.yml
       .github/workflows/windows.yml: gh-actions/samples/windows.yml
-  metanorma-model-nist:
-    remote: ssh://git@github.com/metanorma/metanorma-model-nist
-    branch: master
-    files:
-      .github/workflows/macos.yml: gh-actions/model/macos.yml
-      .github/workflows/ubuntu.yml: gh-actions/model/ubuntu.yml
-      .github/workflows/windows.yml: gh-actions/model/windows.yml
-  basicdoc-models:
-    remote: ssh://git@github.com/metanorma/basicdoc-models
-    branch: master
-    files:
-      .github/workflows/macos.yml: gh-actions/model/macos.yml
-      .github/workflows/ubuntu.yml: gh-actions/model/ubuntu.yml
-      .github/workflows/windows.yml: gh-actions/model/windows.yml
-  metanorma-model-csd:
-    remote: ssh://git@github.com/metanorma/metanorma-model-csd
-    branch: master
-    files:
-      .github/workflows/macos.yml: gh-actions/model/macos.yml
-      .github/workflows/ubuntu.yml: gh-actions/model/ubuntu.yml
-      .github/workflows/windows.yml: gh-actions/model/windows.yml
   metanorma-gb:
     remote: ssh://git@github.com/metanorma/metanorma-gb
-    branch: master
-    files:
-      .github/workflows/macos.yml: gh-actions/master/macos.yml
-      .github/workflows/ubuntu.yml: gh-actions/master/ubuntu.yml
-      .github/workflows/windows.yml: gh-actions/master/windows.yml
-  metanorma-model-m3d:
-    remote: ssh://git@github.com/metanorma/metanorma-model-m3d
-    branch: master
-    files:
-      .github/workflows/macos.yml: gh-actions/model/macos.yml
-      .github/workflows/ubuntu.yml: gh-actions/model/ubuntu.yml
-      .github/workflows/windows.yml: gh-actions/model/windows.yml
-  relaton-iec:
-    remote: ssh://git@github.com/relaton/relaton-iec
     branch: master
     files:
       .github/workflows/macos.yml: gh-actions/master/macos.yml
@@ -296,20 +289,6 @@ repositories:
       .github/workflows/macos.yml: gh-actions/puppeteer/macos.yml
       .github/workflows/ubuntu.yml: gh-actions/puppeteer/ubuntu.yml
       .github/workflows/windows.yml: gh-actions/puppeteer/windows.yml
-  metanorma-model-ogc:
-    remote: ssh://git@github.com/metanorma/metanorma-model-ogc
-    branch: master
-    files:
-      .github/workflows/macos.yml: gh-actions/model/macos.yml
-      .github/workflows/ubuntu.yml: gh-actions/model/ubuntu.yml
-      .github/workflows/windows.yml: gh-actions/model/windows.yml
-  relaton-server-csd:
-    remote: ssh://git@github.com/relaton/relaton-server-csd
-    branch: master
-    files:
-      .github/workflows/macos.yml: gh-actions/puppeteer/macos.yml
-      .github/workflows/ubuntu.yml: gh-actions/puppeteer/ubuntu.yml
-      .github/workflows/windows.yml: gh-actions/puppeteer/windows.yml
   reverse_adoc:
     remote: ssh://git@github.com/metanorma/reverse_adoc
     branch: master
@@ -323,22 +302,8 @@ repositories:
     files:
       .github/workflows/ubuntu.yml: gh-actions/samples/ubuntu.yml
       .github/workflows/windows.yml: gh-actions/samples/windows.yml
-  relaton-gb:
-    remote: ssh://git@github.com/relaton/relaton-gb
-    branch: master
-    files:
-      .github/workflows/macos.yml: gh-actions/master/macos.yml
-      .github/workflows/ubuntu.yml: gh-actions/master/ubuntu.yml
-      .github/workflows/windows.yml: gh-actions/master/windows.yml
   gb-agencies:
     remote: ssh://git@github.com/metanorma/gb-agencies
-    branch: master
-    files:
-      .github/workflows/macos.yml: gh-actions/master/macos.yml
-      .github/workflows/ubuntu.yml: gh-actions/master/ubuntu.yml
-      .github/workflows/windows.yml: gh-actions/master/windows.yml
-  relaton-cli:
-    remote: ssh://git@github.com/relaton/relaton-cli
     branch: master
     files:
       .github/workflows/macos.yml: gh-actions/master/macos.yml
@@ -358,13 +323,6 @@ repositories:
       .github/workflows/macos.yml: gh-actions/puppeteer/macos.yml
       .github/workflows/ubuntu.yml: gh-actions/puppeteer/ubuntu.yml
       .github/workflows/windows.yml: gh-actions/puppeteer/windows.yml
-  relaton:
-    remote: ssh://git@github.com/relaton/relaton
-    branch: master
-    files:
-      .github/workflows/macos.yml: gh-actions/master/macos.yml
-      .github/workflows/ubuntu.yml: gh-actions/master/ubuntu.yml
-      .github/workflows/windows.yml: gh-actions/master/windows.yml
   metanorma:
     remote: ssh://git@github.com/metanorma/metanorma
     branch: master
@@ -372,13 +330,6 @@ repositories:
       .github/workflows/macos.yml: gh-actions/puppeteer/macos.yml
       .github/workflows/ubuntu.yml: gh-actions/puppeteer/ubuntu.yml
       .github/workflows/windows.yml: gh-actions/puppeteer/windows.yml
-  relaton-itu:
-    remote: ssh://git@github.com/relaton/relaton-itu
-    branch: master
-    files:
-      .github/workflows/macos.yml: gh-actions/master/macos.yml
-      .github/workflows/ubuntu.yml: gh-actions/master/ubuntu.yml
-      .github/workflows/windows.yml: gh-actions/master/windows.yml
   omml2mathml:
     remote: ssh://git@github.com/metanorma/omml2mathml
     branch: master
@@ -386,13 +337,6 @@ repositories:
       .github/workflows/macos.yml: gh-actions/master/macos.yml
       .github/workflows/ubuntu.yml: gh-actions/master/ubuntu.yml
       .github/workflows/windows.yml: gh-actions/master/windows.yml
-  metanorma-model-rsd:
-    remote: ssh://git@github.com/metanorma/metanorma-model-rsd
-    branch: master
-    files:
-      .github/workflows/macos.yml: gh-actions/model/macos.yml
-      .github/workflows/ubuntu.yml: gh-actions/model/ubuntu.yml
-      .github/workflows/windows.yml: gh-actions/model/windows.yml
   mn-samples-ogc:
     remote: ssh://git@github.com/metanorma/mn-samples-ogc
     branch: master
@@ -479,14 +423,6 @@ repositories:
       .github/workflows/macos.yml: gh-actions/master/macos.yml
       .github/workflows/ubuntu.yml: gh-actions/master/ubuntu.yml
       .github/workflows/windows.yml: gh-actions/master/windows.yml
-    # metanorma-cli: unique config
-  relaton-ietf:
-    remote: ssh://git@github.com/relaton/relaton-ietf
-    branch: master
-    files:
-      .github/workflows/macos.yml: gh-actions/master/macos.yml
-      .github/workflows/ubuntu.yml: gh-actions/master/ubuntu.yml
-      .github/workflows/windows.yml: gh-actions/master/windows.yml
   metanorma-csa:
     remote: ssh://git@github.com/metanorma/metanorma-csa
     branch: master
@@ -494,20 +430,6 @@ repositories:
       .github/workflows/macos.yml: gh-actions/plantuml/macos.yml
       .github/workflows/ubuntu.yml: gh-actions/plantuml/ubuntu.yml
       .github/workflows/windows.yml: gh-actions/plantuml/windows.yml
-  relaton-nist:
-    remote: ssh://git@github.com/relaton/relaton-nist
-    branch: master
-    files:
-      .github/workflows/macos.yml: gh-actions/master/macos.yml
-      .github/workflows/ubuntu.yml: gh-actions/master/ubuntu.yml
-      .github/workflows/windows.yml: gh-actions/master/windows.yml
-  relaton-ogc:
-    remote: ssh://git@github.com/relaton/relaton-ogc
-    branch: master
-    files:
-      .github/workflows/macos.yml: gh-actions/master/macos.yml
-      .github/workflows/ubuntu.yml: gh-actions/master/ubuntu.yml
-      .github/workflows/windows.yml: gh-actions/master/windows.yml
     # rfc2mn: unique config
   ogc-tcpnp:
     remote: ssh://git@github.com/metanorma/ogc-tcpnp
@@ -545,12 +467,6 @@ repositories:
     files:
       .github/workflows/defaults.yml: gh-actions/templates/defaults.yml
       .github/workflows/windows.yml: gh-actions/templates/windows.yml
-  relaton-iev:
-    remote: ssh://git@github.com/relaton/relaton-iev
-    branch: master
-    files:
-      .github/workflows/defaults.yml: gh-actions/templates/defaults.yml
-      .github/workflows/windows.yml: gh-actions/templates/windows.yml
   csd-html:
     remote: ssh://git@github.com/metanorma/csd-html
     branch: master
@@ -561,101 +477,106 @@ repositories:
 
 groups:
   converter:
-  - rfc2md
   - html2doc
-  - omml2mathml
   - mathml2asciimath
-  - unicode2latex
+  - mn2pdf
+  - omml2mathml
+  - rfc2md
   - rfc2mn
   - tex2mn
-  - mn2pdf
+  - unicode2latex
   processor:
-  - metanorma-iso
-  - metanorma-csd
-  - metanorma-gb
-  - metanorma-csa
-  - metanorma-rsd
-  - metanorma-m3d
-  - metanorma-sample
-  - metanorma-cli
-  - metanorma-vsd
   - metanorma-acme
-  - metanorma-mpfd
-  - metanorma-standoc
-  - metanorma-iec
+  - metanorma-cli
+  - metanorma-csa
+  - metanorma-csd
   - metanorma-docker
-  - metanorma-unece
-  - metanorma-ogc
-  - metanorma-nist
+  - metanorma-gb
+  - metanorma-iec
   - metanorma-ietf
+  - metanorma-iso
   - metanorma-itu
+  - metanorma-m3d
+  - metanorma-mpfd
+  - metanorma-nist
+  - metanorma-ogc
   - metanorma-registry
   - metanorma-release
-  - metanorma-snap
-  metanorma:
-  - metanorma-iso
-  - metanorma-model-iso
-  - metanorma-model-csd
-  - metanorma-csd
-  - metanorma-model-gb
-  - metanorma-gb
-  - metanorma-model-standoc
-  - metanorma-model-csa
-  - metanorma-csa
   - metanorma-rsd
+  - metanorma-sample
+  - metanorma-snap
+  - metanorma-standoc
+  - metanorma-unece
+  - metanorma-vsd
+  metanorma:
   - metanorma
-  - metanorma-model-rsd
-  - metanorma-model-m3d
+  - metanorma-acme
+  - metanorma-build-scripts
+  - metanorma-cli
+  - metanorma-csa
+  - metanorma-csd
+  - metanorma-docker
+  - metanorma-document-gh-pages
+  - metanorma-gb
+  - metanorma-iec
+  - metanorma-ietf
+  - metanorma-iso
+  - metanorma-itu
+  - metanorma-itu-style
+  - metanorma-linux-setup
   - metanorma-m3d
   - metanorma-macos-setup
-  - metanorma-sample
-  - metanorma-cli
-  - metanorma-vsd
-  - metanorma-acme
-  - metanorma-mpfd
-  - metanorma-standoc
-  - metanorma-iec
-  - metanorma-windows-setup
-  - metanorma-linux-setup
-  - metanorma-docker
-  - metanorma-unece
-  - metanorma-model-un
-  - metanorma-document-gh-pages
-  - metanorma-ogc
-  - metanorma-nist
-  - metanorma-model-ogc
-  - metanorma-ogc-style
-  - metanorma-ietf
-  - metanorma-model-nist
-  - metanorma-nist-style
-  - metanorma-mrr-samples
-  - metanorma-itu
-  - metanorma-model-itu
-  - metanorma-itu-style
-  - metanorma-requirements-models
-  - metanorma-registry
-  - metanorma-build-scripts
-  - metanorma-model-mpfa
-  - metanorma-release
-  - metanorma-snap
-  model:
-  - metanorma-model-iso
-  - metanorma-model-gb
-  - metanorma-model-standoc
-  - metanorma-model-csd
   - metanorma-model-csa
-  - metanorma-model-rsd
-  - metanorma-model-m3d
-  - metanorma-model-un
-  - metanorma-model-ogc
-  - metanorma-model-nist
+  - metanorma-model-csd
+  - metanorma-model-gb
+  - metanorma-model-iso
   - metanorma-model-itu
-  - metanorma-model-mpf
+  - metanorma-model-m3d
+  - metanorma-model-mpfa
+  - metanorma-model-nist
+  - metanorma-model-ogc
+  - metanorma-model-rsd
+  - metanorma-model-standoc
+  - metanorma-model-un
+  - metanorma-mpfd
+  - metanorma-mrr-samples
+  - metanorma-nist
+  - metanorma-nist-style
+  - metanorma-ogc
+  - metanorma-ogc-style
+  - metanorma-registry
+  - metanorma-release
+  - metanorma-requirements-models
+  - metanorma-rsd
+  - metanorma-sample
+  - metanorma-snap
+  - metanorma-standoc
+  - metanorma-unece
+  - metanorma-vsd
+  - metanorma-windows-setup
+
+  model:
+  - metanorma-model-csa
+  - metanorma-model-csd
+  - metanorma-model-gb
+  - metanorma-model-iso
+  - metanorma-model-itu
+  - metanorma-model-m3d
+  - metanorma-model-mpfa
+  - metanorma-model-nist
+  - metanorma-model-ogc
+  - metanorma-model-rsd
+  - metanorma-model-standoc
+  - metanorma-model-un
+  - basicdoc-models
+  - resolution-model
+  - metanorma-requirements-models
+
   infrastructure:
   - iso-ics-codes-scripts
   - metanorma-registry
   - metanorma-build-scripts
-  - ci-master
+  - cimas
   style:
   - csd-style
   - csand-style
@@ -670,19 +591,17 @@ groups:
   site:
   - asciirfc.com
   - metanorma.com
-  - relaton/relaton.com
-  - relaton/api.relaton.org
   samples:
-  - mn-samples-iso
-  - mn-samples-gb
-  - mn-samples-mpf
-  - mn-samples-un
-  - mn-samples-ogc
-  - mn-samples-itu
-  - mn-samples-iec
   - mn-samples-cc
+  - mn-samples-gb
+  - mn-samples-iec
   - mn-samples-ietf
+  - mn-samples-iso
+  - mn-samples-itu
+  - mn-samples-mpf
+  - mn-samples-ogc
   - mn-samples-tex-iso
+  - mn-samples-un
   setup:
   - metanorma-macos-setup
   - metanorma-windows-setup
@@ -694,29 +613,12 @@ groups:
   - homebrew-metanorma
   templates:
   - mn-templates-csd
-  - mn-templates-ogc
-  - mn-templates-iso
-  - mn-templates-ietf
   - mn-templates-iec
+  - mn-templates-ietf
+  - mn-templates-iso
   - mn-templates-itu
+  - mn-templates-ogc
   snap:
   - metanorma-snap
   - latexml-snap
-  relaton:
-  - relaton-iso
-  - relaton-models
-  - relaton-gb
-  - relaton
-  - relaton-ietf
-  - relaton-cli
-  - relaton-iec
-  - relaton-server-csd
-  - relaton-calconnect
-  - relaton-nist
-  - relaton-itu
-  - relaton-bib
-  - relaton-iso-bib
-  - relaton-iev
-  - relaton-ogc
-  - relaton-ui-designs
-  - relaton-release
+

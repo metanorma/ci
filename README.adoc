@@ -61,16 +61,21 @@ export CIMAS_WD=~/src/mn/cimas-wd
 
 cimas setup -f $CIMAS_CONFIG -r $CIMAS_WD
 
-cimas pull -f $CIMAS_CONFIG -r $CIMAS_WD
+cimas pull -f $CIMAS_CONFIG -r $CIMAS_WD \
+  -g model
 
 cimas sync -f $CIMAS_CONFIG -r $CIMAS_WD \
-  -d $CIMAS_MASTER_DIR
+  -d $CIMAS_MASTER_DIR \
+  -g model
 
-cimas diff -f $CIMAS_CONFIG -r $CIMAS_WD -d $CIMAS_MASTER_DIR # -g model
+cimas diff -f $CIMAS_CONFIG -r $CIMAS_WD -d $CIMAS_MASTER_DIR \
+  -g model
 
 cimas push -f $CIMAS_CONFIG -r $CIMAS_WD \
-  -b cimas-initial-run -m 'Cimas initial run' # -g model
+  -b cimas-initial-run -m 'Cimas initial run' \
+  -g model
 
 cimas open-prs -f $CIMAS_CONFIG -r $CIMAS_WD \
-  -b cimas-initial-run -m 'Cimas initial run' -g model
+  -b cimas-initial-run -m 'Cimas initial run' \
+  -g model
 ----
