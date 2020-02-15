@@ -29,6 +29,13 @@ jobs:
           path: ~/.cache/xml2rfc
           key: xml2rfc
           restore-key: xml2rfc
+      - name: Use Metanorma
+        run: |
+          curl -L https://raw.githubusercontent.com/metanorma/metanorma-linux-setup/master/ubuntu.sh | sudo bash
+          sudo chown -R $USER:$(id -gn $USER) $HOME/.config
+      - name: Install yq
+        run: |
+          sudo snap install yq
       - name: Use Ruby
         uses: actions/setup-ruby@v1
         with:
@@ -37,13 +44,6 @@ jobs:
       - name: Install bundler
         run: |
           gem install bundler
-      - name: Use Metanorma
-        run: |
-          curl -L https://raw.githubusercontent.com/metanorma/metanorma-linux-setup/master/ubuntu.sh | sudo bash
-          sudo chown -R $USER:$(id -gn $USER) $HOME/.config
-      - name: Install yq
-        run: |
-          sudo snap install yq
       - name: Metanorma compile
         env:
           JAVA_OPTS: "java.awt.headless=true"
