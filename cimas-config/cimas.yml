@@ -282,8 +282,8 @@ repositories:
       .github/workflows/macos.yml: gh-actions/plantuml/macos.yml
       .github/workflows/ubuntu.yml: gh-actions/plantuml/ubuntu.yml
       .github/workflows/windows.yml: gh-actions/plantuml/windows.yml
-  metanorma-unece:
-    remote: ssh://git@github.com/metanorma/metanorma-unece
+  metanorma-un:
+    remote: ssh://git@github.com/metanorma/metanorma-un
     branch: master
     files:
       .github/workflows/macos.yml: gh-actions/puppeteer/macos.yml
@@ -506,7 +506,7 @@ groups:
   - metanorma-sample
   - metanorma-snap
   - metanorma-standoc
-  - metanorma-unece
+  - metanorma-un
   - metanorma-vsd
   metanorma:
   - metanorma
@@ -551,7 +551,7 @@ groups:
   - metanorma-sample
   - metanorma-snap
   - metanorma-standoc
-  - metanorma-unece
+  - metanorma-un
   - metanorma-vsd
   - metanorma-windows-setup
 
