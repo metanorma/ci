@@ -409,6 +409,14 @@ repositories:
       .github/workflows/macos.yml: gh-actions/samples/macos.yml
       .github/workflows/ubuntu.yml: gh-actions/samples/ubuntu.yml
       .github/workflows/windows.yml: gh-actions/samples/windows.yml
+  hk-ogcio-infosec-docs:
+    remote: ssh://git@github.com/metanorma/hk-ogcio-infosec-docs
+    branch: master
+    files:
+      .github/workflows/docker.yml: gh-actions/samples/docker.yml
+      .github/workflows/macos.yml: gh-actions/samples/macos.yml
+      .github/workflows/ubuntu.yml: gh-actions/samples/ubuntu.yml
+      .github/workflows/windows.yml: gh-actions/samples/windows.yml
   metanorma-acme:
     remote: ssh://git@github.com/metanorma/metanorma-acme
     branch: master
@@ -621,4 +629,6 @@ groups:
   snap:
   - metanorma-snap
   - latexml-snap
-
+  docs:
+  - hk-ogcio-infosec-docs
+  - unece-cefact-plenary-2018-6
