@@ -9,7 +9,7 @@ repositories:
     remote: ssh://git@github.com/metanorma/metanorma-cli
     branch: master
     files:
-      .github/workflows/ubuntu.yml: gh-actions/metanorma-cli/ubuntu.yml
+      .github/workflows/ubuntu.yml: gh-actions/master/ubuntu.yml
       .github/workflows/macos.yml: gh-actions/master/macos.yml
       .github/workflows/windows.yml: gh-actions/master/windows.yml
   metanorma-model-gb:
