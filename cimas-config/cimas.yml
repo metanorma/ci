@@ -293,7 +293,7 @@ repositories:
     remote: ssh://git@github.com/metanorma/reverse_adoc
     branch: master
     files:
-      .github/workflows/macos.yml: gh-actions/libreoffice/macos.yml
+      .github/workflows/macos.yml: gh-actions/master/macos.yml
       .github/workflows/ubuntu.yml: gh-actions/libreoffice/ubuntu.yml
       .github/workflows/windows.yml: gh-actions/libreoffice/windows.yml
   isodoc-rice:
