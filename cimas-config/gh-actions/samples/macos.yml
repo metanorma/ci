@@ -39,6 +39,7 @@ jobs:
           sudo bundle install --jobs 4 --retry 3
       - name: Use Metanorma
         run: |
+          brew update
           brew install yq
           brew unlink node@12
           brew install --HEAD https://raw.githubusercontent.com/metanorma/homebrew-metanorma/master/Formula/metanorma.rb
