@@ -28,6 +28,11 @@ jobs:
           path: ~/.cache/xml2rfc
           key: xml2rfc
           restore-key: xml2rfc
+      - name: Use Ruby
+        uses: actions/setup-ruby@v1
+        with:
+          ruby-version: ${{ matrix.ruby }}
+          architecture: 'x64'
       - name: Use Python
         uses: actions/setup-python@v1
         with:
@@ -37,19 +42,11 @@ jobs:
         shell: pwsh
         run: |
           cinst -y metanorma
+          metanorma version
       - name: Install yq
         shell: pwsh
         run: |
           Invoke-WebRequest -Uri "https://github.com/mikefarah/yq/releases/download/2.4.0/yq_windows_amd64.exe " -OutFile ".\yq.exe"
-      - name: Use Ruby
-        uses: actions/setup-ruby@v1
-        with:
-          ruby-version: ${{ matrix.ruby }}
-          architecture: 'x64'
-      - name: Install bundler
-        run: |
-          gem install bundler
-          bundle install --jobs 4 --retry 3
       - name: Metanorma compile
         run: |
           make -f Makefile.win clean all SHELL=cmd
