@@ -41,6 +41,7 @@ jobs:
         run: |
           curl -L https://raw.githubusercontent.com/metanorma/metanorma-linux-setup/master/ubuntu.sh | sudo bash
           sudo chown -R $USER:$(id -gn $USER) $HOME/.config
+          metanorma version
       - name: Install yq
         run: |
           sudo snap install yq
