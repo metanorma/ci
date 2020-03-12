@@ -41,8 +41,7 @@ jobs:
       - name: Use Metanorma
         shell: pwsh
         run: |
-          cinst -y metanorma
-          metanorma version
+          cinst --no-progress -y metanorma
       - name: Install yq
         shell: pwsh
         run: |

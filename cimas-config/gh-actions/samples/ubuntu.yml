@@ -36,12 +36,10 @@ jobs:
       - name: Install bundler
         run: |
           gem install bundler
-          bundle install --jobs 4 --retry 3
       - name: Use Metanorma
         run: |
           curl -L https://raw.githubusercontent.com/metanorma/metanorma-linux-setup/master/ubuntu.sh | sudo bash
           sudo chown -R $USER:$(id -gn $USER) $HOME/.config
-          metanorma version
       - name: Install yq
         run: |
           sudo snap install yq
