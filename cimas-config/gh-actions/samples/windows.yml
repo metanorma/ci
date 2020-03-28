@@ -33,6 +33,9 @@ jobs:
         with:
           ruby-version: ${{ matrix.ruby }}
           architecture: 'x64'
+      - name: Install bundler
+        run: |
+          gem install bundler
       - name: Use Python
         uses: actions/setup-python@v1
         with:
