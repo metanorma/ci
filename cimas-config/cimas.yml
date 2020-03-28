@@ -482,6 +482,13 @@ repositories:
       .github/workflows/macos.yml: gh-actions/master/macos.yml
       .github/workflows/ubuntu.yml: gh-actions/master/ubuntu.yml
       .github/workflows/windows.yml: gh-actions/master/windows.yml
+  relaton-iev:
+    remote: ssh://git@github.com/relaton/relaton-iev
+    branch: master
+    files:
+      .github/workflows/macos.yml: gh-actions/master/macos.yml
+      .github/workflows/ubuntu.yml: gh-actions/master/ubuntu.yml
+      .github/workflows/windows.yml: gh-actions/master/windows.yml
 
 groups:
   converter:
