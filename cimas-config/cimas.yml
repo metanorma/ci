@@ -131,12 +131,6 @@ repositories:
       .github/workflows/macos.yml: gh-actions/puppeteer/macos.yml
       .github/workflows/ubuntu.yml: gh-actions/puppeteer/ubuntu.yml
       .github/workflows/windows.yml: gh-actions/puppeteer/windows.yml
-  unece-cefact-plenary-2018-6:
-    remote: ssh://git@github.com/metanorma/unece-cefact-plenary-2018-6
-    branch: master
-    files:
-      .github/workflows/ubuntu.yml: gh-actions/samples/ubuntu.yml
-      .github/workflows/windows.yml: gh-actions/samples/windows.yml
   metanorma-m3d:
     remote: ssh://git@github.com/metanorma/metanorma-m3d
     branch: master
@@ -165,12 +159,6 @@ repositories:
       .github/workflows/macos.yml: gh-actions/puppeteer/macos.yml
       .github/workflows/ubuntu.yml: gh-actions/puppeteer/ubuntu.yml
       .github/workflows/windows.yml: gh-actions/puppeteer/windows.yml
-  csd-public-documents:
-    remote: ssh://git@github.com/metanorma/csd-public-documents
-    branch: master
-    files:
-      .github/workflows/ubuntu.yml: gh-actions/samples/ubuntu.yml
-      .github/workflows/windows.yml: gh-actions/samples/windows.yml
   metanorma-rsd:
     remote: ssh://git@github.com/metanorma/metanorma-rsd
     branch: master
@@ -178,13 +166,6 @@ repositories:
       .github/workflows/macos.yml: gh-actions/plantuml/macos.yml
       .github/workflows/ubuntu.yml: gh-actions/plantuml/ubuntu.yml
       .github/workflows/windows.yml: gh-actions/plantuml/windows.yml
-  metanorma-sample:
-    remote: ssh://git@github.com/metanorma/metanorma-sample
-    branch: master
-    files:
-      .github/workflows/macos.yml: gh-actions/puppeteer/macos.yml
-      .github/workflows/ubuntu.yml: gh-actions/puppeteer/ubuntu.yml
-      .github/workflows/windows.yml: gh-actions/puppeteer/windows.yml
   isoics:
     remote: ssh://git@github.com/metanorma/isoics
     branch: master
@@ -256,13 +237,6 @@ repositories:
       .github/workflows/windows.yml: gh-actions/puppeteer/windows.yml
   metanorma-ietf:
     remote: ssh://git@github.com/metanorma/metanorma-ietf
-    branch: master
-    files:
-      .github/workflows/macos.yml: gh-actions/xml2rfc/macos.yml
-      .github/workflows/ubuntu.yml: gh-actions/xml2rfc/ubuntu.yml
-      .github/workflows/windows.yml: gh-actions/xml2rfc/windows.yml
-  asciidoctor-rfc:
-    remote: ssh://git@github.com/metanorma/asciidoctor-rfc
     branch: master
     files:
       .github/workflows/macos.yml: gh-actions/xml2rfc/macos.yml
@@ -452,6 +426,8 @@ repositories:
     remote: ssh://git@github.com/metanorma/ogc-tcpnp
     branch: master
     files:
+      .github/workflows/docker.yml: gh-actions/samples/docker.yml
+      .github/workflows/macos.yml: gh-actions/samples/macos.yml
       .github/workflows/ubuntu.yml: gh-actions/samples/ubuntu.yml
       .github/workflows/windows.yml: gh-actions/samples/windows.yml
   mn-templates-csd:
@@ -474,12 +450,6 @@ repositories:
       .github/workflows/windows.yml: gh-actions/templates/windows.yml
   mn-templates-ietf:
     remote: ssh://git@github.com/metanorma/mn-templates-ietf
-    branch: master
-    files:
-      .github/workflows/defaults.yml: gh-actions/templates/defaults.yml
-      .github/workflows/windows.yml: gh-actions/templates/windows.yml
-  iso-bib-item:
-    remote: ssh://git@github.com/metanorma/iso-bib-item
     branch: master
     files:
       .github/workflows/defaults.yml: gh-actions/templates/defaults.yml
@@ -527,7 +497,6 @@ groups:
   - metanorma-registry
   - metanorma-release
   - metanorma-rsd
-  - metanorma-sample
   - metanorma-snap
   - metanorma-standoc
   - metanorma-un
@@ -572,7 +541,6 @@ groups:
   - metanorma-release
   - metanorma-requirements-models
   - metanorma-rsd
-  - metanorma-sample
   - metanorma-snap
   - metanorma-standoc
   - metanorma-un
@@ -647,4 +615,3 @@ groups:
   - latexml-snap
   docs:
   - hk-ogcio-infosec-docs
-  - unece-cefact-plenary-2018-6
