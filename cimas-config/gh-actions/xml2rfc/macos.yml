@@ -15,12 +15,6 @@ jobs:
         ruby: [ '2.6', '2.5', '2.4' ]
     steps:
       - uses: actions/checkout@master
-      - name: Checkout submodules
-        shell: bash
-        run: |
-          auth_header="$(git config --local --get http.https://github.com/.extraheader)"
-          git submodule sync --recursive
-          git -c "http.extraheader=$auth_header" -c protocol.version=2 submodule update --init --force --recursive --depth=1
       - name: Cache xml2rfc
         id: cache-xml2rfc
         uses: actions/cache@v1
@@ -37,13 +31,15 @@ jobs:
         run: |
           sudo gem install bundler --force
           bundle install --jobs 4 --retry 3
-      - name: Use Metanorma
+      - name: Use Python
+        uses: actions/setup-python@v1
+        with:
+          python-version: '2.7'
+          architecture: 'x64'
+      - name: Install xml2rfc
         run: |
-          brew install yq
-          brew unlink node@12
-          brew install --HEAD https://raw.githubusercontent.com/metanorma/homebrew-metanorma/master/Formula/metanorma.rb
-      - name: Metanorma compile
-        env:
-          JAVA_OPTS: "java.awt.headless=true"
+          pip install xml2rfc
+      - name: Run specs
         run: |
-          make clean all
+          bundle exec rake
+
