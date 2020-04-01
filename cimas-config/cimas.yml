@@ -68,15 +68,15 @@ repositories:
       .github/workflows/macos.yml: gh-actions/model/macos.yml
       .github/workflows/ubuntu.yml: gh-actions/model/ubuntu.yml
       .github/workflows/windows.yml: gh-actions/model/windows.yml
-  basicdoc-models:
-    remote: ssh://git@github.com/metanorma/basicdoc-models
+  metanorma-model-iho:
+    remote: ssh://git@github.com/metanorma/metanorma-model-iho
     branch: master
     files:
       .github/workflows/macos.yml: gh-actions/model/macos.yml
       .github/workflows/ubuntu.yml: gh-actions/model/ubuntu.yml
       .github/workflows/windows.yml: gh-actions/model/windows.yml
-  resolution-model:
-    remote: ssh://git@github.com/metanorma/resolution-model
+  basicdoc-models:
+    remote: ssh://git@github.com/metanorma/basicdoc-models
     branch: master
     files:
       .github/workflows/macos.yml: gh-actions/model/macos.yml
@@ -161,6 +161,13 @@ repositories:
       .github/workflows/windows.yml: gh-actions/puppeteer/windows.yml
   metanorma-rsd:
     remote: ssh://git@github.com/metanorma/metanorma-rsd
+    branch: master
+    files:
+      .github/workflows/macos.yml: gh-actions/plantuml/macos.yml
+      .github/workflows/ubuntu.yml: gh-actions/plantuml/ubuntu.yml
+      .github/workflows/windows.yml: gh-actions/plantuml/windows.yml
+  metanorma-iho:
+    remote: ssh://git@github.com/metanorma/metanorma-iho
     branch: master
     files:
       .github/workflows/macos.yml: gh-actions/plantuml/macos.yml
@@ -356,8 +363,8 @@ repositories:
       .github/workflows/ubuntu.yml: gh-actions/samples/ubuntu.yml
       .github/workflows/windows.yml: gh-actions/samples/windows.yml
       Makefile: gh-actions/samples/Makefile
-  mn-samples-mpf:
-    remote: ssh://git@github.com/metanorma/mn-samples-mpf
+  mn-samples-mpfa:
+    remote: ssh://git@github.com/metanorma/mn-samples-mpfa
     branch: master
     files:
       .github/workflows/docker.yml: gh-actions/samples/docker.yml
@@ -392,6 +399,15 @@ repositories:
       .github/workflows/ubuntu.yml: gh-actions/samples/ubuntu.yml
       .github/workflows/windows.yml: gh-actions/samples/windows.yml
       Makefile: gh-actions/samples/Makefile
+  mn-samples-iho:
+    remote: ssh://git@github.com/metanorma/mn-samples-iho
+    branch: master
+    files:
+      .github/workflows/docker.yml: gh-actions/samples/docker.yml
+      .github/workflows/macos.yml: gh-actions/samples/macos.yml
+      .github/workflows/ubuntu.yml: gh-actions/samples/ubuntu.yml
+      .github/workflows/windows.yml: gh-actions/samples/windows.yml
+      Makefile: gh-actions/samples/Makefile
   hk-ogcio-infosec-docs:
     remote: ssh://git@github.com/metanorma/hk-ogcio-infosec-docs
     branch: master
@@ -400,8 +416,8 @@ repositories:
       .github/workflows/macos.yml: gh-actions/samples/macos.yml
       .github/workflows/ubuntu.yml: gh-actions/samples/ubuntu.yml
       .github/workflows/windows.yml: gh-actions/samples/windows.yml
-  metanorma-acme:
-    remote: ssh://git@github.com/metanorma/metanorma-acme
+  metanorma-generic:
+    remote: ssh://git@github.com/metanorma/metanorma-generic
     branch: master
     files:
       .github/workflows/macos.yml: gh-actions/puppeteer/macos.yml
@@ -454,13 +470,6 @@ repositories:
     files:
       .github/workflows/defaults.yml: gh-actions/templates/defaults.yml
       .github/workflows/windows.yml: gh-actions/templates/windows.yml
-  csd-html:
-    remote: ssh://git@github.com/metanorma/csd-html
-    branch: master
-    files:
-      .github/workflows/macos.yml: gh-actions/master/macos.yml
-      .github/workflows/ubuntu.yml: gh-actions/master/ubuntu.yml
-      .github/workflows/windows.yml: gh-actions/master/windows.yml
   relaton-iev:
     remote: ssh://git@github.com/relaton/relaton-iev
     branch: master
@@ -468,6 +477,14 @@ repositories:
       .github/workflows/macos.yml: gh-actions/master/macos.yml
       .github/workflows/ubuntu.yml: gh-actions/master/ubuntu.yml
       .github/workflows/windows.yml: gh-actions/master/windows.yml
+  reeper:
+    remote: ssh://git@github.com/metanorma/reeper
+    branch: master
+    files:
+      .github/workflows/macos.yml: gh-actions/master/macos.yml
+      .github/workflows/ubuntu.yml: gh-actions/master/ubuntu.yml
+      .github/workflows/windows.yml: gh-actions/master/windows.yml
+
 
 groups:
   converter:
@@ -480,7 +497,6 @@ groups:
   - tex2mn
   - unicode2latex
   processor:
-  - metanorma-acme
   - metanorma-cli
   - metanorma-csa
   - metanorma-csd
@@ -501,9 +517,11 @@ groups:
   - metanorma-standoc
   - metanorma-un
   - metanorma-vsd
+  - metanorma-generic
+  - metanorma-iho
   metanorma:
   - metanorma
-  - metanorma-acme
+  - metanorma-generic
   - metanorma-build-scripts
   - metanorma-cli
   - metanorma-csa
@@ -531,6 +549,7 @@ groups:
   - metanorma-model-rsd
   - metanorma-model-standoc
   - metanorma-model-un
+  - metanorma-model-iho
   - metanorma-mpfd
   - metanorma-mrr-samples
   - metanorma-nist
@@ -545,6 +564,7 @@ groups:
   - metanorma-standoc
   - metanorma-un
   - metanorma-vsd
+  - metanorma-iho
   - metanorma-windows-setup
 
   model:
@@ -561,7 +581,6 @@ groups:
   - metanorma-model-standoc
   - metanorma-model-un
   - basicdoc-models
-  - resolution-model
   - metanorma-requirements-models
 
   infrastructure:
@@ -590,10 +609,11 @@ groups:
   - mn-samples-ietf
   - mn-samples-iso
   - mn-samples-itu
-  - mn-samples-mpf
+  - mn-samples-mpfa
   - mn-samples-ogc
   - mn-samples-tex-iso
   - mn-samples-un
+  - mn-samples-iho
   setup:
   - metanorma-macos-setup
   - metanorma-windows-setup
