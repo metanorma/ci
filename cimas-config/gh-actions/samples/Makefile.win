@@ -1,47 +1,50 @@
 #!make
-SHELL := /bin/bash
+SHELL := cmd
 # Ensure the xml2rfc cache directory exists locally
-IGNORE := $(shell mkdir -p $(HOME)/.cache/xml2rfc)
+IGNORE := $(shell md $(USERPROFILE)\.cache\xml2rfc)
 
 SRC := $(lastword $(shell yq r metanorma.yml metanorma.source.files))
 
 ifeq ($(SRC),null)
 SRC :=
 endif
-ifeq ($(SRC),ll)
-SRC :=
-endif
 
 ifeq ($(SRC),)
-BUILT := $(shell yq r metanorma.yml metanorma.source.built_targets | cut -d ':' -f 1 | tr -s '\n' ' ')
+BUILT := $(subst ${ },${\n},$(shell yq r metanorma.yml metanorma.source.built_targets | cut -d ":" -f 1))
 
 ifeq ($(BUILT),null)
 SRC :=
 endif
-ifeq ($(BUILT),ll)
+ifeq ($(BUILT),)
 SRC :=
 endif
 
-ifeq ($(BUILT),)
+ifeq ($(SRC),)
 SRC := $(filter-out README.adoc, $(wildcard sources/*.adoc))
 else
 XML := $(patsubst sources/%,documents/%,$(BUILT))
 endif
 endif
 
-FORMATS := $(shell yq r metanorma.yml metanorma.formats | tr -d '[:space:]' | tr -s '-' ' ')
+$(info "SRC=$(SRC)")
+
+FORMATS := $(subst ${-},${ },$(strip $(shell yq r metanorma.yml metanorma.formats)))
+ifeq ($(FORMATS),null)
+FORMATS :=
+endif
 ifeq ($(FORMATS),)
 FORMAT_MARKER := mn-output-
-FORMATS := $(shell grep "$(FORMAT_MARKER)" $(SRC) | cut -f 2 -d " " | tr "," "\\n" | sort | uniq | tr "\\n" " ")
+FORMATS := $(subst ${\n},${ },$(shell grep "$(FORMAT_MARKER)" $(SRC) | cut -f 2 -d " " | tr "," "\n" | sort | uniq))
 endif
 
 XML  ?= $(patsubst sources/%,documents/%,$(patsubst %.adoc,%.xml,$(SRC)))
 HTML := $(patsubst %.xml,%.html,$(XML))
 
 ifdef METANORMA_DOCKER
-  PREFIX_CMD := echo "Running via docker..."; docker run -v "$$(pwd)":/metanorma/ $(METANORMA_DOCKER)
+  PREFIX_CMD := echo "Running via docker..." & docker run -v "$$(pwd)":/metanorma/ $(METANORMA_DOCKER)
+
 else
-  PREFIX_CMD := echo "Running locally..."; bundle exec
+  PREFIX_CMD := echo "Running locally..." & bundle exec
 endif
 
 _OUT_FILES := $(foreach FORMAT,$(FORMATS),$(shell echo $(FORMAT) | tr '[:lower:]' '[:upper:]'))
@@ -57,34 +60,38 @@ all: documents.html
 	$(call print_vars)
 
 documents:
-	mkdir -p $@
+	setlocal enableextensions & md $@ & endlocal
 
 documents/%.html: documents/%.xml | documents
 	${PREFIX_CMD} metanorma $<
 
 documents/%.xml: sources/%.xml | documents
-	mv $< $@
+	move "$(subst /,\,$<)" "$(subst /,\,$@)"
 
 # Build canonical XML output
 # If XML file is provided, copy it over
 # Otherwise, build the xml using adoc
 sources/%.xml: | bundle
-	BUILT_TARGET="$(shell yq r metanorma.yml metanorma.source.built_targets[$@])"; \
-	if [ "$$BUILT_TARGET" = "" ] || [ "$$BUILT_TARGET" = "null" ]; then \
-		BUILT_TARGET=$@; \
-		$(PREFIX_CMD) metanorma -x xml "$${BUILT_TARGET//xml/adoc}"; \
-	else \
-		if [ -f "$$BUILT_TARGET" ] && [ "$${BUILT_TARGET##*.}" == "xml" ]; then \
-			cp "$$BUILT_TARGET" $@; \
-		else \
-			$(PREFIX_CMD) metanorma -x xml $$BUILT_TARGET; \
-			cp "$${BUILT_TARGET//adoc/xml}" $@; \
-		fi \
-	fi
+	$(eval BUILT_TARGET := $(subst /,\,$(shell yq r metanorma.yml metanorma.source.built_targets[$@])))
+	if "$(BUILT_TARGET)" == "null" ( \
+		$(PREFIX_CMD) metanorma -x xml "$(subst xml,adoc,$@)" \
+	) else ( \
+		if exist "$(BUILT_TARGET)" ( \
+			if "$(suffix $(BUILT_TARGET))" == ".xml" ( \
+				copy "$(BUILT_TARGET)" "$(subst /,\,$@)" \
+			) else ( \
+				$(PREFIX_CMD) metanorma $(BUILT_TARGET) & \
+				copy "$(subst adoc,xml,$(BUILT_TARGET))" "$(subst /,\,$@)" \
+			) \
+		) else ( \
+			$(PREFIX_CMD) metanorma $(BUILT_TARGET) & \
+			copy "$(subst adoc,xml,$(BUILT_TARGET))" "$(subst /,\,$@)" \
+		) \
+	)
 
 documents.rxl: $(XML) $(HTML)
 	${PREFIX_CMD} relaton concatenate \
-	  -t "$(shell yq r metanorma.yml relaton.collection.name)" \
+		-t "$(shell yq r metanorma.yml relaton.collection.name)" \
 		-g "$(shell yq r metanorma.yml relaton.collection.organization)" \
 		documents $@
 
@@ -97,10 +104,10 @@ define FORMAT_TASKS
 OUT_FILES-$(FORMAT) := $($(shell echo $(FORMAT) | tr '[:lower:]' '[:upper:]'))
 
 open-$(FORMAT):
-	open $$(OUT_FILES-$(FORMAT))
+	"$$(OUT_FILES-$(FORMAT))"
 
 clean-$(FORMAT):
-	rm -f $$(OUT_FILES-$(FORMAT))
+	del /q $$(OUT_FILES-$(FORMAT))
 
 $(FORMAT): clean-$(FORMAT) $$(OUT_FILES-$(FORMAT))
 
@@ -113,7 +120,10 @@ $(foreach FORMAT,$(FORMATS),$(eval $(FORMAT_TASKS)))
 open: open-html
 
 clean:
-	rm -rf documents documents.{html,rxl} published *_images $(OUT_FILES)
+	rm -rf $(OUT_FILES)
+	del /q documents published
+	del /q *_images
+	del /q documents.*
 
 bundle:
 ifndef METANORMA_DOCKER
@@ -150,13 +160,16 @@ endef
 
 $(foreach FORMAT,$(FORMATS),$(eval $(WATCH_TASKS)))
 
+ifndef PORT
+override PORT = 8123
+endif
+
 serve: $(NODE_BIN_DIR)/live-server revealjs-css reveal.js
-	export PORT=$${PORT:-8123} ; \
-	port=$${PORT} ; \
-	for html in $(HTML); do \
-		$< --entry-file=$$html --port=$${port} --ignore="*.html,*.xml,Makefile,Gemfile.*,package.*.json" --wait=1000 & \
-		port=$$(( port++ )) ;\
-	done
+	set port=$(PORT) & \
+	for /r %%html in $(HTML) do ( \
+		$< --entry-file=%%html --port=%port% --ignore="*.html,*.xml,Makefile,Gemfile.*,package.*.json" --wait=1000 & \
+		set /A port=%port%+1 \
+	)
 
 watch-serve: $(NODE_BIN_DIR)/run-p
 	$< watch serve
@@ -168,6 +181,7 @@ watch-serve: $(NODE_BIN_DIR)/run-p
 publish: published
 
 published: documents.html
-	mkdir -p $@ && \
-	cp -a documents $@/ && \
-	cp $< $@/index.html;
+	setlocal enableextensions & md $@ & endlocal
+	copy documents $@/
+	copy $< $@/index.html
+	if exist "source\images" xcopy /E source\images $@
