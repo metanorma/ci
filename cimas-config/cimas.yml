@@ -436,6 +436,16 @@ repositories:
       .github/workflows/windows.yml: gh-actions/samples/windows.yml
       Makefile: gh-actions/samples/Makefile
       Makefile.win: gh-actions/samples/Makefile.win
+  csa-caiq:
+    remote: ssh://git@github.com/metanorma/csa-caiq
+    branch: master
+    files:
+      .github/workflows/docker.yml: gh-actions/samples/docker.yml
+      .github/workflows/macos.yml: gh-actions/samples/macos.yml
+      .github/workflows/ubuntu.yml: gh-actions/samples/ubuntu.yml
+      .github/workflows/windows.yml: gh-actions/samples/windows.yml
+      Makefile.main: gh-actions/samples/Makefile
+      Makefile.win.main: gh-actions/samples/Makefile.win
   metanorma-generic:
     remote: ssh://git@github.com/metanorma/metanorma-generic
     branch: master
@@ -457,7 +467,6 @@ repositories:
       .github/workflows/macos.yml: gh-actions/plantuml/macos.yml
       .github/workflows/ubuntu.yml: gh-actions/plantuml/ubuntu.yml
       .github/workflows/windows.yml: gh-actions/plantuml/windows.yml
-    # rfc2mn: unique config
   ogc-tcpnp:
     remote: ssh://git@github.com/metanorma/ogc-tcpnp
     branch: master
@@ -492,6 +501,12 @@ repositories:
     files:
       .github/workflows/defaults.yml: gh-actions/templates/defaults.yml
       .github/workflows/windows.yml: gh-actions/templates/windows.yml
+  mn-templates-iec:
+    remote: ssh://git@github.com/metanorma/mn-templates-iec
+    branch: master
+    files:
+      .github/workflows/defaults.yml: gh-actions/templates/defaults.yml
+      .github/workflows/windows.yml: gh-actions/templates/windows.yml
   relaton-iev:
     remote: ssh://git@github.com/relaton/relaton-iev
     branch: master
@@ -506,6 +521,60 @@ repositories:
       .github/workflows/macos.yml: gh-actions/master/macos.yml
       .github/workflows/ubuntu.yml: gh-actions/master/ubuntu.yml
       .github/workflows/windows.yml: gh-actions/master/windows.yml
+  metanorma-registry:
+    remote: ssh://git@github.com/metanorma/metanorma-registry
+    branch: master
+    files:
+      .github/workflows/macos.yml: gh-actions/master/macos.yml
+      .github/workflows/ubuntu.yml: gh-actions/master/ubuntu.yml
+      .github/workflows/windows.yml: gh-actions/master/windows.yml
+  lapidist:
+    remote: ssh://git@github.com/metanorma/lapidist
+    branch: master
+    files:
+      .github/workflows/macos.yml: gh-actions/master/macos.yml
+      .github/workflows/ubuntu.yml: gh-actions/master/ubuntu.yml
+      .github/workflows/windows.yml: gh-actions/master/windows.yml
+  rfc-divination-cfapi:
+    remote: ssh://git@github.com/metanorma/rfc-divination-cfapi
+    branch: master
+    files:
+      .github/workflows/docker.yml: gh-actions/samples/docker.yml
+      .github/workflows/macos.yml: gh-actions/samples/macos.yml
+      .github/workflows/ubuntu.yml: gh-actions/samples/ubuntu.yml
+      .github/workflows/windows.yml: gh-actions/samples/windows.yml
+      Makefile: gh-actions/asciirfc/Makefile
+      Makefile.win: gh-actions/asciirfc/Makefile.win
+  rfc-camelot-holy-grenade:
+    remote: ssh://git@github.com/metanorma/rfc-camelot-holy-grenade
+    branch: master
+    files:
+      .github/workflows/docker.yml: gh-actions/samples/docker.yml
+      .github/workflows/macos.yml: gh-actions/samples/macos.yml
+      .github/workflows/ubuntu.yml: gh-actions/samples/ubuntu.yml
+      .github/workflows/windows.yml: gh-actions/samples/windows.yml
+      Makefile: gh-actions/asciirfc/Makefile
+      Makefile.win: gh-actions/asciirfc/Makefile.win
+  rfc-asciidoc-rfc:
+    remote: ssh://git@github.com/metanorma/rfc-asciidoc-rfc
+    branch: master
+    files:
+      .github/workflows/docker.yml: gh-actions/samples/docker.yml
+      .github/workflows/macos.yml: gh-actions/samples/macos.yml
+      .github/workflows/ubuntu.yml: gh-actions/samples/ubuntu.yml
+      .github/workflows/windows.yml: gh-actions/samples/windows.yml
+      Makefile: gh-actions/asciirfc/Makefile
+      Makefile.win: gh-actions/asciirfc/Makefile.win
+  rfc-asciirfc-minimal:
+    remote: ssh://git@github.com/metanorma/rfc-asciirfc-minimal
+    branch: master
+    files:
+      .github/workflows/docker.yml: gh-actions/samples/docker.yml
+      .github/workflows/macos.yml: gh-actions/samples/macos.yml
+      .github/workflows/ubuntu.yml: gh-actions/samples/ubuntu.yml
+      .github/workflows/windows.yml: gh-actions/samples/windows.yml
+      Makefile: gh-actions/asciirfc/Makefile
+      Makefile.win: gh-actions/asciirfc/Makefile.win
 
 
 groups:
@@ -657,3 +726,8 @@ groups:
   - latexml-snap
   docs:
   - hk-ogcio-infosec-docs
+  asciirfc:
+  - rfc-divination-cfapi
+  - rfc-camelot-holy-grenade
+  - rfc-asciidoc-rfc
+  - rfc-asciirfc-minimal
