@@ -26,7 +26,7 @@ REPO=$2
 USER=$3
 ACCESS_TOKEN=$4
 EVENT_TYPE=${5:-build_application}
-CLIENT_PAYLOAD=${6:-{}}
+CLIENT_PAYLOAD=${6:-"{}"}
 
 body="{ \"event_type\": \"${EVENT_TYPE}\", \"client_payload\": ${CLIENT_PAYLOAD} }"
 
@@ -35,4 +35,4 @@ curl -s -X POST \
   -H "Accept: application/vnd.github.everest-preview+json" \
   -H "Content-Type: application/json" \
   -d "$body" \
-  https://api.github.com/repos/${GITHUBID}/${REPO}/dispatches
+  "https://api.github.com/repos/${GITHUBID}/${REPO}/dispatches"

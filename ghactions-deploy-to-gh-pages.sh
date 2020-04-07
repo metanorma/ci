@@ -10,7 +10,6 @@ errx() {
   exit 1
 }
 
-SOURCE_BRANCH="master"
 TARGET_BRANCH="gh-pages"
 GH_PAGES_SOURCE=${1:-published}
 
@@ -31,14 +30,14 @@ main() {
 
   # Clone the existing $TARGET_BRANCH for this repo into $DEST_DIR/
   # Create a new empty branch if gh-pages doesn't exist yet (should only happen on first deploy)
-  git clone --depth 1 -b ${TARGET_BRANCH} ${SSH_REPO} ${DEST_DIR} || \
-    git init ${DEST_DIR}
+  git clone --depth 1 -b ${TARGET_BRANCH} "${SSH_REPO}" "${DEST_DIR}" || \
+    git init "${DEST_DIR}"
 
   # Adding contents within published/ to $DEST_DIR.
-  cd ${GITHUB_WORKSPACE}
-  cp -a ${GH_PAGES_SOURCE}/* ${DEST_DIR}/ || exit 0
+  cd "${GITHUB_WORKSPACE}"
+  cp -a "${GH_PAGES_SOURCE}/*" "${DEST_DIR}/" || exit 0
 
-  pushd ${DEST_DIR}
+  pushd "${DEST_DIR}"
   git config user.name "${GITHUB_ACTOR}"
   git config user.email "${GITHUB_ACTOR}@users.noreply.github.com"
 
@@ -69,6 +68,6 @@ main() {
   popd
 }
 
-main $@
+main "$@"
 
 exit 0

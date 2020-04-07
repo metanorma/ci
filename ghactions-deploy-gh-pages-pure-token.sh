@@ -10,7 +10,6 @@ errx() {
   exit 1
 }
 
-SOURCE_BRANCH="master"
 TARGET_BRANCH="gh-pages"
 
 main() {
