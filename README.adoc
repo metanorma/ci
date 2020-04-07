@@ -1,5 +1,7 @@
 = Metanorma Build Scripts
 
+![ubuntu](https://github.com/metanorma/metanorma-build-scripts/workflows/ubuntu/badge.svg)
+image:https://github.com/metanorma/metanorma-build-scripts/workflows/ubuntu/badge.svg["Lint Status", link="https://github.com/metanorma/metanorma-build-scripts/workflows/actions?workflow=ubuntu"]
 
 == Purpose
 
