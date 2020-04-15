@@ -11,7 +11,7 @@
 #
 # where GITHUB_ACCESS_TOKEN is personal access token that you created (it needs repo level access).
 
-if [ "$#" -lt 4 ] || [ "$#" -gt 5 ]; then
+if [ "$#" -lt 4 ] || [ "$#" -gt 6 ]; then
   if [ "$1" = "--help" ] ; then
     echo "Example:"
   else
