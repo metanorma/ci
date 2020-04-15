@@ -30,6 +30,8 @@ CLIENT_PAYLOAD=${6:-"{}"}
 
 body="{ \"event_type\": \"${EVENT_TYPE}\", \"client_payload\": ${CLIENT_PAYLOAD} }"
 
+echo "Trigger repository_dispatch for ${GITHUBID}/${REPO} with ${body}"
+
 curl -s -X POST \
   -u "${USER}:${ACCESS_TOKEN}" \
   -H "Accept: application/vnd.github.everest-preview+json" \
