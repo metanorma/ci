@@ -426,6 +426,13 @@ repositories:
       .github/workflows/windows.yml: gh-actions/samples/windows.yml
       Makefile: gh-actions/samples/Makefile
       Makefile.win: gh-actions/samples/Makefile.win
+  mn-samples-nist:
+    remote: ssh://git@github.com/metanorma/mn-samples-nist
+    branch: master
+    files:
+      .github/workflows/docker.yml: gh-actions/samples/docker.yml
+      Makefile: gh-actions/samples/Makefile
+      Makefile.win: gh-actions/samples/Makefile.win
   hk-ogcio-infosec-docs:
     remote: ssh://git@github.com/metanorma/hk-ogcio-infosec-docs
     branch: master
@@ -573,6 +580,13 @@ repositories:
       .github/workflows/macos.yml: gh-actions/samples/macos.yml
       .github/workflows/ubuntu.yml: gh-actions/samples/ubuntu.yml
       .github/workflows/windows.yml: gh-actions/samples/windows.yml
+      Makefile: gh-actions/asciirfc/Makefile
+      Makefile.win: gh-actions/asciirfc/Makefile.win
+  iso-10303:
+    remote: ssh://git@github.com/metanorma/iso-10303
+    branch: master
+    files:
+      .github/workflows/docker.yml: gh-actions/samples/docker.yml
       Makefile: gh-actions/asciirfc/Makefile
       Makefile.win: gh-actions/asciirfc/Makefile.win
 
