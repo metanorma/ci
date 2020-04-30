@@ -128,9 +128,9 @@ repositories:
     remote: ssh://git@github.com/metanorma/metanorma-ogc
     branch: master
     files:
-      .github/workflows/macos.yml: gh-actions/puppeteer/macos.yml
-      .github/workflows/ubuntu.yml: gh-actions/puppeteer/ubuntu.yml
-      .github/workflows/windows.yml: gh-actions/puppeteer/windows.yml
+      .github/workflows/macos.yml: gh-actions/master/macos.yml
+      .github/workflows/ubuntu.yml: gh-actions/master/ubuntu.yml
+      .github/workflows/windows.yml: gh-actions/master/windows.yml
   metanorma-m3d:
     remote: ssh://git@github.com/metanorma/metanorma-m3d
     branch: master
@@ -149,9 +149,9 @@ repositories:
     remote: ssh://git@github.com/metanorma/metanorma-csd
     branch: master
     files:
-      .github/workflows/macos.yml: gh-actions/puppeteer/macos.yml
-      .github/workflows/ubuntu.yml: gh-actions/puppeteer/ubuntu.yml
-      .github/workflows/windows.yml: gh-actions/puppeteer/windows.yml
+      .github/workflows/macos.yml: gh-actions/master/macos.yml
+      .github/workflows/ubuntu.yml: gh-actions/master/ubuntu.yml
+      .github/workflows/windows.yml: gh-actions/master/windows.yml
   metanorma-vsd:
     remote: ssh://git@github.com/metanorma/metanorma-vsd
     branch: master
@@ -236,16 +236,16 @@ repositories:
     remote: ssh://git@github.com/metanorma/metanorma-nist
     branch: master
     files:
-      .github/workflows/macos.yml: gh-actions/puppeteer/macos.yml
-      .github/workflows/ubuntu.yml: gh-actions/puppeteer/ubuntu.yml
-      .github/workflows/windows.yml: gh-actions/puppeteer/windows.yml
+      .github/workflows/macos.yml: gh-actions/master/macos.yml
+      .github/workflows/ubuntu.yml: gh-actions/master/ubuntu.yml
+      .github/workflows/windows.yml: gh-actions/master/windows.yml
   metanorma-iec:
     remote: ssh://git@github.com/metanorma/metanorma-iec
     branch: master
     files:
-      .github/workflows/macos.yml: gh-actions/puppeteer/macos.yml
-      .github/workflows/ubuntu.yml: gh-actions/puppeteer/ubuntu.yml
-      .github/workflows/windows.yml: gh-actions/puppeteer/windows.yml
+      .github/workflows/macos.yml: gh-actions/master/macos.yml
+      .github/workflows/ubuntu.yml: gh-actions/master/ubuntu.yml
+      .github/workflows/windows.yml: gh-actions/master/windows.yml
   metanorma-ietf:
     remote: ssh://git@github.com/metanorma/metanorma-ietf
     branch: master
@@ -431,6 +431,7 @@ repositories:
     branch: master
     files:
       .github/workflows/docker.yml: gh-actions/samples/docker.yml
+      .github/workflows/windows.yml: gh-actions/samples/windows.yml
       Makefile: gh-actions/samples/Makefile
       Makefile.win: gh-actions/samples/Makefile.win
   hk-ogcio-infosec-docs:
@@ -457,9 +458,9 @@ repositories:
     remote: ssh://git@github.com/metanorma/metanorma-generic
     branch: master
     files:
-      .github/workflows/macos.yml: gh-actions/puppeteer/macos.yml
-      .github/workflows/ubuntu.yml: gh-actions/puppeteer/ubuntu.yml
-      .github/workflows/windows.yml: gh-actions/puppeteer/windows.yml
+      .github/workflows/macos.yml: gh-actions/master/macos.yml
+      .github/workflows/ubuntu.yml: gh-actions/master/ubuntu.yml
+      .github/workflows/windows.yml: gh-actions/master/windows.yml
   iev:
     remote: ssh://git@github.com/metanorma/iev
     branch: master
@@ -471,9 +472,9 @@ repositories:
     remote: ssh://git@github.com/metanorma/metanorma-csa
     branch: master
     files:
-      .github/workflows/macos.yml: gh-actions/plantuml/macos.yml
-      .github/workflows/ubuntu.yml: gh-actions/plantuml/ubuntu.yml
-      .github/workflows/windows.yml: gh-actions/plantuml/windows.yml
+      .github/workflows/macos.yml: gh-actions/master/macos.yml
+      .github/workflows/ubuntu.yml: gh-actions/master/ubuntu.yml
+      .github/workflows/windows.yml: gh-actions/master/windows.yml
   ogc-tcpnp:
     remote: ssh://git@github.com/metanorma/ogc-tcpnp
     branch: master
@@ -510,6 +511,12 @@ repositories:
       .github/workflows/windows.yml: gh-actions/templates/windows.yml
   mn-templates-iec:
     remote: ssh://git@github.com/metanorma/mn-templates-iec
+    branch: master
+    files:
+      .github/workflows/defaults.yml: gh-actions/templates/defaults.yml
+      .github/workflows/windows.yml: gh-actions/templates/windows.yml
+  mn-templates-nist:
+    remote: ssh://git@github.com/metanorma/mn-templates-nist
     branch: master
     files:
       .github/workflows/defaults.yml: gh-actions/templates/defaults.yml
@@ -582,14 +589,72 @@ repositories:
       .github/workflows/windows.yml: gh-actions/samples/windows.yml
       Makefile: gh-actions/asciirfc/Makefile
       Makefile.win: gh-actions/asciirfc/Makefile.win
+  iso-690:
+    remote: ssh://git@github.com/metanorma/iso-690
+    branch: master
+    files:
+      .github/workflows/docker.yml: gh-actions/samples/docker.yml
+      Makefile: gh-actions/samples/Makefile
+  iso-8000-51:
+    remote: ssh://git@github.com/metanorma/iso-8000-51
+    branch: master
+    files:
+      .github/workflows/docker.yml: gh-actions/samples/docker.yml
+      Makefile: gh-actions/samples/Makefile
+  iso-8000-100-ed2:
+    remote: ssh://git@github.com/metanorma/iso-8000-100-ed2
+    branch: master
+    files:
+      .github/workflows/docker.yml: gh-actions/samples/docker.yml
+      Makefile: gh-actions/samples/Makefile
+  iso-8601-1:
+    remote: ssh://git@github.com/metanorma/iso-8601-1
+    branch: master
+    files:
+      .github/workflows/docker.yml: gh-actions/samples/docker.yml
+      Makefile: gh-actions/samples/Makefile
+  iso-8601-2:
+    remote: ssh://git@github.com/metanorma/iso-8601-2
+    branch: master
+    files:
+      .github/workflows/docker.yml: gh-actions/samples/docker.yml
+      Makefile: gh-actions/samples/Makefile
   iso-10303:
     remote: ssh://git@github.com/metanorma/iso-10303
     branch: master
     files:
       .github/workflows/docker.yml: gh-actions/samples/docker.yml
-      Makefile: gh-actions/asciirfc/Makefile
-      Makefile.win: gh-actions/asciirfc/Makefile.win
-
+      Makefile: gh-actions/samples/Makefile
+  iso-10303-2:
+    remote: ssh://git@github.com/metanorma/iso-10303-2
+    branch: master
+    files:
+      .github/workflows/docker.yml: gh-actions/samples/docker.yml
+      Makefile: gh-actions/samples/Makefile
+  iso-19115-3:
+    remote: ssh://git@github.com/metanorma/iso-19115-3
+    branch: master
+    files:
+      .github/workflows/docker.yml: gh-actions/samples/docker.yml
+      Makefile: gh-actions/samples/Makefile
+  iso-19626-1:
+    remote: ssh://git@github.com/metanorma/iso-19626-1
+    branch: master
+    files:
+      .github/workflows/docker.yml: gh-actions/samples/docker.yml
+      Makefile: gh-actions/samples/Makefile
+  iso-tc184-sc4:
+    remote: ssh://git@github.com/metanorma/iso-tc184-sc4
+    branch: master
+    files:
+      .github/workflows/docker.yml: gh-actions/samples/docker.yml
+      Makefile: gh-actions/samples/Makefile
+  DGGS2ISO-19170:
+    remote: ssh://git@github.com/metanorma/DGGS2ISO-19170
+    branch: master
+    files:
+      .github/workflows/docker.yml: gh-actions/samples/docker.yml
+      Makefile: gh-actions/samples/Makefile
 
 groups:
   converter:
@@ -719,6 +784,7 @@ groups:
   - mn-samples-tex-iso
   - mn-samples-un
   - mn-samples-iho
+  - mn-samples-nist
   setup:
   - metanorma-macos-setup
   - metanorma-windows-setup
@@ -735,13 +801,30 @@ groups:
   - mn-templates-iso
   - mn-templates-itu
   - mn-templates-ogc
+  - mn-templates-nist
   snap:
   - metanorma-snap
   - latexml-snap
   docs:
   - hk-ogcio-infosec-docs
+  - ogc-wfs
+  - ogc-tcpnp
+  - csa-caiq
   asciirfc:
   - rfc-divination-cfapi
   - rfc-camelot-holy-grenade
   - rfc-asciidoc-rfc
   - rfc-asciirfc-minimal
+  private:
+  - iso-690
+  - iso-8000-51
+  - iso-8000-100-ed2
+  - iso-8601-1
+  - iso-8601-2
+  - iso-10303
+  - iso-10303-2
+  - iso-19115-3
+  - iso-19626-1
+  - iso-tc184-sc4
+  - DGGS2ISO-19170
+  - mn-samples-nist
