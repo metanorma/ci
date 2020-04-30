@@ -63,6 +63,7 @@ documents/%.html: documents/%.xml | documents
 	${PREFIX_CMD} metanorma $<
 
 documents/%.xml: sources/%.xml | documents
+	mkdir -p $(dir $@)
 	mv $< $@
 
 # Build canonical XML output
