@@ -135,9 +135,9 @@ repositories:
     remote: ssh://git@github.com/metanorma/metanorma-m3d
     branch: master
     files:
-      .github/workflows/macos.yml: gh-actions/puppeteer/macos.yml
-      .github/workflows/ubuntu.yml: gh-actions/puppeteer/ubuntu.yml
-      .github/workflows/windows.yml: gh-actions/puppeteer/windows.yml
+      .github/workflows/macos.yml: gh-actions/master/macos.yml
+      .github/workflows/ubuntu.yml: gh-actions/master/ubuntu.yml
+      .github/workflows/windows.yml: gh-actions/master/windows.yml
   cnccs:
     remote: ssh://git@github.com/metanorma/cnccs
     branch: master
@@ -156,9 +156,9 @@ repositories:
     remote: ssh://git@github.com/metanorma/metanorma-vsd
     branch: master
     files:
-      .github/workflows/macos.yml: gh-actions/puppeteer/macos.yml
-      .github/workflows/ubuntu.yml: gh-actions/puppeteer/ubuntu.yml
-      .github/workflows/windows.yml: gh-actions/puppeteer/windows.yml
+      .github/workflows/macos.yml: gh-actions/master/macos.yml
+      .github/workflows/ubuntu.yml: gh-actions/master/ubuntu.yml
+      .github/workflows/windows.yml: gh-actions/master/windows.yml
   metanorma-rsd:
     remote: ssh://git@github.com/metanorma/metanorma-rsd
     branch: master
@@ -191,9 +191,9 @@ repositories:
     remote: ssh://git@github.com/metanorma/metanorma-mpfd
     branch: master
     files:
-      .github/workflows/macos.yml: gh-actions/puppeteer/macos.yml
-      .github/workflows/ubuntu.yml: gh-actions/puppeteer/ubuntu.yml
-      .github/workflows/windows.yml: gh-actions/puppeteer/windows.yml
+      .github/workflows/macos.yml: gh-actions/master/macos.yml
+      .github/workflows/ubuntu.yml: gh-actions/master/ubuntu.yml
+      .github/workflows/windows.yml: gh-actions/master/windows.yml
   csa-ccm-tools:
     remote: ssh://git@github.com/metanorma/csa-ccm-tools
     branch: master
@@ -271,9 +271,9 @@ repositories:
     remote: ssh://git@github.com/metanorma/metanorma-un
     branch: master
     files:
-      .github/workflows/macos.yml: gh-actions/puppeteer/macos.yml
-      .github/workflows/ubuntu.yml: gh-actions/puppeteer/ubuntu.yml
-      .github/workflows/windows.yml: gh-actions/puppeteer/windows.yml
+      .github/workflows/macos.yml: gh-actions/master/macos.yml
+      .github/workflows/ubuntu.yml: gh-actions/master/ubuntu.yml
+      .github/workflows/windows.yml: gh-actions/master/windows.yml
   reverse_adoc:
     remote: ssh://git@github.com/metanorma/reverse_adoc
     branch: master
@@ -309,9 +309,9 @@ repositories:
     remote: ssh://git@github.com/metanorma/metanorma-itu
     branch: master
     files:
-      .github/workflows/macos.yml: gh-actions/puppeteer/macos.yml
-      .github/workflows/ubuntu.yml: gh-actions/puppeteer/ubuntu.yml
-      .github/workflows/windows.yml: gh-actions/puppeteer/windows.yml
+      .github/workflows/macos.yml: gh-actions/master/macos.yml
+      .github/workflows/ubuntu.yml: gh-actions/master/ubuntu.yml
+      .github/workflows/windows.yml: gh-actions/master/windows.yml
   metanorma:
     remote: ssh://git@github.com/metanorma/metanorma
     branch: master
@@ -655,6 +655,15 @@ repositories:
     files:
       .github/workflows/docker.yml: gh-actions/samples/docker.yml
       Makefile: gh-actions/samples/Makefile
+  mn-native-pdf-nist:
+    remote: ssh://git@github.com/metanorma/mn-native-pdf-nist
+    branch: master
+    files:
+      .github/workflows/docker.yml: gh-actions/samples/docker.yml
+      .github/workflows/windows.yml: gh-actions/samples/windows.yml
+      Makefile: gh-actions/asciirfc/Makefile
+      Makefile.win: gh-actions/asciirfc/Makefile.win
+
 
 groups:
   converter:
@@ -670,7 +679,6 @@ groups:
   - metanorma-cli
   - metanorma-csa
   - metanorma-csd
-  - metanorma-docker
   - metanorma-gb
   - metanorma-iec
   - metanorma-ietf
@@ -680,10 +688,7 @@ groups:
   - metanorma-mpfd
   - metanorma-nist
   - metanorma-ogc
-  - metanorma-registry
-  - metanorma-release
   - metanorma-rsd
-  - metanorma-snap
   - metanorma-standoc
   - metanorma-un
   - metanorma-vsd
@@ -735,8 +740,6 @@ groups:
   - metanorma-un
   - metanorma-vsd
   - metanorma-iho
-  - metanorma-windows-setup
-
   model:
   - metanorma-model-csa
   - metanorma-model-csd
@@ -781,7 +784,6 @@ groups:
   - mn-samples-itu
   - mn-samples-mpfa
   - mn-samples-ogc
-  - mn-samples-tex-iso
   - mn-samples-un
   - mn-samples-iho
   - mn-samples-nist
@@ -828,3 +830,8 @@ groups:
   - iso-tc184-sc4
   - DGGS2ISO-19170
   - mn-samples-nist
+  apps:
+  - packed-mn
+  - chocolatey-metanorma
+  - homebrew-metanorma
+  - metanorma-snap
