@@ -489,38 +489,93 @@ repositories:
     remote: ssh://git@github.com/metanorma/mn-templates-csd
     branch: master
     files:
-      .github/workflows/defaults.yml: gh-actions/templates/defaults.yml
-      .github/workflows/windows.yml: gh-actions/templates/windows.yml
+      .github/workflows/test.yml: gh-actions/templates/test.yml
+      common/.gitignore: gh-actions/templates/common/.gitignore
+      common/Gemfile: gh-actions/templates/common/Gemfile
+      common/Makefile: gh-actions/samples/Makefile
+      common/Makefile.win: gh-actions/samples/Makefile.win
+      common/.github/workflows/docker.yml: gh-actions/samples/docker.yml
+      common/.github/workflows/macos.yml: gh-actions/samples/macos.yml
+      common/.github/workflows/ubuntu.yml: gh-actions/samples/ubuntu.yml
+      common/.github/workflows/windows.yml: gh-actions/samples/windows.yml
   mn-templates-ogc:
     remote: ssh://git@github.com/metanorma/mn-templates-ogc
     branch: master
     files:
-      .github/workflows/defaults.yml: gh-actions/templates/defaults.yml
-      .github/workflows/windows.yml: gh-actions/templates/windows.yml
+      .github/workflows/test.yml: gh-actions/templates/test.yml
+      common/.gitignore: gh-actions/templates/common/.gitignore
+      common/Gemfile: gh-actions/templates/common/Gemfile
+      common/Makefile: gh-actions/samples/Makefile
+      common/Makefile.win: gh-actions/samples/Makefile.win
+      common/.github/workflows/docker.yml: gh-actions/samples/docker.yml
+      common/.github/workflows/macos.yml: gh-actions/samples/macos.yml
+      common/.github/workflows/ubuntu.yml: gh-actions/samples/ubuntu.yml
+      common/.github/workflows/windows.yml: gh-actions/samples/windows.yml
   mn-templates-iso:
     remote: ssh://git@github.com/metanorma/mn-templates-iso
     branch: master
     files:
-      .github/workflows/defaults.yml: gh-actions/templates/defaults.yml
-      .github/workflows/windows.yml: gh-actions/templates/windows.yml
+      .github/workflows/test.yml: gh-actions/templates/test.yml
+      common/.gitignore: gh-actions/templates/common/.gitignore
+      common/Gemfile: gh-actions/templates/common/Gemfile
+      common/Makefile: gh-actions/samples/Makefile
+      common/Makefile.win: gh-actions/samples/Makefile.win
+      common/.github/workflows/docker.yml: gh-actions/samples/docker.yml
+      common/.github/workflows/macos.yml: gh-actions/samples/macos.yml
+      common/.github/workflows/ubuntu.yml: gh-actions/samples/ubuntu.yml
+      common/.github/workflows/windows.yml: gh-actions/samples/windows.yml
   mn-templates-ietf:
     remote: ssh://git@github.com/metanorma/mn-templates-ietf
     branch: master
     files:
-      .github/workflows/defaults.yml: gh-actions/templates/defaults.yml
-      .github/workflows/windows.yml: gh-actions/templates/windows.yml
+      .github/workflows/test.yml: gh-actions/templates/test.yml
+      common/.gitignore: gh-actions/templates/common/.gitignore
+      common/Gemfile: gh-actions/templates/common/Gemfile
+      common/Makefile: gh-actions/samples/Makefile
+      common/Makefile.win: gh-actions/samples/Makefile.win
+      common/.github/workflows/docker.yml: gh-actions/samples/docker.yml
+      common/.github/workflows/macos.yml: gh-actions/samples/macos.yml
+      common/.github/workflows/ubuntu.yml: gh-actions/samples/ubuntu.yml
+      common/.github/workflows/windows.yml: gh-actions/samples/windows.yml
   mn-templates-iec:
     remote: ssh://git@github.com/metanorma/mn-templates-iec
     branch: master
     files:
-      .github/workflows/defaults.yml: gh-actions/templates/defaults.yml
-      .github/workflows/windows.yml: gh-actions/templates/windows.yml
+      .github/workflows/test.yml: gh-actions/templates/test.yml
+      common/.gitignore: gh-actions/templates/common/.gitignore
+      common/Gemfile: gh-actions/templates/common/Gemfile
+      common/Makefile: gh-actions/samples/Makefile
+      common/Makefile.win: gh-actions/samples/Makefile.win
+      common/.github/workflows/docker.yml: gh-actions/samples/docker.yml
+      common/.github/workflows/macos.yml: gh-actions/samples/macos.yml
+      common/.github/workflows/ubuntu.yml: gh-actions/samples/ubuntu.yml
+      common/.github/workflows/windows.yml: gh-actions/samples/windows.yml
+  mn-templates-itu:
+    remote: ssh://git@github.com/metanorma/mn-templates-itu
+    branch: master
+    files:
+      .github/workflows/test.yml: gh-actions/templates/test.yml
+      common/.gitignore: gh-actions/templates/common/.gitignore
+      common/Gemfile: gh-actions/templates/common/Gemfile
+      common/Makefile: gh-actions/samples/Makefile
+      common/Makefile.win: gh-actions/samples/Makefile.win
+      common/.github/workflows/docker.yml: gh-actions/samples/docker.yml
+      common/.github/workflows/macos.yml: gh-actions/samples/macos.yml
+      common/.github/workflows/ubuntu.yml: gh-actions/samples/ubuntu.yml
+      common/.github/workflows/windows.yml: gh-actions/samples/windows.yml
   mn-templates-nist:
     remote: ssh://git@github.com/metanorma/mn-templates-nist
     branch: master
     files:
-      .github/workflows/defaults.yml: gh-actions/templates/defaults.yml
-      .github/workflows/windows.yml: gh-actions/templates/windows.yml
+      .github/workflows/test.yml: gh-actions/templates/test.yml
+      common/.gitignore: gh-actions/templates/common/.gitignore
+      common/Gemfile: gh-actions/templates/common/Gemfile
+      common/Makefile: gh-actions/samples/Makefile
+      common/Makefile.win: gh-actions/samples/Makefile.win
+      common/.github/workflows/docker.yml: gh-actions/samples/docker.yml
+      common/.github/workflows/macos.yml: gh-actions/samples/macos.yml
+      common/.github/workflows/ubuntu.yml: gh-actions/samples/ubuntu.yml
+      common/.github/workflows/windows.yml: gh-actions/samples/windows.yml
   relaton-iev:
     remote: ssh://git@github.com/relaton/relaton-iev
     branch: master
@@ -830,6 +885,7 @@ groups:
   - iso-tc184-sc4
   - DGGS2ISO-19170
   - mn-samples-nist
+  - mn-native-pdf-nist
   apps:
   - packed-mn
   - chocolatey-metanorma

@@ -1,4 +1,4 @@
-name: windows
+name: test
 
 on:
   push:
@@ -6,13 +6,14 @@ on:
   pull_request:
 
 jobs:
-  test-windows:
-    name: Test on Ruby ${{ matrix.ruby }} Windows
-    runs-on: windows-latest
+  test-nix:
+    name: Test on Ruby ${{ matrix.ruby }}
     strategy:
       fail-fast: false
       matrix:
+        os: [ macos-latest, ubuntu-latest, windows-latest ]
         ruby: [ '2.6', '2.5', '2.4' ]
+    runs-on: ${{ matrix.os }}
     steps:
       - uses: actions/checkout@master
       - name: Use Ruby
@@ -20,7 +21,13 @@ jobs:
         with:
           ruby-version: ${{ matrix.ruby }}
           architecture: 'x64'
-      - name: Update gems
+      - name: Update gems *nix
+        if: matrix.os != 'windows-latest'
+        run: |
+          source doctypes.env
+          gem install metanorma-cli metanorma-$TYPE
+      - name: Update gems Windows
+        if: matrix.os == 'windows-latest'
         shell: pwsh
         run: |
           $docTypes = ConvertFrom-StringData (Get-Content ./doctypes.env -Raw)
@@ -29,9 +36,14 @@ jobs:
         uses: actions/setup-node@v1
         with:
           node-version: '12'
+      - name: Puppeteer prerequisties
+        if: matrix.os == 'ubuntu-latest'
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y libgbm1
       - name: Install Puppeteer
         run: |
-          npm install -g puppeteer@3.0.0
+          npm install -g puppeteer@3.0.1
       - name: Use Python
         uses: actions/setup-python@v1
         with:
@@ -40,7 +52,25 @@ jobs:
       - name: Install xml2rfc
         run: |
           pip install xml2rfc
-      - name: Metanorma compile
+      - name: Metanorma compile *nix
+        if: matrix.os != 'windows-latest'
+        run: |
+          source doctypes.env
+          for template in $DOCTYPES
+          do
+            metanorma new test/$template --type $TYPE --doctype $template --template . --overwrite
+            if [ -f test/${template}/document.adoc ]
+            then
+              metanorma compile test/${template}/document.adoc
+            else
+              for docfile in test/${template}/*.adoc
+              do
+                metanorma compile $docfile
+              done
+            fi
+          done
+      - name: Metanorma compile Windows
+        if: matrix.os == 'windows-latest'
         shell: pwsh
         run: |
           $ErrorActionPreference = "Stop" <# https://stackoverflow.com/a/16334189/902217 #>
