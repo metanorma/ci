@@ -434,6 +434,26 @@ repositories:
       .github/workflows/windows.yml: gh-actions/samples/windows.yml
       Makefile: gh-actions/samples/Makefile
       Makefile.win: gh-actions/samples/Makefile.win
+  mn-samples-m3aawg:
+    remote: ssh://git@github.com/metanorma/mn-samples-m3aawg
+    branch: master
+    files:
+      .github/workflows/docker.yml: gh-actions/samples/docker.yml
+      .github/workflows/macos.yml: gh-actions/samples/macos.yml
+      .github/workflows/ubuntu.yml: gh-actions/samples/ubuntu.yml
+      .github/workflows/windows.yml: gh-actions/samples/windows.yml
+      Makefile: gh-actions/samples/Makefile
+      Makefile.win: gh-actions/samples/Makefile.win
+  mn-samples-csa:
+    remote: ssh://git@github.com/metanorma/mn-samples-csa
+    branch: master
+    files:
+      .github/workflows/docker.yml: gh-actions/samples/docker.yml
+      .github/workflows/macos.yml: gh-actions/samples/macos.yml
+      .github/workflows/ubuntu.yml: gh-actions/samples/ubuntu.yml
+      .github/workflows/windows.yml: gh-actions/samples/windows.yml
+      Makefile: gh-actions/samples/Makefile
+      Makefile.win: gh-actions/samples/Makefile.win
   hk-ogcio-infosec-docs:
     remote: ssh://git@github.com/metanorma/hk-ogcio-infosec-docs
     branch: master
@@ -718,7 +738,13 @@ repositories:
       .github/workflows/windows.yml: gh-actions/samples/windows.yml
       Makefile: gh-actions/asciirfc/Makefile
       Makefile.win: gh-actions/asciirfc/Makefile.win
-
+  mn2pdf-ruby:
+    remote: ssh://git@github.com/metanorma/n2pdf-ruby
+    branch: master
+    files:
+      .github/workflows/macos.yml: gh-actions/master/macos.yml
+      .github/workflows/ubuntu.yml: gh-actions/master/ubuntu.yml
+      .github/workflows/windows.yml: gh-actions/master/windows.yml
 
 groups:
   converter:
@@ -730,6 +756,7 @@ groups:
   - rfc2mn
   - tex2mn
   - unicode2latex
+  - mn2pdf-ruby
   processor:
   - metanorma-cli
   - metanorma-csa
@@ -841,7 +868,9 @@ groups:
   - mn-samples-ogc
   - mn-samples-un
   - mn-samples-iho
+  - mn-samples-csa
   - mn-samples-nist
+  - mn-samples-m3aawg
   setup:
   - metanorma-macos-setup
   - metanorma-windows-setup
