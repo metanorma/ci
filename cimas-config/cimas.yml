@@ -739,7 +739,7 @@ repositories:
       Makefile: gh-actions/asciirfc/Makefile
       Makefile.win: gh-actions/asciirfc/Makefile.win
   mn2pdf-ruby:
-    remote: ssh://git@github.com/metanorma/n2pdf-ruby
+    remote: ssh://git@github.com/metanorma/mn2pdf-ruby
     branch: master
     files:
       .github/workflows/macos.yml: gh-actions/master/macos.yml
