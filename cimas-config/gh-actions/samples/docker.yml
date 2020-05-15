@@ -10,7 +10,7 @@ on:
       - .github/workflows/windows.yml
 
 jobs:
-  build:
+  test-docker:
     runs-on: ubuntu-latest
     container: docker://metanorma/mn
     steps:

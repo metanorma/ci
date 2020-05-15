@@ -7,6 +7,7 @@ on:
     paths-ignore:
       - .github/workflows/macos.yml
       - .github/workflows/ubuntu.yml
+
 jobs:
   test-windows:
     name: Test on PlantUML Windows
