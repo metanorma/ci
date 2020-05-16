@@ -17,7 +17,13 @@ jobs:
         experimental: [false]
         include:
           - ruby: '2.7'
-            os: [ macos-latest, ubuntu-latest, windows-latest ]
+            os: macos-latest
+            experimental: true
+          - ruby: '2.7'
+            os: ubuntu-latest
+            experimental: true
+          - ruby: '2.7'
+            os: windows-latest
             experimental: true
     runs-on: ${{ matrix.os }}
     steps:
