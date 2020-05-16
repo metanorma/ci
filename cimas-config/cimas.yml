@@ -596,13 +596,6 @@ repositories:
       common/.github/workflows/macos.yml: gh-actions/samples/macos.yml
       common/.github/workflows/ubuntu.yml: gh-actions/samples/ubuntu.yml
       common/.github/workflows/windows.yml: gh-actions/samples/windows.yml
-  relaton-iev:
-    remote: ssh://git@github.com/relaton/relaton-iev
-    branch: master
-    files:
-      .github/workflows/macos.yml: gh-actions/master/macos.yml
-      .github/workflows/ubuntu.yml: gh-actions/master/ubuntu.yml
-      .github/workflows/windows.yml: gh-actions/master/windows.yml
   reeper:
     remote: ssh://git@github.com/metanorma/reeper
     branch: master
