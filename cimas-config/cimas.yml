@@ -692,6 +692,7 @@ repositories:
     branch: master
     files:
       .github/workflows/docker.yml: gh-actions/samples/docker.yml
+      .gitlab-ci.yml: .gitlab-ci.yml
       Makefile: gh-actions/samples/Makefile
   iso-10303-2:
     remote: ssh://git@github.com/metanorma/iso-10303-2
@@ -723,14 +724,6 @@ repositories:
     files:
       .github/workflows/docker.yml: gh-actions/samples/docker.yml
       Makefile: gh-actions/samples/Makefile
-  mn-native-pdf-nist:
-    remote: ssh://git@github.com/metanorma/mn-native-pdf-nist
-    branch: master
-    files:
-      .github/workflows/docker.yml: gh-actions/samples/docker.yml
-      .github/workflows/windows.yml: gh-actions/samples/windows.yml
-      Makefile: gh-actions/asciirfc/Makefile
-      Makefile.win: gh-actions/asciirfc/Makefile.win
   mn2pdf-ruby:
     remote: ssh://git@github.com/metanorma/mn2pdf-ruby
     branch: master
@@ -907,7 +900,6 @@ groups:
   - iso-tc184-sc4
   - DGGS2ISO-19170
   - mn-samples-nist
-  - mn-native-pdf-nist
   apps:
   - packed-mn
   - chocolatey-metanorma
