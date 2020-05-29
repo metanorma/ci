@@ -32,7 +32,6 @@ jobs:
         uses: actions/setup-ruby@v1
         with:
           ruby-version: ${{ matrix.ruby }}
-          architecture: 'x64'
       - name: Update gems *nix
         if: matrix.os != 'windows-latest'
         run: |

@@ -27,7 +27,6 @@ jobs:
         uses: actions/setup-ruby@v1
         with:
           ruby-version: ${{ matrix.ruby }}
-          architecture: 'x64'
       - name: Install LibreOffice
         run: |
           choco install libreoffice-still
