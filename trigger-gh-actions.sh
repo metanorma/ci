@@ -26,12 +26,15 @@ REPO=$2
 USER=$3
 ACCESS_TOKEN=$4
 EVENT_TYPE=${5:-build_application}
-CLIENT_PAYLOAD=${6:-"{}"}
+CLIENT_PAYLOAD=${6:-null}
 
+# https://stackoverflow.com/questions/9733338/shell-script-remove-first-and-last-quote-from-a-variable
+CLIENT_PAYLOAD="${CLIENT_PAYLOAD%\"}"
+CLIENT_PAYLOAD="${CLIENT_PAYLOAD#\"}"
 
 body="{ \"event_type\": \"${EVENT_TYPE}\", \"client_payload\": ${CLIENT_PAYLOAD} }"
 
-echo "Trigger repository_dispatch for ${GITHUBID}/${REPO} with ${body} client_payload=${CLIENT_PAYLOAD} client_payload2=$CLIENT_PAYLOAD"
+echo "Trigger repository_dispatch for ${GITHUBID}/${REPO} with ${body} client_payload=${CLIENT_PAYLOAD}"
 
 curl -s -X POST \
   -u "${USER}:${ACCESS_TOKEN}" \
