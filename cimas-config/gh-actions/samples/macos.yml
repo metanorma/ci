@@ -8,6 +8,7 @@ on:
       - .github/workflows/docker.yml
       - .github/workflows/ubuntu.yml
       - .github/workflows/windows.yml
+      - Makefile.win
 
 jobs:
   test-macos:
