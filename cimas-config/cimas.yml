@@ -121,9 +121,9 @@ repositories:
     remote: ssh://git@github.com/metanorma/isodoc
     branch: master
     files:
-      .github/workflows/macos.yml: gh-actions/puppeteer/macos.yml
-      .github/workflows/ubuntu.yml: gh-actions/puppeteer/ubuntu.yml
-      .github/workflows/windows.yml: gh-actions/puppeteer/windows.yml
+      .github/workflows/macos.yml: gh-actions/master/macos.yml
+      .github/workflows/ubuntu.yml: gh-actions/master/ubuntu.yml
+      .github/workflows/windows.yml: gh-actions/master/windows.yml
   metanorma-ogc:
     remote: ssh://git@github.com/metanorma/metanorma-ogc
     branch: master
@@ -316,9 +316,9 @@ repositories:
     remote: ssh://git@github.com/metanorma/metanorma
     branch: master
     files:
-      .github/workflows/macos.yml: gh-actions/puppeteer/macos.yml
-      .github/workflows/ubuntu.yml: gh-actions/puppeteer/ubuntu.yml
-      .github/workflows/windows.yml: gh-actions/puppeteer/windows.yml
+      .github/workflows/macos.yml: gh-actions/master/macos.yml
+      .github/workflows/ubuntu.yml: gh-actions/master/ubuntu.yml
+      .github/workflows/windows.yml: gh-actions/master/windows.yml
   omml2mathml:
     remote: ssh://git@github.com/metanorma/omml2mathml
     branch: master

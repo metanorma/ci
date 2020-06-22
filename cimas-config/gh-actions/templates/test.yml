@@ -56,18 +56,6 @@ jobs:
             props = dict(line.strip().split('=', 1) for line in file)
             os.system("gem install metanorma-{}".format(props['TYPE']))
 
-      - name: Use Node
-        uses: actions/setup-node@v1
-        with:
-          node-version: '12'
-      - name: Puppeteer prerequisties
-        if: matrix.os == 'ubuntu-latest'
-        run: |
-          sudo apt-get update
-          sudo apt-get install -y libgbm1
-      - name: Install Puppeteer
-        run: |
-          npm install -g puppeteer@3.0.1
       - name: Use Python
         uses: actions/setup-python@v1
         with:

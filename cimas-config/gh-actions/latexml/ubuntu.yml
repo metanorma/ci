@@ -27,9 +27,6 @@ jobs:
         uses: actions/setup-ruby@v1
         with:
           ruby-version: ${{ matrix.ruby }}
-      - uses: actions/setup-node@v1
-        with:
-          node-version: '10.x'
       - name: Update gems
         run: |
           gem install bundler
@@ -45,11 +42,6 @@ jobs:
           timeout_minutes: 5
           max_attempts: 3
           command: sudo bash -c "curl -L https://github.com/metanorma/plantuml-install/raw/master/ubuntu.sh | bash"
-      - name: Install puppeteer
-        run: |
-          sudo apt-get update
-          sudo apt-get install -y libgbm1
-          npm install -g puppeteer@3.0.1
       - name: Run specs
         run: |
           bundle exec rake
