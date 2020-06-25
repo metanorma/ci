@@ -26,8 +26,8 @@ repositories:
       .github/workflows/macos.yml: gh-actions/master/macos.yml
       .github/workflows/ubuntu.yml: gh-actions/master/ubuntu.yml
       .github/workflows/windows.yml: gh-actions/master/windows.yml
-  metanorma-m3d:
-    remote: ssh://git@github.com/metanorma/metanorma-m3d
+  metanorma-m3aawg:
+    remote: ssh://git@github.com/metanorma/metanorma-m3aawg
     branch: master
     files:
       .github/workflows/macos.yml: gh-actions/master/macos.yml
@@ -40,22 +40,22 @@ repositories:
       .github/workflows/macos.yml: gh-actions/master/macos.yml
       .github/workflows/ubuntu.yml: gh-actions/master/ubuntu.yml
       .github/workflows/windows.yml: gh-actions/master/windows.yml
-  metanorma-csd:
-    remote: ssh://git@github.com/metanorma/metanorma-csd
+  metanorma-cc:
+    remote: ssh://git@github.com/metanorma/metanorma-cc
     branch: master
     files:
       .github/workflows/macos.yml: gh-actions/master/macos.yml
       .github/workflows/ubuntu.yml: gh-actions/master/ubuntu.yml
       .github/workflows/windows.yml: gh-actions/master/windows.yml
-  metanorma-vsd:
-    remote: ssh://git@github.com/metanorma/metanorma-vsd
+  metanorma-vg:
+    remote: ssh://git@github.com/metanorma/metanorma-vg
     branch: master
     files:
       .github/workflows/macos.yml: gh-actions/master/macos.yml
       .github/workflows/ubuntu.yml: gh-actions/master/ubuntu.yml
       .github/workflows/windows.yml: gh-actions/master/windows.yml
-  metanorma-rsd:
-    remote: ssh://git@github.com/metanorma/metanorma-rsd
+  metanorma-ribose:
+    remote: ssh://git@github.com/metanorma/metanorma-ribose
     branch: master
     files:
       .github/workflows/macos.yml: gh-actions/plantuml/macos.yml
@@ -82,8 +82,8 @@ repositories:
       .github/workflows/macos.yml: gh-actions/master/macos.yml
       .github/workflows/ubuntu.yml: gh-actions/master/ubuntu.yml
       .github/workflows/windows.yml: gh-actions/master/windows.yml
-  metanorma-mpfd:
-    remote: ssh://git@github.com/metanorma/metanorma-mpfd
+  metanorma-mpfa:
+    remote: ssh://git@github.com/metanorma/metanorma-mpfa
     branch: master
     files:
       .github/workflows/macos.yml: gh-actions/master/macos.yml
@@ -505,8 +505,8 @@ repositories:
       .github/workflows/windows.yml: gh-actions/samples/windows.yml
       Makefile: gh-actions/samples/Makefile
       Makefile.win: gh-actions/samples/Makefile.win
-  mn-templates-csd:
-    remote: ssh://git@github.com/metanorma/mn-templates-csd
+  mn-templates-cc:
+    remote: ssh://git@github.com/metanorma/mn-templates-cc
     branch: master
     files:
       .github/workflows/test.yml: gh-actions/templates/test.yml
@@ -753,20 +753,20 @@ groups:
   processor:
   - metanorma-cli
   - metanorma-csa
-  - metanorma-csd
+  - metanorma-cc
   - metanorma-gb
   - metanorma-iec
   - metanorma-ietf
   - metanorma-iso
   - metanorma-itu
-  - metanorma-m3d
-  - metanorma-mpfd
+  - metanorma-m3aawg
+  - metanorma-mpfa
   - metanorma-nist
   - metanorma-ogc
-  - metanorma-rsd
+  - metanorma-ribose
   - metanorma-standoc
   - metanorma-un
-  - metanorma-vsd
+  - metanorma-vg
   - metanorma-generic
   - metanorma-iho
   metanorma:
@@ -785,7 +785,7 @@ groups:
   - metanorma-itu
   - metanorma-itu-style
   - metanorma-linux-setup
-  - metanorma-m3d
+  - metanorma-m3aawg
   - metanorma-macos-setup
   - metanorma-model-csa
   - metanorma-model-csd
@@ -813,7 +813,7 @@ groups:
   - metanorma-snap
   - metanorma-standoc
   - metanorma-un
-  - metanorma-vsd
+  - metanorma-vg
   - metanorma-iho
   model:
   - metanorma-model-csa
