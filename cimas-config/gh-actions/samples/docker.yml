@@ -27,7 +27,6 @@ jobs:
           git -c "http.extraheader=$auth_header" -c protocol.version=2 submodule update --init --force --recursive --depth=1
       - name: Setup fonts
         run: |
-          gem install metanorma-cli
           metanorma setup --agree-to-terms
       - uses: actions/setup-go@v2-beta
         with:
