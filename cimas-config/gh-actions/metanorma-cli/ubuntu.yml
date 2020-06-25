@@ -39,8 +39,8 @@ jobs:
       - name: Trigger repositories
         if: matrix.ruby == '2.6'
         env:
-          GH_USERNAME: ${{ secrets.PAT_USERNAME }}
-          GH_ACCESS_TOKEN: ${{ secrets.PAT_TOKEN }}
+          GH_USERNAME: metanorma-ci
+          GH_ACCESS_TOKEN: ${{ secrets.METANORMA_CI_PAT_TOKEN }}
         run: |
           curl -LO --retry 3 https://raw.githubusercontent.com/metanorma/metanorma-build-scripts/master/trigger-gh-actions.sh
           [[ -f ".github/workflows/dependent_repos.env" ]] && source .github/workflows/dependent_repos.env
@@ -56,8 +56,8 @@ jobs:
       - name: Trigger release repositories
         if: (github.ref == 'refs/heads/master' || startsWith(github.ref, 'refs/tags/v')) && matrix.ruby == '2.6'
         env:
-          GH_USERNAME: ${{ secrets.PAT_USERNAME }}
-          GH_ACCESS_TOKEN: ${{ secrets.PAT_TOKEN }}
+          GH_USERNAME: metanorma-ci
+          GH_ACCESS_TOKEN: ${{ secrets.METANORMA_CI_PAT_TOKEN }}
         run: |
           curl -LO --retry 3 https://raw.githubusercontent.com/metanorma/metanorma-build-scripts/master/trigger-gh-actions.sh
           [[ -f ".github/workflows/dependent_repos.env" ]] && source .github/workflows/dependent_repos.env
