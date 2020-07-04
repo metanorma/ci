@@ -16,9 +16,9 @@ repositories:
     remote: ssh://git@github.com/metanorma/isodoc
     branch: master
     files:
-      .github/workflows/macos.yml: gh-actions/master/macos.yml
-      .github/workflows/ubuntu.yml: gh-actions/master/ubuntu.yml
-      .github/workflows/windows.yml: gh-actions/master/windows.yml
+      .github/workflows/macos.yml: gh-actions/inkscape/macos.yml
+      .github/workflows/ubuntu.yml: gh-actions/inkscape/ubuntu.yml
+      .github/workflows/windows.yml: gh-actions/inkscape/windows.yml
   metanorma-ogc:
     remote: ssh://git@github.com/metanorma/metanorma-ogc
     branch: master
@@ -699,7 +699,7 @@ repositories:
     branch: master
     files:
       .github/workflows/docker.yml: gh-actions/samples/docker.yml
-      .gitlab-ci.yml: .gitlab-ci.yml
+      .gitlab-ci.yml: gh-actions/samples/.gitlab-ci.yml
       Makefile: gh-actions/samples/Makefile
   iso-10303-2:
     remote: ssh://git@github.com/metanorma/iso-10303-2
