@@ -48,7 +48,7 @@ jobs:
           "{ "ref": "${GITHUB_REF}", "repo": "${GITHUB_REPOSITORY}" }"
           EOF
           )
-          for repo in $TEMPLATE_REPOS" $SAMPLES_REPOS
+          for repo in $TEMPLATE_REPOS" $SAMPLES_REPOS"
           do
             sh trigger-gh-actions.sh $ORGANISATION $repo $GH_USERNAME $GH_ACCESS_TOKEN $GITHUB_REPOSITORY "$CLIENT_PAYLOAD"
           done
