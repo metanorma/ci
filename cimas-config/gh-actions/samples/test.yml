@@ -26,7 +26,11 @@ jobs:
             os: 'macos-latest'
             experimental: true
     steps:
-      - uses: actions/checkout@master
+      - name: Checkout code
+        uses: actions/checkout@v2
+        with:
+          token: ${{ secrets.METANORMA_CI_PAT_TOKEN || github.token }}
+          submodules: true
       - name: Use Ruby
         uses: actions/setup-ruby@v1
         with:
