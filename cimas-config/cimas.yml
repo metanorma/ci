@@ -350,6 +350,7 @@ repositories:
       .github/workflows/windows.yml: gh-actions/samples/windows.yml
       Makefile: gh-actions/samples/Makefile
       Makefile.win: gh-actions/samples/Makefile.win
+      .github/workflows/docker-pres_xml.yml: gh-actions/samples/docker-pres_xml.yml
   mn-samples-itu:
     remote: ssh://git@github.com/metanorma/mn-samples-itu
     branch: master
@@ -360,6 +361,7 @@ repositories:
       .github/workflows/windows.yml: gh-actions/samples/windows.yml
       Makefile: gh-actions/samples/Makefile
       Makefile.win: gh-actions/samples/Makefile.win
+      .github/workflows/docker-pres_xml.yml: gh-actions/samples/docker-pres_xml.yml
   mn-samples-iec:
     remote: ssh://git@github.com/metanorma/mn-samples-iec
     branch: master
@@ -370,6 +372,7 @@ repositories:
       .github/workflows/windows.yml: gh-actions/samples/windows.yml
       Makefile: gh-actions/samples/Makefile
       Makefile.win: gh-actions/samples/Makefile.win
+      .github/workflows/docker-pres_xml.yml: gh-actions/samples/docker-pres_xml.yml
   mn-samples-ietf:
     remote: ssh://git@github.com/metanorma/mn-samples-ietf
     branch: master
@@ -380,6 +383,7 @@ repositories:
       .github/workflows/windows.yml: gh-actions/samples/windows.yml
       Makefile: gh-actions/samples/Makefile
       Makefile.win: gh-actions/samples/Makefile.win
+      .github/workflows/docker-pres_xml.yml: gh-actions/samples/docker-pres_xml.yml
   mn-samples-un:
     remote: ssh://git@github.com/metanorma/mn-samples-un
     branch: master
@@ -390,6 +394,7 @@ repositories:
       .github/workflows/windows.yml: gh-actions/samples/windows.yml
       Makefile: gh-actions/samples/Makefile
       Makefile.win: gh-actions/samples/Makefile.win
+      .github/workflows/docker-pres_xml.yml: gh-actions/samples/docker-pres_xml.yml
   mn-samples-mpfa:
     remote: ssh://git@github.com/metanorma/mn-samples-mpfa
     branch: master
@@ -400,6 +405,7 @@ repositories:
       .github/workflows/windows.yml: gh-actions/samples/windows.yml
       Makefile: gh-actions/samples/Makefile
       Makefile.win: gh-actions/samples/Makefile.win
+      .github/workflows/docker-pres_xml.yml: gh-actions/samples/docker-pres_xml.yml
   mn-samples-iso:
     remote: ssh://git@github.com/metanorma/mn-samples-iso
     branch: master
@@ -410,6 +416,7 @@ repositories:
       .github/workflows/windows.yml: gh-actions/samples/windows.yml
       Makefile: gh-actions/samples/Makefile
       Makefile.win: gh-actions/samples/Makefile.win
+      .github/workflows/docker-pres_xml.yml: gh-actions/samples/docker-pres_xml.yml
   mn-samples-gb:
     remote: ssh://git@github.com/metanorma/mn-samples-gb
     branch: master
@@ -420,6 +427,7 @@ repositories:
       .github/workflows/windows.yml: gh-actions/samples/windows.yml
       Makefile: gh-actions/samples/Makefile
       Makefile.win: gh-actions/samples/Makefile.win
+      .github/workflows/docker-pres_xml.yml: gh-actions/samples/docker-pres_xml.yml
   mn-samples-cc:
     remote: ssh://git@github.com/metanorma/mn-samples-cc
     branch: master
@@ -430,6 +438,7 @@ repositories:
       .github/workflows/windows.yml: gh-actions/samples/windows.yml
       Makefile: gh-actions/samples/Makefile
       Makefile.win: gh-actions/samples/Makefile.win
+      .github/workflows/docker-pres_xml.yml: gh-actions/samples/docker-pres_xml.yml
   mn-samples-iho:
     remote: ssh://git@github.com/metanorma/mn-samples-iho
     branch: master
@@ -440,6 +449,7 @@ repositories:
       .github/workflows/windows.yml: gh-actions/samples/windows.yml
       Makefile: gh-actions/samples/Makefile
       Makefile.win: gh-actions/samples/Makefile.win
+      .github/workflows/docker-pres_xml.yml: gh-actions/samples/docker-pres_xml.yml
   mn-samples-nist:
     remote: ssh://git@github.com/metanorma/mn-samples-nist
     branch: master
@@ -448,6 +458,7 @@ repositories:
       .github/workflows/windows.yml: gh-actions/samples/windows.yml
       Makefile: gh-actions/samples/Makefile
       Makefile.win: gh-actions/samples/Makefile.win
+      .github/workflows/docker-pres_xml.yml: gh-actions/samples/docker-pres_xml.yml
   mn-samples-m3aawg:
     remote: ssh://git@github.com/metanorma/mn-samples-m3aawg
     branch: master
@@ -458,6 +469,7 @@ repositories:
       .github/workflows/windows.yml: gh-actions/samples/windows.yml
       Makefile: gh-actions/samples/Makefile
       Makefile.win: gh-actions/samples/Makefile.win
+      .github/workflows/docker-pres_xml.yml: gh-actions/samples/docker-pres_xml.yml
   mn-samples-csa:
     remote: ssh://git@github.com/metanorma/mn-samples-csa
     branch: master
@@ -468,6 +480,7 @@ repositories:
       .github/workflows/windows.yml: gh-actions/samples/windows.yml
       Makefile: gh-actions/samples/Makefile
       Makefile.win: gh-actions/samples/Makefile.win
+      .github/workflows/docker-pres_xml.yml: gh-actions/samples/docker-pres_xml.yml
   hk-ogcio-infosec-docs:
     remote: ssh://git@github.com/metanorma/hk-ogcio-infosec-docs
     branch: master
