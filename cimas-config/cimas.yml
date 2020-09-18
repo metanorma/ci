@@ -12,6 +12,13 @@ repositories:
       .github/workflows/ubuntu.yml: gh-actions/metanorma-cli/ubuntu.yml
       .github/workflows/macos.yml: gh-actions/master/macos.yml
       .github/workflows/windows.yml: gh-actions/master/windows.yml
+      templates/base/.github/workflows/docker.yml: gh-actions/samples/docker.yml
+      templates/base/.github/workflows/macos.yml: gh-actions/samples/macos.yml
+      templates/base/.github/workflows/ubuntu.yml: gh-actions/samples/ubuntu.yml
+      templates/base/.github/workflows/windows.yml: gh-actions/samples/windows.yml
+      templates/base/.gitlab-ci.yml: gh-actions/samples/.gitlab-ci.yml
+      templates/base/Makefile: gh-actions/samples/Makefile
+      templates/base/Makefile.win: gh-actions/samples/Makefile.win
   isodoc:
     remote: ssh://git@github.com/metanorma/isodoc
     branch: master
@@ -121,9 +128,9 @@ repositories:
     remote: ssh://git@github.com/metanorma/metanorma-standoc
     branch: master
     files:
-      .github/workflows/macos.yml: gh-actions/latexml/macos.yml
-      .github/workflows/ubuntu.yml: gh-actions/latexml/ubuntu.yml
-      .github/workflows/windows.yml: gh-actions/latexml/windows.yml
+      .github/workflows/macos.yml: gh-actions/plantuml/macos.yml
+      .github/workflows/ubuntu.yml: gh-actions/plantuml/ubuntu.yml
+      .github/workflows/windows.yml: gh-actions/plantuml/windows.yml
   metanorma-iso:
     remote: ssh://git@github.com/metanorma/metanorma-iso
     branch: master
@@ -719,7 +726,6 @@ repositories:
     branch: master
     files:
       .github/workflows/docker.yml: gh-actions/samples/docker.yml
-      Makefile: gh-actions/samples/Makefile
   iso-19115-3:
     remote: ssh://git@github.com/metanorma/iso-19115-3
     branch: master
