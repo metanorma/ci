@@ -1,16 +1,17 @@
 name: notify
 
 on:
-  push:
-    branches: [ master ]
-    tags:
-      - '*'
+  check_suite:
+    types:
+      - completed
 
 jobs:
   notify:
     name: Notify dependent repos
     runs-on: ubuntu-latest
     steps:
+      - uses: actions/checkout@master
+
       - name: Trigger repositories
         env:
           GH_USERNAME: metanorma-ci

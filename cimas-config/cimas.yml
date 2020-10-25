@@ -9,9 +9,8 @@ repositories:
     remote: ssh://git@github.com/metanorma/metanorma-cli
     branch: master
     files:
-      .github/workflows/ubuntu.yml: gh-actions/metanorma-cli/ubuntu.yml
-      .github/workflows/macos.yml: gh-actions/master/macos.yml
-      .github/workflows/windows.yml: gh-actions/master/windows.yml
+      .github/workflows/rake.yml: gh-actions/master/rake.yml
+      .github/workflows/notify.yml: gh-actions/metanorma-cli/notify.yml
       templates/base/.github/workflows/docker.yml: gh-actions/samples/docker.yml
       templates/base/.github/workflows/macos.yml: gh-actions/samples/macos.yml
       templates/base/.github/workflows/ubuntu.yml: gh-actions/samples/ubuntu.yml
@@ -23,282 +22,217 @@ repositories:
     remote: ssh://git@github.com/metanorma/isodoc
     branch: master
     files:
-      .github/workflows/macos.yml: gh-actions/inkscape/macos.yml
-      .github/workflows/ubuntu.yml: gh-actions/inkscape/ubuntu.yml
-      .github/workflows/windows.yml: gh-actions/inkscape/windows.yml
+      .github/workflows/rake.yml: gh-actions/inkscape/rake.yml
   metanorma-ogc:
     remote: ssh://git@github.com/metanorma/metanorma-ogc
     branch: master
     files:
-      .github/workflows/macos.yml: gh-actions/master/macos.yml
-      .github/workflows/ubuntu.yml: gh-actions/master/ubuntu.yml
-      .github/workflows/windows.yml: gh-actions/master/windows.yml
+      .github/workflows/rake.yml: gh-actions/master/rake.yml
   metanorma-m3aawg:
     remote: ssh://git@github.com/metanorma/metanorma-m3aawg
     branch: master
     files:
-      .github/workflows/macos.yml: gh-actions/master/macos.yml
-      .github/workflows/ubuntu.yml: gh-actions/master/ubuntu.yml
-      .github/workflows/windows.yml: gh-actions/master/windows.yml
+      .github/workflows/rake.yml: gh-actions/master/rake.yml
   cnccs:
     remote: ssh://git@github.com/metanorma/cnccs
     branch: master
     files:
-      .github/workflows/macos.yml: gh-actions/master/macos.yml
-      .github/workflows/ubuntu.yml: gh-actions/master/ubuntu.yml
-      .github/workflows/windows.yml: gh-actions/master/windows.yml
+      .github/workflows/rake.yml: gh-actions/master/rake.yml
   metanorma-cc:
     remote: ssh://git@github.com/metanorma/metanorma-cc
     branch: master
     files:
-      .github/workflows/macos.yml: gh-actions/master/macos.yml
-      .github/workflows/ubuntu.yml: gh-actions/master/ubuntu.yml
-      .github/workflows/windows.yml: gh-actions/master/windows.yml
+      .github/workflows/rake.yml: gh-actions/master/rake.yml
   metanorma-vg:
     remote: ssh://git@github.com/metanorma/metanorma-vg
     branch: master
     files:
-      .github/workflows/macos.yml: gh-actions/master/macos.yml
-      .github/workflows/ubuntu.yml: gh-actions/master/ubuntu.yml
-      .github/workflows/windows.yml: gh-actions/master/windows.yml
+      .github/workflows/rake.yml: gh-actions/master/rake.yml
   metanorma-ribose:
     remote: ssh://git@github.com/metanorma/metanorma-ribose
     branch: master
     files:
-      .github/workflows/macos.yml: gh-actions/plantuml/macos.yml
-      .github/workflows/ubuntu.yml: gh-actions/plantuml/ubuntu.yml
-      .github/workflows/windows.yml: gh-actions/plantuml/windows.yml
+      .github/workflows/rake.yml: gh-actions/plantuml/rake.yml
   metanorma-iho:
     remote: ssh://git@github.com/metanorma/metanorma-iho
     branch: master
     files:
-      .github/workflows/macos.yml: gh-actions/plantuml/macos.yml
-      .github/workflows/ubuntu.yml: gh-actions/plantuml/ubuntu.yml
-      .github/workflows/windows.yml: gh-actions/plantuml/windows.yml
+      .github/workflows/rake.yml: gh-actions/plantuml/rake.yml
   isoics:
     remote: ssh://git@github.com/metanorma/isoics
     branch: master
     files:
-      .github/workflows/macos.yml: gh-actions/master/macos.yml
-      .github/workflows/ubuntu.yml: gh-actions/master/ubuntu.yml
-      .github/workflows/windows.yml: gh-actions/master/windows.yml
+      .github/workflows/rake.yml: gh-actions/master/rake.yml
   iso690render:
     remote: ssh://git@github.com/metanorma/iso690render
     branch: master
     files:
-      .github/workflows/macos.yml: gh-actions/master/macos.yml
-      .github/workflows/ubuntu.yml: gh-actions/master/ubuntu.yml
-      .github/workflows/windows.yml: gh-actions/master/windows.yml
+      .github/workflows/rake.yml: gh-actions/master/rake.yml
   metanorma-mpfa:
     remote: ssh://git@github.com/metanorma/metanorma-mpfa
     branch: master
     files:
-      .github/workflows/macos.yml: gh-actions/master/macos.yml
-      .github/workflows/ubuntu.yml: gh-actions/master/ubuntu.yml
-      .github/workflows/windows.yml: gh-actions/master/windows.yml
+      .github/workflows/rake.yml: gh-actions/master/rake.yml
   metanorma-gb:
     remote: ssh://git@github.com/metanorma/metanorma-gb
     branch: master
     files:
-      .github/workflows/macos.yml: gh-actions/master/macos.yml
-      .github/workflows/ubuntu.yml: gh-actions/master/ubuntu.yml
-      .github/workflows/windows.yml: gh-actions/master/windows.yml
+      .github/workflows/rake.yml: gh-actions/master/rake.yml
   metanorma-nist:
     remote: ssh://git@github.com/metanorma/metanorma-nist
     branch: master
     files:
-      .github/workflows/macos.yml: gh-actions/master/macos.yml
-      .github/workflows/ubuntu.yml: gh-actions/master/ubuntu.yml
-      .github/workflows/windows.yml: gh-actions/master/windows.yml
+      .github/workflows/rake.yml: gh-actions/master/rake.yml
   metanorma-iec:
     remote: ssh://git@github.com/metanorma/metanorma-iec
     branch: master
     files:
-      .github/workflows/macos.yml: gh-actions/master/macos.yml
-      .github/workflows/ubuntu.yml: gh-actions/master/ubuntu.yml
-      .github/workflows/windows.yml: gh-actions/master/windows.yml
+      .github/workflows/rake.yml: gh-actions/master/rake.yml
   metanorma-ietf:
     remote: ssh://git@github.com/metanorma/metanorma-ietf
     branch: master
     files:
-      .github/workflows/macos.yml: gh-actions/xml2rfc/macos.yml
-      .github/workflows/ubuntu.yml: gh-actions/xml2rfc/ubuntu.yml
-      .github/workflows/windows.yml: gh-actions/xml2rfc/windows.yml
+      .github/workflows/rake.yml: gh-actions/xml2rfc/rake.yml
   metanorma-standoc:
     remote: ssh://git@github.com/metanorma/metanorma-standoc
     branch: master
     files:
-      .github/workflows/macos.yml: gh-actions/plantuml/macos.yml
-      .github/workflows/ubuntu.yml: gh-actions/plantuml/ubuntu.yml
-      .github/workflows/windows.yml: gh-actions/plantuml/windows.yml
+      .github/workflows/rake.yml: gh-actions/plantuml/rake.yml
   metanorma-iso:
     remote: ssh://git@github.com/metanorma/metanorma-iso
     branch: master
     files:
-      .github/workflows/macos.yml: gh-actions/plantuml/macos.yml
-      .github/workflows/ubuntu.yml: gh-actions/plantuml/ubuntu.yml
-      .github/workflows/windows.yml: gh-actions/plantuml/windows.yml
+      .github/workflows/rake.yml: gh-actions/plantuml/rake.yml
   metanorma-un:
     remote: ssh://git@github.com/metanorma/metanorma-un
     branch: master
     files:
-      .github/workflows/macos.yml: gh-actions/master/macos.yml
-      .github/workflows/ubuntu.yml: gh-actions/master/ubuntu.yml
-      .github/workflows/windows.yml: gh-actions/master/windows.yml
+      .github/workflows/rake.yml: gh-actions/master/rake.yml
   metanorma-itu:
     remote: ssh://git@github.com/metanorma/metanorma-itu
     branch: master
     files:
-      .github/workflows/macos.yml: gh-actions/master/macos.yml
-      .github/workflows/ubuntu.yml: gh-actions/master/ubuntu.yml
-      .github/workflows/windows.yml: gh-actions/master/windows.yml
+      .github/workflows/rake.yml: gh-actions/master/rake.yml
   metanorma-generic:
     remote: ssh://git@github.com/metanorma/metanorma-generic
     branch: master
     files:
-      .github/workflows/macos.yml: gh-actions/master/macos.yml
-      .github/workflows/ubuntu.yml: gh-actions/master/ubuntu.yml
-      .github/workflows/windows.yml: gh-actions/master/windows.yml
+      .github/workflows/rake.yml: gh-actions/master/rake.yml
   metanorma-csa:
     remote: ssh://git@github.com/metanorma/metanorma-csa
     branch: master
     files:
-      .github/workflows/macos.yml: gh-actions/master/macos.yml
-      .github/workflows/ubuntu.yml: gh-actions/master/ubuntu.yml
-      .github/workflows/windows.yml: gh-actions/master/windows.yml
+      .github/workflows/rake.yml: gh-actions/master/rake.yml
   metanorma-bipm:
     remote: ssh://git@github.com/metanorma/metanorma-bipm
     branch: master
     files:
-      .github/workflows/macos.yml: gh-actions/master/macos.yml
-      .github/workflows/ubuntu.yml: gh-actions/master/ubuntu.yml
-      .github/workflows/windows.yml: gh-actions/master/windows.yml
+      .github/workflows/rake.yml: gh-actions/master/rake.yml
   metanorma-model-gb:
     remote: ssh://git@github.com/metanorma/metanorma-model-gb
     branch: master
     files:
-      .github/workflows/macos.yml: gh-actions/model/macos.yml
-      .github/workflows/ubuntu.yml: gh-actions/model/ubuntu.yml
-      .github/workflows/windows.yml: gh-actions/model/windows.yml
+      .github/workflows/make.yml: gh-actions/model/make.yml
+      .github/workflows/automerge.yml: gh-actions/master/automerge.yml
   metanorma-model-iso:
     remote: ssh://git@github.com/metanorma/metanorma-model-iso
     branch: master
     files:
-      .github/workflows/macos.yml: gh-actions/model/macos.yml
-      .github/workflows/ubuntu.yml: gh-actions/model/ubuntu.yml
-      .github/workflows/windows.yml: gh-actions/model/windows.yml
+      .github/workflows/make.yml: gh-actions/model/make.yml
+      .github/workflows/automerge.yml: gh-actions/master/automerge.yml
   metanorma-model-standoc:
     remote: ssh://git@github.com/metanorma/metanorma-model-standoc
     branch: master
     files:
-      .github/workflows/macos.yml: gh-actions/model/macos.yml
-      .github/workflows/ubuntu.yml: gh-actions/model/ubuntu.yml
-      .github/workflows/windows.yml: gh-actions/model/windows.yml
+      .github/workflows/make.yml: gh-actions/model/make.yml
+      .github/workflows/automerge.yml: gh-actions/master/automerge.yml
   metanorma-model-un:
     remote: ssh://git@github.com/metanorma/metanorma-model-un
     branch: master
     files:
-      .github/workflows/macos.yml: gh-actions/model/macos.yml
-      .github/workflows/ubuntu.yml: gh-actions/model/ubuntu.yml
-      .github/workflows/windows.yml: gh-actions/model/windows.yml
+      .github/workflows/make.yml: gh-actions/model/make.yml
+      .github/workflows/automerge.yml: gh-actions/master/automerge.yml
   metanorma-model-mpfa:
     remote: ssh://git@github.com/metanorma/metanorma-model-mpfa
     branch: master
     files:
-      .github/workflows/macos.yml: gh-actions/model/macos.yml
-      .github/workflows/ubuntu.yml: gh-actions/model/ubuntu.yml
-      .github/workflows/windows.yml: gh-actions/model/windows.yml
+      .github/workflows/make.yml: gh-actions/model/make.yml
+      .github/workflows/automerge.yml: gh-actions/master/automerge.yml
   metanorma-model-itu:
     remote: ssh://git@github.com/metanorma/metanorma-model-itu
     branch: master
     files:
-      .github/workflows/macos.yml: gh-actions/model/macos.yml
-      .github/workflows/ubuntu.yml: gh-actions/model/ubuntu.yml
-      .github/workflows/windows.yml: gh-actions/model/windows.yml
+      .github/workflows/make.yml: gh-actions/model/make.yml
+      .github/workflows/automerge.yml: gh-actions/master/automerge.yml
   metanorma-model-csa:
     remote: ssh://git@github.com/metanorma/metanorma-model-csa
     branch: master
     files:
-      .github/workflows/macos.yml: gh-actions/model/macos.yml
-      .github/workflows/ubuntu.yml: gh-actions/model/ubuntu.yml
-      .github/workflows/windows.yml: gh-actions/model/windows.yml
+      .github/workflows/make.yml: gh-actions/model/make.yml
+      .github/workflows/automerge.yml: gh-actions/master/automerge.yml
   metanorma-model-nist:
     remote: ssh://git@github.com/metanorma/metanorma-model-nist
     branch: master
     files:
-      .github/workflows/macos.yml: gh-actions/model/macos.yml
-      .github/workflows/ubuntu.yml: gh-actions/model/ubuntu.yml
-      .github/workflows/windows.yml: gh-actions/model/windows.yml
+      .github/workflows/make.yml: gh-actions/model/make.yml
+      .github/workflows/automerge.yml: gh-actions/master/automerge.yml
   metanorma-model-iho:
     remote: ssh://git@github.com/metanorma/metanorma-model-iho
     branch: master
     files:
-      .github/workflows/macos.yml: gh-actions/model/macos.yml
-      .github/workflows/ubuntu.yml: gh-actions/model/ubuntu.yml
-      .github/workflows/windows.yml: gh-actions/model/windows.yml
+      .github/workflows/make.yml: gh-actions/model/make.yml
+      .github/workflows/automerge.yml: gh-actions/master/automerge.yml
   metanorma-model-csd:
     remote: ssh://git@github.com/metanorma/metanorma-model-csd
     branch: master
     files:
-      .github/workflows/macos.yml: gh-actions/model/macos.yml
-      .github/workflows/ubuntu.yml: gh-actions/model/ubuntu.yml
-      .github/workflows/windows.yml: gh-actions/model/windows.yml
+      .github/workflows/make.yml: gh-actions/model/make.yml
+      .github/workflows/automerge.yml: gh-actions/master/automerge.yml
   metanorma-model-m3d:
     remote: ssh://git@github.com/metanorma/metanorma-model-m3d
     branch: master
     files:
-      .github/workflows/macos.yml: gh-actions/model/macos.yml
-      .github/workflows/ubuntu.yml: gh-actions/model/ubuntu.yml
-      .github/workflows/windows.yml: gh-actions/model/windows.yml
+      .github/workflows/make.yml: gh-actions/model/make.yml
+      .github/workflows/automerge.yml: gh-actions/master/automerge.yml
   metanorma-model-ogc:
     remote: ssh://git@github.com/metanorma/metanorma-model-ogc
     branch: master
     files:
-      .github/workflows/macos.yml: gh-actions/model/macos.yml
-      .github/workflows/ubuntu.yml: gh-actions/model/ubuntu.yml
-      .github/workflows/windows.yml: gh-actions/model/windows.yml
+      .github/workflows/make.yml: gh-actions/model/make.yml
+      .github/workflows/automerge.yml: gh-actions/master/automerge.yml
   metanorma-model-rsd:
     remote: ssh://git@github.com/metanorma/metanorma-model-rsd
     branch: master
     files:
-      .github/workflows/macos.yml: gh-actions/model/macos.yml
-      .github/workflows/ubuntu.yml: gh-actions/model/ubuntu.yml
-      .github/workflows/windows.yml: gh-actions/model/windows.yml
+      .github/workflows/make.yml: gh-actions/model/make.yml
+      .github/workflows/automerge.yml: gh-actions/master/automerge.yml
   basicdoc-models:
     remote: ssh://git@github.com/metanorma/basicdoc-models
     branch: master
     files:
-      .github/workflows/macos.yml: gh-actions/model/macos.yml
-      .github/workflows/ubuntu.yml: gh-actions/model/ubuntu.yml
-      .github/workflows/windows.yml: gh-actions/model/windows.yml
+      .github/workflows/make.yml: gh-actions/model/make.yml
+      .github/workflows/automerge.yml: gh-actions/master/automerge.yml
   metanorma-requirements-models:
     remote: ssh://git@github.com/metanorma/metanorma-requirements-models
     branch: master
     files:
-      .github/workflows/macos.yml: gh-actions/model/macos.yml
-      .github/workflows/ubuntu.yml: gh-actions/model/ubuntu.yml
-      .github/workflows/windows.yml: gh-actions/model/windows.yml
+      .github/workflows/make.yml: gh-actions/model/make.yml
+      .github/workflows/automerge.yml: gh-actions/master/automerge.yml
   csa-ccm-tools:
     remote: ssh://git@github.com/metanorma/csa-ccm-tools
     branch: master
     files:
-      .github/workflows/macos.yml: gh-actions/master/macos.yml
-      .github/workflows/ubuntu.yml: gh-actions/master/ubuntu.yml
-      .github/workflows/windows.yml: gh-actions/master/windows.yml
+      .github/workflows/rake.yml: gh-actions/master/rake.yml
   unicode2latex:
     remote: ssh://git@github.com/metanorma/unicode2latex
     branch: master
     files:
-      .github/workflows/macos.yml: gh-actions/plantuml/macos.yml
-      .github/workflows/ubuntu.yml: gh-actions/plantuml/ubuntu.yml
-      .github/workflows/windows.yml: gh-actions/plantuml/windows.yml
+      .github/workflows/rake.yml: gh-actions/plantuml/rake.yml
   html2doc:
     remote: ssh://git@github.com/metanorma/html2doc
     branch: master
     files:
-      .github/workflows/macos.yml: gh-actions/master/macos.yml
-      .github/workflows/ubuntu.yml: gh-actions/master/ubuntu.yml
-      .github/workflows/windows.yml: gh-actions/master/windows.yml
+      .github/workflows/rake.yml: gh-actions/master/rake.yml
   ogc-wfs:
     remote: ssh://git@github.com/metanorma/ogc-wfs
     branch: master
@@ -313,9 +247,8 @@ repositories:
     remote: ssh://git@github.com/metanorma/reverse_adoc
     branch: master
     files:
-      .github/workflows/macos.yml: gh-actions/master/macos.yml
-      .github/workflows/ubuntu.yml: gh-actions/libreoffice/ubuntu.yml
-      .github/workflows/windows.yml: gh-actions/libreoffice/windows.yml
+      .github/workflows/rake.yml: gh-actions/libreoffice/rake.yml
+
   isodoc-rice:
     remote: ssh://git@github.com/metanorma/isodoc-rice
     branch: master
@@ -330,30 +263,22 @@ repositories:
     remote: ssh://git@github.com/metanorma/gb-agencies
     branch: master
     files:
-      .github/workflows/macos.yml: gh-actions/master/macos.yml
-      .github/workflows/ubuntu.yml: gh-actions/master/ubuntu.yml
-      .github/workflows/windows.yml: gh-actions/master/windows.yml
+      .github/workflows/rake.yml: gh-actions/master/rake.yml
   mathml2asciimath:
     remote: ssh://git@github.com/metanorma/mathml2asciimath
     branch: master
     files:
-      .github/workflows/macos.yml: gh-actions/master/macos.yml
-      .github/workflows/ubuntu.yml: gh-actions/master/ubuntu.yml
-      .github/workflows/windows.yml: gh-actions/master/windows.yml
+      .github/workflows/rake.yml: gh-actions/master/rake.yml
   metanorma:
     remote: ssh://git@github.com/metanorma/metanorma
     branch: master
     files:
-      .github/workflows/macos.yml: gh-actions/master/macos.yml
-      .github/workflows/ubuntu.yml: gh-actions/master/ubuntu.yml
-      .github/workflows/windows.yml: gh-actions/master/windows.yml
+      .github/workflows/rake.yml: gh-actions/master/rake.yml
   omml2mathml:
     remote: ssh://git@github.com/metanorma/omml2mathml
     branch: master
     files:
-      .github/workflows/macos.yml: gh-actions/master/macos.yml
-      .github/workflows/ubuntu.yml: gh-actions/master/ubuntu.yml
-      .github/workflows/windows.yml: gh-actions/master/windows.yml
+      .github/workflows/rake.yml: gh-actions/master/rake.yml
   mn-samples-ogc:
     remote: ssh://git@github.com/metanorma/mn-samples-ogc
     branch: master
@@ -364,7 +289,9 @@ repositories:
       .github/workflows/windows.yml: gh-actions/samples/windows.yml
       Makefile: gh-actions/samples/Makefile
       Makefile.win: gh-actions/samples/Makefile.win
+      .github/workflows/test.yml: gh-actions/samples/test.yml
       .github/workflows/docker-pres_xml.yml: gh-actions/samples/docker-pres_xml.yml
+      .github/workflows/automerge.yml: gh-actions/master/automerge.yml
   mn-samples-itu:
     remote: ssh://git@github.com/metanorma/mn-samples-itu
     branch: master
@@ -375,7 +302,9 @@ repositories:
       .github/workflows/windows.yml: gh-actions/samples/windows.yml
       Makefile: gh-actions/samples/Makefile
       Makefile.win: gh-actions/samples/Makefile.win
+      .github/workflows/test.yml: gh-actions/samples/test.yml
       .github/workflows/docker-pres_xml.yml: gh-actions/samples/docker-pres_xml.yml
+      .github/workflows/automerge.yml: gh-actions/master/automerge.yml
   mn-samples-iec:
     remote: ssh://git@github.com/metanorma/mn-samples-iec
     branch: master
@@ -386,7 +315,9 @@ repositories:
       .github/workflows/windows.yml: gh-actions/samples/windows.yml
       Makefile: gh-actions/samples/Makefile
       Makefile.win: gh-actions/samples/Makefile.win
+      .github/workflows/test.yml: gh-actions/samples/test.yml
       .github/workflows/docker-pres_xml.yml: gh-actions/samples/docker-pres_xml.yml
+      .github/workflows/automerge.yml: gh-actions/master/automerge.yml
   mn-samples-ietf:
     remote: ssh://git@github.com/metanorma/mn-samples-ietf
     branch: master
@@ -397,7 +328,9 @@ repositories:
       .github/workflows/windows.yml: gh-actions/samples/windows.yml
       Makefile: gh-actions/samples/Makefile
       Makefile.win: gh-actions/samples/Makefile.win
+      .github/workflows/test.yml: gh-actions/samples/test.yml
       .github/workflows/docker-pres_xml.yml: gh-actions/samples/docker-pres_xml.yml
+      .github/workflows/automerge.yml: gh-actions/master/automerge.yml
   mn-samples-un:
     remote: ssh://git@github.com/metanorma/mn-samples-un
     branch: master
@@ -408,7 +341,9 @@ repositories:
       .github/workflows/windows.yml: gh-actions/samples/windows.yml
       Makefile: gh-actions/samples/Makefile
       Makefile.win: gh-actions/samples/Makefile.win
+      .github/workflows/test.yml: gh-actions/samples/test.yml
       .github/workflows/docker-pres_xml.yml: gh-actions/samples/docker-pres_xml.yml
+      .github/workflows/automerge.yml: gh-actions/master/automerge.yml
   mn-samples-mpfa:
     remote: ssh://git@github.com/metanorma/mn-samples-mpfa
     branch: master
@@ -419,7 +354,9 @@ repositories:
       .github/workflows/windows.yml: gh-actions/samples/windows.yml
       Makefile: gh-actions/samples/Makefile
       Makefile.win: gh-actions/samples/Makefile.win
+      .github/workflows/test.yml: gh-actions/samples/test.yml
       .github/workflows/docker-pres_xml.yml: gh-actions/samples/docker-pres_xml.yml
+      .github/workflows/automerge.yml: gh-actions/master/automerge.yml
   mn-samples-iso:
     remote: ssh://git@github.com/metanorma/mn-samples-iso
     branch: master
@@ -430,7 +367,9 @@ repositories:
       .github/workflows/windows.yml: gh-actions/samples/windows.yml
       Makefile: gh-actions/samples/Makefile
       Makefile.win: gh-actions/samples/Makefile.win
+      .github/workflows/test.yml: gh-actions/samples/test.yml
       .github/workflows/docker-pres_xml.yml: gh-actions/samples/docker-pres_xml.yml
+      .github/workflows/automerge.yml: gh-actions/master/automerge.yml
   mn-samples-gb:
     remote: ssh://git@github.com/metanorma/mn-samples-gb
     branch: master
@@ -441,7 +380,9 @@ repositories:
       .github/workflows/windows.yml: gh-actions/samples/windows.yml
       Makefile: gh-actions/samples/Makefile
       Makefile.win: gh-actions/samples/Makefile.win
+      .github/workflows/test.yml: gh-actions/samples/test.yml
       .github/workflows/docker-pres_xml.yml: gh-actions/samples/docker-pres_xml.yml
+      .github/workflows/automerge.yml: gh-actions/master/automerge.yml
   mn-samples-cc:
     remote: ssh://git@github.com/metanorma/mn-samples-cc
     branch: master
@@ -452,7 +393,9 @@ repositories:
       .github/workflows/windows.yml: gh-actions/samples/windows.yml
       Makefile: gh-actions/samples/Makefile
       Makefile.win: gh-actions/samples/Makefile.win
+      .github/workflows/test.yml: gh-actions/samples/test.yml
       .github/workflows/docker-pres_xml.yml: gh-actions/samples/docker-pres_xml.yml
+      .github/workflows/automerge.yml: gh-actions/master/automerge.yml
   mn-samples-iho:
     remote: ssh://git@github.com/metanorma/mn-samples-iho
     branch: master
@@ -463,7 +406,9 @@ repositories:
       .github/workflows/windows.yml: gh-actions/samples/windows.yml
       Makefile: gh-actions/samples/Makefile
       Makefile.win: gh-actions/samples/Makefile.win
+      .github/workflows/test.yml: gh-actions/samples/test.yml
       .github/workflows/docker-pres_xml.yml: gh-actions/samples/docker-pres_xml.yml
+      .github/workflows/automerge.yml: gh-actions/master/automerge.yml
   mn-samples-nist:
     remote: ssh://git@github.com/metanorma/mn-samples-nist
     branch: master
@@ -472,7 +417,9 @@ repositories:
       .github/workflows/windows.yml: gh-actions/samples/windows.yml
       Makefile: gh-actions/samples/Makefile
       Makefile.win: gh-actions/samples/Makefile.win
+      .github/workflows/test.yml: gh-actions/samples/test.yml
       .github/workflows/docker-pres_xml.yml: gh-actions/samples/docker-pres_xml.yml
+      .github/workflows/automerge.yml: gh-actions/master/automerge.yml
   mn-samples-m3aawg:
     remote: ssh://git@github.com/metanorma/mn-samples-m3aawg
     branch: master
@@ -483,7 +430,9 @@ repositories:
       .github/workflows/windows.yml: gh-actions/samples/windows.yml
       Makefile: gh-actions/samples/Makefile
       Makefile.win: gh-actions/samples/Makefile.win
+      .github/workflows/test.yml: gh-actions/samples/test.yml
       .github/workflows/docker-pres_xml.yml: gh-actions/samples/docker-pres_xml.yml
+      .github/workflows/automerge.yml: gh-actions/master/automerge.yml
   mn-samples-csa:
     remote: ssh://git@github.com/metanorma/mn-samples-csa
     branch: master
@@ -494,7 +443,9 @@ repositories:
       .github/workflows/windows.yml: gh-actions/samples/windows.yml
       Makefile: gh-actions/samples/Makefile
       Makefile.win: gh-actions/samples/Makefile.win
+      .github/workflows/test.yml: gh-actions/samples/test.yml
       .github/workflows/docker-pres_xml.yml: gh-actions/samples/docker-pres_xml.yml
+      .github/workflows/automerge.yml: gh-actions/master/automerge.yml
   hk-ogcio-infosec-docs:
     remote: ssh://git@github.com/metanorma/hk-ogcio-infosec-docs
     branch: master
@@ -515,13 +466,13 @@ repositories:
       .github/workflows/windows.yml: gh-actions/samples/windows.yml
       Makefile.main: gh-actions/samples/Makefile
       Makefile.win.main: gh-actions/samples/Makefile.win
+      .github/workflows/test.yml: gh-actions/samples/test.yml
+      .github/workflows/automerge.yml: gh-actions/master/automerge.yml
   iev:
     remote: ssh://git@github.com/metanorma/iev
     branch: master
     files:
-      .github/workflows/macos.yml: gh-actions/master/macos.yml
-      .github/workflows/ubuntu.yml: gh-actions/master/ubuntu.yml
-      .github/workflows/windows.yml: gh-actions/master/windows.yml
+      .github/workflows/rake.yml: gh-actions/master/rake.yml
   ogc-tcpnp:
     remote: ssh://git@github.com/metanorma/ogc-tcpnp
     branch: master
@@ -634,23 +585,17 @@ repositories:
     remote: ssh://git@github.com/metanorma/reeper
     branch: master
     files:
-      .github/workflows/macos.yml: gh-actions/master/macos.yml
-      .github/workflows/ubuntu.yml: gh-actions/master/ubuntu.yml
-      .github/workflows/windows.yml: gh-actions/master/windows.yml
+      .github/workflows/rake.yml: gh-actions/master/rake.yml
   metanorma-registry:
     remote: ssh://git@github.com/metanorma/metanorma-registry
     branch: master
     files:
-      .github/workflows/macos.yml: gh-actions/master/macos.yml
-      .github/workflows/ubuntu.yml: gh-actions/master/ubuntu.yml
-      .github/workflows/windows.yml: gh-actions/master/windows.yml
+      .github/workflows/rake.yml: gh-actions/master/rake.yml
   lapidist:
     remote: ssh://git@github.com/metanorma/lapidist
     branch: master
     files:
-      .github/workflows/macos.yml: gh-actions/master/macos.yml
-      .github/workflows/ubuntu.yml: gh-actions/master/ubuntu.yml
-      .github/workflows/windows.yml: gh-actions/master/windows.yml
+      .github/workflows/rake.yml: gh-actions/master/rake.yml
   rfc-divination-cfapi:
     remote: ssh://git@github.com/metanorma/rfc-divination-cfapi
     branch: master
@@ -761,9 +706,7 @@ repositories:
     remote: ssh://git@github.com/metanorma/mn2pdf-ruby
     branch: master
     files:
-      .github/workflows/macos.yml: gh-actions/master/macos.yml
-      .github/workflows/ubuntu.yml: gh-actions/master/ubuntu.yml
-      .github/workflows/windows.yml: gh-actions/master/windows.yml
+      .github/workflows/rake.yml: gh-actions/master/rake.yml
 
 groups:
   converter:
@@ -900,7 +843,7 @@ groups:
   homebrew:
   - homebrew-metanorma
   templates:
-  - mn-templates-csd
+  - mn-templates-cc
   - mn-templates-iec
   - mn-templates-ietf
   - mn-templates-iso
