@@ -1,14 +1,12 @@
 name: notify
 
-on:
-  check_suite:
-    types:
-      - completed
+on: status
 
 jobs:
   notify:
     name: Notify dependent repos
     runs-on: ubuntu-latest
+    if: github.event.context == 'tests-passed-successfully'
     steps:
       - uses: actions/checkout@master
 

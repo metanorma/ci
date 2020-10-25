@@ -10,7 +10,7 @@ repositories:
     branch: master
     files:
       .github/workflows/rake.yml: gh-actions/master/rake.yml
-      .github/workflows/notify.yml: gh-actions/metanorma-cli/notify.yml
+      .github/workflows/notify.yml: gh-actions/master/notify.yml
       templates/base/.github/workflows/docker.yml: gh-actions/samples/docker.yml
       templates/base/.github/workflows/macos.yml: gh-actions/samples/macos.yml
       templates/base/.github/workflows/ubuntu.yml: gh-actions/samples/ubuntu.yml
