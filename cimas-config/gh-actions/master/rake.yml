@@ -2,7 +2,7 @@ name: rake
 
 on:
   push:
-    branches: [ master ]
+    branches: [ master, main  ]
     tags: [ v* ]
   pull_request:
 
@@ -50,7 +50,7 @@ jobs:
       - name: Trigger notify workflow
         uses: Sibz/github-status-action@v1
         with:
-          authToken: ${{ secrets.METANORMA_CI_PAT_TOKEN }}
+          authToken: ${{ secrets.GITHUB_TOKEN }}
           context: 'tests-passed-successfully'
           description: 'Tests passed successfully'
           state: 'success'
