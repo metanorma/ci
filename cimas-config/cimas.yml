@@ -707,6 +707,11 @@ repositories:
     branch: master
     files:
       .github/workflows/rake.yml: gh-actions/master/rake.yml
+  metanorma-plugin-lutaml:
+    remote: ssh://git@github.com/metanorma/metanorma-plugin-lutaml
+    branch: master
+    files:
+      .github/workflows/rake.yml: gh-actions/master/rake.yml
 
 groups:
   converter:
@@ -881,3 +886,4 @@ groups:
   - chocolatey-metanorma
   - homebrew-metanorma
   - metanorma-snap
+  - metanorma-plugin-lutaml
