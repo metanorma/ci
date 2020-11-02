@@ -707,23 +707,37 @@ repositories:
     branch: master
     files:
       .github/workflows/rake.yml: gh-actions/master/rake.yml
+  mn2sts-ruby:
+    remote: ssh://git@github.com/metanorma/mn2sts-ruby
+    branch: master
+    files:
+      .github/workflows/rake.yml: gh-actions/master/rake.yml
   metanorma-plugin-lutaml:
     remote: ssh://git@github.com/metanorma/metanorma-plugin-lutaml
     branch: master
     files:
       .github/workflows/rake.yml: gh-actions/master/rake.yml
+  rfc2md:
+    remote: git@github.com:metanorma/rfc2md.git
+    branch: master
+    files:
+      .github/workflows/test.yml: gh-actions/rfc2/test.yml
+  rfc2mn:
+    remote: git@github.com:metanorma/rfc2mn.git
+    branch: master
+    files:
+      .github/workflows/test.yml: gh-actions/rfc2/test.yml
 
 groups:
   converter:
   - html2doc
   - mathml2asciimath
-  - mn2pdf
   - omml2mathml
   - rfc2md
   - rfc2mn
-  - tex2mn
   - unicode2latex
   - mn2pdf-ruby
+  - mn2sts-ruby
   processor:
   - metanorma-cli
   - metanorma-csa
@@ -743,52 +757,14 @@ groups:
   - metanorma-vg
   - metanorma-generic
   - metanorma-iho
+  - metanorma-bipm
   metanorma:
   - metanorma
-  - metanorma-generic
-  - metanorma-build-scripts
   - metanorma-cli
-  - metanorma-csa
-  - metanorma-csd
   - metanorma-docker
-  - metanorma-document-gh-pages
-  - metanorma-gb
-  - metanorma-iec
-  - metanorma-ietf
-  - metanorma-iso
-  - metanorma-itu
-  - metanorma-itu-style
-  - metanorma-linux-setup
-  - metanorma-m3aawg
-  - metanorma-macos-setup
-  - metanorma-model-csa
-  - metanorma-model-csd
-  - metanorma-model-gb
-  - metanorma-model-iso
-  - metanorma-model-itu
-  - metanorma-model-m3d
-  - metanorma-model-mpfa
-  - metanorma-model-nist
-  - metanorma-model-ogc
-  - metanorma-model-rsd
-  - metanorma-model-standoc
-  - metanorma-model-un
-  - metanorma-model-iho
-  - metanorma-mpfd
-  - metanorma-mrr-samples
-  - metanorma-nist
-  - metanorma-nist-style
-  - metanorma-ogc
-  - metanorma-ogc-style
   - metanorma-registry
   - metanorma-release
-  - metanorma-requirements-models
-  - metanorma-rsd
-  - metanorma-snap
-  - metanorma-standoc
-  - metanorma-un
-  - metanorma-vg
-  - metanorma-iho
+  - metanorma-document-gh-pages
   model:
   - metanorma-model-csa
   - metanorma-model-csd
@@ -804,12 +780,13 @@ groups:
   - metanorma-model-un
   - basicdoc-models
   - metanorma-requirements-models
-
   infrastructure:
   - iso-ics-codes-scripts
   - metanorma-registry
   - metanorma-build-scripts
   - cimas
+  - lapidist
+  - csa-ccm-tools
   style:
   - csd-style
   - csand-style
@@ -821,6 +798,8 @@ groups:
   - metanorma-ogc-style
   - metanorma-nist-style
   - metanorma-itu-style
+  - metanorma-nist-style
+  - metanorma-ogc-style
   site:
   - asciirfc.com
   - metanorma.com
@@ -838,6 +817,7 @@ groups:
   - mn-samples-csa
   - mn-samples-nist
   - mn-samples-m3aawg
+  - metanorma-mrr-samples
   setup:
   - metanorma-macos-setup
   - metanorma-windows-setup

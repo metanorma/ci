@@ -30,17 +30,21 @@ jobs:
     steps:
       - uses: actions/checkout@master
 
-      - name: Use Ruby
-        uses: ruby/setup-ruby@v1
+      - uses: ruby/setup-ruby@v1
         with:
           ruby-version: ${{ matrix.ruby }}
-          bundler-cache: true
 
-      - name: Update gems
-        run: bundle install --jobs 4 --retry 3
+      - uses: actions/cache@v1
+        with:
+          path: vendor/bundle
+          key: bundle-${{ matrix.os }}-${{ matrix.ruby }}-${{ hashFiles('**/*.gemspec') }}
+          restore-keys: bundle-${{ matrix.os }}-${{ matrix.ruby }}
 
-      - name: Run specs
-        run: bundle exec rake
+      - run: bundle config set path 'vendor/bundle'
+
+      - run: bundle install --jobs 4 --retry 3
+
+      - run: bundle exec rake
 
   notify:
     name: Trigger notify workflow

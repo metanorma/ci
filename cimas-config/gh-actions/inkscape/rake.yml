@@ -30,11 +30,19 @@ jobs:
     steps:
       - uses: actions/checkout@master
 
-      - name: Use Ruby
-        uses: ruby/setup-ruby@v1
+      - uses: ruby/setup-ruby@v1
         with:
           ruby-version: ${{ matrix.ruby }}
-          bundler-cache: true
+
+      - uses: actions/cache@v1
+        with:
+          path: vendor/bundle
+          key: bundle-${{ matrix.os }}-${{ matrix.ruby }}-${{ hashFiles('**/*.gemspec') }}
+          restore-keys: bundle-${{ matrix.os }}-${{ matrix.ruby }}
+
+      - run: bundle config set path 'vendor/bundle'
+
+      - run: bundle install --jobs 4 --retry 3
 
       - name: Install Inkscape macOS
         if: matrix.os == 'macos-latest'
@@ -56,8 +64,4 @@ jobs:
           choco install --no-progress -y inkscape
           inkscape --version
 
-      - name: Update gems
-        run: bundle install --jobs 4 --retry 3
-
-      - name: Run specs
-        run: bundle exec rake
+      - run: bundle exec rake
