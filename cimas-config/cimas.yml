@@ -206,6 +206,18 @@ repositories:
     files:
       .github/workflows/make.yml: gh-actions/model/make.yml
       .github/workflows/automerge.yml: gh-actions/master/automerge.yml
+  metanorma-model-bipm:
+    remote: ssh://git@github.com/metanorma/metanorma-model-bipm
+    branch: master
+    files:
+      .github/workflows/make.yml: gh-actions/model/make.yml
+      .github/workflows/automerge.yml: gh-actions/master/automerge.yml
+  metanorma-model-ieee:
+    remote: ssh://git@github.com/metanorma/metanorma-model-ieee
+    branch: master
+    files:
+      .github/workflows/make.yml: gh-actions/model/make.yml
+      .github/workflows/automerge.yml: gh-actions/master/automerge.yml
   basicdoc-models:
     remote: ssh://git@github.com/metanorma/basicdoc-models
     branch: master
@@ -220,6 +232,11 @@ repositories:
       .github/workflows/automerge.yml: gh-actions/master/automerge.yml
   csa-ccm-tools:
     remote: ssh://git@github.com/metanorma/csa-ccm-tools
+    branch: master
+    files:
+      .github/workflows/rake.yml: gh-actions/master/rake.yml
+  cimas:
+    remote: git@github.com:metanorma/cimas.git
     branch: master
     files:
       .github/workflows/rake.yml: gh-actions/master/rake.yml
@@ -435,6 +452,19 @@ repositories:
       .github/workflows/automerge.yml: gh-actions/master/automerge.yml
   mn-samples-csa:
     remote: ssh://git@github.com/metanorma/mn-samples-csa
+    branch: master
+    files:
+      .github/workflows/docker.yml: gh-actions/samples/docker.yml
+      .github/workflows/macos.yml: gh-actions/samples/macos.yml
+      .github/workflows/ubuntu.yml: gh-actions/samples/ubuntu.yml
+      .github/workflows/windows.yml: gh-actions/samples/windows.yml
+      Makefile: gh-actions/samples/Makefile
+      Makefile.win: gh-actions/samples/Makefile.win
+      .github/workflows/test.yml: gh-actions/samples/test.yml
+      .github/workflows/docker-pres_xml.yml: gh-actions/samples/docker-pres_xml.yml
+      .github/workflows/automerge.yml: gh-actions/master/automerge.yml
+  mn-samples-bipm:
+    remote: ssh://git@github.com/metanorma/mn-samples-bipm
     branch: master
     files:
       .github/workflows/docker.yml: gh-actions/samples/docker.yml
@@ -778,6 +808,8 @@ groups:
   - metanorma-model-rsd
   - metanorma-model-standoc
   - metanorma-model-un
+  - metanorma-model-bipm
+  - metanorma-model-ieee
   - basicdoc-models
   - metanorma-requirements-models
   infrastructure:
@@ -817,6 +849,7 @@ groups:
   - mn-samples-csa
   - mn-samples-nist
   - mn-samples-m3aawg
+  - mn-samples-bipm
   - metanorma-mrr-samples
   setup:
   - metanorma-macos-setup
