@@ -36,7 +36,20 @@ jobs:
         run: cinst -y plantuml
 
       - if: matrix.os != 'windows-latest'
-        run:  make clean all 
+        run:  make clean all
 
       - if: matrix.os == 'windows-latest'
         run: make clean all SHELL=cmd
+
+  tests-passed:
+    needs: make
+    runs-on: ubuntu-latest
+    steps:
+      - name: Trigger tests passed event
+        uses: Sibz/github-status-action@v1
+        with:
+          authToken: ${{ secrets.GITHUB_TOKEN }}
+          context: 'tests-passed-successfully'
+          description: 'Tests passed successfully'
+          state: 'success'
+          sha: ${{ github.event.pull_request.head.sha || github.sha }}

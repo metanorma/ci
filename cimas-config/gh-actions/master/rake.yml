@@ -46,12 +46,11 @@ jobs:
 
       - run: bundle exec rake
 
-  notify:
-    name: Trigger notify workflow
+  tests-passed:
     needs: rake
     runs-on: ubuntu-latest
     steps:
-      - name: Trigger notify workflow
+      - name: Trigger tests passed event
         uses: Sibz/github-status-action@v1
         with:
           authToken: ${{ secrets.GITHUB_TOKEN }}
