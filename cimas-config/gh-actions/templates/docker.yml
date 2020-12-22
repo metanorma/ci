@@ -19,8 +19,6 @@ jobs:
           token: ${{ secrets.METANORMA_CI_PAT_TOKEN || github.token }}
           submodules: true
 
-      - run: metanorma setup --agree-to-terms
-
       - name: Metanorma compile
         shell: bash
         run: |

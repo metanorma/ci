@@ -66,7 +66,6 @@ jobs:
       - name: Metanorma compile *nix
         if: matrix.os != 'windows-latest'
         run: |
-          metanorma setup --agree-to-terms
           source doctypes.env
           for template in $DOCTYPES
           do
