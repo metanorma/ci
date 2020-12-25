@@ -43,4 +43,4 @@ jobs:
         env:
           JAVA_OPTS: "java.awt.headless=true"
         run: |
-          make clean all SKIP_BUNDLE=true
+          metanorma site generate sources --output-dir site
