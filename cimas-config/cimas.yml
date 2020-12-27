@@ -580,8 +580,6 @@ repositories:
       .github/workflows/macos.yml: gh-actions/samples/macos.yml
       .github/workflows/ubuntu.yml: gh-actions/samples/ubuntu.yml
       .github/workflows/windows.yml: gh-actions/samples/windows.yml
-      Makefile: gh-actions/asciirfc/Makefile
-      Makefile.win: gh-actions/asciirfc/Makefile.win
   rfc-camelot-holy-grenade:
     remote: ssh://git@github.com/metanorma/rfc-camelot-holy-grenade
     branch: master
@@ -590,8 +588,6 @@ repositories:
       .github/workflows/macos.yml: gh-actions/samples/macos.yml
       .github/workflows/ubuntu.yml: gh-actions/samples/ubuntu.yml
       .github/workflows/windows.yml: gh-actions/samples/windows.yml
-      Makefile: gh-actions/asciirfc/Makefile
-      Makefile.win: gh-actions/asciirfc/Makefile.win
   rfc-asciidoc-rfc:
     remote: ssh://git@github.com/metanorma/rfc-asciidoc-rfc
     branch: master
@@ -600,8 +596,6 @@ repositories:
       .github/workflows/macos.yml: gh-actions/samples/macos.yml
       .github/workflows/ubuntu.yml: gh-actions/samples/ubuntu.yml
       .github/workflows/windows.yml: gh-actions/samples/windows.yml
-      Makefile: gh-actions/asciirfc/Makefile
-      Makefile.win: gh-actions/asciirfc/Makefile.win
   rfc-asciirfc-minimal:
     remote: ssh://git@github.com/metanorma/rfc-asciirfc-minimal
     branch: master
@@ -610,8 +604,6 @@ repositories:
       .github/workflows/macos.yml: gh-actions/samples/macos.yml
       .github/workflows/ubuntu.yml: gh-actions/samples/ubuntu.yml
       .github/workflows/windows.yml: gh-actions/samples/windows.yml
-      Makefile: gh-actions/asciirfc/Makefile
-      Makefile.win: gh-actions/asciirfc/Makefile.win
   iso-690:
     remote: ssh://git@github.com/metanorma/iso-690
     branch: master
