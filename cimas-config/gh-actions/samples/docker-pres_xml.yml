@@ -26,10 +26,10 @@ jobs:
           LANG: C.UTF-8
           LANGUAGE: C.UTF-8
         run: |
-          metanorma site generate sources --output-dir published
+          metanorma site generate sources
 
       - uses: actions/upload-artifact@master
         if: github.ref == 'refs/heads/master'
         with:
-          name: published
-          path: published
+          name: site
+          path: site
