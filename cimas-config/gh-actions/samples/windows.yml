@@ -11,7 +11,6 @@ on:
       - .github/workflows/ubuntu.yml
       - .github/workflows/docker.yml
       - .github/workflows/docker-pres_xml.yml
-      - Makefile
 
 jobs:
   test-windows:
