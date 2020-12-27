@@ -42,4 +42,4 @@ jobs:
         env:
           JAVA_OPTS: "java.awt.headless=true"
         run: |
-          metanorma site generate sources --output-dir site
+          metanorma site generate sources
