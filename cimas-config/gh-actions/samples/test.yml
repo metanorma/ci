@@ -46,6 +46,9 @@ jobs:
         run: |
           pip install xml2rfc
 
+      - if: matrix.os == 'macos-latest'
+        run: brew install autoconf automake libtool
+
       - name: Install metanorma
         shell: python
         env:
