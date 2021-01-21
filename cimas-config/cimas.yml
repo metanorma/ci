@@ -672,7 +672,7 @@ repositories:
       .github/workflows/rake.yml: gh-actions/master/rake.yml
   metanorma-plugin-lutaml:
     remote: ssh://git@github.com/metanorma/metanorma-plugin-lutaml
-    branch: master
+    branch: main
     files:
       .github/workflows/rake.yml: gh-actions/master/rake.yml
   rfc2md:
@@ -685,6 +685,11 @@ repositories:
     branch: master
     files:
       .github/workflows/test.yml: gh-actions/rfc2/test.yml
+  metanorma-plugin-datastruct:
+    remote: git@github.com:metanorma/metanorma-plugin-datastruct.git
+    branch: master
+    files:
+      .github/workflows/rake.yml: gh-actions/master/rake.yml
 
 groups:
   converter:
