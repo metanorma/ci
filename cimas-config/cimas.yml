@@ -690,6 +690,11 @@ repositories:
     branch: master
     files:
       .github/workflows/rake.yml: gh-actions/master/rake.yml
+  metanorma-utils:
+    remote: git@github.com:metanorma/metanorma-utils.git
+    branch: master
+    files:
+      .github/workflows/rake.yml: gh-actions/master/rake.yml
 
 groups:
   converter:
