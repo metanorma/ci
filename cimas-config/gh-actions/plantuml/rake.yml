@@ -34,9 +34,6 @@ jobs:
         with:
           ruby-version: ${{ matrix.ruby }}
 
-      - if: matrix.os == 'macos-latest'
-        run: brew install autoconf automake libtool
-
       - uses: actions/cache@v2
         with:
           path: vendor/bundle

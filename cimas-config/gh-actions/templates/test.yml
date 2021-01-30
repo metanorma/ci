@@ -36,9 +36,6 @@ jobs:
         with:
           ruby-version: ${{ matrix.ruby }}
 
-      - if: matrix.os == 'macos-latest'
-        run: brew install autoconf automake libtool
-
       - name: Install metanorma
         shell: python
         env:
