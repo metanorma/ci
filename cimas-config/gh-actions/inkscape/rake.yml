@@ -44,25 +44,7 @@ jobs:
 
       - run: bundle install --jobs 4 --retry 3
 
-      - name: Install Inkscape macOS
-        if: matrix.os == 'macos-latest'
-        run: |
-          brew cask install inkscape
-          inkscape --version
-
-      - name: Install Inkscape Ubuntu
-        if: matrix.os == 'ubuntu-latest'
-        run: |
-          sudo add-apt-repository ppa:inkscape.dev/stable
-          sudo apt update
-          sudo apt install inkscape
-          inkscape --version
-
-      - name: Install Inkscape Windows
-        if: matrix.os == 'windows-latest'
-        run: |
-          choco install --no-progress -y inkscape
-          inkscape --version
+      - uses: metanorma/metanorma-build-scripts/inkscape-setup-action@master
 
       - run: bundle exec rake
 
