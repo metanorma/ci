@@ -23,21 +23,8 @@ jobs:
           token: ${{ secrets.METANORMA_CI_PAT_TOKEN || github.token }}
           submodules: true
 
-      - uses: actions/cache@v2
-        with:
-          path: ~/.cache/xml2rfc
-          key: xml2rfc
-          restore-key: xml2rfc
-
       - run: brew install metanorma/metanorma/metanorma
 
-      - name: Use Ruby
-        uses: ruby/setup-ruby@v1
-        with:
-          ruby-version: 2.6
-      - name: Install relaton
-        run: |
-          gem install relaton-cli
       - name: Metanorma compile
         env:
           JAVA_OPTS: "java.awt.headless=true"
