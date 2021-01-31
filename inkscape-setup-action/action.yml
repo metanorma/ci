@@ -1,0 +1,23 @@
+name: 'inkscape-setup-action'
+description: 'composite action which installs inkscape for all OSes'
+runs:
+  using: "composite"
+  steps:
+    - shell: python
+      run: |
+        import os
+        import platform
+
+        cmds = {
+          "Darwin": [ "brew install --cask inkscape" ],
+          "Windows": [ "choco install --no-progress -y inkscape" ],
+          "Linux": [
+            "sudo add-apt-repository ppa:inkscape.dev/stable",
+            "sudo apt update",
+            "sudo apt install inkscape"
+          ]
+        }.get(platform.system(), [ "echo \"Unsupported platform: {}\"".format(platform.system()) ])
+
+        cmds.append("inkscape --version")
+
+        [os.system(cmd) for cmd in cmds]
