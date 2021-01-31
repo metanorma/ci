@@ -35,13 +35,6 @@ jobs:
           ruby-version: ${{ matrix.ruby }}
           bundler-cache: true
 
-      - name: install libre-office windows
-        if: matrix.os == 'windows-latest'
-        run: |
-          choco install libreoffice-still
-          echo "::add-path::C:\Program Files\LibreOffice\program"
-
-      - if: matrix.os == 'ubuntu-latest'
-        run: sudo apt-get -y --no-install-recommends install libreoffice
+      - uses: metanorma/metanorma-build-scripts/libreoffice-setup-action@master
 
       - run: bundle exec rake

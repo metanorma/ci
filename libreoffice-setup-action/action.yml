@@ -1,0 +1,22 @@
+name: 'libreoffice-setup-action'
+description: 'composite action which installs inkscape for all OSes'
+runs:
+  using: "composite"
+  steps:
+    - shell: python
+      run: |
+        import os
+        import platform
+
+        cmds = {
+          "Darwin": [ ],
+          "Windows": [
+            "choco install libreoffice-still",
+            "echo \"C:\\Program Files\\LibreOffice\\program\\\\\" >> $GITHUB_PATH"
+          ],
+          "Linux": [
+            "sudo apt-get -y --no-install-recommends install libreoffice"
+          ]
+        }.get(platform.system(), [ "echo \"Unsupported platform: {}\"".format(platform.system()) ])
+
+        [os.system(cmd) for cmd in cmds]
