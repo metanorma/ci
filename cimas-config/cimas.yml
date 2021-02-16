@@ -442,6 +442,17 @@ repositories:
       .github/workflows/test.yml: gh-actions/samples/test.yml
       .github/workflows/docker-pres_xml.yml: gh-actions/samples/docker-pres_xml.yml
       .github/workflows/automerge.yml: gh-actions/master/automerge.yml
+  mn-samples-jcgm:
+    remote: ssh://git@github.com/metanorma/mn-samples-jcgm
+    branch: master
+    files:
+      .github/workflows/docker.yml: gh-actions/samples/docker.yml
+      .github/workflows/macos.yml: gh-actions/samples/macos.yml
+      .github/workflows/ubuntu.yml: gh-actions/samples/ubuntu.yml
+      .github/workflows/windows.yml: gh-actions/samples/windows.yml
+      .github/workflows/test.yml: gh-actions/samples/test.yml
+      .github/workflows/docker-pres_xml.yml: gh-actions/samples/docker-pres_xml.yml
+      .github/workflows/automerge.yml: gh-actions/master/automerge.yml
   hk-ogcio-infosec-docs:
     remote: ssh://git@github.com/metanorma/hk-ogcio-infosec-docs
     branch: master
