@@ -706,6 +706,11 @@ repositories:
     branch: master
     files:
       .github/workflows/rake.yml: gh-actions/master/rake.yml
+  asciimath2unitsml:
+    remote: git@github.com:plurimath/asciimath2unitsml.git
+    branch: main
+    files:
+      .github/workflows/rake.yml: gh-actions/master/rake.yml
 
 groups:
   converter:
