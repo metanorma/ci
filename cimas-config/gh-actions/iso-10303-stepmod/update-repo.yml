@@ -20,25 +20,27 @@ jobs:
       - run: gem install stepmod-utils
 
       - working-directory: ./iso-10303-stepmod
-        run:
-          git config user.name github-actions
-          git config user.email github-actions@github.com
+        run: |
+          git config --global user.name "metanorma-ci"
+          git config --global user.email "metanorma-ci@users.noreply.github.com"
 
-          git remote add cvs https://github.com/metanorma/iso-10303-stepmod-cvs
-          git fetch cvs --no-checkout --depth 1
-          git checkout master cvs/master
+          git remote add cvs https://metanorma-ci:${{ secrets.METANORMA_CI_PAT_TOKEN }}@github.com/metanorma/iso-10303-stepmod-cvs
+          git pull cvs master --ff-only --depth 1
+
+          git switch -c test
+          git merge cvs/master
           git remote remove cvs
 
           stepmod-annotate-all .
 
       - working-directory: ./iso-10303-stepmod
-        run:
-          mkdir -p .github/workflow
-          wget https://raw.githubusercontent.com/metanorma/metanorma-build-scripts/master/cimas-config/gh-actions/iso-10303-stepmod/update-repo.yml -O .github/workflow/update-repo.yml
-          git add .github/workflow/update-repo.yml
+        run: |
+          mkdir -p .github/workflows
+          wget https://raw.githubusercontent.com/metanorma/metanorma-build-scripts/master/cimas-config/gh-actions/iso-10303-stepmod/update-repo.yml -O .github/workflows/update-repo.yml
+          git add .github/workflows/update-repo.yml
           git commit -m "Add GHA update-repo workflow"
 
       - working-directory: ./iso-10303-stepmod
-        run:
+        run: |
           git remote add origin https://github.com/metanorma/iso-10303-stepmod
-          echo "TODO git push origin master -f"
+          git push origin test -f
