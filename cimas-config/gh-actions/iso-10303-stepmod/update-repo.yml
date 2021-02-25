@@ -9,7 +9,8 @@ jobs:
   update-repo:
     name: Update repository
     runs-on: ubuntu-latest
-
+    env:
+      BRANCH: test # TODO replace with master
     steps:
       - uses: ruby/setup-ruby@v1
         with:
@@ -27,9 +28,9 @@ jobs:
 
       - run: |
           git remote add cvs https://github.com/metanorma/iso-10303-stepmod-cvs
-          git fetch cvs --depth 1
+          git fetch cvs
 
-          git switch -c test
+          git switch -c ${{ env.BRANCH }}
           git reset --hard cvs/master
           git remote remove cvs
 
@@ -43,6 +44,4 @@ jobs:
           git add .github/workflows/update-repo.yml
           git commit -m "Add GHA update-repo workflow"
 
-      - run: |
-          git fetch --unshallow origin
-          git push origin test -f
+      - run: git push origin ${{ env.BRANCH }} -f -vv
