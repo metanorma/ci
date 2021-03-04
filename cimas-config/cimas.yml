@@ -663,6 +663,12 @@ repositories:
     branch: main
     files:
       .github/workflows/rake.yml: gh-actions/master/rake.yml
+  stepmod-utils:
+    remote: git@github.com:metanorma/stepmod-utils.git
+    branch: master
+    files:
+      .github/workflows/rake.yml: gh-actions/master/rake.yml
+      .github/workflows/release.yml: gh-actions/master/release.yml
 
 groups:
   converter:
