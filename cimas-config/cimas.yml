@@ -295,9 +295,7 @@ repositories:
     branch: master
     files:
       .github/workflows/docker.yml: gh-actions/samples/docker.yml
-      .github/workflows/macos.yml: gh-actions/samples/macos.yml
-      .github/workflows/ubuntu.yml: gh-actions/samples/ubuntu.yml
-      .github/workflows/windows.yml: gh-actions/samples/windows.yml
+      .github/workflows/generate.yml: gh-actions/samples/generate.yml
       .github/workflows/test.yml: gh-actions/samples/test.yml
       .github/workflows/docker-pres_xml.yml: gh-actions/samples/docker-pres_xml.yml
       .github/workflows/automerge.yml: gh-actions/master/automerge.yml
@@ -306,9 +304,7 @@ repositories:
     branch: master
     files:
       .github/workflows/docker.yml: gh-actions/samples/docker.yml
-      .github/workflows/macos.yml: gh-actions/samples/macos.yml
-      .github/workflows/ubuntu.yml: gh-actions/samples/ubuntu.yml
-      .github/workflows/windows.yml: gh-actions/samples/windows.yml
+      .github/workflows/generate.yml: gh-actions/samples/generate.yml
       .github/workflows/test.yml: gh-actions/samples/test.yml
       .github/workflows/docker-pres_xml.yml: gh-actions/samples/docker-pres_xml.yml
       .github/workflows/automerge.yml: gh-actions/master/automerge.yml
@@ -317,9 +313,7 @@ repositories:
     branch: master
     files:
       .github/workflows/docker.yml: gh-actions/samples/docker.yml
-      .github/workflows/macos.yml: gh-actions/samples/macos.yml
-      .github/workflows/ubuntu.yml: gh-actions/samples/ubuntu.yml
-      .github/workflows/windows.yml: gh-actions/samples/windows.yml
+      .github/workflows/generate.yml: gh-actions/samples/generate.yml
       .github/workflows/test.yml: gh-actions/samples/test.yml
       .github/workflows/docker-pres_xml.yml: gh-actions/samples/docker-pres_xml.yml
       .github/workflows/automerge.yml: gh-actions/master/automerge.yml
@@ -328,9 +322,7 @@ repositories:
     branch: master
     files:
       .github/workflows/docker.yml: gh-actions/samples/docker.yml
-      .github/workflows/macos.yml: gh-actions/samples/macos.yml
-      .github/workflows/ubuntu.yml: gh-actions/samples/ubuntu.yml
-      .github/workflows/windows.yml: gh-actions/samples/windows.yml
+      .github/workflows/generate.yml: gh-actions/samples/generate.yml
       .github/workflows/test.yml: gh-actions/samples/test.yml
       .github/workflows/docker-pres_xml.yml: gh-actions/samples/docker-pres_xml.yml
       .github/workflows/automerge.yml: gh-actions/master/automerge.yml
@@ -339,9 +331,7 @@ repositories:
     branch: master
     files:
       .github/workflows/docker.yml: gh-actions/samples/docker.yml
-      .github/workflows/macos.yml: gh-actions/samples/macos.yml
-      .github/workflows/ubuntu.yml: gh-actions/samples/ubuntu.yml
-      .github/workflows/windows.yml: gh-actions/samples/windows.yml
+      .github/workflows/generate.yml: gh-actions/samples/generate.yml
       .github/workflows/test.yml: gh-actions/samples/test.yml
       .github/workflows/docker-pres_xml.yml: gh-actions/samples/docker-pres_xml.yml
       .github/workflows/automerge.yml: gh-actions/master/automerge.yml
@@ -350,9 +340,7 @@ repositories:
     branch: master
     files:
       .github/workflows/docker.yml: gh-actions/samples/docker.yml
-      .github/workflows/macos.yml: gh-actions/samples/macos.yml
-      .github/workflows/ubuntu.yml: gh-actions/samples/ubuntu.yml
-      .github/workflows/windows.yml: gh-actions/samples/windows.yml
+      .github/workflows/generate.yml: gh-actions/samples/generate.yml
       .github/workflows/test.yml: gh-actions/samples/test.yml
       .github/workflows/docker-pres_xml.yml: gh-actions/samples/docker-pres_xml.yml
       .github/workflows/automerge.yml: gh-actions/master/automerge.yml
@@ -361,9 +349,7 @@ repositories:
     branch: master
     files:
       .github/workflows/docker.yml: gh-actions/samples/docker.yml
-      .github/workflows/macos.yml: gh-actions/samples/macos.yml
-      .github/workflows/ubuntu.yml: gh-actions/samples/ubuntu.yml
-      .github/workflows/windows.yml: gh-actions/samples/windows.yml
+      .github/workflows/generate.yml: gh-actions/samples/generate.yml
       .github/workflows/test.yml: gh-actions/samples/test.yml
       .github/workflows/docker-pres_xml.yml: gh-actions/samples/docker-pres_xml.yml
       .github/workflows/automerge.yml: gh-actions/master/automerge.yml
@@ -372,9 +358,7 @@ repositories:
     branch: master
     files:
       .github/workflows/docker.yml: gh-actions/samples/docker.yml
-      .github/workflows/macos.yml: gh-actions/samples/macos.yml
-      .github/workflows/ubuntu.yml: gh-actions/samples/ubuntu.yml
-      .github/workflows/windows.yml: gh-actions/samples/windows.yml
+      .github/workflows/generate.yml: gh-actions/samples/generate.yml
       .github/workflows/test.yml: gh-actions/samples/test.yml
       .github/workflows/docker-pres_xml.yml: gh-actions/samples/docker-pres_xml.yml
       .github/workflows/automerge.yml: gh-actions/master/automerge.yml
@@ -383,9 +367,7 @@ repositories:
     branch: master
     files:
       .github/workflows/docker.yml: gh-actions/samples/docker.yml
-      .github/workflows/macos.yml: gh-actions/samples/macos.yml
-      .github/workflows/ubuntu.yml: gh-actions/samples/ubuntu.yml
-      .github/workflows/windows.yml: gh-actions/samples/windows.yml
+      .github/workflows/generate.yml: gh-actions/samples/generate.yml
       .github/workflows/test.yml: gh-actions/samples/test.yml
       .github/workflows/docker-pres_xml.yml: gh-actions/samples/docker-pres_xml.yml
       .github/workflows/automerge.yml: gh-actions/master/automerge.yml
@@ -394,9 +376,7 @@ repositories:
     branch: master
     files:
       .github/workflows/docker.yml: gh-actions/samples/docker.yml
-      .github/workflows/macos.yml: gh-actions/samples/macos.yml
-      .github/workflows/ubuntu.yml: gh-actions/samples/ubuntu.yml
-      .github/workflows/windows.yml: gh-actions/samples/windows.yml
+      .github/workflows/generate.yml: gh-actions/samples/generate.yml
       .github/workflows/test.yml: gh-actions/samples/test.yml
       .github/workflows/docker-pres_xml.yml: gh-actions/samples/docker-pres_xml.yml
       .github/workflows/automerge.yml: gh-actions/master/automerge.yml
@@ -405,7 +385,7 @@ repositories:
     branch: master
     files:
       .github/workflows/docker.yml: gh-actions/samples/docker.yml
-      .github/workflows/windows.yml: gh-actions/samples/windows.yml
+      .github/workflows/generate.yml: gh-actions/samples/generate.yml
       .github/workflows/test.yml: gh-actions/samples/test.yml
       .github/workflows/docker-pres_xml.yml: gh-actions/samples/docker-pres_xml.yml
       .github/workflows/automerge.yml: gh-actions/master/automerge.yml
@@ -414,9 +394,7 @@ repositories:
     branch: master
     files:
       .github/workflows/docker.yml: gh-actions/samples/docker.yml
-      .github/workflows/macos.yml: gh-actions/samples/macos.yml
-      .github/workflows/ubuntu.yml: gh-actions/samples/ubuntu.yml
-      .github/workflows/windows.yml: gh-actions/samples/windows.yml
+      .github/workflows/generate.yml: gh-actions/samples/generate.yml
       .github/workflows/test.yml: gh-actions/samples/test.yml
       .github/workflows/docker-pres_xml.yml: gh-actions/samples/docker-pres_xml.yml
       .github/workflows/automerge.yml: gh-actions/master/automerge.yml
@@ -425,9 +403,7 @@ repositories:
     branch: master
     files:
       .github/workflows/docker.yml: gh-actions/samples/docker.yml
-      .github/workflows/macos.yml: gh-actions/samples/macos.yml
-      .github/workflows/ubuntu.yml: gh-actions/samples/ubuntu.yml
-      .github/workflows/windows.yml: gh-actions/samples/windows.yml
+      .github/workflows/generate.yml: gh-actions/samples/generate.yml
       .github/workflows/test.yml: gh-actions/samples/test.yml
       .github/workflows/docker-pres_xml.yml: gh-actions/samples/docker-pres_xml.yml
       .github/workflows/automerge.yml: gh-actions/master/automerge.yml
@@ -436,9 +412,7 @@ repositories:
     branch: master
     files:
       .github/workflows/docker.yml: gh-actions/samples/docker.yml
-      .github/workflows/macos.yml: gh-actions/samples/macos.yml
-      .github/workflows/ubuntu.yml: gh-actions/samples/ubuntu.yml
-      .github/workflows/windows.yml: gh-actions/samples/windows.yml
+      .github/workflows/generate.yml: gh-actions/samples/generate.yml
       .github/workflows/test.yml: gh-actions/samples/test.yml
       .github/workflows/docker-pres_xml.yml: gh-actions/samples/docker-pres_xml.yml
       .github/workflows/automerge.yml: gh-actions/master/automerge.yml
@@ -447,9 +421,7 @@ repositories:
     branch: master
     files:
       .github/workflows/docker.yml: gh-actions/samples/docker.yml
-      .github/workflows/macos.yml: gh-actions/samples/macos.yml
-      .github/workflows/ubuntu.yml: gh-actions/samples/ubuntu.yml
-      .github/workflows/windows.yml: gh-actions/samples/windows.yml
+      .github/workflows/generate.yml: gh-actions/samples/generate.yml
       .github/workflows/test.yml: gh-actions/samples/test.yml
       .github/workflows/docker-pres_xml.yml: gh-actions/samples/docker-pres_xml.yml
       .github/workflows/automerge.yml: gh-actions/master/automerge.yml
@@ -458,17 +430,13 @@ repositories:
     branch: master
     files:
       .github/workflows/docker.yml: gh-actions/samples/docker.yml
-      .github/workflows/macos.yml: gh-actions/samples/macos.yml
-      .github/workflows/ubuntu.yml: gh-actions/samples/ubuntu.yml
-      .github/workflows/windows.yml: gh-actions/samples/windows.yml
+      .github/workflows/generate.yml: gh-actions/samples/generate.yml
   csa-caiq:
     remote: ssh://git@github.com/metanorma/csa-caiq
     branch: master
     files:
       .github/workflows/docker.yml: gh-actions/samples/docker.yml
-      .github/workflows/macos.yml: gh-actions/samples/macos.yml
-      .github/workflows/ubuntu.yml: gh-actions/samples/ubuntu.yml
-      .github/workflows/windows.yml: gh-actions/samples/windows.yml
+      .github/workflows/generate.yml: gh-actions/samples/generate.yml
       .github/workflows/test.yml: gh-actions/samples/test.yml
       .github/workflows/automerge.yml: gh-actions/master/automerge.yml
   iev:
@@ -481,9 +449,7 @@ repositories:
     branch: master
     files:
       .github/workflows/docker.yml: gh-actions/samples/docker.yml
-      .github/workflows/macos.yml: gh-actions/samples/macos.yml
-      .github/workflows/ubuntu.yml: gh-actions/samples/ubuntu.yml
-      .github/workflows/windows.yml: gh-actions/samples/windows.yml
+      .github/workflows/generate.yml: gh-actions/samples/generate.yml
   mn-templates-cc:
     remote: ssh://git@github.com/metanorma/mn-templates-cc
     branch: master
@@ -493,9 +459,7 @@ repositories:
       common/.gitignore: gh-actions/templates/common/.gitignore
       common/Gemfile: gh-actions/templates/common/Gemfile
       common/.github/workflows/docker.yml: gh-actions/samples/docker.yml
-      common/.github/workflows/macos.yml: gh-actions/samples/macos.yml
-      common/.github/workflows/ubuntu.yml: gh-actions/samples/ubuntu.yml
-      common/.github/workflows/windows.yml: gh-actions/samples/windows.yml
+      common/.github/workflows/generate.yml: gh-actions/samples/generate.yml
   mn-templates-ogc:
     remote: ssh://git@github.com/metanorma/mn-templates-ogc
     branch: master
@@ -505,9 +469,7 @@ repositories:
       common/.gitignore: gh-actions/templates/common/.gitignore
       common/Gemfile: gh-actions/templates/common/Gemfile
       common/.github/workflows/docker.yml: gh-actions/samples/docker.yml
-      common/.github/workflows/macos.yml: gh-actions/samples/macos.yml
-      common/.github/workflows/ubuntu.yml: gh-actions/samples/ubuntu.yml
-      common/.github/workflows/windows.yml: gh-actions/samples/windows.yml
+      common/.github/workflows/generate.yml: gh-actions/samples/generate.yml
   mn-templates-iso:
     remote: ssh://git@github.com/metanorma/mn-templates-iso
     branch: master
@@ -517,9 +479,7 @@ repositories:
       common/.gitignore: gh-actions/templates/common/.gitignore
       common/Gemfile: gh-actions/templates/common/Gemfile
       common/.github/workflows/docker.yml: gh-actions/samples/docker.yml
-      common/.github/workflows/macos.yml: gh-actions/samples/macos.yml
-      common/.github/workflows/ubuntu.yml: gh-actions/samples/ubuntu.yml
-      common/.github/workflows/windows.yml: gh-actions/samples/windows.yml
+      common/.github/workflows/generate.yml: gh-actions/samples/generate.yml
   mn-templates-ietf:
     remote: ssh://git@github.com/metanorma/mn-templates-ietf
     branch: master
@@ -529,9 +489,7 @@ repositories:
       common/.gitignore: gh-actions/templates/common/.gitignore
       common/Gemfile: gh-actions/templates/common/Gemfile
       common/.github/workflows/docker.yml: gh-actions/samples/docker.yml
-      common/.github/workflows/macos.yml: gh-actions/samples/macos.yml
-      common/.github/workflows/ubuntu.yml: gh-actions/samples/ubuntu.yml
-      common/.github/workflows/windows.yml: gh-actions/samples/windows.yml
+      common/.github/workflows/generate.yml: gh-actions/samples/generate.yml
   mn-templates-iec:
     remote: ssh://git@github.com/metanorma/mn-templates-iec
     branch: master
@@ -541,9 +499,7 @@ repositories:
       common/.gitignore: gh-actions/templates/common/.gitignore
       common/Gemfile: gh-actions/templates/common/Gemfile
       common/.github/workflows/docker.yml: gh-actions/samples/docker.yml
-      common/.github/workflows/macos.yml: gh-actions/samples/macos.yml
-      common/.github/workflows/ubuntu.yml: gh-actions/samples/ubuntu.yml
-      common/.github/workflows/windows.yml: gh-actions/samples/windows.yml
+      common/.github/workflows/generate.yml: gh-actions/samples/generate.yml
   mn-templates-itu:
     remote: ssh://git@github.com/metanorma/mn-templates-itu
     branch: master
@@ -553,9 +509,7 @@ repositories:
       common/.gitignore: gh-actions/templates/common/.gitignore
       common/Gemfile: gh-actions/templates/common/Gemfile
       common/.github/workflows/docker.yml: gh-actions/samples/docker.yml
-      common/.github/workflows/macos.yml: gh-actions/samples/macos.yml
-      common/.github/workflows/ubuntu.yml: gh-actions/samples/ubuntu.yml
-      common/.github/workflows/windows.yml: gh-actions/samples/windows.yml
+      common/.github/workflows/generate.yml: gh-actions/samples/generate.yml
   mn-templates-nist:
     remote: ssh://git@github.com/metanorma/mn-templates-nist
     branch: master
@@ -565,9 +519,7 @@ repositories:
       common/.gitignore: gh-actions/templates/common/.gitignore
       common/Gemfile: gh-actions/templates/common/Gemfile
       common/.github/workflows/docker.yml: gh-actions/samples/docker.yml
-      common/.github/workflows/macos.yml: gh-actions/samples/macos.yml
-      common/.github/workflows/ubuntu.yml: gh-actions/samples/ubuntu.yml
-      common/.github/workflows/windows.yml: gh-actions/samples/windows.yml
+      common/.github/workflows/generate.yml: gh-actions/samples/generate.yml
   reeper:
     remote: ssh://git@github.com/metanorma/reeper
     branch: master
@@ -804,7 +756,7 @@ groups:
   - mn-samples-nist
   - mn-samples-m3aawg
   - mn-samples-bipm
-  - metanorma-mrr-samples
+  - mn-samples-jcgm
   setup:
   - metanorma-macos-setup
   - metanorma-windows-setup

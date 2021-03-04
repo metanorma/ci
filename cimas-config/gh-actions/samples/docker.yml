@@ -24,19 +24,14 @@ jobs:
           token: ${{ secrets.METANORMA_CI_PAT_TOKEN || github.token }}
           submodules: true
 
-      - name: instal gems from local Gemfile
-        run: curl -L --retry 3 https://raw.githubusercontent.com/metanorma/metanorma-build-scripts/master/gemfile-to-bundle-add.sh | bash
+      - run: curl -L --retry 3 https://raw.githubusercontent.com/metanorma/metanorma-build-scripts/master/gemfile-to-bundle-add.sh | bash
 
-      - run: metanorma site generate sources
-        env:
-          LC_ALL: C.UTF-8
-          LANG: C.UTF-8
-          LANGUAGE: C.UTF-8
+      - run: metanorma site generate . -o published -c metanorma.yml --agree-to-terms
 
       - uses: actions/upload-artifact@master
         with:
-          name: site
-          path: site
+          name: published
+          path: published
 
   deploy-gh-pages:
     if: github.ref == 'refs/heads/master'
@@ -47,12 +42,12 @@ jobs:
 
       - uses: actions/download-artifact@v1
         with:
-          name: site
+          name: published
 
       - uses: peaceiris/actions-gh-pages@v3
         with:
           deploy_key: ${{ secrets.GH_DEPLOY_KEY }}
-          publish_dir: ./site
+          publish_dir: ./published
           force_orphan: true
           user_name: ${{ github.actor }}
           user_email: ${{ format('{0}@users.noreply.github.com', github.actor) }}
