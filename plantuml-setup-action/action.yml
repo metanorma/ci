@@ -1,0 +1,22 @@
+name: 'plantuml-setup-action'
+description: 'composite action which installs plantuml for all OSes'
+runs:
+  using: "composite"
+  steps:
+    - shell: python
+      run: |
+        import os
+        import platform
+
+        cmds = {
+          "Darwin": [ "brew install plantuml" ],
+          "Windows": [ "cinst -y plantuml" ],
+          "Linux": [
+            "sudo apt update",
+            "sudo apt install plantuml"
+          ]
+        }.get(platform.system(), [ "echo \"Unsupported platform: {}\"".format(platform.system()) ])
+
+        cmds.append("plantuml -version")
+
+        [os.system(cmd) for cmd in cmds]
