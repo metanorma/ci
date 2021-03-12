@@ -16,30 +16,11 @@ jobs:
         os: [ ubuntu-latest, windows-latest, macos-latest ]
 
     steps:
-      - uses: actions/checkout@master
+      - uses: actions/checkout@v2
 
-      - name: install plantuml ubuntu
-        if: matrix.os == 'ubuntu-latest'
-        uses: nick-invision/retry@v1
-        with:
-          polling_interval_seconds: 5
-          timeout_minutes: 5
-          max_attempts: 3
-          command: >
-            sudo apt-get update -y && sudo bash -c
-            "curl -L https://github.com/metanorma/plantuml-install/raw/master/ubuntu.sh | bash"
+      - uses: metanorma/metanorma-build-scripts/plantuml-setup-action@master
 
-      - if: matrix.os == 'macos-latest'
-        run: brew install plantuml
-
-      - if: matrix.os == 'windows-latest'
-        run: cinst -y plantuml
-
-      - if: matrix.os != 'windows-latest'
-        run:  make clean all
-
-      - if: matrix.os == 'windows-latest'
-        run: make clean all SHELL=cmd
+      - run: make clean all
 
   tests-passed:
     needs: make

@@ -12,9 +12,7 @@ repositories:
       .github/workflows/rake.yml: gh-actions/master/rake.yml
       .github/workflows/notify.yml: gh-actions/master/notify.yml
       templates/base/.github/workflows/docker.yml: gh-actions/samples/docker.yml
-      templates/base/.github/workflows/macos.yml: gh-actions/samples/macos.yml
-      templates/base/.github/workflows/ubuntu.yml: gh-actions/samples/ubuntu.yml
-      templates/base/.github/workflows/windows.yml: gh-actions/samples/windows.yml
+      templates/base/.github/workflows/macos.yml: gh-actions/samples/generate.yml
       templates/base/.gitlab-ci.yml: gh-actions/samples/.gitlab-ci.yml
   isodoc:
     remote: ssh://git@github.com/metanorma/isodoc
@@ -180,8 +178,8 @@ repositories:
     files:
       .github/workflows/make.yml: gh-actions/model/make.yml
       .github/workflows/automerge.yml: gh-actions/master/automerge.yml
-  metanorma-model-csd:
-    remote: ssh://git@github.com/metanorma/metanorma-model-csd
+  metanorma-model-cc:
+    remote: ssh://git@github.com/metanorma/metanorma-model-cc
     branch: master
     files:
       .github/workflows/make.yml: gh-actions/model/make.yml
@@ -253,23 +251,18 @@ repositories:
     branch: master
     files:
       .github/workflows/docker.yml: gh-actions/samples/docker.yml
-      .github/workflows/macos.yml: gh-actions/samples/macos.yml
-      .github/workflows/ubuntu.yml: gh-actions/samples/ubuntu.yml
-      .github/workflows/windows.yml: gh-actions/samples/windows.yml
+      .github/workflows/generate.yml: gh-actions/samples/generate.yml
   reverse_adoc:
     remote: ssh://git@github.com/metanorma/reverse_adoc
     branch: master
     files:
       .github/workflows/rake.yml: gh-actions/libreoffice/rake.yml
-
   isodoc-rice:
     remote: ssh://git@github.com/metanorma/isodoc-rice
     branch: master
     files:
       .github/workflows/docker.yml: gh-actions/samples/docker.yml
-      .github/workflows/macos.yml: gh-actions/samples/macos.yml
-      .github/workflows/ubuntu.yml: gh-actions/samples/ubuntu.yml
-      .github/workflows/windows.yml: gh-actions/samples/windows.yml
+      .github/workflows/generate.yml: gh-actions/samples/generate.yml
   gb-agencies:
     remote: ssh://git@github.com/metanorma/gb-agencies
     branch: master
@@ -298,7 +291,6 @@ repositories:
       .github/workflows/generate.yml: gh-actions/samples/generate.yml
       .github/workflows/test.yml: gh-actions/samples/test.yml
       .github/workflows/docker-pres_xml.yml: gh-actions/samples/docker-pres_xml.yml
-      .github/workflows/automerge.yml: gh-actions/master/automerge.yml
   mn-samples-itu:
     remote: ssh://git@github.com/metanorma/mn-samples-itu
     branch: master
@@ -425,6 +417,14 @@ repositories:
       .github/workflows/test.yml: gh-actions/samples/test.yml
       .github/workflows/docker-pres_xml.yml: gh-actions/samples/docker-pres_xml.yml
       .github/workflows/automerge.yml: gh-actions/master/automerge.yml
+  mn-samples-ribose:
+    remote: ssh://git@github.com/metanorma/mn-samples-ribose
+    branch: master
+    files:
+      .github/workflows/docker.yml: gh-actions/samples/docker.yml
+      .github/workflows/generate.yml: gh-actions/samples/generate.yml
+      .github/workflows/test.yml: gh-actions/samples/test.yml
+      .github/workflows/docker-pres_xml.yml: gh-actions/samples/docker-pres_xml.yml
   hk-ogcio-infosec-docs:
     remote: ssh://git@github.com/metanorma/hk-ogcio-infosec-docs
     branch: master
@@ -512,6 +512,26 @@ repositories:
       common/.github/workflows/generate.yml: gh-actions/samples/generate.yml
   mn-templates-nist:
     remote: ssh://git@github.com/metanorma/mn-templates-nist
+    branch: master
+    files:
+      .github/workflows/test.yml: gh-actions/templates/test.yml
+      .github/workflows/docker.yml: gh-actions/templates/docker.yml
+      common/.gitignore: gh-actions/templates/common/.gitignore
+      common/Gemfile: gh-actions/templates/common/Gemfile
+      common/.github/workflows/docker.yml: gh-actions/samples/docker.yml
+      common/.github/workflows/generate.yml: gh-actions/samples/generate.yml
+  mn-templates-m3aawg:
+    remote: ssh://git@github.com/metanorma/mn-templates-m3aawg
+    branch: master
+    files:
+      .github/workflows/test.yml: gh-actions/templates/test.yml
+      .github/workflows/docker.yml: gh-actions/templates/docker.yml
+      common/.gitignore: gh-actions/templates/common/.gitignore
+      common/Gemfile: gh-actions/templates/common/Gemfile
+      common/.github/workflows/docker.yml: gh-actions/samples/docker.yml
+      common/.github/workflows/generate.yml: gh-actions/samples/generate.yml
+  mn-templates-un:
+    remote: ssh://git@github.com/metanorma/mn-templates-un
     branch: master
     files:
       .github/workflows/test.yml: gh-actions/templates/test.yml
@@ -638,39 +658,54 @@ repositories:
     branch: main
     files:
       .github/workflows/rake.yml: gh-actions/master/rake.yml
-  rfc2md:
-    remote: git@github.com:metanorma/rfc2md.git
-    branch: master
-    files:
-      .github/workflows/test.yml: gh-actions/rfc2/test.yml
-  rfc2mn:
-    remote: git@github.com:metanorma/rfc2mn.git
-    branch: master
-    files:
-      .github/workflows/test.yml: gh-actions/rfc2/test.yml
   metanorma-plugin-datastruct:
-    remote: git@github.com:metanorma/metanorma-plugin-datastruct.git
+    remote: ssh://git@github.com/metanorma/metanorma-plugin-datastruct
     branch: master
     files:
       .github/workflows/rake.yml: gh-actions/master/rake.yml
   metanorma-utils:
-    remote: git@github.com:metanorma/metanorma-utils.git
-    branch: master
+    remote: ssh://git@github.com/metanorma/metanorma-utils
+    branch: main
     files:
       .github/workflows/rake.yml: gh-actions/master/rake.yml
   asciimath2unitsml:
-    remote: git@github.com:plurimath/asciimath2unitsml.git
+    remote: ssh://git@github.com/plurimath/asciimath2unitsml
     branch: main
     files:
       .github/workflows/rake.yml: gh-actions/master/rake.yml
   stepmod-utils:
-    remote: git@github.com:metanorma/stepmod-utils.git
+    remote: ssh://git@github.com/metanorma/stepmod-utils
     branch: master
     files:
       .github/workflows/rake.yml: gh-actions/master/rake.yml
       .github/workflows/release.yml: gh-actions/master/release.yml
+  stepmod2mn:
+    remote: ssh://git@github.com/metanorma/stepmod-utils
+    branch: master
+    files:
+      .github/workflows/rake.yml: gh-actions/master/rake.yml
+      .github/workflows/release.yml: gh-actions/master/release.yml
+  bipm-data-importer:
+    remote: ssh://git@github.com/metanorma/bipm-data-importer
+    branch: master
+    files:
+      .github/workflows/rake.yml: gh-actions/master/rake.yml
+  sts2mn:
+    remote: ssh://git@github.com/metanorma/sts2mn
+    branch: master
+    files: {}
+  tex2mn:
+    remote: ssh://git@github.com/metanorma/sts2mn
+    branch: master
+    files: {}
+  rfc2mn:
+    remote: ssh://git@github.com/metanorma/rfc2mn
+    branch: master
+    files: {}
 
 groups:
+  site:
+  - metanorma.org
   converter:
   - html2doc
   - mathml2asciimath
@@ -680,6 +715,19 @@ groups:
   - unicode2latex
   - mn2pdf-ruby
   - mn2sts-ruby
+  - stepmod2mn
+  - iso690render
+  - csa-ccm-tools
+  - reverse_adoc
+  - sts2mn
+  - tex2mn
+  data:
+  - isoics
+  - cnccs
+  fetcher:
+  - iev
+  - gb-agencies
+  - bipm-data-importer
   processor:
   - metanorma-cli
   - metanorma-csa
@@ -703,13 +751,11 @@ groups:
   metanorma:
   - metanorma
   - metanorma-cli
-  - metanorma-docker
   - metanorma-registry
-  - metanorma-release
-  - metanorma-document-gh-pages
+  - metanorma-utils
   model:
   - metanorma-model-csa
-  - metanorma-model-csd
+  - metanorma-model-cc
   - metanorma-model-gb
   - metanorma-model-iso
   - metanorma-model-itu
@@ -725,12 +771,14 @@ groups:
   - basicdoc-models
   - metanorma-requirements-models
   infrastructure:
+  - metanorma-release
+  - metanorma-document-gh-pages
   - iso-ics-codes-scripts
   - metanorma-registry
   - metanorma-build-scripts
   - cimas
   - lapidist
-  - csa-ccm-tools
+  - oss-guides
   style:
   - csd-style
   - csand-style
@@ -763,6 +811,9 @@ groups:
   - mn-samples-m3aawg
   - mn-samples-bipm
   - mn-samples-jcgm
+  - mn-samples-ribose
+  - bipm-si-brochure
+  - isodoc-rice
   setup:
   - metanorma-macos-setup
   - metanorma-windows-setup
@@ -774,12 +825,14 @@ groups:
   - homebrew-metanorma
   templates:
   - mn-templates-cc
+  - mn-templates-un
   - mn-templates-iec
   - mn-templates-ietf
   - mn-templates-iso
   - mn-templates-itu
   - mn-templates-ogc
   - mn-templates-nist
+  - mn-templates-m3aawg
   snap:
   - metanorma-snap
   - latexml-snap
@@ -811,4 +864,7 @@ groups:
   - chocolatey-metanorma
   - homebrew-metanorma
   - metanorma-snap
+  - metanorma-docker
+  plugins:
   - metanorma-plugin-lutaml
+  - metanorma-plugin-datastruct

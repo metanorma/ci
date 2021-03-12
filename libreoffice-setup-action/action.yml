@@ -1,5 +1,5 @@
 name: 'libreoffice-setup-action'
-description: 'composite action which installs inkscape for all OSes'
+description: 'composite action which installs libreoffice for Windows and Linux'
 runs:
   using: "composite"
   steps:

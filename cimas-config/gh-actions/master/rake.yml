@@ -28,7 +28,9 @@ jobs:
             os: 'macos-latest'
             experimental: true
     steps:
-      - uses: actions/checkout@master
+      - uses: actions/checkout@v2
+        with:
+          submodules: true
 
       - uses: ruby/setup-ruby@v1
         with:
