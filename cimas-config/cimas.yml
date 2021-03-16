@@ -9,51 +9,51 @@ repositories:
     remote: ssh://git@github.com/metanorma/metanorma-cli
     branch: master
     files:
-      .github/workflows/rake.yml: gh-actions/master/rake.yml
+      .github/workflows/rake.yml: gh-actions/master/rake-notify.yml
       .github/workflows/notify.yml: gh-actions/master/notify.yml
       templates/base/.github/workflows/docker.yml: gh-actions/samples/docker.yml
       templates/base/.github/workflows/macos.yml: gh-actions/samples/generate.yml
       templates/base/.gitlab-ci.yml: gh-actions/samples/.gitlab-ci.yml
-  isodoc:
-    remote: ssh://git@github.com/metanorma/isodoc
+  metanorma:
+    remote: ssh://git@github.com/metanorma/metanorma
     branch: master
     files:
-      .github/workflows/rake.yml: gh-actions/inkscape/rake.yml
+      .github/workflows/rake.yml: gh-actions/master/rake-notify.yml
   metanorma-ogc:
     remote: ssh://git@github.com/metanorma/metanorma-ogc
     branch: master
     files:
-      .github/workflows/rake.yml: gh-actions/master/rake.yml
+      .github/workflows/rake.yml: gh-actions/master/rake-notify.yml
   metanorma-m3aawg:
     remote: ssh://git@github.com/metanorma/metanorma-m3aawg
     branch: master
     files:
-      .github/workflows/rake.yml: gh-actions/master/rake.yml
+      .github/workflows/rake.yml: gh-actions/master/rake-notify.yml
   cnccs:
     remote: ssh://git@github.com/metanorma/cnccs
     branch: master
     files:
-      .github/workflows/rake.yml: gh-actions/master/rake.yml
+      .github/workflows/rake.yml: gh-actions/master/rake-notify.yml
   metanorma-cc:
     remote: ssh://git@github.com/metanorma/metanorma-cc
     branch: master
     files:
-      .github/workflows/rake.yml: gh-actions/master/rake.yml
+      .github/workflows/rake.yml: gh-actions/master/rake-notify.yml
   metanorma-vg:
     remote: ssh://git@github.com/metanorma/metanorma-vg
     branch: master
     files:
-      .github/workflows/rake.yml: gh-actions/master/rake.yml
+      .github/workflows/rake.yml: gh-actions/master/rake-notify.yml
   metanorma-ribose:
     remote: ssh://git@github.com/metanorma/metanorma-ribose
     branch: master
     files:
-      .github/workflows/rake.yml: gh-actions/plantuml/rake.yml
+      .github/workflows/rake.yml: gh-actions/plantuml/rake-notify.yml
   metanorma-iho:
     remote: ssh://git@github.com/metanorma/metanorma-iho
     branch: master
     files:
-      .github/workflows/rake.yml: gh-actions/plantuml/rake.yml
+      .github/workflows/rake.yml: gh-actions/plantuml/rake-notify.yml
   isoics:
     remote: ssh://git@github.com/metanorma/isoics
     branch: master
@@ -68,62 +68,62 @@ repositories:
     remote: ssh://git@github.com/metanorma/metanorma-mpfa
     branch: master
     files:
-      .github/workflows/rake.yml: gh-actions/master/rake.yml
+      .github/workflows/rake.yml: gh-actions/master/rake-notify.yml
   metanorma-gb:
     remote: ssh://git@github.com/metanorma/metanorma-gb
     branch: master
     files:
-      .github/workflows/rake.yml: gh-actions/master/rake.yml
+      .github/workflows/rake.yml: gh-actions/master/rake-notify.yml
   metanorma-nist:
     remote: ssh://git@github.com/metanorma/metanorma-nist
     branch: master
     files:
-      .github/workflows/rake.yml: gh-actions/master/rake.yml
+      .github/workflows/rake.yml: gh-actions/master/rake-notify.yml
   metanorma-iec:
     remote: ssh://git@github.com/metanorma/metanorma-iec
     branch: master
     files:
-      .github/workflows/rake.yml: gh-actions/master/rake.yml
+      .github/workflows/rake.yml: gh-actions/master/rake-notify.yml
   metanorma-ietf:
     remote: ssh://git@github.com/metanorma/metanorma-ietf
     branch: master
     files:
-      .github/workflows/rake.yml: gh-actions/xml2rfc/rake.yml
+      .github/workflows/rake.yml: gh-actions/xml2rfc/rake-notify.yml
   metanorma-standoc:
     remote: ssh://git@github.com/metanorma/metanorma-standoc
     branch: master
     files:
-      .github/workflows/rake.yml: gh-actions/plantuml/rake.yml
+      .github/workflows/rake.yml: gh-actions/plantuml/rake-notify.yml
   metanorma-iso:
     remote: ssh://git@github.com/metanorma/metanorma-iso
     branch: master
     files:
-      .github/workflows/rake.yml: gh-actions/plantuml/rake.yml
+      .github/workflows/rake.yml: gh-actions/plantuml/rake-notify.yml
   metanorma-un:
     remote: ssh://git@github.com/metanorma/metanorma-un
     branch: master
     files:
-      .github/workflows/rake.yml: gh-actions/master/rake.yml
+      .github/workflows/rake.yml: gh-actions/master/rake-notify.yml
   metanorma-itu:
     remote: ssh://git@github.com/metanorma/metanorma-itu
     branch: master
     files:
-      .github/workflows/rake.yml: gh-actions/master/rake.yml
+      .github/workflows/rake.yml: gh-actions/master/rake-notify.yml
   metanorma-generic:
     remote: ssh://git@github.com/metanorma/metanorma-generic
     branch: master
     files:
-      .github/workflows/rake.yml: gh-actions/master/rake.yml
+      .github/workflows/rake.yml: gh-actions/master/rake-notify.yml
   metanorma-csa:
     remote: ssh://git@github.com/metanorma/metanorma-csa
     branch: master
     files:
-      .github/workflows/rake.yml: gh-actions/master/rake.yml
+      .github/workflows/rake.yml: gh-actions/master/rake-notify.yml
   metanorma-bipm:
     remote: ssh://git@github.com/metanorma/metanorma-bipm
     branch: master
     files:
-      .github/workflows/rake.yml: gh-actions/master/rake.yml
+      .github/workflows/rake.yml: gh-actions/master/rake-notify.yml
   metanorma-model-gb:
     remote: ssh://git@github.com/metanorma/metanorma-model-gb
     branch: master
@@ -134,6 +134,8 @@ repositories:
     remote: ssh://git@github.com/metanorma/metanorma-model-iso
     branch: master
     files:
+      Gemfile: gh-actions/model/Gemfile
+      Makefile: gh-actions/model/Makefile
       .github/workflows/make.yml: gh-actions/model/make.yml
       .github/workflows/automerge.yml: gh-actions/master/automerge.yml
   metanorma-model-standoc:
@@ -206,6 +208,8 @@ repositories:
     remote: ssh://git@github.com/metanorma/metanorma-model-bipm
     branch: master
     files:
+      Gemfile: gh-actions/model/Gemfile
+      Makefile: gh-actions/model/Makefile
       .github/workflows/make.yml: gh-actions/model/make.yml
       .github/workflows/automerge.yml: gh-actions/master/automerge.yml
   metanorma-model-ieee:
@@ -226,6 +230,11 @@ repositories:
     files:
       .github/workflows/make.yml: gh-actions/model/make.yml
       .github/workflows/automerge.yml: gh-actions/master/automerge.yml
+  isodoc:
+    remote: ssh://git@github.com/metanorma/isodoc
+    branch: master
+    files:
+      .github/workflows/rake.yml: gh-actions/inkscape/rake.yml
   csa-ccm-tools:
     remote: ssh://git@github.com/metanorma/csa-ccm-tools
     branch: master
@@ -270,11 +279,6 @@ repositories:
       .github/workflows/rake.yml: gh-actions/master/rake.yml
   mathml2asciimath:
     remote: ssh://git@github.com/metanorma/mathml2asciimath
-    branch: master
-    files:
-      .github/workflows/rake.yml: gh-actions/master/rake.yml
-  metanorma:
-    remote: ssh://git@github.com/metanorma/metanorma
     branch: master
     files:
       .github/workflows/rake.yml: gh-actions/master/rake.yml
@@ -657,7 +661,7 @@ repositories:
     remote: ssh://git@github.com/metanorma/metanorma-plugin-lutaml
     branch: main
     files:
-      .github/workflows/rake.yml: gh-actions/master/rake.yml
+      .github/workflows/rake.yml: gh-actions/plantuml/rake.yml
   metanorma-plugin-datastruct:
     remote: ssh://git@github.com/metanorma/metanorma-plugin-datastruct
     branch: master
@@ -721,6 +725,7 @@ groups:
   - reverse_adoc
   - sts2mn
   - tex2mn
+  - isodoc
   data:
   - isoics
   - cnccs
@@ -732,7 +737,6 @@ groups:
   - metanorma-cli
   - metanorma-csa
   - metanorma-cc
-  - metanorma-gb
   - metanorma-iec
   - metanorma-ietf
   - metanorma-iso
@@ -744,10 +748,12 @@ groups:
   - metanorma-ribose
   - metanorma-standoc
   - metanorma-un
-  - metanorma-vg
   - metanorma-generic
   - metanorma-iho
   - metanorma-bipm
+  # not maintained anymore:
+  # - metanorma-gb
+  # - metanorma-vg
   metanorma:
   - metanorma
   - metanorma-cli
