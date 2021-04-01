@@ -12,7 +12,7 @@ repositories:
       .github/workflows/rake.yml: gh-actions/master/rake-notify.yml
       .github/workflows/notify.yml: gh-actions/master/notify.yml
       templates/base/.github/workflows/docker.yml: gh-actions/samples/docker.yml
-      templates/base/.github/workflows/macos.yml: gh-actions/samples/generate.yml
+      templates/base/.github/workflows/generate.yml: gh-actions/samples/generate.yml
       templates/base/.gitlab-ci.yml: gh-actions/samples/.gitlab-ci.yml
   metanorma:
     remote: ssh://git@github.com/metanorma/metanorma
@@ -128,6 +128,8 @@ repositories:
     remote: ssh://git@github.com/metanorma/metanorma-model-gb
     branch: master
     files:
+      Gemfile: gh-actions/model/Gemfile
+      Makefile: gh-actions/model/Makefile
       .github/workflows/make.yml: gh-actions/model/make.yml
       .github/workflows/automerge.yml: gh-actions/master/automerge.yml
   metanorma-model-iso:
@@ -142,66 +144,88 @@ repositories:
     remote: ssh://git@github.com/metanorma/metanorma-model-standoc
     branch: master
     files:
+      Gemfile: gh-actions/model/Gemfile
+      Makefile: gh-actions/model/Makefile
       .github/workflows/make.yml: gh-actions/model/make.yml
       .github/workflows/automerge.yml: gh-actions/master/automerge.yml
   metanorma-model-un:
     remote: ssh://git@github.com/metanorma/metanorma-model-un
     branch: master
     files:
+      Gemfile: gh-actions/model/Gemfile
+      Makefile: gh-actions/model/Makefile
       .github/workflows/make.yml: gh-actions/model/make.yml
       .github/workflows/automerge.yml: gh-actions/master/automerge.yml
   metanorma-model-mpfa:
     remote: ssh://git@github.com/metanorma/metanorma-model-mpfa
     branch: master
     files:
+      Gemfile: gh-actions/model/Gemfile
+      Makefile: gh-actions/model/Makefile
       .github/workflows/make.yml: gh-actions/model/make.yml
       .github/workflows/automerge.yml: gh-actions/master/automerge.yml
   metanorma-model-itu:
     remote: ssh://git@github.com/metanorma/metanorma-model-itu
     branch: master
     files:
+      Gemfile: gh-actions/model/Gemfile
+      Makefile: gh-actions/model/Makefile
       .github/workflows/make.yml: gh-actions/model/make.yml
       .github/workflows/automerge.yml: gh-actions/master/automerge.yml
   metanorma-model-csa:
     remote: ssh://git@github.com/metanorma/metanorma-model-csa
     branch: master
     files:
+      Gemfile: gh-actions/model/Gemfile
+      Makefile: gh-actions/model/Makefile
       .github/workflows/make.yml: gh-actions/model/make.yml
       .github/workflows/automerge.yml: gh-actions/master/automerge.yml
   metanorma-model-nist:
     remote: ssh://git@github.com/metanorma/metanorma-model-nist
     branch: master
     files:
+      Gemfile: gh-actions/model/Gemfile
+      Makefile: gh-actions/model/Makefile
       .github/workflows/make.yml: gh-actions/model/make.yml
       .github/workflows/automerge.yml: gh-actions/master/automerge.yml
   metanorma-model-iho:
     remote: ssh://git@github.com/metanorma/metanorma-model-iho
     branch: master
     files:
+      Gemfile: gh-actions/model/Gemfile
+      Makefile: gh-actions/model/Makefile
       .github/workflows/make.yml: gh-actions/model/make.yml
       .github/workflows/automerge.yml: gh-actions/master/automerge.yml
   metanorma-model-cc:
     remote: ssh://git@github.com/metanorma/metanorma-model-cc
     branch: master
     files:
+      Gemfile: gh-actions/model/Gemfile
+      Makefile: gh-actions/model/Makefile
       .github/workflows/make.yml: gh-actions/model/make.yml
       .github/workflows/automerge.yml: gh-actions/master/automerge.yml
   metanorma-model-m3d:
     remote: ssh://git@github.com/metanorma/metanorma-model-m3d
     branch: master
     files:
+      Gemfile: gh-actions/model/Gemfile
+      Makefile: gh-actions/model/Makefile
       .github/workflows/make.yml: gh-actions/model/make.yml
       .github/workflows/automerge.yml: gh-actions/master/automerge.yml
   metanorma-model-ogc:
     remote: ssh://git@github.com/metanorma/metanorma-model-ogc
     branch: master
     files:
+      Gemfile: gh-actions/model/Gemfile
+      Makefile: gh-actions/model/Makefile
       .github/workflows/make.yml: gh-actions/model/make.yml
       .github/workflows/automerge.yml: gh-actions/master/automerge.yml
   metanorma-model-rsd:
     remote: ssh://git@github.com/metanorma/metanorma-model-rsd
     branch: master
     files:
+      Gemfile: gh-actions/model/Gemfile
+      Makefile: gh-actions/model/Makefile
       .github/workflows/make.yml: gh-actions/model/make.yml
       .github/workflows/automerge.yml: gh-actions/master/automerge.yml
   metanorma-model-bipm:
@@ -216,18 +240,24 @@ repositories:
     remote: ssh://git@github.com/metanorma/metanorma-model-ieee
     branch: master
     files:
+      Gemfile: gh-actions/model/Gemfile
+      Makefile: gh-actions/model/Makefile
       .github/workflows/make.yml: gh-actions/model/make.yml
       .github/workflows/automerge.yml: gh-actions/master/automerge.yml
   basicdoc-models:
     remote: ssh://git@github.com/metanorma/basicdoc-models
     branch: master
     files:
+      Gemfile: gh-actions/model/Gemfile
+      Makefile: gh-actions/model/Makefile
       .github/workflows/make.yml: gh-actions/model/make.yml
       .github/workflows/automerge.yml: gh-actions/master/automerge.yml
   metanorma-requirements-models:
     remote: ssh://git@github.com/metanorma/metanorma-requirements-models
     branch: master
     files:
+      Gemfile: gh-actions/model/Gemfile
+      Makefile: gh-actions/model/Makefile
       .github/workflows/make.yml: gh-actions/model/make.yml
       .github/workflows/automerge.yml: gh-actions/master/automerge.yml
   isodoc:
@@ -762,7 +792,6 @@ groups:
   model:
   - metanorma-model-csa
   - metanorma-model-cc
-  - metanorma-model-gb
   - metanorma-model-iso
   - metanorma-model-itu
   - metanorma-model-m3d
@@ -776,6 +805,8 @@ groups:
   - metanorma-model-ieee
   - basicdoc-models
   - metanorma-requirements-models
+  # not maintained anymore:
+  # - metanorma-model-gb
   infrastructure:
   - metanorma-release
   - metanorma-document-gh-pages
