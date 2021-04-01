@@ -1,7 +1,9 @@
 # source: https://github.com/marketplace/actions/merge-pull-requests#usage
 name: automerge
 
-on: status
+on:
+  repository_dispatch:
+    types: [ tests-passed ]
 
 jobs:
   automerge:
