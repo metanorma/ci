@@ -484,6 +484,12 @@ repositories:
     files:
       .github/workflows/docker.yml: gh-actions/samples/docker.yml
       .github/workflows/generate.yml: gh-actions/samples/generate.yml
+  ogc-dggs-xmi:
+    remote: ssh://git@github.com/metanorma/ogc-dggs-xmi
+    branch: master
+    files:
+      .github/workflows/docker.yml: gh-actions/samples/docker.yml
+      .github/workflows/generate.yml: gh-actions/samples/generate.yml
   mn-templates-cc:
     remote: ssh://git@github.com/metanorma/mn-templates-cc
     branch: master
@@ -851,6 +857,7 @@ groups:
   - mn-samples-ribose
   - bipm-si-brochure
   - isodoc-rice
+  - ogc-dggs-xmi
   setup:
   - metanorma-macos-setup
   - metanorma-windows-setup
