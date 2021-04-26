@@ -124,6 +124,11 @@ repositories:
     branch: master
     files:
       .github/workflows/rake.yml: gh-actions/master/rake-notify.yml
+  metanorma-bsi:
+    remote: ssh://git@github.com/metanorma/metanorma-bsi
+    branch: main
+    files:
+      .github/workflows/rake.yml: gh-actions/master/rake-notify.yml
   metanorma-model-gb:
     remote: ssh://git@github.com/metanorma/metanorma-model-gb
     branch: master
@@ -787,6 +792,7 @@ groups:
   - metanorma-generic
   - metanorma-iho
   - metanorma-bipm
+  - metanorma-bsi
   # not maintained anymore:
   # - metanorma-gb
   # - metanorma-vg
@@ -857,7 +863,6 @@ groups:
   - mn-samples-ribose
   - bipm-si-brochure
   - isodoc-rice
-  - ogc-dggs-xmi
   setup:
   - metanorma-macos-setup
   - metanorma-windows-setup
@@ -903,6 +908,7 @@ groups:
   - iso-tc184-sc4
   - DGGS2ISO-19170
   - mn-samples-nist
+  - ogc-dggs-xmi
   apps:
   - packed-mn
   - chocolatey-metanorma
