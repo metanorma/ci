@@ -405,7 +405,6 @@ repositories:
       .github/workflows/docker.yml: gh-actions/samples/docker.yml
       .github/workflows/generate.yml: gh-actions/samples/generate.yml
       .github/workflows/test.yml: gh-actions/samples/test.yml
-      .github/workflows/docker-pres_xml.yml: gh-actions/samples/docker-pres_xml.yml
   mn-samples-itu:
     remote: ssh://git@github.com/metanorma/mn-samples-itu
     branch: master
@@ -413,7 +412,6 @@ repositories:
       .github/workflows/docker.yml: gh-actions/samples/docker.yml
       .github/workflows/generate.yml: gh-actions/samples/generate.yml
       .github/workflows/test.yml: gh-actions/samples/test.yml
-      .github/workflows/docker-pres_xml.yml: gh-actions/samples/docker-pres_xml.yml
       .github/workflows/automerge.yml: gh-actions/master/automerge.yml
   mn-samples-iec:
     remote: ssh://git@github.com/metanorma/mn-samples-iec
@@ -422,7 +420,6 @@ repositories:
       .github/workflows/docker.yml: gh-actions/samples/docker.yml
       .github/workflows/generate.yml: gh-actions/samples/generate.yml
       .github/workflows/test.yml: gh-actions/samples/test.yml
-      .github/workflows/docker-pres_xml.yml: gh-actions/samples/docker-pres_xml.yml
       .github/workflows/automerge.yml: gh-actions/master/automerge.yml
   mn-samples-ietf:
     remote: ssh://git@github.com/metanorma/mn-samples-ietf
@@ -431,7 +428,6 @@ repositories:
       .github/workflows/docker.yml: gh-actions/samples/docker.yml
       .github/workflows/generate.yml: gh-actions/samples/generate.yml
       .github/workflows/test.yml: gh-actions/samples/test.yml
-      .github/workflows/docker-pres_xml.yml: gh-actions/samples/docker-pres_xml.yml
       .github/workflows/automerge.yml: gh-actions/master/automerge.yml
   mn-samples-un:
     remote: ssh://git@github.com/metanorma/mn-samples-un
@@ -440,7 +436,6 @@ repositories:
       .github/workflows/docker.yml: gh-actions/samples/docker.yml
       .github/workflows/generate.yml: gh-actions/samples/generate.yml
       .github/workflows/test.yml: gh-actions/samples/test.yml
-      .github/workflows/docker-pres_xml.yml: gh-actions/samples/docker-pres_xml.yml
       .github/workflows/automerge.yml: gh-actions/master/automerge.yml
   mn-samples-mpfa:
     remote: ssh://git@github.com/metanorma/mn-samples-mpfa
@@ -449,7 +444,6 @@ repositories:
       .github/workflows/docker.yml: gh-actions/samples/docker.yml
       .github/workflows/generate.yml: gh-actions/samples/generate.yml
       .github/workflows/test.yml: gh-actions/samples/test.yml
-      .github/workflows/docker-pres_xml.yml: gh-actions/samples/docker-pres_xml.yml
       .github/workflows/automerge.yml: gh-actions/master/automerge.yml
   mn-samples-iso:
     remote: ssh://git@github.com/metanorma/mn-samples-iso
@@ -458,7 +452,6 @@ repositories:
       .github/workflows/docker.yml: gh-actions/samples/docker.yml
       .github/workflows/generate.yml: gh-actions/samples/generate.yml
       .github/workflows/test.yml: gh-actions/samples/test.yml
-      .github/workflows/docker-pres_xml.yml: gh-actions/samples/docker-pres_xml.yml
       .github/workflows/automerge.yml: gh-actions/master/automerge.yml
   mn-samples-gb:
     remote: ssh://git@github.com/metanorma/mn-samples-gb
@@ -467,7 +460,6 @@ repositories:
       .github/workflows/docker.yml: gh-actions/samples/docker.yml
       .github/workflows/generate.yml: gh-actions/samples/generate.yml
       .github/workflows/test.yml: gh-actions/samples/test.yml
-      .github/workflows/docker-pres_xml.yml: gh-actions/samples/docker-pres_xml.yml
       .github/workflows/automerge.yml: gh-actions/master/automerge.yml
   mn-samples-cc:
     remote: ssh://git@github.com/metanorma/mn-samples-cc
@@ -476,7 +468,6 @@ repositories:
       .github/workflows/docker.yml: gh-actions/samples/docker.yml
       .github/workflows/generate.yml: gh-actions/samples/generate.yml
       .github/workflows/test.yml: gh-actions/samples/test.yml
-      .github/workflows/docker-pres_xml.yml: gh-actions/samples/docker-pres_xml.yml
       .github/workflows/automerge.yml: gh-actions/master/automerge.yml
   mn-samples-iho:
     remote: ssh://git@github.com/metanorma/mn-samples-iho
@@ -485,7 +476,6 @@ repositories:
       .github/workflows/docker.yml: gh-actions/samples/docker.yml
       .github/workflows/generate.yml: gh-actions/samples/generate.yml
       .github/workflows/test.yml: gh-actions/samples/test.yml
-      .github/workflows/docker-pres_xml.yml: gh-actions/samples/docker-pres_xml.yml
       .github/workflows/automerge.yml: gh-actions/master/automerge.yml
   mn-samples-nist:
     remote: ssh://git@github.com/metanorma/mn-samples-nist
@@ -494,7 +484,6 @@ repositories:
       .github/workflows/docker.yml: gh-actions/samples/docker.yml
       .github/workflows/generate.yml: gh-actions/samples/generate.yml
       .github/workflows/test.yml: gh-actions/samples/test.yml
-      .github/workflows/docker-pres_xml.yml: gh-actions/samples/docker-pres_xml.yml
       .github/workflows/automerge.yml: gh-actions/master/automerge.yml
   mn-samples-m3aawg:
     remote: ssh://git@github.com/metanorma/mn-samples-m3aawg
@@ -503,7 +492,6 @@ repositories:
       .github/workflows/docker.yml: gh-actions/samples/docker.yml
       .github/workflows/generate.yml: gh-actions/samples/generate.yml
       .github/workflows/test.yml: gh-actions/samples/test.yml
-      .github/workflows/docker-pres_xml.yml: gh-actions/samples/docker-pres_xml.yml
       .github/workflows/automerge.yml: gh-actions/master/automerge.yml
   mn-samples-csa:
     remote: ssh://git@github.com/metanorma/mn-samples-csa
@@ -512,7 +500,6 @@ repositories:
       .github/workflows/docker.yml: gh-actions/samples/docker.yml
       .github/workflows/generate.yml: gh-actions/samples/generate.yml
       .github/workflows/test.yml: gh-actions/samples/test.yml
-      .github/workflows/docker-pres_xml.yml: gh-actions/samples/docker-pres_xml.yml
       .github/workflows/automerge.yml: gh-actions/master/automerge.yml
   mn-samples-bipm:
     remote: ssh://git@github.com/metanorma/mn-samples-bipm
@@ -521,7 +508,6 @@ repositories:
       .github/workflows/docker.yml: gh-actions/samples/docker.yml
       .github/workflows/generate.yml: gh-actions/samples/generate.yml
       .github/workflows/test.yml: gh-actions/samples/test.yml
-      .github/workflows/docker-pres_xml.yml: gh-actions/samples/docker-pres_xml.yml
       .github/workflows/automerge.yml: gh-actions/master/automerge.yml
   mn-samples-jcgm:
     remote: ssh://git@github.com/metanorma/mn-samples-jcgm
@@ -530,7 +516,6 @@ repositories:
       .github/workflows/docker.yml: gh-actions/samples/docker.yml
       .github/workflows/generate.yml: gh-actions/samples/generate.yml
       .github/workflows/test.yml: gh-actions/samples/test.yml
-      .github/workflows/docker-pres_xml.yml: gh-actions/samples/docker-pres_xml.yml
       .github/workflows/automerge.yml: gh-actions/master/automerge.yml
   mn-samples-ribose:
     remote: ssh://git@github.com/metanorma/mn-samples-ribose
@@ -539,7 +524,6 @@ repositories:
       .github/workflows/docker.yml: gh-actions/samples/docker.yml
       .github/workflows/generate.yml: gh-actions/samples/generate.yml
       .github/workflows/test.yml: gh-actions/samples/test.yml
-      .github/workflows/docker-pres_xml.yml: gh-actions/samples/docker-pres_xml.yml
   hk-ogcio-infosec-docs:
     remote: ssh://git@github.com/metanorma/hk-ogcio-infosec-docs
     branch: master
