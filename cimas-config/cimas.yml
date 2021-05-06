@@ -524,6 +524,13 @@ repositories:
       .github/workflows/docker.yml: gh-actions/samples/docker.yml
       .github/workflows/generate.yml: gh-actions/samples/generate.yml
       .github/workflows/test.yml: gh-actions/samples/test.yml
+  mn-samples-bsi:
+    remote: ssh://git@github.com/metanorma/mn-samples-bsi
+    branch: master
+    files:
+      .github/workflows/docker.yml: gh-actions/samples/docker.yml
+      .github/workflows/generate.yml: gh-actions/samples/generate.yml
+      .github/workflows/test.yml: gh-actions/samples/test.yml
   hk-ogcio-infosec-docs:
     remote: ssh://git@github.com/metanorma/hk-ogcio-infosec-docs
     branch: master
