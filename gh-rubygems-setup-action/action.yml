@@ -28,5 +28,6 @@ runs:
         :verbose: true
         EOF
 
-    - run: |
+    - shell: bash
+      run: |
         bundle config https://rubygems.pkg.github.com/${{ inputs.owner }} ${{ inputs.username }}:${{ inputs.token }}
