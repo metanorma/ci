@@ -1,0 +1,34 @@
+name: 'gh-packages-setup-action'
+description: 'composite action which setup metanorma private GitHub packages for rubygems'
+inputs:
+  username:
+    description: 'GitHub username'
+    required: true
+  token:
+    description: 'personal access token (PAT)'
+    required: true
+  owner:
+    description: 'the name of the user or organization account that owns the repository containing your project.'
+    required: true
+runs:
+  using: "composite"
+  steps:
+    - shell: python
+      run: |
+        gemrc_content = """---
+        :backtrace: false
+        :bulk_threshold: 1000
+        :sources:
+        - https://${{ inputs.username }}:${{ inputs.token }}@rubygems.pkg.github.com/${{ inputs.owner }}/
+        - https://rubygems.org/
+        :update_sources: true
+        :verbose: true
+        """
+
+        with open('./.gemrc', 'w') as f:
+          f.write(gemrc_content)
+
+    - continue-on-error: true
+      run: |
+        bundle config https://rubygems.pkg.github.com/${{ inputs.owner }} ${{ inputs.username }}:${{ inputs.token }}
+
