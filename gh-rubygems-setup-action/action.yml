@@ -4,18 +4,21 @@ inputs:
   username:
     description: 'GitHub username'
     required: true
+    default: metanorma-ci
   token:
     description: 'personal access token (PAT)'
     required: true
   owner:
     description: 'the name of the user or organization account that owns the repository containing your project.'
     required: true
+    default: metanorma
 runs:
   using: "composite"
   steps:
-    - shell: python
+    - shell: bash
       run: |
-        gemrc_content = """---
+        envsubst << 'EOF' > ~/.gemrc
+        ---
         :backtrace: false
         :bulk_threshold: 1000
         :sources:
@@ -23,12 +26,7 @@ runs:
         - https://rubygems.org/
         :update_sources: true
         :verbose: true
-        """
+        EOF
 
-        with open('./.gemrc', 'w') as f:
-          f.write(gemrc_content)
-
-        try:
-          subprocess.call(["bundle", "config", "https://rubygems.pkg.github.com/${{ inputs.owner }}", "${{ inputs.username }}:${{ inputs.token }}"])
-        except FileNotFoundError:
-          print("bundle not exists, skip 'bundle config ...' step")
+    - run: |
+        bundle config https://rubygems.pkg.github.com/${{ inputs.owner }} ${{ inputs.username }}:${{ inputs.token }}
