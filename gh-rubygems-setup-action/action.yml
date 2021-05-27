@@ -17,7 +17,7 @@ runs:
   steps:
     - shell: bash
       run: |
-        envsubst << 'EOF' > ~/.gemrc
+        cat << 'EOF' > ~/.gemrc
         ---
         :backtrace: false
         :bulk_threshold: 1000
