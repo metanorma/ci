@@ -28,7 +28,7 @@ runs:
         with open('./.gemrc', 'w') as f:
           f.write(gemrc_content)
 
-    - continue-on-error: true
-      run: |
-        bundle config https://rubygems.pkg.github.com/${{ inputs.owner }} ${{ inputs.username }}:${{ inputs.token }}
-
+        try:
+          subprocess.call(["bundle", "config", "https://rubygems.pkg.github.com/${{ inputs.owner }}", "${{ inputs.username }}:${{ inputs.token }}"])
+        except FileNotFoundError:
+          print("bundle not exists, skip 'bundle config ...' step")
