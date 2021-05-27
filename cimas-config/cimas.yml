@@ -7,7 +7,7 @@ settings:
 repositories:
   metanorma-cli:
     remote: ssh://git@github.com/metanorma/metanorma-cli
-    branch: master
+    branch: main
     files:
       .hound.yml: gh-actions/master/.hound.yml
       .rubocop.yml: gh-actions/master/.rubocop.yml
@@ -18,7 +18,7 @@ repositories:
       templates/base/.gitlab-ci.yml: gh-actions/samples/.gitlab-ci.yml
   metanorma:
     remote: ssh://git@github.com/metanorma/metanorma
-    branch: master
+    branch: main
     files:
       .hound.yml: gh-actions/master/.hound.yml
       .rubocop.yml: gh-actions/master/.rubocop.yml
@@ -32,84 +32,64 @@ repositories:
       .github/workflows/rake.yml: gh-actions/master/rake.yml
   metanorma-ogc:
     remote: ssh://git@github.com/metanorma/metanorma-ogc
-    branch: master
+    branch: main
     files:
       .hound.yml: gh-actions/master/.hound.yml
       .rubocop.yml: gh-actions/master/.rubocop.yml
       .github/workflows/rake.yml: gh-actions/master/rake-notify.yml
   metanorma-m3aawg:
     remote: ssh://git@github.com/metanorma/metanorma-m3aawg
-    branch: master
+    branch: main
     files:
       .hound.yml: gh-actions/master/.hound.yml
       .rubocop.yml: gh-actions/master/.rubocop.yml
       .github/workflows/rake.yml: gh-actions/master/rake-notify.yml
-  cnccs:
-    remote: ssh://git@github.com/metanorma/cnccs
-    branch: master
-    files:
-      .hound.yml: gh-actions/master/.hound.yml
-      .rubocop.yml: gh-actions/master/.rubocop.yml
       .github/workflows/rake.yml: gh-actions/master/rake-notify.yml
   metanorma-cc:
     remote: ssh://git@github.com/metanorma/metanorma-cc
-    branch: master
+    branch: main
     files:
       .hound.yml: gh-actions/master/.hound.yml
       .rubocop.yml: gh-actions/master/.rubocop.yml
       .github/workflows/rake.yml: gh-actions/master/rake-notify.yml
   metanorma-vg:
     remote: ssh://git@github.com/metanorma/metanorma-vg
-    branch: master
+    branch: main
     files:
       .hound.yml: gh-actions/master/.hound.yml
       .rubocop.yml: gh-actions/master/.rubocop.yml
       .github/workflows/rake.yml: gh-actions/master/rake-notify.yml
   metanorma-ribose:
     remote: ssh://git@github.com/metanorma/metanorma-ribose
-    branch: master
+    branch: main
     files:
       .hound.yml: gh-actions/master/.hound.yml
       .rubocop.yml: gh-actions/master/.rubocop.yml
       .github/workflows/rake.yml: gh-actions/plantuml/rake-notify.yml
   metanorma-iho:
     remote: ssh://git@github.com/metanorma/metanorma-iho
-    branch: master
+    branch: main
     files:
       .hound.yml: gh-actions/master/.hound.yml
       .rubocop.yml: gh-actions/master/.rubocop.yml
       .github/workflows/rake.yml: gh-actions/plantuml/rake-notify.yml
-  isoics:
-    remote: ssh://git@github.com/metanorma/isoics
-    branch: master
-    files:
-      .hound.yml: gh-actions/master/.hound.yml
-      .rubocop.yml: gh-actions/master/.rubocop.yml
-      .github/workflows/rake.yml: gh-actions/master/rake.yml
-  iso690render:
-    remote: ssh://git@github.com/metanorma/iso690render
-    branch: master
-    files:
-      .hound.yml: gh-actions/master/.hound.yml
-      .rubocop.yml: gh-actions/master/.rubocop.yml
-      .github/workflows/rake.yml: gh-actions/master/rake.yml
   metanorma-mpfa:
     remote: ssh://git@github.com/metanorma/metanorma-mpfa
-    branch: master
+    branch: main
     files:
       .hound.yml: gh-actions/master/.hound.yml
       .rubocop.yml: gh-actions/master/.rubocop.yml
       .github/workflows/rake.yml: gh-actions/master/rake-notify.yml
   metanorma-gb:
     remote: ssh://git@github.com/metanorma/metanorma-gb
-    branch: master
+    branch: main
     files:
       .hound.yml: gh-actions/master/.hound.yml
       .rubocop.yml: gh-actions/master/.rubocop.yml
       .github/workflows/rake.yml: gh-actions/master/rake-notify.yml
   metanorma-nist:
     remote: ssh://git@github.com/metanorma/metanorma-nist
-    branch: master
+    branch: main
     files:
       .hound.yml: gh-actions/master/.hound.yml
       .rubocop.yml: gh-actions/master/.rubocop.yml
@@ -117,63 +97,63 @@ repositories:
       .github/workflows/release_github_packages.yml: gh-actions/master/release_github_packages.yml
   metanorma-iec:
     remote: ssh://git@github.com/metanorma/metanorma-iec
-    branch: master
+    branch: main
     files:
       .hound.yml: gh-actions/master/.hound.yml
       .rubocop.yml: gh-actions/master/.rubocop.yml
       .github/workflows/rake.yml: gh-actions/master/rake-notify.yml
   metanorma-ietf:
     remote: ssh://git@github.com/metanorma/metanorma-ietf
-    branch: master
+    branch: main
     files:
       .hound.yml: gh-actions/master/.hound.yml
       .rubocop.yml: gh-actions/master/.rubocop.yml
       .github/workflows/rake.yml: gh-actions/xml2rfc/rake-notify.yml
   metanorma-standoc:
     remote: ssh://git@github.com/metanorma/metanorma-standoc
-    branch: master
+    branch: main
     files:
       .hound.yml: gh-actions/master/.hound.yml
       .rubocop.yml: gh-actions/master/.rubocop.yml
       .github/workflows/rake.yml: gh-actions/plantuml/rake-notify.yml
   metanorma-iso:
     remote: ssh://git@github.com/metanorma/metanorma-iso
-    branch: master
+    branch: main
     files:
       .hound.yml: gh-actions/master/.hound.yml
       .rubocop.yml: gh-actions/master/.rubocop.yml
       .github/workflows/rake.yml: gh-actions/plantuml/rake-notify.yml
   metanorma-un:
     remote: ssh://git@github.com/metanorma/metanorma-un
-    branch: master
+    branch: main
     files:
       .hound.yml: gh-actions/master/.hound.yml
       .rubocop.yml: gh-actions/master/.rubocop.yml
       .github/workflows/rake.yml: gh-actions/master/rake-notify.yml
   metanorma-itu:
     remote: ssh://git@github.com/metanorma/metanorma-itu
-    branch: master
+    branch: main
     files:
       .hound.yml: gh-actions/master/.hound.yml
       .rubocop.yml: gh-actions/master/.rubocop.yml
       .github/workflows/rake.yml: gh-actions/master/rake-notify.yml
   metanorma-generic:
     remote: ssh://git@github.com/metanorma/metanorma-generic
-    branch: master
+    branch: main
     files:
       .hound.yml: gh-actions/master/.hound.yml
       .rubocop.yml: gh-actions/master/.rubocop.yml
       .github/workflows/rake.yml: gh-actions/master/rake-notify.yml
   metanorma-csa:
     remote: ssh://git@github.com/metanorma/metanorma-csa
-    branch: master
+    branch: main
     files:
       .hound.yml: gh-actions/master/.hound.yml
       .rubocop.yml: gh-actions/master/.rubocop.yml
       .github/workflows/rake.yml: gh-actions/master/rake-notify.yml
   metanorma-bipm:
     remote: ssh://git@github.com/metanorma/metanorma-bipm
-    branch: master
+    branch: main
     files:
       .hound.yml: gh-actions/master/.hound.yml
       .rubocop.yml: gh-actions/master/.rubocop.yml
@@ -326,11 +306,38 @@ repositories:
 
   isodoc:
     remote: ssh://git@github.com/metanorma/isodoc
-    branch: master
+    branch: main
     files:
       .hound.yml: gh-actions/master/.hound.yml
       .rubocop.yml: gh-actions/master/.rubocop.yml
       .github/workflows/rake.yml: gh-actions/inkscape/rake.yml
+  html2doc:
+    remote: ssh://git@github.com/metanorma/html2doc
+    branch: master
+    files:
+      .hound.yml: gh-actions/master/.hound.yml
+      .rubocop.yml: gh-actions/master/.rubocop.yml
+      .github/workflows/rake.yml: gh-actions/master/rake.yml
+  cnccs:
+    remote: ssh://git@github.com/metanorma/cnccs
+    branch: master
+    files:
+      .hound.yml: gh-actions/master/.hound.yml
+      .rubocop.yml: gh-actions/master/.rubocop.yml
+  isoics:
+    remote: ssh://git@github.com/metanorma/isoics
+    branch: master
+    files:
+      .hound.yml: gh-actions/master/.hound.yml
+      .rubocop.yml: gh-actions/master/.rubocop.yml
+      .github/workflows/rake.yml: gh-actions/master/rake.yml
+  iso690render:
+    remote: ssh://git@github.com/metanorma/iso690render
+    branch: master
+    files:
+      .hound.yml: gh-actions/master/.hound.yml
+      .rubocop.yml: gh-actions/master/.rubocop.yml
+      .github/workflows/rake.yml: gh-actions/master/rake.yml
   csa-ccm-tools:
     remote: ssh://git@github.com/metanorma/csa-ccm-tools
     branch: master
@@ -352,13 +359,6 @@ repositories:
       .hound.yml: gh-actions/master/.hound.yml
       .rubocop.yml: gh-actions/master/.rubocop.yml
       .github/workflows/rake.yml: gh-actions/plantuml/rake.yml
-  html2doc:
-    remote: ssh://git@github.com/metanorma/html2doc
-    branch: master
-    files:
-      .hound.yml: gh-actions/master/.hound.yml
-      .rubocop.yml: gh-actions/master/.rubocop.yml
-      .github/workflows/rake.yml: gh-actions/master/rake.yml
   reverse_adoc:
     remote: ssh://git@github.com/metanorma/reverse_adoc
     branch: master
@@ -387,7 +387,7 @@ repositories:
       .hound.yml: gh-actions/master/.hound.yml
       .rubocop.yml: gh-actions/master/.rubocop.yml
       .github/workflows/rake.yml: gh-actions/master/rake.yml
-
+  # samples
   ogc-wfs:
     remote: ssh://git@github.com/metanorma/ogc-wfs
     branch: master
@@ -559,7 +559,7 @@ repositories:
     files:
       .github/workflows/docker.yml: gh-actions/samples/docker.yml
       .github/workflows/generate.yml: gh-actions/samples/generate.yml
-
+  # templates
   mn-templates-cc:
     remote: ssh://git@github.com/metanorma/mn-templates-cc
     branch: master
@@ -650,7 +650,7 @@ repositories:
       common/Gemfile: gh-actions/templates/common/Gemfile
       common/.github/workflows/docker.yml: gh-actions/samples/docker.yml
       common/.github/workflows/generate.yml: gh-actions/samples/generate.yml
-
+  # other
   iev:
     remote: ssh://git@github.com/metanorma/iev
     branch: master
@@ -679,7 +679,7 @@ repositories:
       .hound.yml: gh-actions/master/.hound.yml
       .rubocop.yml: gh-actions/master/.rubocop.yml
       .github/workflows/rake.yml: gh-actions/master/rake.yml
-
+  # rfc
   rfc-divination-cfapi:
     remote: ssh://git@github.com/metanorma/rfc-divination-cfapi
     branch: master
