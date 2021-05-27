@@ -27,7 +27,9 @@ runs:
         :update_sources: true
         :verbose: true
         EOF
+        echo "~/.gemrc generated!"
 
     - shell: bash
       run: |
         bundle config https://rubygems.pkg.github.com/${{ inputs.owner }} ${{ inputs.username }}:${{ inputs.token }}
+        echo "https://rubygems.pkg.github.com/${{ inputs.owner }} added to bundler's config"
