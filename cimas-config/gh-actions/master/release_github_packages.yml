@@ -1,4 +1,4 @@
-name: release
+name: release-github-packages
 
 on:
   workflow_dispatch:
@@ -30,14 +30,14 @@ jobs:
           git config user.email github-actions@github.com
           gem bump --version ${{ github.event.inputs.next_version }} --tag --push
 
-      - name: publish to rubygems.org
+      - name: publish to GitHub Packages
         env:
-          RUBYGEMS_API_KEY: ${{secrets.METANORMA_CI_RUBYGEMS_API_KEY}}
+          GITHUB_PACKAGES_TOKEN: ${{ secrets.METANORMA_CI_PAT_TOKEN }}
         run: |
-          gem install gem-release
           envsubst << 'EOF' > ~/.gem/credentials
           ---
-          :rubygems_api_key: ${RUBYGEMS_API_KEY}
+          :github: Bearer ${GITHUB_PACKAGES_TOKEN}
           EOF
           chmod 0600 ~/.gem/credentials
-          gem release
+          gem release --key github --host https://rubygems.pkg.github.com/metanorma
+
