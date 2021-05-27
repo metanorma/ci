@@ -1,10 +1,6 @@
 name: 'gh-packages-setup-action'
 description: 'composite action which setup metanorma private GitHub packages for rubygems'
 inputs:
-  username:
-    description: 'GitHub username'
-    required: true
-    default: metanorma-ci
   token:
     description: 'personal access token (PAT)'
     required: true
@@ -22,7 +18,7 @@ runs:
         :backtrace: false
         :bulk_threshold: 1000
         :sources:
-        - https://${{ inputs.username }}:${{ inputs.token }}@rubygems.pkg.github.com/${{ inputs.owner }}/
+        - https://x-access-token:${{ inputs.token }}@rubygems.pkg.github.com/${{ inputs.owner }}/
         - https://rubygems.org/
         :update_sources: true
         :verbose: true
@@ -31,5 +27,5 @@ runs:
 
     - shell: bash
       run: |
-        bundle config https://rubygems.pkg.github.com/${{ inputs.owner }} ${{ inputs.username }}:${{ inputs.token }}
+        bundle config https://rubygems.pkg.github.com/${{ inputs.owner }} x-access-token:${{ inputs.token }}
         echo "https://rubygems.pkg.github.com/${{ inputs.owner }} added to bundler's config"
