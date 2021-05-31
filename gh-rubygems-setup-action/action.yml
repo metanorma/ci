@@ -27,5 +27,9 @@ runs:
 
     - shell: bash
       run: |
-        bundle config https://rubygems.pkg.github.com/${{ inputs.owner }} x-access-token:${{ inputs.token }}
-        echo "https://rubygems.pkg.github.com/${{ inputs.owner }} added to bundler's config"
+        if command -v bundle &> /dev/null; then
+          bundle config https://rubygems.pkg.github.com/${{ inputs.owner }} x-access-token:${{ inputs.token }}
+          echo "https://rubygems.pkg.github.com/${{ inputs.owner }} added to bundler's config"
+        else
+          echo "bundler note installed. skip 'bundle config ...'"
+        fi
