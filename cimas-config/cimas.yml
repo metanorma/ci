@@ -289,7 +289,7 @@ repositories:
       .github/workflows/automerge.yml: gh-actions/master/automerge.yml
   metanorma-model-bsi:
     remote: ssh://git@github.com/metanorma/metanorma-model-bsi
-    branch: master
+    branch: main
     files:
       Gemfile: gh-actions/model/Gemfile
       Makefile: gh-actions/model/Makefile
