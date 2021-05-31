@@ -287,6 +287,14 @@ repositories:
       Makefile: gh-actions/model/Makefile
       .github/workflows/make.yml: gh-actions/model/make.yml
       .github/workflows/automerge.yml: gh-actions/master/automerge.yml
+  metanorma-model-bsi:
+    remote: ssh://git@github.com/metanorma/metanorma-model-bsi
+    branch: master
+    files:
+      Gemfile: gh-actions/model/Gemfile
+      Makefile: gh-actions/model/Makefile
+      .github/workflows/make.yml: gh-actions/model/make.yml
+      .github/workflows/automerge.yml: gh-actions/master/automerge.yml
   basicdoc-models:
     remote: ssh://git@github.com/metanorma/basicdoc-models
     branch: master
