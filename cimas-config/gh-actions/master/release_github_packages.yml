@@ -24,10 +24,12 @@ jobs:
 
       - run: gem install gem-release
 
-      - if: ${{ github.event_name == 'workflow_dispatch' }} && ${{ github.event.inputs.next_version != 'skip' }}
-        run: |
+      - run: |
           git config user.name github-actions
           git config user.email github-actions@github.com
+
+      - if: github.event_name == 'workflow_dispatch' && github.event.inputs.next_version != 'skip'
+        run: |
           gem bump --version ${{ github.event.inputs.next_version }} --tag --push
 
       - name: publish to GitHub Packages
@@ -40,4 +42,3 @@ jobs:
           EOF
           chmod 0600 ~/.gem/credentials
           gem release --key github --host https://rubygems.pkg.github.com/metanorma
-
