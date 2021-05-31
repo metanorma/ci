@@ -907,6 +907,7 @@ groups:
   - metanorma-model-un
   - metanorma-model-bipm
   - metanorma-model-ieee
+  - metanorma-model-bsi
   - basicdoc-models
   - metanorma-requirements-models
   # not maintained anymore:
