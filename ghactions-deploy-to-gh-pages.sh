@@ -35,7 +35,10 @@ main() {
 
   # Adding contents within published/ to $DEST_DIR.
   cd "${GITHUB_WORKSPACE}"
-  cp -a "${GH_PAGES_SOURCE}/*" "${DEST_DIR}/" || exit 0
+  [[ -d "${GH_PAGES_SOURCE}" ]] ||
+    errx "'${GH_PAGES_SOURCE}' is not a directory; it must be a directory."
+
+  cp -a "${GH_PAGES_SOURCE}"/* "${DEST_DIR}/" || exit 0
 
   pushd "${DEST_DIR}"
   git config user.name "${GITHUB_ACTOR}"
