@@ -41,4 +41,7 @@ jobs:
           :github: Bearer ${GITHUB_PACKAGES_TOKEN}
           EOF
           chmod 0600 ~/.gem/credentials
-          gem release --key github --host https://rubygems.pkg.github.com/metanorma
+          bundle exec rake build
+          # gem release - don't allow to execute rake tasks
+          # rake release - finished with ERROR: too many connection resets
+          gem push --key github --host https://rubygems.pkg.github.com/metanorma pkg/*.gem
