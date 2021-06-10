@@ -783,6 +783,13 @@ repositories:
       .hound.yml: gh-actions/master/.hound.yml
       .rubocop.yml: gh-actions/master/.rubocop.yml
       .github/workflows/rake.yml: gh-actions/master/rake.yml
+  sts2mn-ruby:
+    remote: ssh://git@github.com/metanorma/sts2mn-ruby
+    branch: master
+    files:
+      .hound.yml: gh-actions/master/.hound.yml
+      .rubocop.yml: gh-actions/master/.rubocop.yml
+      .github/workflows/rake.yml: gh-actions/master/rake.yml
   metanorma-plugin-lutaml:
     remote: ssh://git@github.com/metanorma/metanorma-plugin-lutaml
     branch: main
@@ -849,6 +856,9 @@ groups:
   - omml2mathml
   - rfc2md
   - rfc2mn
+  - mn2pdf
+  - mn2sts
+  - sts2mn
   - unicode2latex
   - mn2pdf-ruby
   - mn2sts-ruby
