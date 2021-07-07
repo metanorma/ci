@@ -31,6 +31,6 @@ runs:
           bundle config https://rubygems.pkg.github.com/${{ inputs.owner }} x-access-token:${{ inputs.token }}
           echo "https://rubygems.pkg.github.com/${{ inputs.owner }} added to bundler's config"
         else
-          echo "bundler note installed. skip 'bundle config ...'"
+          echo "bundler not installed. so defining BUNDLE_RUBYGEMS__PKG__GITHUB__COM ...'"
           echo "BUNDLE_RUBYGEMS__PKG__GITHUB__COM=x-access-token:${{ inputs.token }}" >> $GITHUB_ENV
         fi
