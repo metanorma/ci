@@ -39,7 +39,7 @@ repositories:
       .github/workflows/rake.yml: gh-actions/master/rake-notify.yml
   metanorma-m3aawg:
     remote: ssh://git@github.com/metanorma/metanorma-m3aawg
-    branch: master
+    branch: main
     files:
       .hound.yml: gh-actions/master/.hound.yml
       .rubocop.yml: gh-actions/master/.rubocop.yml
@@ -369,7 +369,7 @@ repositories:
       .github/workflows/rake.yml: gh-actions/plantuml/rake.yml
   reverse_adoc:
     remote: ssh://git@github.com/metanorma/reverse_adoc
-    branch: master
+    branch: main
     files:
       .hound.yml: gh-actions/master/.hound.yml
       .rubocop.yml: gh-actions/master/.rubocop.yml
@@ -813,15 +813,7 @@ repositories:
       .github/workflows/rake.yml: gh-actions/master/rake.yml
   stepmod-utils:
     remote: ssh://git@github.com/metanorma/stepmod-utils
-    branch: master
-    files:
-      .hound.yml: gh-actions/master/.hound.yml
-      .rubocop.yml: gh-actions/master/.rubocop.yml
-      .github/workflows/rake.yml: gh-actions/master/rake.yml
-      .github/workflows/release.yml: gh-actions/master/release.yml
-  stepmod-utils:
-    remote: ssh://git@github.com/metanorma/stepmod-utils
-    branch: master
+    branch: main
     files:
       .hound.yml: gh-actions/master/.hound.yml
       .rubocop.yml: gh-actions/master/.rubocop.yml
