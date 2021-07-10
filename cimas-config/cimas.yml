@@ -567,6 +567,12 @@ repositories:
     files:
       .github/workflows/docker.yml: gh-actions/samples/docker.yml
       .github/workflows/generate.yml: gh-actions/samples/generate.yml
+  bipm-si-brochure:
+    remote: ssh://git@github.com/metanorma/bipm-si-brochure
+    branch: master
+    files:
+      .github/workflows/docker.yml: gh-actions/samples/docker.yml
+      .github/workflows/generate.yml: gh-actions/samples/generate.yml
   # templates
   mn-templates-cc:
     remote: ssh://git@github.com/metanorma/mn-templates-cc
@@ -790,6 +796,13 @@ repositories:
       .hound.yml: gh-actions/master/.hound.yml
       .rubocop.yml: gh-actions/master/.rubocop.yml
       .github/workflows/rake.yml: gh-actions/master/rake.yml
+  mnconvert-ruby:
+    remote: git@github.com:metanorma/mnconvert-ruby.git
+    branch: main
+    files:
+      .hound.yml: gh-actions/master/.hound.yml
+      .rubocop.yml: gh-actions/master/.rubocop.yml
+      .github/workflows/rake.yml: gh-actions/master/rake.yml
   metanorma-plugin-lutaml:
     remote: ssh://git@github.com/metanorma/metanorma-plugin-lutaml
     branch: main
@@ -838,6 +851,10 @@ repositories:
     remote: ssh://git@github.com/metanorma/rfc2mn
     branch: master
     files: {}
+  mnconvert:
+    remote: ssh://git@github.com/metanorma/mnconvert
+    branch: master
+    files: {}
 
 groups:
   site:
@@ -854,6 +871,7 @@ groups:
   - unicode2latex
   - mn2pdf-ruby
   - mn2sts-ruby
+  - sts2mn-ruby
   - stepmod2mn
   - iso690render
   - csa-ccm-tools
@@ -861,6 +879,12 @@ groups:
   - sts2mn
   - tex2mn
   - isodoc
+  - mnconvert-ruby
+  java:
+  - mn2pdf
+  - mn2sts
+  - sts2mn
+  - mnconvert
   data:
   - isoics
   - cnccs
