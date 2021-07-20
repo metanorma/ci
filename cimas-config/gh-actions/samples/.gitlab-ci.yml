@@ -15,11 +15,11 @@ build:
   script:
     - curl -L --retry 3 https://raw.githubusercontent.com/metanorma/metanorma-build-scripts/master/gemfile-to-bundle-add.sh | bash
     - bundle install
-    - metanorma site generate --agree-to-terms .
+    - metanorma site generate --output-dir public --agree-to-terms .
 
   artifacts:
     paths:
-      - site
+      - public
 
 pages:
   dependencies:
@@ -31,6 +31,6 @@ pages:
           "https://gitlab.com/api/v4/projects/$CI_PROJECT_ID/jobs/artifacts/master/download?job=build"
   artifacts:
     paths:
-      - site
+      - public
   only:
     - master
