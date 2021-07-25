@@ -856,6 +856,22 @@ repositories:
     remote: ssh://git@github.com/metanorma/mnconvert
     branch: master
     files: {}
+  lutaml:
+    remote: ssh://git@github.com/lutaml/lutaml
+    branch: main
+    files:
+      .hound.yml: gh-actions/master/.hound.yml
+      .rubocop.yml: gh-actions/master/.rubocop.yml
+      .github/workflows/rake.yml: gh-actions/graphviz/rake.yml
+      .github/workflows/release.yml: gh-actions/master/release.yml
+  ammitto:
+    remote: ssh://git@github.com/ammitto/ammitto
+    branch: main
+    files:
+      .hound.yml: gh-actions/master/.hound.yml
+      .rubocop.yml: gh-actions/master/.rubocop.yml
+      .github/workflows/rake.yml: gh-actions/master/rake.yml
+      .github/workflows/release.yml: gh-actions/master/release.yml
 
 groups:
   site:
