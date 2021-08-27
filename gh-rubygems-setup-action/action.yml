@@ -45,7 +45,7 @@ runs:
           mkdir -p ~/.bundle
           OWNER_UPPER=$(echo "${{ inputs.owner }}" | tr '[:lower:]' '[:upper:]')
           cat > ~/.bundle/config << 'EOF'
-          ---
-          BUNDLE_RUBYGEMS__PKG__GITHUB__COM: "x-access-token:${{ inputs.token }}"
-          EOF
+        ---
+        BUNDLE_RUBYGEMS__PKG__GITHUB__COM: "x-access-token:${{ inputs.token }}"
+        EOF
         fi
