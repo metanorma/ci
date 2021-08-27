@@ -13,6 +13,9 @@ runs:
   steps:
     - shell: bash
       run: |
+        if [ -f "~/.gemrc" ]; then
+          echo "WARNING! Overwriting ~/.gemrc."
+        fi
         cat << 'EOF' > ~/.gemrc
         ---
         :backtrace: false
@@ -31,6 +34,18 @@ runs:
           bundle config https://rubygems.pkg.github.com/${{ inputs.owner }} x-access-token:${{ inputs.token }}
           echo "https://rubygems.pkg.github.com/${{ inputs.owner }} added to bundler's config"
         else
-          echo "bundler not installed. so defining BUNDLE_RUBYGEMS__PKG__GITHUB__COM ...'"
+          echo "bundler not installed. so defining BUNDLE_RUBYGEMS__PKG__GITHUB__COM ..."
           echo "BUNDLE_RUBYGEMS__PKG__GITHUB__COM=x-access-token:${{ inputs.token }}" >> $GITHUB_ENV
+
+          echo "generating ~/.bundle/config ..."
+          if [ -f "~/.bundle/config" ]
+          then
+            echo "WARNING! Overwriting ~/.bundle/config"
+          fi
+          mkdir -p ~/.bundle
+          OWNER_UPPER=$(echo "${{ inputs.owner }}" | tr '[:lower:]' '[:upper:]')
+          cat > ~/.bundle/config << 'EOF'
+          ---
+          BUNDLE_HTTPS://RUBYGEMS__PKG__GITHUB__COM/$OWNER_UPPER/: "x-access-token:${{ inputs.token }}"
+          EOF
         fi
