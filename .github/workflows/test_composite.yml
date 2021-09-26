@@ -17,7 +17,20 @@ jobs:
         experimental: [ false ]
     steps:
       - uses: actions/checkout@master
+
       - uses: ./graphviz-setup-action
+      - run: dot -V
+
       - uses: ./inkscape-setup-action
+      - if: matrix.os == 'windows-latest'
+        run: |
+          Write-Host $env:PATH
+          inkscape --version
+
       - uses: ./libreoffice-setup-action
+
+      - if: matrix.os != 'macos-latest'
+        run: libreoffice --version
+
       - uses: ./plantuml-setup-action
+      - run: plantuml -version
