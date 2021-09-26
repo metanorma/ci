@@ -26,7 +26,7 @@ jobs:
 
       - uses: ./libreoffice-setup-action
       - if: matrix.os != 'macos-latest'
-        run: libreoffice --version
+        run: soffice --version
 
       - uses: ./plantuml-setup-action
       - run: plantuml -version
