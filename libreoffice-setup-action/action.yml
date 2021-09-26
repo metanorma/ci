@@ -11,7 +11,7 @@ runs:
         cmds = {
           "Darwin": [ ],
           "Windows": [
-            "choco install libreoffice-still",
+            "cinst --no-progress -y libreoffice-still",
             "echo \"C:\\Program Files\\LibreOffice\\program\\\\\" >> $GITHUB_PATH"
           ],
           "Linux": [
