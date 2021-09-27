@@ -9,25 +9,25 @@ runs:
         import sys
         import platform
 
-        prefix = "{}\\inkscape\\bin\\".format(os.getcwd()) if platform.system() == "Windows" else ""
+        win_prefix = "{}\\inkscape\\bin\\".format(os.getcwd())
 
         cmds = {
-          "Darwin": [ "brew install --cask inkscape" ],
+          "Darwin": [ "brew install --cask inkscape", "inkscape --version" ],
           # commented because of https://github.com/chocolatey-community/chocolatey-coreteampackages/issues/1717
           # "Windows": [ "choco install --no-progress -y inkscape" ],
           "Windows": [
             "bitsadmin /transfer inkscapedwnld /download /priority FOREGROUND \"https://media.inkscape.org/dl/resources/file/inkscape-1.1-x64.7z\" \"{}\\inkscape.7z\"".format(os.getcwd()),
             "7z x \".\\inkscape.7z\" -y",
-            "echo {}>> {}".format(prefix, os.environ["GITHUB_PATH"])
+            "echo {}>> {}".format(win_prefix, os.environ["GITHUB_PATH"]),
+            "\"{}inkscape\" --version".format(win_prefix)
           ],
           "Linux": [
             "sudo add-apt-repository ppa:inkscape.dev/stable",
             "sudo apt update",
             "sudo apt install inkscape"
+            "inkscape --version"
           ]
         }.get(platform.system(), [ "echo \"Unsupported platform: {}\"".format(platform.system()), "exit 1" ])
-
-        cmds.append("{}inkscape --version".format(prefix))
 
         for cmd in cmds:
           if os.system(cmd) != 0:
