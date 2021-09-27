@@ -10,7 +10,13 @@ runs:
 
         cmds = {
           "Darwin": [ "brew install --cask inkscape" ],
-          "Windows": [ "choco install --no-progress -y inkscape" ],
+          # commented because of https://github.com/chocolatey-community/chocolatey-coreteampackages/issues/1717
+          # "Windows": [ "choco install --no-progress -y inkscape" ],
+          "Windows": [
+            "bitsadmin /transfer inkscapedwnld /download /priority FOREGROUND \"https://media.inkscape.org/dl/resources/file/inkscape-1.1-x64.7z\" \"{}\\inkscape.7z\"".format(os.getcwd()),
+            "7z x \".\\inkscape.7z\" -y",
+            "echo {}\inkscape\\bin>> {}".format(os.getcwd(), os.environ["GITHUB_PATH"])
+          ],
           "Linux": [
             "sudo add-apt-repository ppa:inkscape.dev/stable",
             "sudo apt update",
