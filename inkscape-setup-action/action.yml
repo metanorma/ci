@@ -25,7 +25,7 @@ runs:
             "sudo apt update",
             "sudo apt install inkscape"
           ]
-        }.get(platform.system(), [ "echo \"Unsupported platform: {}\"".format(platform.system()) ])
+        }.get(platform.system(), [ "echo \"Unsupported platform: {}\"".format(platform.system()), "exit 1" ])
 
         cmds.append("{}inkscape --version".format(prefix))
 

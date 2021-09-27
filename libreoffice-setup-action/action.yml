@@ -19,7 +19,7 @@ runs:
           "Linux": [
             "sudo apt-get -y --no-install-recommends install libreoffice"
           ]
-        }.get(platform.system(), [ "echo \"Unsupported platform: {}\"".format(platform.system()) ])
+        }.get(platform.system(), [ "echo \"Unsupported platform: {}\"".format(platform.system()), "exit 1" ])
 
         if cmds:
           cmds.append("{prefix}soffice --version")
