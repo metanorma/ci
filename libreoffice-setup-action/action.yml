@@ -22,4 +22,7 @@ runs:
         if cmds:
           cmds.append("soffice --version")
 
-        [os.system(cmd) for cmd in cmds]
+        for cmd in cmds:
+          if os.system(cmd) != 0:
+            print("Command {} FAILED!".format(cmd))
+            sys.exit(1)
