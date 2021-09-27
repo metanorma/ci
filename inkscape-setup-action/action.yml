@@ -9,17 +9,14 @@ runs:
         import sys
         import platform
 
-        win_prefix = "{}\\inkscape\\bin\\".format(os.getcwd())
+        win_prefix = "C:\\Program Files\\Inkscape\\bin"
 
         cmds = {
           "Darwin": [ "brew install --cask inkscape", "inkscape --version" ],
-          # commented because of https://github.com/chocolatey-community/chocolatey-coreteampackages/issues/1717
-          # "Windows": [ "choco install --no-progress -y inkscape" ],
           "Windows": [
-            "bitsadmin /transfer inkscapedwnld /download /priority FOREGROUND \"https://media.inkscape.org/dl/resources/file/inkscape-1.1-x64.7z\" \"{}\\inkscape.7z\"".format(os.getcwd()),
-            "7z x \".\\inkscape.7z\" -y",
+            "choco install --no-progress -y inkscape",
             "echo {}>> {}".format(win_prefix, os.environ["GITHUB_PATH"]),
-            "\"{}inkscape\" --version".format(win_prefix)
+            "\"{}\\inkscape\" --version".format(win_prefix)
           ],
           "Linux": [
             "sudo add-apt-repository ppa:inkscape.dev/stable",
