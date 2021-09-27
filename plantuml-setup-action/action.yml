@@ -10,7 +10,7 @@ runs:
 
         cmds = {
           "Darwin": [ "brew install plantuml" ],
-          "Windows": [ "cinst -y plantuml" ],
+          "Windows": [ "cinst -y --no-progress plantuml" ],
           "Linux": [
             "sudo apt update",
             "sudo apt install plantuml"
