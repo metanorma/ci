@@ -8,11 +8,13 @@ runs:
         import os
         import platform
 
+        prefix = "C:\\Program Files\\LibreOffice\\program\\" if platform.system() == "Windows" else ""
+
         cmds = {
           "Darwin": [ ],
           "Windows": [
             "cinst --no-progress -y libreoffice-still",
-            "echo C:\\Program Files\\LibreOffice\\program>> {}".format(os.environ["GITHUB_PATH"])
+            "echo {}>> {}".format(prefix, os.environ["GITHUB_PATH"])
           ],
           "Linux": [
             "sudo apt-get -y --no-install-recommends install libreoffice"
@@ -20,7 +22,7 @@ runs:
         }.get(platform.system(), [ "echo \"Unsupported platform: {}\"".format(platform.system()) ])
 
         if cmds:
-          cmds.append("soffice --version")
+          cmds.append("{prefix}soffice --version")
 
         for cmd in cmds:
           if os.system(cmd) != 0:
