@@ -10,7 +10,7 @@ runs:
 
         cmds = {
           "Darwin": [ "brew install graphviz" ],
-          "Windows": [ "choco install --no-progress -y graphviz" ],
+          "Windows": [ "cinst --no-progress -y graphviz" ],
           "Linux": [
             "sudo apt update",
             "sudo apt install graphviz"

@@ -1,0 +1,32 @@
+name: test-composite
+
+on:
+  push:
+    branches: [ master, main ]
+  pull_request:
+
+jobs:
+  rake:
+    name: Test composite actions ${{ matrix.os }}
+    runs-on: ${{ matrix.os }}
+    continue-on-error: ${{ matrix.experimental }}
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ ubuntu-latest, windows-latest, macos-latest ]
+        experimental: [ false ]
+    steps:
+      - uses: actions/checkout@master
+
+      - uses: ./graphviz-setup-action
+      - run: dot -V
+
+      - uses: ./inkscape-setup-action
+      - run: inkscape --version
+
+      - uses: ./libreoffice-setup-action
+      - if: matrix.os != 'macos-latest'
+        run: soffice --version
+
+      - uses: ./plantuml-setup-action
+      - run: plantuml -version

@@ -3,6 +3,8 @@ settings:
   reviewers:
     - opoudjis
     - ronaldtse
+  assignees:
+    - CAMOBAP
 
 repositories:
   metanorma-cli:
@@ -563,6 +565,12 @@ repositories:
       .github/workflows/generate.yml: gh-actions/samples/generate.yml
   ogc-dggs-xmi:
     remote: ssh://git@github.com/metanorma/ogc-dggs-xmi
+    branch: master
+    files:
+      .github/workflows/docker.yml: gh-actions/samples/docker.yml
+      .github/workflows/generate.yml: gh-actions/samples/generate.yml
+  ogc-citygml-xmi:
+    remote: ssh://git@github.com/metanorma/ogc-citygml-xmi
     branch: master
     files:
       .github/workflows/docker.yml: gh-actions/samples/docker.yml

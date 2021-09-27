@@ -11,12 +11,15 @@ runs:
         cmds = {
           "Darwin": [ ],
           "Windows": [
-            "choco install libreoffice-still",
-            "echo \"C:\\Program Files\\LibreOffice\\program\\\\\" >> $GITHUB_PATH"
+            "cinst --no-progress -y libreoffice-still",
+            "echo C:\\Program Files\\LibreOffice\\program>> {}".format(os.environ["GITHUB_PATH"])
           ],
           "Linux": [
             "sudo apt-get -y --no-install-recommends install libreoffice"
           ]
         }.get(platform.system(), [ "echo \"Unsupported platform: {}\"".format(platform.system()) ])
+
+        if cmds:
+          cmds.append("soffice --version")
 
         [os.system(cmd) for cmd in cmds]
