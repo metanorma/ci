@@ -6,6 +6,7 @@ runs:
     - shell: python
       run: |
         import os
+        import sys
         import platform
 
         cmds = {

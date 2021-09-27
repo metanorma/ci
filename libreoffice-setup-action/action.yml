@@ -22,7 +22,7 @@ runs:
         }.get(platform.system(), [ "echo \"Unsupported platform: {}\"".format(platform.system()), "exit 1" ])
 
         if cmds:
-          cmds.append("{prefix}soffice --version")
+          cmds.append("{}soffice --version".format(prefix))
 
         for cmd in cmds:
           if os.system(cmd) != 0:
