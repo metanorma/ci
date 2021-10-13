@@ -1,0 +1,51 @@
+name: 'native-deps-action'
+description: 'list native shared/dynamic library dependencies for native executable'
+inputs:
+  filepath:
+    description: 'Full path to native executable (can be skipped in favor of libname+directory)'
+    required: false
+  libname:
+    description: 'library name (without extension and version)'
+    required: false
+  directory:
+    description: 'path where to search for library'
+    required: false
+    default: ''
+runs:
+  using: "composite"
+  steps:
+    - shell: python
+      run: |
+        import os
+        import glob
+        import platform
+
+        filepath = "${{ inputs.filepath }}"
+
+        if not os.path.exists(filepath):
+          libname = "${{ inputs.libname }}"
+          directory = "${{ inputs.directory }}"
+
+          exts = {
+            "Darwin": [ ".dylib", ".bundle" ],
+            "Windows": [ ".dll", ".exe" ],
+            "Linux": [ ".so", "" ]
+          }.get(platform.system(), [ "" ])
+
+          for ext in exts:
+            result = glob.glob("{}/*{}*{}".format(directory, libname, ext))
+            if result:
+              filepath = result[0]
+
+        if not os.path.exists(filepath):
+          print("Unable to find file for passed input")
+          sys.exit(2)
+
+        ldd = {"Darwin": "otool -L"}.get(platform.system(), "ldd")
+
+        cmd = "{} \"{}\"".format(ldd, filepath)
+
+        for cmd in cmds:
+          if os.system(cmd) != 0:
+            print("Command {} FAILED!".format(cmd))
+            sys.exit(1)
