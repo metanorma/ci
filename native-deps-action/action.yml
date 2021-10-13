@@ -17,6 +17,7 @@ runs:
     - shell: python
       run: |
         import os
+        import sys
         import glob
         import platform
 
@@ -45,7 +46,8 @@ runs:
 
         cmd = "{} \"{}\"".format(ldd, filepath)
 
-        print("Testing {} ...".format(filepath), flush=True)
+        print("Testing {} ...".format(filepath))
+        sys.stdout.flush()
         if os.system(cmd) != 0:
           print("Command {} FAILED!".format(cmd))
           sys.exit(1)
