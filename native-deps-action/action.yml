@@ -45,7 +45,7 @@ runs:
 
         cmd = "{} \"{}\"".format(ldd, filepath)
 
-        for cmd in cmds:
-          if os.system(cmd) != 0:
-            print("Command {} FAILED!".format(cmd))
-            sys.exit(1)
+        print("Testing {} ...".format(filepath))
+        if os.system(cmd) != 0:
+          print("Command {} FAILED!".format(cmd))
+          sys.exit(1)
