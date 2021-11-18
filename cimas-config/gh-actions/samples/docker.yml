@@ -10,6 +10,7 @@ on:
       - .github/workflows/generate.yml
   repository_dispatch:
     types: [ metanorma/metanorma-docker ]
+  workflow_dispatch:
 
 jobs:
   test-docker:
