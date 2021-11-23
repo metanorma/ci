@@ -819,6 +819,7 @@ repositories:
       .hound.yml: gh-actions/master/.hound.yml
       .rubocop.yml: gh-actions/master/.rubocop.yml
       .github/workflows/rake.yml: gh-actions/plantuml/rake.yml
+      .github/workflows/release.yml: gh-actions/plantuml/release.yml
   metanorma-plugin-datastruct:
     remote: ssh://git@github.com/metanorma/metanorma-plugin-datastruct
     branch: master
@@ -826,6 +827,7 @@ repositories:
       .hound.yml: gh-actions/master/.hound.yml
       .rubocop.yml: gh-actions/master/.rubocop.yml
       .github/workflows/rake.yml: gh-actions/master/rake.yml
+      .github/workflows/release.yml: gh-actions/plantuml/release.yml
   asciimath2unitsml:
     remote: ssh://git@github.com/plurimath/asciimath2unitsml
     branch: main
