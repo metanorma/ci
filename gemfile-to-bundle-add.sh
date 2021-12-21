@@ -2,6 +2,12 @@
 # shellcheck disable=SC2086
 
 GEMFILE=${1:-./Gemfile}
+CALLER=${2:-bash}
+
+if [[ "${CALLER}" = "bash" ]]
+then
+	echo "[WARNING] Avoid use this script directly use metanorma/docker-gem-install@master action instead"
+fi
 
 while IFS= read -r line; do
 	if [[ $line =~ ^gem ]]; then
