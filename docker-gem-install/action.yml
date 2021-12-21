@@ -1,0 +1,12 @@
+name: 'gdocker-gem-install'
+description: This workaround step which used inside our docker image to be able overwrite gems
+inputs:
+  gemfile:
+    description: Gemfile to add gems from
+    default: ./Gemfile
+runs:
+  using: "composite"
+  steps:
+    # https://github.com/actions/runner/issues/1066 GITHUB_ACTION_PATH vs github.action_path
+    - run: bash ${GITHUB_ACTION_PATH//\\//}/gemfile-to-bundle-add.sh ${{ inputs.gemfile }} gh
+      shell: bash

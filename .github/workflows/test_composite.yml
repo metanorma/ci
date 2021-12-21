@@ -6,7 +6,7 @@ on:
   pull_request:
 
 jobs:
-  rake:
+  test:
     name: Test composite actions ${{ matrix.os }}
     runs-on: ${{ matrix.os }}
     continue-on-error: ${{ matrix.experimental }}
@@ -16,7 +16,7 @@ jobs:
         os: [ ubuntu-latest, windows-latest, macos-latest ]
         experimental: [ false ]
     steps:
-      - uses: actions/checkout@master
+      - uses: actions/checkout@v2
 
       - uses: ./graphviz-setup-action
       - run: dot -V
@@ -30,3 +30,21 @@ jobs:
 
       - uses: ./plantuml-setup-action
       - run: plantuml -version
+
+  docker:
+    name: Test composite action for gem install workaround on docker
+    runs-on: ubuntu-latest
+    container: docker://metanorma/mn
+    steps:
+      - uses: actions/checkout@v2
+
+      - uses: ./gh-rubygems-setup-action
+        with:
+          token: ${{ secrets.METANORMA_CI_PAT_TOKEN }}
+
+      - run: |
+          echo 'gem "metanorma-cli"' > Gemfile
+          echo 'gem "metanorma-nist", source: "https://rubygems.pkg.github.com/metanorma"' >> Gemfile
+          echo 'gem "metanorma-standoc", git: "https://github.com/metanorma/metanorma-standoc", branch: "main"' >> Gemfile
+
+      - uses: ./docker-gem-install
