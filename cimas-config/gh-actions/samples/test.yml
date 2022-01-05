@@ -6,4 +6,4 @@ on:
 
 jobs:
   test-docker:
-    uses: metanorma/metanorma-build-scripts/workflows/sample-test.yml@main
+    uses: mmetanorma/metanorma-build-scripts/.github/workflows/sample-test.yml@main

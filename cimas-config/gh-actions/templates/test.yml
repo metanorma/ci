@@ -9,4 +9,4 @@ on:
 
 jobs:
   test:
-    uses: metanorma/metanorma-build-scripts/workflows/template-test.yml@main
+    uses: metanorma/metanorma-build-scripts/.github/workflows/template-test.yml@main

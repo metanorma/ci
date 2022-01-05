@@ -8,4 +8,4 @@ on:
 
 jobs:
   rake:
-    uses: metanorma/metanorma-build-scripts/workflows/generic-rake.yml@main
+    uses: metanorma/metanorma-build-scripts/.github/workflows/generic-rake.yml@main

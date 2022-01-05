@@ -13,7 +13,7 @@ on:
 
 jobs:
   release:
-    uses: metanorma/metanorma-build-scripts/workflows/rubygems-release.yml@main
+    uses: metanorma/metanorma-build-scripts/.github/workflows/rubygems-release.yml@main
     with:
       next_version: ${{ github.event.inputs.next_version }}
       event_name: ${{ github.event_name }}

@@ -8,4 +8,4 @@ on:
 
 jobs:
   rake:
-    uses: metanorma/metanorma-build-scripts/workflows/plantuml-rake.yml@main
+    uses: metanorma/metanorma-build-scripts/.github/workflows/plantuml-rake.yml@main

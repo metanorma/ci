@@ -8,4 +8,4 @@ on:
 
 jobs:
   rake:
-    uses: metanorma/metanorma-build-scripts/workflows/libreoffice-rake.yml@main
+    uses: metanorma/metanorma-build-scripts/.github/workflows/libreoffice-rake.yml@main

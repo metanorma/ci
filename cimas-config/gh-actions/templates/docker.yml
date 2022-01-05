@@ -12,4 +12,4 @@ on:
 
 jobs:
   test-docker:
-    uses: metanorma/metanorma-build-scripts/workflows/template-docker.yml@main
+    uses: metanorma/metanorma-build-scripts/.github/workflows/template-docker.yml@main
