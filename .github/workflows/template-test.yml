@@ -16,7 +16,7 @@ jobs:
 
     runs-on: ${{ matrix.os }}
     steps:
-      - uses: actions/checkout@master
+      - uses: actions/checkout@v2
 
       - name: Install metanorma
         shell: python
@@ -43,7 +43,7 @@ jobs:
 
             gemfile.writelines(lines)
 
-      - uses: metanorma/metanorma-build-scripts/gh-rubygems-setup-action@master
+      - uses: metanorma/metanorma-build-scripts/gh-rubygems-setup-action@main
         with:
           token: ${{ secrets.METANORMA_CI_PAT_TOKEN }}
 
