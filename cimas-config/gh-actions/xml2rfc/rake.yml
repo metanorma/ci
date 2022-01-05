@@ -9,4 +9,4 @@ on:
 
 jobs:
   rake:
-    uses: metanorma/metanorma-build-scripts/workflows/xml2rfc-rake.yml@main
+    uses: metanorma/metanorma-build-scripts/.github/workflows/xml2rfc-rake.yml@main
