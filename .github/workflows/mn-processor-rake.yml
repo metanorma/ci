@@ -19,6 +19,10 @@ jobs:
         with:
           submodules: true
 
+      - uses: metanorma/metanorma-build-scripts/gh-rubygems-setup-action@main
+        with:
+          token: ${{ secrets.METANORMA_CI_PAT_TOKEN }}
+
       - uses: ruby/setup-ruby@v1
         with:
           ruby-version: ${{ matrix.ruby }}
