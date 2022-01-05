@@ -13,35 +13,7 @@ on:
 
 jobs:
   release:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v2
-
-      - uses: ruby/setup-ruby@v1
-        with:
-          ruby-version: '2.6'
-          bundler-cache: true
-
-      - run: gem install gem-release
-
-      - run: |
-          git config user.name github-actions
-          git config user.email github-actions@github.com
-
-      - if: github.event_name == 'workflow_dispatch' && github.event.inputs.next_version != 'skip'
-        run: |
-          gem bump --version ${{ github.event.inputs.next_version }} --tag --push
-
-      - name: publish to GitHub Packages
-        env:
-          GITHUB_PACKAGES_TOKEN: ${{ secrets.METANORMA_CI_PAT_TOKEN }}
-        run: |
-          envsubst << 'EOF' > ~/.gem/credentials
-          ---
-          :github: Bearer ${GITHUB_PACKAGES_TOKEN}
-          EOF
-          chmod 0600 ~/.gem/credentials
-          bundle exec rake build
-          # gem release - don't allow to execute rake tasks
-          # rake release - finished with ERROR: too many connection resets
-          gem push --key github --host https://rubygems.pkg.github.com/metanorma pkg/*.gem
+    uses: metanorma/metanorma-build-scripts/workflows/ghpkg-release.yml@main
+    with:
+      next_version: ${{ github.event.inputs.next_version }}
+      event_name: ${{ github.event_name }}
