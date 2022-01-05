@@ -2,7 +2,9 @@ name: notify
 
 on:
   workflow_call:
-
+    secrets:
+      pat_token:
+        required: true
 jobs:
   notify:
     name: Notify dependent repos
@@ -13,7 +15,7 @@ jobs:
       - name: Trigger repositories
         env:
           GH_USERNAME: metanorma-ci
-          GH_ACCESS_TOKEN: ${{ secrets.METANORMA_CI_PAT_TOKEN }}
+          GH_ACCESS_TOKEN: ${{ secrets.pat_token }}
         run: |
           curl -LO --retry 3 https://raw.githubusercontent.com/metanorma/metanorma-build-scripts/master/trigger-gh-actions.sh
           [[ -f ".github/workflows/dependent_repos.env" ]] && source .github/workflows/dependent_repos.env
@@ -30,7 +32,7 @@ jobs:
         if: github.event.client_payload.ref == 'refs/heads/master' || startsWith(github.event.client_payload.ref, 'refs/tags/v')
         env:
           GH_USERNAME: metanorma-ci
-          GH_ACCESS_TOKEN: ${{ secrets.METANORMA_CI_PAT_TOKEN }}
+          GH_ACCESS_TOKEN: ${{ secrets.pat_token }}
         run: |
           curl -LO --retry 3 https://raw.githubusercontent.com/metanorma/metanorma-build-scripts/master/trigger-gh-actions.sh
           [[ -f ".github/workflows/dependent_repos.env" ]] && source .github/workflows/dependent_repos.env

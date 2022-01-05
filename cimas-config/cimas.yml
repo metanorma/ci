@@ -876,7 +876,6 @@ groups:
   - mathml2asciimath
   - omml2mathml
   - rfc2md
-  - rfc2mn
   - mn2pdf
   - mn2sts
   - unicode2latex

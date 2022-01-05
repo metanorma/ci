@@ -2,6 +2,9 @@ name: gems-test
 
 on:
   workflow_call:
+    secrets:
+      pat_token:
+        required: false
 
 jobs:
   test-macos:
@@ -17,7 +20,7 @@ jobs:
     steps:
       - uses: actions/checkout@v2
         with:
-          token: ${{ secrets.METANORMA_CI_PAT_TOKEN || github.token }}
+          token: ${{ secrets.pat_token || github.token }}
           submodules: true
 
       - uses: ruby/setup-ruby@v1

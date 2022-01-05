@@ -2,6 +2,9 @@ name: rake
 
 on:
   workflow_call:
+    secrets:
+      pat_token:
+        required: true
 
 jobs:
   rake:
@@ -32,7 +35,7 @@ jobs:
     steps:
       - uses: peter-evans/repository-dispatch@v1
         with:
-          token: ${{ secrets.METANORMA_CI_PAT_TOKEN || secrets.GITHUB_TOKEN }}
+          token: ${{ secrets.pat_token || github.token }}
           repository: ${{ github.repository }}
           event-type: tests-passed
           client-payload: '{"ref": "${{ github.ref }}", "sha": "${{ github.sha }}"}'

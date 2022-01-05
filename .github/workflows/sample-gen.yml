@@ -2,6 +2,9 @@ name: generate
 
 on:
   workflow_call:
+    secrets:
+      pat_token:
+        required: false
 
 jobs:
   test-linux:
@@ -14,7 +17,7 @@ jobs:
     steps:
       - uses: actions/checkout@v2
         with:
-          token: ${{ secrets.METANORMA_CI_PAT_TOKEN || github.token }}
+          token: ${{ secrets.pat_token || github.token }}
           submodules: true
 
       - uses: actions/cache@v2

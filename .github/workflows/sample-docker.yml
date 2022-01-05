@@ -2,6 +2,9 @@ name: docker
 
 on:
   workflow_call:
+    secrets:
+      pat_token:
+        required: true
 
 jobs:
   test-docker:
@@ -10,7 +13,7 @@ jobs:
     steps:
       - uses: actions/checkout@v2
         with:
-          token: ${{ secrets.METANORMA_CI_PAT_TOKEN || github.token }}
+          token: ${{ secrets.pat_token || github.token }}
           submodules: true
 
       - uses: actions/cache@v2
@@ -27,7 +30,7 @@ jobs:
 
       - uses: metanorma/metanorma-build-scripts/gh-rubygems-setup-action@main
         with:
-          token: ${{ secrets.METANORMA_CI_PAT_TOKEN }}
+          token: ${{ secrets.pat_token }}
 
       - run: |
           curl -L --retry 3 https://raw.githubusercontent.com/metanorma/metanorma-build-scripts/master/gemfile-to-bundle-add.sh | bash

@@ -2,6 +2,9 @@ name: test
 
 on:
   workflow_call:
+    secrets:
+      pat_token:
+        required: true
 
 jobs:
   test:
@@ -45,7 +48,7 @@ jobs:
 
       - uses: metanorma/metanorma-build-scripts/gh-rubygems-setup-action@main
         with:
-          token: ${{ secrets.METANORMA_CI_PAT_TOKEN }}
+          token: ${{ secrets.pat_token }}
 
       - uses: ruby/setup-ruby@v1
         with:

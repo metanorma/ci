@@ -9,6 +9,9 @@ on:
       event_name:
         required: true
         type: string
+    secrets:
+      pat_token:
+        required: true
 
 jobs:
   release:
@@ -33,7 +36,7 @@ jobs:
 
       - name: publish to GitHub Packages
         env:
-          GITHUB_PACKAGES_TOKEN: ${{ secrets.METANORMA_CI_PAT_TOKEN }}
+          GITHUB_PACKAGES_TOKEN: ${{ secrets.pat_token }}
         run: |
           envsubst << 'EOF' > ~/.gem/credentials
           ---

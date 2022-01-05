@@ -9,3 +9,5 @@ on:
 jobs:
   rake:
     uses: metanorma/metanorma-build-scripts/.github/workflows/inkscape-rake.yml@main
+    secrets:
+      pat_token: ${{ secrets.METANORMA_CI_PAT_TOKEN }}

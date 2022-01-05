@@ -2,6 +2,9 @@ name: docker
 
 on:
   workflow_call:
+    secrets:
+      pat_token:
+        required: false
 
 jobs:
   test-docker:
@@ -10,7 +13,7 @@ jobs:
     steps:
       - uses: actions/checkout@v2
         with:
-          token: ${{ secrets.METANORMA_CI_PAT_TOKEN || github.token }}
+          token: ${{ secrets.pat_token || github.token }}
           submodules: true
 
       - name: Metanorma compile
