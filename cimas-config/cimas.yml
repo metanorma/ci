@@ -798,13 +798,6 @@ repositories:
       .hound.yml: gh-actions/master/.hound.yml
       .rubocop.yml: gh-actions/master/.rubocop.yml
       .github/workflows/rake.yml: gh-actions/master/rake.yml
-  sts2mn-ruby:
-    remote: ssh://git@github.com/metanorma/sts2mn-ruby
-    branch: master
-    files:
-      .hound.yml: gh-actions/master/.hound.yml
-      .rubocop.yml: gh-actions/master/.rubocop.yml
-      .github/workflows/rake.yml: gh-actions/master/rake.yml
   mnconvert-ruby:
     remote: git@github.com:metanorma/mnconvert-ruby.git
     branch: main
@@ -819,7 +812,7 @@ repositories:
       .hound.yml: gh-actions/master/.hound.yml
       .rubocop.yml: gh-actions/master/.rubocop.yml
       .github/workflows/rake.yml: gh-actions/plantuml/rake.yml
-      .github/workflows/release.yml: gh-actions/plantuml/release.yml
+      .github/workflows/release.yml: gh-actions/master/release.yml
   metanorma-plugin-datastruct:
     remote: ssh://git@github.com/metanorma/metanorma-plugin-datastruct
     branch: master
@@ -827,7 +820,7 @@ repositories:
       .hound.yml: gh-actions/master/.hound.yml
       .rubocop.yml: gh-actions/master/.rubocop.yml
       .github/workflows/rake.yml: gh-actions/master/rake.yml
-      .github/workflows/release.yml: gh-actions/plantuml/release.yml
+      .github/workflows/release.yml: gh-actions/master/release.yml
   asciimath2unitsml:
     remote: ssh://git@github.com/plurimath/asciimath2unitsml
     branch: main
@@ -850,16 +843,8 @@ repositories:
       .hound.yml: gh-actions/master/.hound.yml
       .rubocop.yml: gh-actions/master/.rubocop.yml
       .github/workflows/rake.yml: gh-actions/master/rake.yml
-  sts2mn:
-    remote: ssh://git@github.com/metanorma/sts2mn
-    branch: master
-    files: {}
   tex2mn:
-    remote: ssh://git@github.com/metanorma/sts2mn
-    branch: master
-    files: {}
-  rfc2mn:
-    remote: ssh://git@github.com/metanorma/rfc2mn
+    remote: ssh://git@github.com/metanorma/tex2mn
     branch: master
     files: {}
   mnconvert:
@@ -868,7 +853,7 @@ repositories:
     files: {}
   lutaml:
     remote: ssh://git@github.com/lutaml/lutaml
-    branch: main
+    branch: master
     files:
       .hound.yml: gh-actions/master/.hound.yml
       .rubocop.yml: gh-actions/master/.rubocop.yml
@@ -876,7 +861,7 @@ repositories:
       .github/workflows/release.yml: gh-actions/master/release.yml
   ammitto:
     remote: ssh://git@github.com/ammitto/ammitto
-    branch: main
+    branch: master
     files:
       .hound.yml: gh-actions/master/.hound.yml
       .rubocop.yml: gh-actions/master/.rubocop.yml
@@ -894,23 +879,19 @@ groups:
   - rfc2mn
   - mn2pdf
   - mn2sts
-  - sts2mn
   - unicode2latex
   - mn2pdf-ruby
   - mn2sts-ruby
-  - sts2mn-ruby
   - stepmod2mn
   - iso690render
   - csa-ccm-tools
   - reverse_adoc
-  - sts2mn
   - tex2mn
   - isodoc
   - mnconvert-ruby
   java:
   - mn2pdf
   - mn2sts
-  - sts2mn
   - mnconvert
   data:
   - isoics
