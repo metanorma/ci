@@ -657,6 +657,7 @@ repositories:
     branch: master
     files:
       .github/workflows/test.yml: gh-actions/templates/test.yml
+      .github/workflows/pages.yml: gh-actions/templates/pages.yml
       .github/workflows/docker.yml: gh-actions/templates/docker.yml
       common/.gitignore: gh-actions/templates/common/.gitignore
       common/Gemfile: gh-actions/templates/common/Gemfile

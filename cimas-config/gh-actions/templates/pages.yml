@@ -1,0 +1,14 @@
+name: test
+
+on:
+  push:
+    branches: [ master, main ]
+  pull_request:
+  repository_dispatch:
+    types: [ metanorma/metanorma-* ]
+
+jobs:
+  test:
+    uses: metanorma/metanorma-build-scripts/.github/workflows/template-pages.yml@main
+    secrets:
+      pat_token: ${{ secrets.METANORMA_CI_PAT_TOKEN }}
