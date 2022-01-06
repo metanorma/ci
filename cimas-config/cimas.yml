@@ -74,7 +74,7 @@ repositories:
     files:
       .hound.yml: gh-actions/master/.hound.yml
       .rubocop.yml: gh-actions/master/.rubocop.yml
-      .github/workflows/rake.yml: gh-actions/plantuml/rake.yml
+      .github/workflows/rake.yml: gh-actions/master/rake.yml
   metanorma-mpfa:
     remote: ssh://git@github.com/metanorma/metanorma-mpfa
     branch: main
@@ -587,6 +587,7 @@ repositories:
     branch: master
     files:
       .github/workflows/test.yml: gh-actions/templates/test.yml
+      .github/workflows/pages.yml: gh-actions/templates/pages.yml
       .github/workflows/docker.yml: gh-actions/templates/docker.yml
       common/.gitignore: gh-actions/templates/common/.gitignore
       common/Gemfile: gh-actions/templates/common/Gemfile
@@ -597,6 +598,7 @@ repositories:
     branch: master
     files:
       .github/workflows/test.yml: gh-actions/templates/test.yml
+      .github/workflows/pages.yml: gh-actions/templates/pages.yml
       .github/workflows/docker.yml: gh-actions/templates/docker.yml
       common/.gitignore: gh-actions/templates/common/.gitignore
       common/Gemfile: gh-actions/templates/common/Gemfile
@@ -607,6 +609,7 @@ repositories:
     branch: master
     files:
       .github/workflows/test.yml: gh-actions/templates/test.yml
+      .github/workflows/pages.yml: gh-actions/templates/pages.yml
       .github/workflows/docker.yml: gh-actions/templates/docker.yml
       common/.gitignore: gh-actions/templates/common/.gitignore
       common/Gemfile: gh-actions/templates/common/Gemfile
@@ -617,6 +620,7 @@ repositories:
     branch: master
     files:
       .github/workflows/test.yml: gh-actions/templates/test.yml
+      .github/workflows/pages.yml: gh-actions/templates/pages.yml
       .github/workflows/docker.yml: gh-actions/templates/docker.yml
       common/.gitignore: gh-actions/templates/common/.gitignore
       common/Gemfile: gh-actions/templates/common/Gemfile
@@ -627,6 +631,7 @@ repositories:
     branch: master
     files:
       .github/workflows/test.yml: gh-actions/templates/test.yml
+      .github/workflows/pages.yml: gh-actions/templates/pages.yml
       .github/workflows/docker.yml: gh-actions/templates/docker.yml
       common/.gitignore: gh-actions/templates/common/.gitignore
       common/Gemfile: gh-actions/templates/common/Gemfile
@@ -637,6 +642,7 @@ repositories:
     branch: master
     files:
       .github/workflows/test.yml: gh-actions/templates/test.yml
+      .github/workflows/pages.yml: gh-actions/templates/pages.yml
       .github/workflows/docker.yml: gh-actions/templates/docker.yml
       common/.gitignore: gh-actions/templates/common/.gitignore
       common/Gemfile: gh-actions/templates/common/Gemfile
@@ -647,6 +653,7 @@ repositories:
     branch: master
     files:
       .github/workflows/test.yml: gh-actions/templates/test.yml
+      .github/workflows/pages.yml: gh-actions/templates/pages.yml
       .github/workflows/docker.yml: gh-actions/templates/docker.yml
       common/.gitignore: gh-actions/templates/common/.gitignore
       common/Gemfile: gh-actions/templates/common/Gemfile
@@ -668,6 +675,7 @@ repositories:
     branch: master
     files:
       .github/workflows/test.yml: gh-actions/templates/test.yml
+      .github/workflows/pages.yml: gh-actions/templates/pages.yml
       .github/workflows/docker.yml: gh-actions/templates/docker.yml
       common/.gitignore: gh-actions/templates/common/.gitignore
       common/Gemfile: gh-actions/templates/common/Gemfile
