@@ -187,7 +187,7 @@ repositories:
       .github/workflows/automerge.yml: gh-actions/master/automerge.yml
   metanorma-model-standoc:
     remote: ssh://git@github.com/metanorma/metanorma-model-standoc
-    branch: master
+    branch: main
     files:
       Gemfile: gh-actions/model/Gemfile
       Makefile: gh-actions/model/Makefile
@@ -943,6 +943,7 @@ groups:
   - metanorma-model-bsi
   - basicdoc-models
   - metanorma-requirements-models
+  - metanorma-model-iho
   # not maintained anymore:
   # - metanorma-model-gb
   infrastructure:
