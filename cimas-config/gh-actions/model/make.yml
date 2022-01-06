@@ -7,5 +7,5 @@ on:
   pull_request:
 
 jobs:
-  rake:
+  make:
     uses: metanorma/metanorma-build-scripts/.github/workflows/model-make.yml@main
