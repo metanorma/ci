@@ -4,6 +4,9 @@ on:
   push:
     branches: [ master, main ]
   pull_request:
+    paths-ignore:
+      - .github/workflows/docker.yml
+      - .github/workflows/pages.yml
   repository_dispatch:
     types: [ metanorma/metanorma-* ]
 

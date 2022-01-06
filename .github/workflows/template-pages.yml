@@ -6,18 +6,6 @@ on:
       pat_token:
         required: true
 
-name: pages
-
-on:
-  push:
-    branches: [ master, main ]
-  pull_request:
-    paths-ignore:
-      - .github/workflows/test.yml
-      - .github/workflows/generate.yml
-  repository_dispatch:
-    types: [ metanorma/metanorma-docker ]
-
 jobs:
   generate-site:
     runs-on: ubuntu-latest
