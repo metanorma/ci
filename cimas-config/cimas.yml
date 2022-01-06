@@ -124,7 +124,7 @@ repositories:
     files:
       .hound.yml: gh-actions/master/.hound.yml
       .rubocop.yml: gh-actions/master/.rubocop.yml
-      .github/workflows/rake.yml: gh-actions/plantuml/rake.yml
+      .github/workflows/rake.yml: gh-actions/master/rake.yml
   metanorma-un:
     remote: ssh://git@github.com/metanorma/metanorma-un
     branch: main
@@ -171,7 +171,7 @@ repositories:
   # models
   metanorma-model-gb:
     remote: ssh://git@github.com/metanorma/metanorma-model-gb
-    branch: master
+    branch: main
     files:
       Gemfile: gh-actions/model/Gemfile
       Makefile: gh-actions/model/Makefile
@@ -179,7 +179,7 @@ repositories:
       .github/workflows/automerge.yml: gh-actions/master/automerge.yml
   metanorma-model-iso:
     remote: ssh://git@github.com/metanorma/metanorma-model-iso
-    branch: master
+    branch: main
     files:
       Gemfile: gh-actions/model/Gemfile
       Makefile: gh-actions/model/Makefile
@@ -195,7 +195,7 @@ repositories:
       .github/workflows/automerge.yml: gh-actions/master/automerge.yml
   metanorma-model-un:
     remote: ssh://git@github.com/metanorma/metanorma-model-un
-    branch: master
+    branch: main
     files:
       Gemfile: gh-actions/model/Gemfile
       Makefile: gh-actions/model/Makefile
@@ -211,7 +211,7 @@ repositories:
       .github/workflows/automerge.yml: gh-actions/master/automerge.yml
   metanorma-model-itu:
     remote: ssh://git@github.com/metanorma/metanorma-model-itu
-    branch: master
+    branch: main
     files:
       Gemfile: gh-actions/model/Gemfile
       Makefile: gh-actions/model/Makefile
@@ -219,7 +219,7 @@ repositories:
       .github/workflows/automerge.yml: gh-actions/master/automerge.yml
   metanorma-model-csa:
     remote: ssh://git@github.com/metanorma/metanorma-model-csa
-    branch: master
+    branch: main
     files:
       Gemfile: gh-actions/model/Gemfile
       Makefile: gh-actions/model/Makefile
@@ -243,7 +243,7 @@ repositories:
       .github/workflows/automerge.yml: gh-actions/master/automerge.yml
   metanorma-model-cc:
     remote: ssh://git@github.com/metanorma/metanorma-model-cc
-    branch: master
+    branch: main
     files:
       Gemfile: gh-actions/model/Gemfile
       Makefile: gh-actions/model/Makefile
@@ -251,7 +251,7 @@ repositories:
       .github/workflows/automerge.yml: gh-actions/master/automerge.yml
   metanorma-model-m3d:
     remote: ssh://git@github.com/metanorma/metanorma-model-m3d
-    branch: master
+    branch: main
     files:
       Gemfile: gh-actions/model/Gemfile
       Makefile: gh-actions/model/Makefile
@@ -259,7 +259,7 @@ repositories:
       .github/workflows/automerge.yml: gh-actions/master/automerge.yml
   metanorma-model-ogc:
     remote: ssh://git@github.com/metanorma/metanorma-model-ogc
-    branch: master
+    branch: main
     files:
       Gemfile: gh-actions/model/Gemfile
       Makefile: gh-actions/model/Makefile
@@ -267,7 +267,7 @@ repositories:
       .github/workflows/automerge.yml: gh-actions/master/automerge.yml
   metanorma-model-rsd:
     remote: ssh://git@github.com/metanorma/metanorma-model-rsd
-    branch: master
+    branch: main
     files:
       Gemfile: gh-actions/model/Gemfile
       Makefile: gh-actions/model/Makefile
@@ -275,7 +275,7 @@ repositories:
       .github/workflows/automerge.yml: gh-actions/master/automerge.yml
   metanorma-model-bipm:
     remote: ssh://git@github.com/metanorma/metanorma-model-bipm
-    branch: master
+    branch: main
     files:
       Gemfile: gh-actions/model/Gemfile
       Makefile: gh-actions/model/Makefile
@@ -307,7 +307,7 @@ repositories:
       .github/workflows/automerge.yml: gh-actions/master/automerge.yml
   metanorma-requirements-models:
     remote: ssh://git@github.com/metanorma/metanorma-requirements-models
-    branch: master
+    branch: main
     files:
       Gemfile: gh-actions/model/Gemfile
       Makefile: gh-actions/model/Makefile
@@ -406,20 +406,20 @@ repositories:
       .github/workflows/generate.yml: gh-actions/samples/generate.yml
   isodoc-rice:
     remote: ssh://git@github.com/metanorma/isodoc-rice
-    branch: master
+    branch: main
     files:
       .github/workflows/docker.yml: gh-actions/samples/docker.yml
       .github/workflows/generate.yml: gh-actions/samples/generate.yml
   mn-samples-ogc:
     remote: ssh://git@github.com/metanorma/mn-samples-ogc
-    branch: master
+    branch: main
     files:
       .github/workflows/docker.yml: gh-actions/samples/docker.yml
       .github/workflows/generate.yml: gh-actions/samples/generate.yml
       .github/workflows/test.yml: gh-actions/samples/test.yml
   mn-samples-itu:
     remote: ssh://git@github.com/metanorma/mn-samples-itu
-    branch: master
+    branch: main
     files:
       .github/workflows/docker.yml: gh-actions/samples/docker.yml
       .github/workflows/generate.yml: gh-actions/samples/generate.yml
@@ -427,7 +427,7 @@ repositories:
       .github/workflows/automerge.yml: gh-actions/master/automerge.yml
   mn-samples-iec:
     remote: ssh://git@github.com/metanorma/mn-samples-iec
-    branch: master
+    branch: main
     files:
       .github/workflows/docker.yml: gh-actions/samples/docker.yml
       .github/workflows/generate.yml: gh-actions/samples/generate.yml
@@ -435,7 +435,7 @@ repositories:
       .github/workflows/automerge.yml: gh-actions/master/automerge.yml
   mn-samples-ietf:
     remote: ssh://git@github.com/metanorma/mn-samples-ietf
-    branch: master
+    branch: main
     files:
       .github/workflows/docker.yml: gh-actions/samples/docker.yml
       .github/workflows/generate.yml: gh-actions/samples/generate.yml
@@ -443,7 +443,7 @@ repositories:
       .github/workflows/automerge.yml: gh-actions/master/automerge.yml
   mn-samples-un:
     remote: ssh://git@github.com/metanorma/mn-samples-un
-    branch: master
+    branch: main
     files:
       .github/workflows/docker.yml: gh-actions/samples/docker.yml
       .github/workflows/generate.yml: gh-actions/samples/generate.yml
@@ -451,7 +451,7 @@ repositories:
       .github/workflows/automerge.yml: gh-actions/master/automerge.yml
   mn-samples-mpfa:
     remote: ssh://git@github.com/metanorma/mn-samples-mpfa
-    branch: master
+    branch: main
     files:
       .github/workflows/docker.yml: gh-actions/samples/docker.yml
       .github/workflows/generate.yml: gh-actions/samples/generate.yml
@@ -459,7 +459,7 @@ repositories:
       .github/workflows/automerge.yml: gh-actions/master/automerge.yml
   mn-samples-iso:
     remote: ssh://git@github.com/metanorma/mn-samples-iso
-    branch: master
+    branch: main
     files:
       .github/workflows/docker.yml: gh-actions/samples/docker.yml
       .github/workflows/generate.yml: gh-actions/samples/generate.yml
@@ -467,7 +467,7 @@ repositories:
       .github/workflows/automerge.yml: gh-actions/master/automerge.yml
   mn-samples-gb:
     remote: ssh://git@github.com/metanorma/mn-samples-gb
-    branch: master
+    branch: main
     files:
       .github/workflows/docker.yml: gh-actions/samples/docker.yml
       .github/workflows/generate.yml: gh-actions/samples/generate.yml
@@ -475,7 +475,7 @@ repositories:
       .github/workflows/automerge.yml: gh-actions/master/automerge.yml
   mn-samples-cc:
     remote: ssh://git@github.com/metanorma/mn-samples-cc
-    branch: master
+    branch: main
     files:
       .github/workflows/docker.yml: gh-actions/samples/docker.yml
       .github/workflows/generate.yml: gh-actions/samples/generate.yml
@@ -483,7 +483,7 @@ repositories:
       .github/workflows/automerge.yml: gh-actions/master/automerge.yml
   mn-samples-iho:
     remote: ssh://git@github.com/metanorma/mn-samples-iho
-    branch: master
+    branch: main
     files:
       .github/workflows/docker.yml: gh-actions/samples/docker.yml
       .github/workflows/generate.yml: gh-actions/samples/generate.yml
@@ -491,7 +491,7 @@ repositories:
       .github/workflows/automerge.yml: gh-actions/master/automerge.yml
   mn-samples-nist:
     remote: ssh://git@github.com/metanorma/mn-samples-nist
-    branch: master
+    branch: main
     files:
       .github/workflows/docker.yml: gh-actions/samples/docker.yml
       .github/workflows/generate.yml: gh-actions/samples/generate.yml
@@ -499,7 +499,7 @@ repositories:
       .github/workflows/automerge.yml: gh-actions/master/automerge.yml
   mn-samples-m3aawg:
     remote: ssh://git@github.com/metanorma/mn-samples-m3aawg
-    branch: master
+    branch: main
     files:
       .github/workflows/docker.yml: gh-actions/samples/docker.yml
       .github/workflows/generate.yml: gh-actions/samples/generate.yml
@@ -507,7 +507,7 @@ repositories:
       .github/workflows/automerge.yml: gh-actions/master/automerge.yml
   mn-samples-csa:
     remote: ssh://git@github.com/metanorma/mn-samples-csa
-    branch: master
+    branch: main
     files:
       .github/workflows/docker.yml: gh-actions/samples/docker.yml
       .github/workflows/generate.yml: gh-actions/samples/generate.yml
@@ -515,7 +515,7 @@ repositories:
       .github/workflows/automerge.yml: gh-actions/master/automerge.yml
   mn-samples-bipm:
     remote: ssh://git@github.com/metanorma/mn-samples-bipm
-    branch: master
+    branch: main
     files:
       .github/workflows/docker.yml: gh-actions/samples/docker.yml
       .github/workflows/generate.yml: gh-actions/samples/generate.yml
@@ -523,7 +523,7 @@ repositories:
       .github/workflows/automerge.yml: gh-actions/master/automerge.yml
   mn-samples-jcgm:
     remote: ssh://git@github.com/metanorma/mn-samples-jcgm
-    branch: master
+    branch: main
     files:
       .github/workflows/docker.yml: gh-actions/samples/docker.yml
       .github/workflows/generate.yml: gh-actions/samples/generate.yml
@@ -531,14 +531,14 @@ repositories:
       .github/workflows/automerge.yml: gh-actions/master/automerge.yml
   mn-samples-ribose:
     remote: ssh://git@github.com/metanorma/mn-samples-ribose
-    branch: master
+    branch: main
     files:
       .github/workflows/docker.yml: gh-actions/samples/docker.yml
       .github/workflows/generate.yml: gh-actions/samples/generate.yml
       .github/workflows/test.yml: gh-actions/samples/test.yml
   mn-samples-bsi:
     remote: ssh://git@github.com/metanorma/mn-samples-bsi
-    branch: master
+    branch: main
     files:
       .github/workflows/docker.yml: gh-actions/samples/docker.yml
       .github/workflows/generate.yml: gh-actions/samples/generate.yml
@@ -577,7 +577,7 @@ repositories:
       .github/workflows/generate.yml: gh-actions/samples/generate.yml
   bipm-si-brochure:
     remote: ssh://git@github.com/metanorma/bipm-si-brochure
-    branch: master
+    branch: main
     files:
       .github/workflows/docker.yml: gh-actions/samples/docker.yml
       .github/workflows/generate.yml: gh-actions/samples/generate.yml
@@ -754,7 +754,7 @@ repositories:
       .github/workflows/docker.yml: gh-actions/samples/docker.yml
   iso-10303:
     remote: ssh://git@github.com/metanorma/iso-10303
-    branch: master
+    branch: main
     files:
       .github/workflows/docker.yml: gh-actions/samples/docker.yml
       .gitlab-ci.yml: gh-actions/samples/.gitlab-ci.yml
@@ -786,7 +786,7 @@ repositories:
 
   mn2pdf-ruby:
     remote: ssh://git@github.com/metanorma/mn2pdf-ruby
-    branch: master
+    branch: main
     files:
       .hound.yml: gh-actions/master/.hound.yml
       .rubocop.yml: gh-actions/master/.rubocop.yml
@@ -799,7 +799,7 @@ repositories:
       .rubocop.yml: gh-actions/master/.rubocop.yml
       .github/workflows/rake.yml: gh-actions/master/rake.yml
   mnconvert-ruby:
-    remote: git@github.com:metanorma/mnconvert-ruby.git
+    remote: ssh://git@github.com/metanorma/mnconvert-ruby
     branch: main
     files:
       .hound.yml: gh-actions/master/.hound.yml
@@ -849,7 +849,7 @@ repositories:
     files: {}
   mnconvert:
     remote: ssh://git@github.com/metanorma/mnconvert
-    branch: master
+    branch: main
     files: {}
   lutaml:
     remote: ssh://git@github.com/lutaml/lutaml
