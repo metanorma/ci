@@ -465,13 +465,6 @@ repositories:
       .github/workflows/generate.yml: gh-actions/samples/generate.yml
       .github/workflows/test.yml: gh-actions/samples/test.yml
       .github/workflows/automerge.yml: gh-actions/master/automerge.yml
-  mn-samples-gb:
-    remote: ssh://git@github.com/metanorma/mn-samples-gb
-    branch: main
-    files:
-      .github/workflows/docker.yml: gh-actions/samples/docker.yml
-      .github/workflows/test.yml: gh-actions/samples/test.yml
-      .github/workflows/automerge.yml: gh-actions/master/automerge.yml
   mn-samples-cc:
     remote: ssh://git@github.com/metanorma/mn-samples-cc
     branch: main
@@ -981,7 +974,6 @@ groups:
   - metanorma.com
   samples:
   - mn-samples-cc
-  - mn-samples-gb
   - mn-samples-iec
   - mn-samples-ietf
   - mn-samples-iso
@@ -998,6 +990,8 @@ groups:
   - mn-samples-ribose
   - bipm-si-brochure
   - isodoc-rice
+  # not maintained anymore:
+  # - mn-samples-gb
   setup:
   - metanorma-macos-setup
   - metanorma-windows-setup
