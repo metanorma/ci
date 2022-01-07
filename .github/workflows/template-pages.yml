@@ -32,6 +32,8 @@ jobs:
         with:
           token: ${{ secrets.pat_token }}
 
+      - uses: metanorma/metanorma-build-scripts/docker-gem-install@main
+
       - uses: actions-mn/cli/site-gen@main
         with:
           agree-to-terms: true
