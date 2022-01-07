@@ -32,6 +32,9 @@ jobs:
         with:
           token: ${{ secrets.pat_token }}
 
+      - if: github.repository == 'metanorma/mn-samples-gb'
+        run: bundle remove metanorma-cli
+
       - uses: metanorma/metanorma-build-scripts/docker-gem-install@main
 
       - uses: actions-mn/cli/site-gen@main
