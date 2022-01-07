@@ -32,8 +32,7 @@ jobs:
         with:
           token: ${{ secrets.pat_token }}
 
-      - run: |
-          curl -L --retry 3 https://raw.githubusercontent.com/metanorma/metanorma-build-scripts/master/gemfile-to-bundle-add.sh | bash
+      - uses: metanorma/metanorma-build-scripts/docker-gem-install@main
 
       - uses: actions-mn/cli/site-gen@main
         with:

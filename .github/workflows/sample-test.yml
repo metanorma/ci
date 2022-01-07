@@ -7,7 +7,7 @@ on:
         required: false
 
 jobs:
-  test-macos:
+  test:
     name: Test on Ruby ${{ matrix.ruby }}
     runs-on: ${{ matrix.os }}
     continue-on-error: ${{ matrix.experimental }}
