@@ -21,6 +21,10 @@ jobs:
     steps:
       - uses: actions/checkout@v2
 
+      - uses: metanorma/metanorma-build-scripts/gh-rubygems-setup-action@main
+        with:
+          token: ${{ secrets.pat_token }}
+
       - name: Install metanorma
         shell: python
         env:
@@ -45,10 +49,6 @@ jobs:
               lines.append('gem "{}", github: "{}"{}\n'.format(repo.split("/", 1)[1], repo, gem_branch))
 
             gemfile.writelines(lines)
-
-      - uses: metanorma/metanorma-build-scripts/gh-rubygems-setup-action@main
-        with:
-          token: ${{ secrets.pat_token }}
 
       - uses: ruby/setup-ruby@v1
         with:

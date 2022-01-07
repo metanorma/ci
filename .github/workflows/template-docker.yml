@@ -22,6 +22,12 @@ jobs:
           token: ${{ secrets.pat_token || github.token }}
           submodules: true
 
+      - uses: metanorma/metanorma-build-scripts/gh-rubygems-setup-action@main
+        with:
+          token: ${{ secrets.pat_token }}
+
+      - uses: metanorma/metanorma-build-scripts/docker-gem-install@main
+
       - name: Metanorma compile
         shell: bash
         run: |
