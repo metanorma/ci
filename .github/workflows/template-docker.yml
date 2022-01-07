@@ -2,6 +2,11 @@ name: docker
 
 on:
   workflow_call:
+    inputs:
+      docker-tag:
+        default: 'latest'
+        required: false
+        type: string
     secrets:
       pat_token:
         required: false
@@ -9,7 +14,8 @@ on:
 jobs:
   test-docker:
     runs-on: ubuntu-latest
-    container: docker://metanorma/mn
+    container:
+      image: metanorma/mn:${{ inputs.docker-tag }}
     steps:
       - uses: actions/checkout@v2
         with:
