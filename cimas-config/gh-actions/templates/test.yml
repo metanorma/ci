@@ -13,7 +13,5 @@ on:
 jobs:
   test:
     uses: metanorma/metanorma-build-scripts/.github/workflows/template-test.yml@main
-    with:
-      event_name: ${{ github.event_name }}
     secrets:
       pat_token: ${{ secrets.METANORMA_CI_PAT_TOKEN }}

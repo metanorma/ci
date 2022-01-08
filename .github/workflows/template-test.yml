@@ -4,6 +4,7 @@ on:
   workflow_call:
     inputs:
       event_name:
+        description: 'deprecated github.event_name used instead'
         default: 'push'
         required: false
         type: string
@@ -26,14 +27,11 @@ jobs:
     steps:
       - uses: actions/checkout@v2
 
-      - run: |
-          echo "event_name: ${{ github.event_name }} event_name: ${{ inputs.event_name }}"
-
       - uses: metanorma/metanorma-build-scripts/gh-rubygems-setup-action@main
         with:
           token: ${{ secrets.pat_token }}
 
-      - if: inputs.event_name == 'repository_dispatch'
+      - if: github.event_name == 'repository_dispatch'
         shell: python
         env:
           TRIGGER_REPO: ${{ github.event.client_payload.repo }}
