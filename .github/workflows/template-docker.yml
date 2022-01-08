@@ -30,9 +30,7 @@ jobs:
 
       - uses: actions/cache@v2
         with:
-          path: |
-            ~/.fontist
-            ~/.metanorma/fonts
+          path: /config/fonts
           key: fontist-${{ runner.os }}
           restore-keys: fontist-${{ runner.os }}
 
