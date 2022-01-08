@@ -31,6 +31,14 @@ jobs:
 
       - uses: metanorma/metanorma-build-scripts/docker-gem-install@main
 
+      - uses: actions/cache@v2
+        with:
+          path: |
+            ~/.fontist
+            ~/.metanorma/fonts
+          key: fontist-${{ runner.os }}
+          restore-keys: fontist-${{ runner.os }}
+
       - name: Metanorma compile
         shell: bash
         run: |
@@ -40,11 +48,11 @@ jobs:
             metanorma new test/$template --type $TYPE --doctype $template --template . --overwrite
             if [ -f test/${template}/document.adoc ]
             then
-              metanorma compile --no-install-fonts test/${template}/document.adoc
+              metanorma compile --agree-to-terms test/${template}/document.adoc
             else
               for docfile in test/${template}/*.adoc
               do
-                metanorma compile --no-install-fonts $docfile
+                metanorma compile --agree-to-terms $docfile
               done
             fi
           done

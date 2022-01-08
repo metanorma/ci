@@ -70,6 +70,14 @@ jobs:
 
       - run: pip install xml2rfc
 
+      - uses: actions/cache@v2
+        with:
+          path: |
+            ~/.fontist
+            ~/.metanorma/fonts
+          key: fontist-${{ runner.os }}
+          restore-keys: fontist-${{ runner.os }}
+
       - name: Metanorma compile *nix
         if: matrix.os != 'windows-latest'
         run: |
@@ -79,11 +87,11 @@ jobs:
             bundle exec metanorma new test/$template --type $TYPE --doctype $template --template . --overwrite
             if [ -f test/${template}/document.adoc ]
             then
-              bundle exec metanorma compile --no-install-fonts test/${template}/document.adoc
+              bundle exec metanorma compile --agree-to-terms test/${template}/document.adoc
             else
               for docfile in test/${template}/*.adoc
               do
-                bundle exec metanorma compile --no-install-fonts $docfile
+                bundle exec metanorma compile ---agree-to-terms $docfile
               done
             fi
           done
@@ -99,10 +107,10 @@ jobs:
             bundle exec metanorma new result\$t --type $($docTypes.TYPE) --doctype $t --template . --overwrite
             $doc = "result\$t\document.adoc"
             if (Test-Path -Path $doc) {
-              bundle exec metanorma compile --no-install-fonts $doc
+              bundle exec metanorma compile --agree-to-terms $doc
             } else {
               Get-ChildItem ".\result\$t" -Filter *.adoc | % {
-                bundle exec metanorma compile --no-install-fonts $_.FullName
+                bundle exec metanorma compile --agree-to-terms $_.FullName
               }
             }
           }
