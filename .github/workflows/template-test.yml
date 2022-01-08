@@ -2,6 +2,11 @@ name: test
 
 on:
   workflow_call:
+    inputs:
+      event_name:
+        default: 'push'
+        required: false
+        type: string
     secrets:
       pat_token:
         required: true
@@ -21,11 +26,14 @@ jobs:
     steps:
       - uses: actions/checkout@v2
 
+      - run: |
+          echo "event_name: ${{ github.event_name }} event_name: ${{ inputs.event_name }}"
+
       - uses: metanorma/metanorma-build-scripts/gh-rubygems-setup-action@main
         with:
           token: ${{ secrets.pat_token }}
 
-      - name: Install metanorma
+      - if: inputs.event_name == 'repository_dispatch'
         shell: python
         env:
           TRIGGER_REPO: ${{ github.event.client_payload.repo }}

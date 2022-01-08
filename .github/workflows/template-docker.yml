@@ -22,6 +22,9 @@ jobs:
           token: ${{ secrets.pat_token || github.token }}
           submodules: true
 
+      - run: |
+          echo "event_name: ${{ github.event_name }}"
+
       - uses: metanorma/metanorma-build-scripts/gh-rubygems-setup-action@main
         with:
           token: ${{ secrets.pat_token }}
