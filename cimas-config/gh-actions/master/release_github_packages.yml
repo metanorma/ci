@@ -16,4 +16,5 @@ jobs:
     uses: metanorma/metanorma-build-scripts/.github/workflows/ghpkg-release.yml@main
     with:
       next_version: ${{ github.event.inputs.next_version }}
+    secrets:
       pat_token: ${{ secrets.METANORMA_CI_PAT_TOKEN }}
