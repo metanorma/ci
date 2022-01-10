@@ -774,6 +774,7 @@ repositories:
     branch: master
     files:
       .github/workflows/docker.yml: gh-actions/samples/docker.yml
+      .github/workflows/generate.yml: gh-actions/samples/generate.yml
   iso-tc184-sc4:
     remote: ssh://git@github.com/metanorma/iso-tc184-sc4
     branch: master
