@@ -26,6 +26,11 @@ jobs:
           key: xml2rfc
           restore-keys: xml2rfc
 
+      - run: |
+          gem install fontist
+          fontist repo setup metanorma https://metanorma-ci:${{ secrets.pat_token }}@github.com/metanorma/fontist-formulas-private
+          fontist repo update metanorma
+
       - uses: actions/cache@v2
         with:
           path: ~/.fontist

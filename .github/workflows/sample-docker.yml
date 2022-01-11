@@ -22,6 +22,10 @@ jobs:
           token: ${{ secrets.pat_token || github.token }}
           submodules: true
 
+      - run: |
+          fontist repo setup metanorma https://metanorma-ci:${{ secrets.pat_token }}@github.com/metanorma/fontist-formulas-private
+          fontist repo update metanorma
+
       - uses: actions/cache@v2
         with:
           path: /config/fonts

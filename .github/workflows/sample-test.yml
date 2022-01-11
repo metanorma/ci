@@ -27,6 +27,10 @@ jobs:
         with:
           ruby-version: ${{ matrix.ruby }}
 
+      - run: |
+          bundle exec fontist repo setup metanorma https://metanorma-ci:${{ secrets.pat_token }}@github.com/metanorma/fontist-formulas-private
+          bundle exec fontist repo update metanorma
+
       - uses: actions/setup-python@v1
         with:
           python-version: '3.6'
