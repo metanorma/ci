@@ -48,10 +48,21 @@ jobs:
         with:
           agree-to-terms: true
 
+      - if: hashFiles('collection.yml') != ''
+        uses: actions-mn/cli/collection
+        with:
+          manifest: collection.yml
+          formats: xml,html,presentation,pdf
+          cover-page: sources/collection_cover.html
+          output-dir: collection
+          agree-to-terms: true
+
       - uses: actions/upload-artifact@v2
         with:
           name: site
-          path: site
+          path: |
+            site
+            collection
 
   deploy-gh-pages:
     if: github.ref == 'refs/heads/master'
