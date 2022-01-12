@@ -980,7 +980,6 @@ groups:
   - mn-samples-ietf
   - mn-samples-iso
   - mn-samples-itu
-  - mn-samples-mpfa
   - mn-samples-ogc
   - mn-samples-un
   - mn-samples-iho
@@ -994,6 +993,7 @@ groups:
   - isodoc-rice
   # not maintained anymore:
   # - mn-samples-gb
+  # - mn-samples-mpfa
   setup:
   - metanorma-macos-setup
   - metanorma-windows-setup
