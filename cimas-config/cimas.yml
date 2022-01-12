@@ -1,7 +1,6 @@
 ---
 settings:
   reviewers:
-    - opoudjis
     - ronaldtse
   assignees:
     - CAMOBAP
