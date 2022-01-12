@@ -734,13 +734,11 @@ repositories:
     remote: ssh://git@github.com/metanorma/iso-8000-51
     branch: master
     files:
-      .gitlab-ci.yml: gh-actions/samples/.gitlab-ci.yml
       .github/workflows/docker.yml: gh-actions/samples/docker.yml
   iso-8000-100-ed2:
     remote: ssh://git@github.com/metanorma/iso-8000-100-ed2
     branch: master
     files:
-      .gitlab-ci.yml: gh-actions/samples/.gitlab-ci.yml
       .github/workflows/docker.yml: gh-actions/samples/docker.yml
   iso-8601-1:
     remote: ssh://git@github.com/metanorma/iso-8601-1
