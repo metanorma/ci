@@ -49,7 +49,7 @@ jobs:
           agree-to-terms: true
 
       - if: hashFiles('collection.yml') != ''
-        uses: actions-mn/cli/collection
+        uses: actions-mn/cli/collection@main
         with:
           manifest: collection.yml
           formats: xml,html,presentation,pdf

@@ -57,4 +57,15 @@ jobs:
           os.system("gem install specific_install")
           os.system("gem specific_install -l https://github.com/{}.git -b {}".format(repo, branch))
 
-      - run: metanorma site generate --agree-to-terms
+      - uses: actions-mn/cli/site-gen@main
+        with:
+          agree-to-terms: true
+
+      - if: hashFiles('collection.yml') != ''
+        uses: actions-mn/cli/collection@main
+        with:
+          manifest: collection.yml
+          formats: xml,html,presentation,pdf
+          cover-page: sources/collection_cover.html
+          output-dir: collection
+          agree-to-terms: true
