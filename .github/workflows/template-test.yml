@@ -43,6 +43,8 @@ jobs:
           repo = os.environ.get("TRIGGER_REPO")
           branch = os.environ.get("TRIGGER_REF")
 
+          print("triggered by: ", repo, " branch: ", branch)
+
           with open("Gemfile", "w") as gemfile:
             lines = [ "# generated Gemfile\n\n", 'source "https://rubygems.org"\n\n', 'source "https://rubygems.pkg.github.com/metanorma"\n\n' ]
             if repo != "metanorma/metanorma-cli":
@@ -50,11 +52,13 @@ jobs:
 
             if repo:
               gem_branch = "\n"
-              if  branch:
+              if branch:
                 gem_branch = ', branch: "{}"\n'.format(branch)
               lines.append('gem "{}", github: "{}"{}\n'.format(repo.split("/", 1)[1], repo, gem_branch))
 
             gemfile.writelines(lines)
+
+      - run: cat Gemfile
 
       - uses: ruby/setup-ruby@v1
         with:
