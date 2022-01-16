@@ -565,6 +565,11 @@ repositories:
     files:
       .github/workflows/docker.yml: gh-actions/samples/docker.yml
       .github/workflows/generate.yml: gh-actions/samples/generate.yml
+  ogc-citygml2:
+    remote: ssh://git@github.com/metanorma/ogc-citygml2
+    branch: master
+    files:
+      .github/workflows/docker.yml: gh-actions/samples/docker.yml
   bipm-si-brochure:
     remote: ssh://git@github.com/metanorma/bipm-si-brochure
     branch: main
