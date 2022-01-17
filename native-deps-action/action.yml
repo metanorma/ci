@@ -27,6 +27,8 @@ runs:
           libname = "${{ inputs.libname }}"
           directory = "${{ inputs.directory }}"
 
+          print("Platform :", platform.system())
+
           exts = {
             "Darwin": [ ".dylib", ".bundle" ],
             "Windows": [ ".dll", ".exe" ],
@@ -34,7 +36,9 @@ runs:
           }.get(platform.system(), [ "" ])
 
           for ext in exts:
-            result = glob.glob("{}/*{}*{}".format(directory, libname, ext))
+            search_pattern = "{}/*{}*{}".format(directory, libname, ext)
+            print("Searching for pattern :", search_pattern)
+            result = glob.glob(search_pattern)
             if result:
               filepath = result[0]
 
