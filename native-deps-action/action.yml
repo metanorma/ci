@@ -39,8 +39,10 @@ runs:
             search_pattern = "{}/*{}*{}".format(directory, libname, ext)
             print("Searching for pattern :", search_pattern)
             result = glob.glob(search_pattern)
+            print("Result :", result)
             if result:
               filepath = result[0]
+              break
 
         if not os.path.exists(filepath):
           print("Unable to find file for passed input")
