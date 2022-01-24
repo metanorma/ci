@@ -24,3 +24,5 @@ while IFS= read -r line; do
 		bundle add ${GEM}
 	fi
 done < "$GEMFILE"
+
+bundle update
