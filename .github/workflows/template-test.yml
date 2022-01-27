@@ -20,7 +20,7 @@ jobs:
       fail-fast: false
       matrix:
         os: [ macos-latest, ubuntu-latest, windows-latest ]
-        ruby: [ '3.0', '2.7', '2.6', '2.5' ]
+        ruby: [ '3.0', '2.7', '2.6' ]
         experimental: [ false ]
 
     runs-on: ${{ matrix.os }}
