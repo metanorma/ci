@@ -20,6 +20,7 @@ jobs:
       - uses: actions/checkout@v2
       - id: build-matrix
         run: echo "::set-output name=matrix::$(cat .github/workflows/matrix.json | tr '\n' ' ')"
+      - run: cat .github/workflows/matrix.json
 
   generate:
     runs-on: ubuntu-latest
