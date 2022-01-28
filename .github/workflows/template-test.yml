@@ -102,39 +102,26 @@ jobs:
           key: fontist-${{ runner.os }}
           restore-keys: fontist-${{ runner.os }}
 
-      - name: Metanorma compile *nix
-        if: matrix.os != 'windows-latest'
-        run: |
-          source doctypes.env
-          for template in $DOCTYPES
-          do
-            bundle exec metanorma new test/$template --type $TYPE --doctype $template --template . --overwrite
-            if [ -f test/${template}/document.adoc ]
-            then
-              bundle exec metanorma compile --agree-to-terms test/${template}/document.adoc
-            else
-              for docfile in test/${template}/*.adoc
-              do
-                bundle exec metanorma compile ---agree-to-terms $docfile
-              done
-            fi
-          done
+      - uses: actions-mn/cli/new@main
+        with:
+          type: ${{ matrix.type }}
+          doctype: ${{ matrix.doctype }}
+          output-path: test/${{ matrix.doctype }}
+          template: '.'
+          overwrite: true
+          use-bundler: true
 
-      - name: Metanorma compile Windows
-        if: matrix.os == 'windows-latest'
-        shell: pwsh
-        run: |
-          $ErrorActionPreference = "Stop" <# https://stackoverflow.com/a/16334189/902217 #>
-          $docTypes = ConvertFrom-StringData (Get-Content ./doctypes.env -Raw)
-          $docTypes.DOCTYPES.Split(" ") | % {
-            $t = $_.Trim('"')
-            bundle exec metanorma new result\$t --type $($docTypes.TYPE) --doctype $t --template . --overwrite
-            $doc = "result\$t\document.adoc"
-            if (Test-Path -Path $doc) {
-              bundle exec metanorma compile --agree-to-terms $doc
-            } else {
-              Get-ChildItem ".\result\$t" -Filter *.adoc | % {
-                bundle exec metanorma compile --agree-to-terms $_.FullName
-              }
-            }
-          }
+      - run: |
+          cat << 'EOF' > test/${{ matrix.doctype }}/metanorma.yml
+          metanorma:
+            source:
+              files:
+                - document.adoc
+          EOF
+
+      - uses: actions-mn/cli/site-gen@main
+        with:
+          source-path: test/${{ matrix.doctype }}
+          config-file: test/${{ matrix.doctype }}/metanorma.yml
+          agree-to-terms: true
+          use-bundler: true
