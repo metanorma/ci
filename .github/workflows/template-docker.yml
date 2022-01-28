@@ -23,6 +23,7 @@ jobs:
       - run: cat .github/workflows/matrix.json
 
   generate:
+    needs: pre
     runs-on: ubuntu-latest
     container:
       image: metanorma/mn:${{ inputs.docker-tag }}
