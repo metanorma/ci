@@ -22,11 +22,11 @@ jobs:
         run: echo "::set-output name=matrix::$(cat .github/workflows/matrix.json | tr '\n' ' ')"
 
   generate:
-    needs: build-matrix
     runs-on: ubuntu-latest
     container:
       image: metanorma/mn:${{ inputs.docker-tag }}
     continue-on-error: ${{ matrix.experimental }}
+    needs: build-matrix
     strategy:
       fail-fast: false
       matrix: ${{ fromJson(needs.build-matrix.outputs.matrix) }}

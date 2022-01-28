@@ -13,17 +13,36 @@ on:
         required: true
 
 jobs:
+  build-matrix:
+    runs-on: ubuntu-latest
+    outputs:
+      matrix: ${{ steps.build-matrix.outputs.matrix }}
+    steps:
+      - uses: actions/checkout@v2
+      - id: build-matrix
+        run: |
+          if cat .github/workflows/matrix.json | jq -e 'has("include")'; then
+            cat .github/workflows/matrix.json | \
+              jq -c '{"type":[.include[0].type],"doctype":[.include[]? | select(.experimental == false).doctype]}' \
+              > matrix.json.tmp && mv matrix.json.tmp .github/workflows/matrix.json
+          fi
+
+          cat .github/workflows/matrix.json                                        | \
+            jq '. + {"experimental": [false]}'                                     | \
+            jq '. + {"ruby": ["3.0", "2.7", "2.6"]}'                               | \
+            jq -c '. + {"os": ["macos-latest", "ubuntu-latest", "windows-latest" ]}' \
+            > matrix.json.tmp && mv matrix.json.tmp .github/workflows/matrix.json
+
+          echo "::set-output name=matrix::$(cat .github/workflows/matrix.json)"
+
   test:
-    name: Test ruby-${{ matrix.ruby }} on ${{ matrix.os }}
+    runs-on: ${{ matrix.os }}
     continue-on-error: ${{ matrix.experimental }}
+    needs: build-matrix
     strategy:
       fail-fast: false
-      matrix:
-        os: [ macos-latest, ubuntu-latest, windows-latest ]
-        ruby: [ '3.0', '2.7', '2.6' ]
-        experimental: [ false ]
+      matrix: ${{ fromJson(needs.build-matrix.outputs.matrix) }}
 
-    runs-on: ${{ matrix.os }}
     steps:
       - uses: actions/checkout@v2
 
