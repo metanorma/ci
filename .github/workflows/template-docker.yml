@@ -12,7 +12,7 @@ on:
         required: false
 
 jobs:
-  pre:
+  build-matrix:
     runs-on: ubuntu-latest
     outputs:
       matrix: ${{ steps.build-matrix.outputs.matrix }}
@@ -20,17 +20,16 @@ jobs:
       - uses: actions/checkout@v2
       - id: build-matrix
         run: echo "::set-output name=matrix::$(cat .github/workflows/matrix.json | tr '\n' ' ')"
-      - run: cat .github/workflows/matrix.json
 
   generate:
-    needs: pre
+    needs: build-matrix
     runs-on: ubuntu-latest
     container:
       image: metanorma/mn:${{ inputs.docker-tag }}
     continue-on-error: ${{ matrix.experimental }}
     strategy:
       fail-fast: false
-      matrix: ${{ fromJson(needs.pre.outputs.matrix) }}
+      matrix: ${{ fromJson(needs.build-matrix.outputs.matrix) }}
     steps:
       - uses: actions/checkout@v2
         with:
