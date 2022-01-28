@@ -12,10 +12,23 @@ on:
         required: false
 
 jobs:
-  test-docker:
+  pre:
+    runs-on: ubuntu-latest
+    outputs:
+      matrix: ${{ steps.build-matrix.outputs.matrix }}
+    steps:
+      - uses: actions/checkout@v2
+      - id: build-matrix
+        run: echo "::set-output name=matrix::$(cat .github/workflows/matrix.json | tr '\n' ' ')"
+
+  generate:
     runs-on: ubuntu-latest
     container:
       image: metanorma/mn:${{ inputs.docker-tag }}
+    continue-on-error: ${{ matrix.experimental }}
+    strategy:
+      fail-fast: false
+      matrix: ${{ fromJson(needs.pre.outputs.matrix) }}
     steps:
       - uses: actions/checkout@v2
         with:
@@ -34,20 +47,26 @@ jobs:
           key: fontist-${{ runner.os }}
           restore-keys: fontist-${{ runner.os }}
 
-      - name: Metanorma compile
-        shell: bash
-        run: |
-          source doctypes.env
-          for template in $DOCTYPES
-          do
-            metanorma new test/$template --type $TYPE --doctype $template --template . --overwrite
-            if [ -f test/${template}/document.adoc ]
-            then
-              metanorma compile --agree-to-terms test/${template}/document.adoc
-            else
-              for docfile in test/${template}/*.adoc
-              do
-                metanorma compile --agree-to-terms $docfile
-              done
-            fi
-          done
+      - uses: metanorma/metanorma-build-scripts/docker-gem-install@main
+
+      - uses: actions-mn/cli/new@main
+        with:
+          type: ${{ matrix.type }}
+          doctype: ${{ matrix.doctype }}
+          output-path: test/${{ matrix.doctype }}
+          template: '.'
+          overwrite: true
+
+      - run: |
+          cat << 'EOF' > test/${{ matrix.doctype }}/metanorma.yml
+          metanorma:
+            source:
+              files:
+                - document.adoc
+          EOF
+
+      - uses: actions-mn/cli/site-gen@main
+        with:
+          source-path: test/${{ matrix.doctype }}
+          config-file: test/${{ matrix.doctype }}/metanorma.yml
+          agree-to-terms: true
