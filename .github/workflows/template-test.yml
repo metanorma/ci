@@ -111,7 +111,8 @@ jobs:
           overwrite: true
           use-bundler: true
 
-      - run: |
+      - shell: bash
+        run: |
           cat << 'EOF' > test/${{ matrix.doctype }}/metanorma.yml
           metanorma:
             source:
