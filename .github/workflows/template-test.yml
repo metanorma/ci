@@ -111,7 +111,8 @@ jobs:
           overwrite: true
           use-bundler: true
 
-      - shell: bash
+      - if: hashFiles(join(['test', matrix.doctype, 'metanorma.yml'], '/')) == ''
+        shell: bash
         run: |
           cat << 'EOF' > test/${{ matrix.doctype }}/metanorma.yml
           metanorma:
