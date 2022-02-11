@@ -67,6 +67,8 @@ jobs:
                 - document.adoc
           EOF
 
+      - run: cat test/${{ matrix.doctype }}/metanorma.yml
+
       - uses: actions-mn/cli/site-gen@main
         with:
           source-path: test/${{ matrix.doctype }}
