@@ -58,7 +58,7 @@ jobs:
           template: '.'
           overwrite: true
 
-      - if: hashFiles(join(['test', matrix.doctype, 'metanorma.yml'], '/')) == ''
+      - if: hashFiles('test/' + matrix.doctype + '/metanorma.yml') == ''
         run: |
           cat << 'EOF' > test/${{ matrix.doctype }}/metanorma.yml
           metanorma:
