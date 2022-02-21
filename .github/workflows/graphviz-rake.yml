@@ -18,7 +18,9 @@ jobs:
         os: [ ubuntu-latest, windows-latest, macos-latest ]
         experimental: [ false ]
     steps:
-      - uses: actions/checkout@master
+      - uses: actions/checkout@v2
+        with:
+          submodules: true
 
       - uses: ruby/setup-ruby@v1
         with:
