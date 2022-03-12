@@ -22,9 +22,6 @@ jobs:
     runs-on: ubuntu-latest
     container:
       image: ${{ inputs.docker-image }}
-      credentials:
-        username: ${{ secrets.pat_username || null }}
-        password: ${{ secrets.pat_token || null }}
     steps:
       - uses: actions/checkout@v2
         with:
