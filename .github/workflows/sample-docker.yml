@@ -3,26 +3,35 @@ name: docker
 on:
   workflow_call:
     inputs:
-      docker-tag:
-        default: 'latest'
+      docker-image:
+        default: 'metanorma/mn:latest'
+        required: false
+        type: string
+      private-fonts:
+        default: 'false'
         required: false
         type: string
     secrets:
+      pat_username:
+        required: false
       pat_token:
-        required: true
+        required: false
 
 jobs:
   test-docker:
     runs-on: ubuntu-latest
     container:
-      image: metanorma/mn:${{ inputs.docker-tag }}
+      image: ${{ inputs.docker-image }}
+      credentials:
+        username: ${{ secrets.pat_username || github.actor }}
+        password: ${{ secrets.pat_token || github.token }}
     steps:
       - uses: actions/checkout@v2
         with:
           token: ${{ secrets.pat_token || github.token }}
           submodules: true
 
-      - if: github.repository == 'metanorma/mn-samples-bsi'
+      - if: ${{ inputs.private-fonts == 'true' }}
         run: |
           fontist update
           fontist repo setup metanorma https://metanorma-ci:${{ secrets.pat_token }}@github.com/metanorma/fontist-formulas-private

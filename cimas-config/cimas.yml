@@ -576,6 +576,12 @@ repositories:
     files:
       .github/workflows/docker.yml: gh-actions/samples/docker.yml
       .github/workflows/generate.yml: gh-actions/samples/generate.yml
+  eccma-iso-scor-vocab:
+    remote: ssh://git@github.com/metanorma/eccma-iso-scor-vocab
+    branch: main
+    files:
+      .github/workflows/docker.yml: gh-actions/samples/docker.yml
+      .github/workflows/generate.yml: gh-actions/samples/generate.yml
   # templates
   mn-templates-cc:
     remote: ssh://git@github.com/metanorma/mn-templates-cc

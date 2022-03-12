@@ -2,6 +2,11 @@ name: generate
 
 on:
   workflow_call:
+    inputs:
+      private-fonts:
+        default: 'false'
+        required: false
+        type: string
     secrets:
       pat_token:
         required: false
@@ -30,7 +35,7 @@ jobs:
         with:
           ruby-version: '3.0'
 
-      - if: github.repository == 'metanorma/mn-samples-bsi'
+      - if: ${{ inputs.private-fonts == 'true' }}
         run: |
           gem install fontist
           fontist update

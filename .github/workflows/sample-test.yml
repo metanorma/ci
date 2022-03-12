@@ -2,6 +2,11 @@ name: gems-test
 
 on:
   workflow_call:
+    inputs:
+      private-fonts:
+        default: 'false'
+        required: false
+        type: string
     secrets:
       pat_token:
         required: false
@@ -27,7 +32,8 @@ jobs:
         with:
           ruby-version: ${{ matrix.ruby }}
 
-      - run: |
+      - if: ${{ inputs.private-fonts == 'true' }}
+        run: |
           bundle exec fontist update
           bundle exec fontist repo setup metanorma https://metanorma-ci:${{ secrets.pat_token }}@github.com/metanorma/fontist-formulas-private
           bundle exec fontist repo update metanorma
