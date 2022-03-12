@@ -23,8 +23,8 @@ jobs:
     container:
       image: ${{ inputs.docker-image }}
       credentials:
-        username: ${{ secrets.pat_username || github.actor }}
-        password: ${{ secrets.pat_token || github.token }}
+        username: ${{ secrets.pat_username || null }}
+        password: ${{ secrets.pat_token || null }}
     steps:
       - uses: actions/checkout@v2
         with:
