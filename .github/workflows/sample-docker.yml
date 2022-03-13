@@ -11,6 +11,10 @@ on:
         default: 'false'
         required: false
         type: string
+      deploy-gh-pages:
+        default: 'true'
+        required: false
+        type: string
     secrets:
       pat_username:
         required: false
@@ -74,7 +78,7 @@ jobs:
           path: site
 
   deploy-gh-pages:
-    if: github.ref == 'refs/heads/master' || github.ref == 'refs/heads/main'
+    if: ${{ inputs.deploy-gh-pages == 'true' }} && github.ref == 'refs/heads/master' || github.ref == 'refs/heads/main'
     runs-on: ubuntu-latest
     needs: test-docker
     steps:
