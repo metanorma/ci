@@ -8,6 +8,10 @@ inputs:
     description: 'the name of the user or organization account that owns the repository containing your project.'
     required: true
     default: metanorma
+  local:
+    description: 'true if local config need to be modified, false by default'
+    required: false
+    default: ''
 runs:
   using: "composite"
   steps:
@@ -31,20 +35,22 @@ runs:
     - shell: bash
       run: |
         if command -v bundle &> /dev/null; then
-          bundle config https://rubygems.pkg.github.com/${{ inputs.owner }} x-access-token:${{ inputs.token }}
+          bundle config ${{ inputs.local && '--local' || '--global' }} https://rubygems.pkg.github.com/${{ inputs.owner }} x-access-token:${{ inputs.token }}
           echo "https://rubygems.pkg.github.com/${{ inputs.owner }} added to bundler's config"
         else
           echo "bundler not installed. so defining BUNDLE_RUBYGEMS__PKG__GITHUB__COM ..."
           echo "BUNDLE_RUBYGEMS__PKG__GITHUB__COM=x-access-token:${{ inputs.token }}" >> $GITHUB_ENV
 
-          echo "generating ~/.bundle/config ..."
-          if [ -f "~/.bundle/config" ]
+          BUNDLE_PATH=$([ ! -z "${{ inputs.local }}" ] && echo './.bundle' || echo "~/.bundle");
+
+          echo "generating ${BUNDLE_PATH}/config ..."
+          if [ -f "${BUNDLE_PATH}/config" ]
           then
-            echo "WARNING! Overwriting ~/.bundle/config"
+            echo "WARNING! Overwriting ${BUNDLE_PATH}/config"
           fi
-          mkdir -p ~/.bundle
+          mkdir -p "${BUNDLE_PATH}"
           OWNER_UPPER=$(echo "${{ inputs.owner }}" | tr '[:lower:]' '[:upper:]')
-          cat > ~/.bundle/config << 'EOF'
+          cat > "${BUNDLE_PATH}/config" << 'EOF'
         ---
         BUNDLE_RUBYGEMS__PKG__GITHUB__COM: "x-access-token:${{ inputs.token }}"
         EOF
