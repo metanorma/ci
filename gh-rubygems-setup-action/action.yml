@@ -36,6 +36,7 @@ runs:
       run: |
         if command -v bundle &> /dev/null; then
           bundle config ${{ inputs.local && '--local' || '--global' }} https://rubygems.pkg.github.com/${{ inputs.owner }} x-access-token:${{ inputs.token }}
+          bundle config ${{ inputs.local && '--local' || '--global' }} GITHUB__COM x-access-token:${{ inputs.token }}
           echo "https://rubygems.pkg.github.com/${{ inputs.owner }} added to bundler's config"
         else
           echo "bundler not installed. so defining BUNDLE_RUBYGEMS__PKG__GITHUB__COM ..."
@@ -53,5 +54,6 @@ runs:
           cat > "${BUNDLE_PATH}/config" << 'EOF'
         ---
         BUNDLE_RUBYGEMS__PKG__GITHUB__COM: "x-access-token:${{ inputs.token }}"
+        GITHUB__COM: "x-access-token:${{ inputs.token }}"
         EOF
         fi
