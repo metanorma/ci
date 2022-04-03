@@ -54,6 +54,7 @@ runs:
           cat > "${BUNDLE_PATH}/config" << 'EOF'
         ---
         BUNDLE_HTTPS://RUBYGEMS__PKG__GITHUB__COM/${OWNER_UPPER}/: "x-access-token:${{ inputs.token }}"
+        BUNDLE_RUBYGEMS__PKG__GITHUB__COM: "x-access-token:${{ inputs.token }}"
         BUNDLE_GITHUB__COM: "x-access-token:${{ inputs.token }}"
         EOF
         fi
