@@ -14,6 +14,7 @@ repositories:
       .rubocop.yml: gh-actions/master/.rubocop.yml
       .github/workflows/rake.yml: gh-actions/master/rake-notify.yml
       .github/workflows/notify.yml: gh-actions/master/notify.yml
+      .github/workflows/release.yml: gh-actions/master/release.yml
       templates/base/.github/workflows/docker.yml: gh-actions/samples/docker.yml
       templates/base/.github/workflows/generate.yml: gh-actions/samples/generate.yml
       templates/base/.gitlab-ci.yml: gh-actions/samples/.gitlab-ci.yml
