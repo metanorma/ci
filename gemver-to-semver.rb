@@ -19,18 +19,24 @@ options = defaults.dup
 
 OptionParser.new do |opts|
   opts.banner = <<~HELP
-                  Utility to convert gem version to other version formats
+    Utility to convert gem version to other version formats
 
-                  Usage: gemver-to-semver.rb [options] <version>"
-                HELP
+    Usage: gemver-to-semver.rb [options] <version>"
+  HELP
 
   opts.on("-d", "--strip-prefix", "String non numeric prefix before version") do
     options[:strip_prefix] = true
   end
-  opts.on("-s", "--SEM_VER-org", "Target version will conform with https://SEM_VER.org specification") do
+  opts.on("-s", "--SEM_VER-org",
+          "Target version will conform with semver.org specification") do
     options[:target_version] = TargetVersion::SEM_VER
   end
-  opts.on("-c", "--CHOCOLATEY", "Target version will conform with https://docs.CHOCOLATEY.org/en-us/create/create-packages#versioning-recommendations") do
+  opts.on(
+    "-c",
+    "--CHOCOLATEY",
+    "Target version will conform with" \
+    "https://docs.chocolatey.org/en-us/create/create-packages#versioning-recommendations",
+  ) do
     options[:target_version] = TargetVersion::CHOCOLATEY
     options[:strip_prefix] = true
   end
@@ -39,46 +45,41 @@ OptionParser.new do |opts|
   end
 end.parse!
 
+def fix_prelease(gem_ver, is_chocolatey)
+  pre_found = false
+  r = gem_ver.segments.inject("") do |result, segment|
+    next result if segment == "pre" && pre_found
+
+    pre_found = true if segment == "pre"
+    if is_chocolatey && segment.is_a?(String)
+      result += "-pre"
+      break result
+    end
+    result + "#{segment.is_a?(Numeric) ? '.' : '-'}#{segment}"
+  end
+
+  r[1..-1]
+end
+
 def convert(verstr, options)
   prefix = verstr[/\b[a-zA-Z\/]*/]
   clean_ver = verstr.to_s.sub(prefix, "")
   gem_ver = Gem::Version.new(clean_ver)
-  strip_prefix = options[:strip_prefix] || options[:target_version] == TargetVersion::CHOCOLATEY
+  is_chocolatey = options[:target_version] == TargetVersion::CHOCOLATEY
+  strip_prefix = options[:strip_prefix] || is_chocolatey
 
-  result = ""
-  pre_found = false
   if gem_ver.prerelease?
-    for segment in gem_ver.segments
-      next if segment == "pre" && pre_found
-      pre_found = true if segment == "pre"
-
-      separator = segment.is_a?(Numeric) ? "." : "-"
-      if options[:target_version] == TargetVersion::CHOCOLATEY && segment.is_a?(String)
-        result += "-pre"
-        break
-      end
-      result += "#{separator}#{segment}"
-    end
-    result = result[1..-1] # remove leading dot
-
-    if strip_prefix
-      return result
-    end
-
-    return prefix + result
+    result = fix_prelease(gem_ver, is_chocolatey)
+    return strip_prefix ? result : prefix + result
   end
 
-  if strip_prefix
-    return clean_ver
-  end
-
-  verstr.to_s
+  strip_prefix ? clean_ver : verstr.to_s
 end
 
 input = ARGV[0]
 
 unless options[:self_test]
-  print(convert(input, options))
+  puts(convert(input, options))
   return
 end
 
@@ -91,7 +92,7 @@ test_suite = {
   "1.2.3": [{ expected: "1.2.3", options: [strip, CHOCOLATEY, defaults] }],
   "1.2.3rc": [{ expected: "1.2.3-rc", options: [defaults] }],
   "1.2.3rc1": [{ expected: "1.2.3-rc.1", options: [defaults] }],
-  "v1": [
+  v1: [
     { expected: "v1", options: [defaults] },
     { expected: "1", options: [CHOCOLATEY, strip] },
   ],
@@ -110,7 +111,7 @@ test_suite = {
   "v1.2.3rc": [
     { expected: "v1.2.3-rc", options: [defaults] },
     { expected: "1.2.3-pre", options: [CHOCOLATEY] },
-    { expected: "1.2.3-rc", options: [strip] }
+    { expected: "1.2.3-rc", options: [strip] },
   ],
   "v1.2.3rc1": [
     { expected: "v1.2.3-rc.1", options: [defaults] },
@@ -131,20 +132,20 @@ test_suite = {
     { expected: "v1.2.3-pre", options: [defaults] },
     { expected: "1.2.3-pre", options: [CHOCOLATEY] },
     { expected: "1.2.3-pre", options: [strip] },
-  ]
+  ],
 }
 succeed = true
-for input, test_cases in test_suite
-  for tc in test_cases
-    for opts in tc[:options]
-      result = convert(input, opts)
+test_suite.each do |inver, test_cases|
+  test_cases.each do |tc|
+    tc[:options].each do |opts|
+      result = convert(inver, opts)
       expected = tc[:expected].to_s
-        if result != expected
+      if result != expected
         succeed = false
-        print("Test failed for #{input}: expected:#{expected} actual:#{result}\n")
+        puts("Failed for #{inver}: expected:#{expected} actual:#{result}")
       end
     end
   end
 end
-print("Self-test passed\n") if succeed
+puts("Self-test passed\n") if succeed
 exit(succeed ? 0 : 2)
