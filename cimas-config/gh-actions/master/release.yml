@@ -18,4 +18,5 @@ jobs:
       next_version: ${{ github.event.inputs.next_version }}
     secrets:
       rubygems-api-key: ${{ secrets.METANORMA_CI_RUBYGEMS_API_KEY }}
+      pat_token: ${{ secrets.METANORMA_CI_PAT_TOKEN }}
 
