@@ -13,6 +13,7 @@ defaults = {
   strip_prefix: false,
   target_version: TargetVersion::SEM_VER,
   self_test: false,
+  keep_first: -1,
 }
 
 options = defaults.dup
@@ -40,6 +41,13 @@ OptionParser.new do |opts|
     options[:target_version] = TargetVersion::CHOCOLATEY
     options[:strip_prefix] = true
   end
+  opts.on(
+    "-k",
+    "--keep N",
+    "Keep only first N sections of version string",
+  ) do |val|
+    options[:keep_first] = val.to_i
+  end
   opts.on("-t", "--self-test", "Run utility's self-test") do
     options[:self_test] = true
   end
@@ -61,84 +69,89 @@ def fix_prelease(gem_ver, is_chocolatey)
   r[1..-1]
 end
 
-def convert(verstr, options)
+def convert(verstr, is_chocolatey, strip_prefix, keep_head)
   prefix = verstr[/\b[a-zA-Z\/]*/]
-  clean_ver = verstr.to_s.sub(prefix, "")
-  gem_ver = Gem::Version.new(clean_ver)
-  is_chocolatey = options[:target_version] == TargetVersion::CHOCOLATEY
-  strip_prefix = options[:strip_prefix] || is_chocolatey
+
+  gem_ver = Gem::Version.new(verstr.to_s.sub(prefix, ""))
+  if keep_head.positive?
+    gem_ver = Gem::Version.new(gem_ver.segments.first(keep_head).join("."))
+  end
 
   if gem_ver.prerelease?
     result = fix_prelease(gem_ver, is_chocolatey)
     return strip_prefix ? result : prefix + result
   end
 
-  strip_prefix ? clean_ver : verstr.to_s
+  strip_prefix ? gem_ver.to_s : prefix + gem_ver.to_s
 end
 
 input = ARGV[0]
 
 unless options[:self_test]
-  puts(convert(input, options))
+  is_chocolatey = options[:target_version] == TargetVersion::CHOCOLATEY
+  strip_prefix = options[:strip_prefix] || is_chocolatey
+  keep_first = options[:keep_first]
+  puts(convert(input, is_chocolatey, strip_prefix, keep_first))
   return
 end
 
-CHOCOLATEY = defaults.dup.merge!({ target_version: TargetVersion::CHOCOLATEY })
-strip = defaults.dup.merge!({ strip_prefix: true })
+DEFAULTS = [false, false, -1].freeze
+CHOCOLATEY = [true, true, -1].freeze
+STRIP = [false, true, -1].freeze
 
 test_suite = {
-  "1": [{ expected: "1", options: [strip, CHOCOLATEY, defaults] }],
-  "1.2": [{ expected: "1.2", options: [defaults, CHOCOLATEY, strip] }],
-  "1.2.3": [{ expected: "1.2.3", options: [strip, CHOCOLATEY, defaults] }],
-  "1.2.3rc": [{ expected: "1.2.3-rc", options: [defaults] }],
-  "1.2.3rc1": [{ expected: "1.2.3-rc.1", options: [defaults] }],
+  "1": [{ expected: "1", options: [STRIP, CHOCOLATEY, DEFAULTS] }],
+  "1.2": [{ expected: "1.2", options: [DEFAULTS, CHOCOLATEY, STRIP] }],
+  "1.2.3": [{ expected: "1.2.3", options: [STRIP, CHOCOLATEY, DEFAULTS] }],
+  "1.2.3rc": [{ expected: "1.2.3-rc", options: [DEFAULTS] }],
+  "1.2.3rc1": [{ expected: "1.2.3-rc.1", options: [DEFAULTS] }],
   v1: [
-    { expected: "v1", options: [defaults] },
-    { expected: "1", options: [CHOCOLATEY, strip] },
+    { expected: "v1", options: [DEFAULTS] },
+    { expected: "1", options: [CHOCOLATEY, STRIP] },
   ],
   "v1.2": [
-    { expected: "v1.2", options: [defaults] },
-    { expected: "1.2", options: [CHOCOLATEY, strip] },
+    { expected: "v1.2", options: [DEFAULTS] },
+    { expected: "1.2", options: [CHOCOLATEY, STRIP] },
   ],
   "v1.2.3": [
-    { expected: "v1.2.3", options: [defaults] },
-    { expected: "1.2.3", options: [CHOCOLATEY, strip] },
+    { expected: "v1.2.3", options: [DEFAULTS] },
+    { expected: "1.2.3", options: [CHOCOLATEY, STRIP] },
   ],
   "refs/tags/v1.2.3": [
-    { expected: "refs/tags/v1.2.3", options: [defaults] },
-    { expected: "1.2.3", options: [CHOCOLATEY, strip] },
+    { expected: "refs/tags/v1.2.3", options: [DEFAULTS] },
+    { expected: "1.2.3", options: [CHOCOLATEY, STRIP] },
   ],
   "v1.2.3rc": [
-    { expected: "v1.2.3-rc", options: [defaults] },
+    { expected: "v1.2.3-rc", options: [DEFAULTS] },
     { expected: "1.2.3-pre", options: [CHOCOLATEY] },
-    { expected: "1.2.3-rc", options: [strip] },
+    { expected: "1.2.3-rc", options: [STRIP] },
   ],
   "v1.2.3rc1": [
-    { expected: "v1.2.3-rc.1", options: [defaults] },
+    { expected: "v1.2.3-rc.1", options: [DEFAULTS] },
     { expected: "1.2.3-pre", options: [CHOCOLATEY] },
-    { expected: "1.2.3-rc.1", options: [strip] },
+    { expected: "1.2.3-rc.1", options: [STRIP] },
   ],
   "v1.2.3pre": [
-    { expected: "v1.2.3-pre", options: [defaults] },
+    { expected: "v1.2.3-pre", options: [DEFAULTS] },
     { expected: "1.2.3-pre", options: [CHOCOLATEY] },
-    { expected: "1.2.3-pre", options: [strip] },
+    { expected: "1.2.3-pre", options: [STRIP] },
   ],
   "v10.02.53pre.15": [
-    { expected: "v10.2.53-pre.15", options: [defaults] },
+    { expected: "v10.2.53-pre.15", options: [DEFAULTS] },
     { expected: "10.2.53-pre", options: [CHOCOLATEY] },
-    { expected: "10.2.53-pre.15", options: [strip] },
+    { expected: "10.2.53-pre.15", options: [STRIP] },
   ],
   "v1.2.3-pre": [
-    { expected: "v1.2.3-pre", options: [defaults] },
+    { expected: "v1.2.3-pre", options: [DEFAULTS] },
     { expected: "1.2.3-pre", options: [CHOCOLATEY] },
-    { expected: "1.2.3-pre", options: [strip] },
+    { expected: "1.2.3-pre", options: [STRIP] },
   ],
 }
 succeed = true
 test_suite.each do |inver, test_cases|
   test_cases.each do |tc|
     tc[:options].each do |opts|
-      result = convert(inver, opts)
+      result = convert(inver, *opts)
       expected = tc[:expected].to_s
       if result != expected
         succeed = false
