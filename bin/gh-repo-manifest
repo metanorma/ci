@@ -3,13 +3,13 @@
 require 'optparse'
 require 'net/http'
 require 'json'
-
-require 'rexml/document'
+require 'yaml'
 
 options = OpenStruct.new
 options.organization = 'metanorma'
 options.include_forks = false
 options.include_archived = false
+options.manifest_file = nil
 
 OptionParser.new do |opts|
   opts.banner = "Usage: gh-repo-manifest [options]"
@@ -26,34 +26,36 @@ OptionParser.new do |opts|
     options.include_archived = archived
   end
 
+  opts.on("-m", "--report-missing [cimas.yml]", "Report missing repos") do |manifest_file|
+    options.manifest_file = manifest_file
+  end
+
   opts.on("-h", "--help", "Prints this help") do
     puts opts
     exit
   end
 end.parse!
 
-doc = REXML::Document.new
-doc.context[:attribute_quote] = :quote
-doc.context[:prologue_quote] = :quote
+manifest = {
+  settings: {
+    reviewers: nil,
+    author: ["CAMOBAP"],
+  }.transform_keys(&:to_s),
+  repositories: {},
+  groups: {},
+}.transform_keys(&:to_s)
 
-doc << REXML::XMLDecl.new('1.0', 'UTF-8')
-
-manifest = doc.add_element 'manifest'
-
-remote = manifest.add_element 'remote'
-remote.attributes['name'] = 'github'
-remote.attributes['fetch'] = 'ssh://git@github.com'
-
-default = manifest.add_element 'default'
-default.attributes['revision'] = 'master'
-default.attributes['remote'] = 'github'
-default.attributes['sync-j'] = '4'
+existing_manifest = nil
+if options.manifest_file && File.exists?(options.manifest_file)
+  existing_manifest = YAML.load_file(options.manifest_file)
+end
 
 groups_matchers = {
   'processor': /^metanorma-\w*$/,
   'metanorma': /^metanorma-.*$/,
   'relaton': /^relaton-.*$/,
-  'model': /^metanorma-model-/,
+  'model': /^\w+-model[-s]?/,
+  'data': /^\w+-data-/,
   'style': /-style$/,
   'snap': /-snap$/,
   'brew': /^homebrew-\w+/,
@@ -64,43 +66,61 @@ groups_matchers = {
   'setup': /\w-setup$/,
   'site': /(\.com|\.org)$/,
   'converter': /[\w\d]+2[\w\d]+/,
-  'infrastructure': /(-ci|^ci-|-registry$|scripts$)/
+  'infrastructure': /(-ci$|^ci-|-registry$|scripts$)/,
+  'python': /-py$/
 }
 
 begin
-  page=1
-  repos=[]
+  page = 1
+  repos = []
 
   options.organization.split(',').each do |org|
-  	manifest << REXML::Comment.new(" #{org} organization ")
   	page = 1
     loop do 
       uri = URI("https://api.github.com/orgs/#{org}/repos?page=#{page}&per_page=100")
       response = Net::HTTP.get(uri)
       result_set = JSON.parse(response)
 
-      if !result_set.kind_of?(Array) then
-        manifest << REXML::Comment.new(result_set.to_json)
+      unless result_set.kind_of?(Array)
+        warn result_set.to_json
         break
       end
 
       result_set.each do |repo|
-        next if repo['fork'] && !options.include_forks
-        next if repo['archived'] && !options.include_archived
+        repo_name = repo['name'].to_s
+        next if existing_manifest && existing_manifest["repositories"].key?(repo_name)
 
-        if repo['size'] > 0 then
-          repo_name = repo['name']
-          project = manifest.add_element 'project'
-          project.attributes['name'] = repo['full_name']
-          project.attributes['path'] = repo_name
+        p "#{repo_name} -> #{existing_manifest['repositories'].key?(repo_name)}"
 
-          groups=['all', repo_name]
-          groups_matchers.each do |group, regexp|
-            groups << group if repo_name.match(regexp)
-          end
-
-          project.attributes['groups'] = groups.join(",")
+        if repo['fork'] && !options.include_forks
+          puts "Skip #{repo_name} because it's a fork repo"
+          next
+        elsif repo['archived'] && !options.include_archived
+          puts "Skip #{repo_name} because this repo is archived"
+          next
+        elsif repo['size'] == 0
+          puts "Skip #{repo_name} because it's empty"
+          next
         end
+
+        project = {
+          remote: "ssh://git@github.com/relaton/#{repo_name}",
+          branch: repo["default_branch"],
+        }.transform_keys(&:to_s)
+
+        groups = [] # ['all', repo_name]
+        groups_matchers.each do |group, regexp|
+          groups << group if repo_name.match(regexp)
+        end
+
+        groups.each do |g|
+          if manifest["groups"][g]
+            manifest["groups"][g] << repo_name
+          else
+            manifest["groups"][g] = [repo_name]
+          end
+        end
+        manifest["repositories"][repo_name] = project
       end
 
       break if result_set.empty?
@@ -109,7 +129,9 @@ begin
     end
   end
 rescue Interrupt => e
-  manifest << REXML::Comment.new('interrupted with Ctrl+C, output may be incomplete')
+  warn 'interrupted with Ctrl+C, output may be incomplete'
 end
 
-doc.write($stdout, 2)
+manifest["groups"].transform_keys!(&:to_s)
+
+puts YAML.dump(manifest.transform_keys(&:to_s))
