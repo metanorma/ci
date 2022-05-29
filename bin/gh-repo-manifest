@@ -90,8 +90,6 @@ begin
         repo_name = repo['name'].to_s
         next if existing_manifest && existing_manifest["repositories"].key?(repo_name)
 
-        p "#{repo_name} -> #{existing_manifest['repositories'].key?(repo_name)}"
-
         if repo['fork'] && !options.include_forks
           puts "Skip #{repo_name} because it's a fork repo"
           next
