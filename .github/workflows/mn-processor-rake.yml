@@ -34,7 +34,7 @@ jobs:
   rake:
     name: Test on Ruby ${{ matrix.ruby }} ${{ matrix.os }}
     needs: prepare
-    if: "(github.event_name == 'push' && needs.prepare.outputs.head_tag == '') || (github.event_name == 'pull_request' && needs.prepare.outputs.foreign_pr == 'yes')"
+    if: "(github.event_name == 'push' && needs.prepare.outputs.head_tag == '') || github.event_name == 'pull_request'"
     runs-on: ${{ matrix.os }}
     continue-on-error: ${{ matrix.experimental }}
     strategy:
