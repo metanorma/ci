@@ -12,7 +12,7 @@ runs:
         win_prefix = "C:\\Program Files\\Inkscape\\bin"
 
         cmds = {
-          "Darwin": [ "brew install --cask inkscape", "inkscape --version" ],
+          "Darwin": [ "HOMEBREW_CASK_OPTS='--no-quarantine' brew install --cask inkscape", "inkscape --version" ],
           "Windows": [
             "choco install --no-progress -y inkscape",
             "echo {}>> {}".format(win_prefix, os.environ["GITHUB_PATH"]),
