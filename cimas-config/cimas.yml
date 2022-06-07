@@ -75,8 +75,8 @@ repositories:
       .hound.yml: gh-actions/master/.hound.yml
       .rubocop.yml: gh-actions/master/.rubocop.yml
       .github/workflows/rake.yml: gh-actions/master/rake.yml
-  metanorma-mpfa:
-    remote: ssh://git@github.com/metanorma/metanorma-mpfa
+  metanorma-ieee:
+    remote: ssh://git@github.com/metanorma/metanorma-ieee
     branch: main
     files:
       .hound.yml: gh-actions/master/.hound.yml
@@ -927,7 +927,6 @@ groups:
   - metanorma-iso
   - metanorma-itu
   - metanorma-m3aawg
-  - metanorma-mpfa
   - metanorma-nist
   - metanorma-ogc
   - metanorma-ribose
@@ -937,9 +936,11 @@ groups:
   - metanorma-iho
   - metanorma-bipm
   - metanorma-bsi
+  - metanorma-ieee
   # not maintained anymore:
   # - metanorma-gb
   # - metanorma-vg
+  # - metanorma-mpfa
   metanorma:
   - metanorma
   - metanorma-cli
