@@ -37,6 +37,9 @@ jobs:
     if: "(github.event_name == 'push' && needs.prepare.outputs.head_tag == '') || github.event_name == 'pull_request'"
     runs-on: ${{ matrix.os }}
     continue-on-error: ${{ matrix.experimental }}
+    concurrency:
+      group: '${{ github.workflow }}-${{ matrix.os }}-${{ matrix.ruby }}-${{ github.head_ref || github.ref_name }}'
+      cancel-in-progress: true
     strategy:
       fail-fast: false
       max-parallel: 5

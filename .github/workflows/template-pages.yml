@@ -11,6 +11,10 @@ on:
       pat_token:
         required: true
 
+concurrency:
+  group: '${{ github.workflow }}-${{ github.head_ref || github.ref_name }}'
+  cancel-in-progress: true
+
 jobs:
   generate-site:
     runs-on: ubuntu-latest

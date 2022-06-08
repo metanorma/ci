@@ -16,6 +16,9 @@ jobs:
     name: Test on Ruby ${{ matrix.ruby }}
     runs-on: ${{ matrix.os }}
     continue-on-error: ${{ matrix.experimental }}
+    concurrency:
+      group: '${{ github.workflow }}-${{ matrix.os }}-${{ matrix.ruby }}-${{ github.head_ref || github.ref_name }}'
+      cancel-in-progress: true
     strategy:
       fail-fast: false
       max-parallel: 5

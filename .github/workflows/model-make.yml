@@ -7,11 +7,13 @@ jobs:
   make:
     name: Test on LutaML ${{ matrix.os }}
     runs-on: ${{ matrix.os }}
+    concurrency:
+      group: '${{ github.workflow }}-${{ matrix.os }}-${{ github.head_ref || github.ref_name }}'
+      cancel-in-progress: true
     strategy:
       fail-fast: false
       matrix:
         os: [ ubuntu-latest, windows-latest, macos-latest ]
-
     steps:
       - uses: actions/checkout@v2
 

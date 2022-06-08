@@ -15,6 +15,9 @@ jobs:
   site-generate:
     name: Test on ${{ matrix.os }}
     runs-on: ${{ matrix.os }}
+    concurrency:
+      group: '${{ github.workflow }}-${{ matrix.os }}-${{ github.head_ref || github.ref_name }}'
+      cancel-in-progress: true
     strategy:
       fail-fast: false
       matrix:

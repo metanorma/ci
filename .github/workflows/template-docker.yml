@@ -23,6 +23,9 @@ jobs:
 
   generate:
     runs-on: ubuntu-latest
+    concurrency:
+      group: '${{ github.workflow }}-${{ matrix.type }}-${{ matrix.doctype }}-${{ github.head_ref || github.ref_name }}'
+      cancel-in-progress: true
     container:
       image: metanorma/mn:${{ inputs.docker-tag }}
     continue-on-error: ${{ matrix.experimental }}
