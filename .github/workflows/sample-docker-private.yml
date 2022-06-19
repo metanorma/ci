@@ -4,7 +4,7 @@ on:
   workflow_call:
     inputs:
       docker-image:
-        default: 'metanorma/mn:latest'
+        default: 'metanorma/metanorma:latest'
         required: false
         type: string
       private-fonts:
