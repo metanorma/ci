@@ -22,7 +22,7 @@ while IFS= read -r line; do
 			-e "s/[[:space:]]*,[[:space:]]*[\"']\([0-9a-z\.~>=<\-]*\)[\"']/ --version \1/g" )
 		GEM=$(eval echo $GEM) # drop quotes
 		echo "> bundle add $GEM"
-		bundle add ${GEM}
+		env --unset=RUBYOPT bundle add ${GEM}
 	fi
 done < "$GEMFILE"
 
