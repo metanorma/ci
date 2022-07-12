@@ -26,10 +26,6 @@ jobs:
         ruby: [ '2.7', '3.0', '3.1' ]
         os: [ ubuntu-latest, windows-latest, macos-latest ]
         experimental: [ false ]
-        include:
-          - ruby: head
-            os: ubuntu-latest
-            experimental: true
     steps:
       - uses: actions/checkout@v2
         with:
