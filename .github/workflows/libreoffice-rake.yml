@@ -37,6 +37,6 @@ jobs:
           ruby-version: ${{ matrix.ruby }}
           bundler-cache: true
 
-      - uses: metanorma/metanorma-build-scripts/libreoffice-setup-action@main
+      - uses: metanorma/ci/libreoffice-setup-action@main
 
       - run: bundle exec rake

@@ -971,7 +971,7 @@ groups:
   - metanorma-document-gh-pages
   - iso-ics-codes-scripts
   - metanorma-registry
-  - metanorma-build-scripts
+  - ci
   - cimas
   - lapidist
   - oss-guides

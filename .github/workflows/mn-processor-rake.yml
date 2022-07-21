@@ -52,7 +52,7 @@ jobs:
         with:
           submodules: true
 
-      - uses: metanorma/metanorma-build-scripts/gh-rubygems-setup-action@main
+      - uses: metanorma/ci/gh-rubygems-setup-action@main
         with:
           token: ${{ secrets.pat_token }}
 

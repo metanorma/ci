@@ -54,13 +54,13 @@ jobs:
           key: metanorma-ietf-workgroup-cache
           restore-keys: metanorma-ietf-workgroup-cache
 
-      - uses: metanorma/metanorma-build-scripts/gh-rubygems-setup-action@main
+      - uses: metanorma/ci/gh-rubygems-setup-action@main
         with:
           token: ${{ secrets.pat_token }}
 
       - run: apt-get update -y && apt-get install -y gcc g++ ruby-dev
 
-      - uses: metanorma/metanorma-build-scripts/docker-gem-install@main
+      - uses: metanorma/ci/docker-gem-install@main
 
       - uses: actions-mn/cli/site-gen@main
         with:

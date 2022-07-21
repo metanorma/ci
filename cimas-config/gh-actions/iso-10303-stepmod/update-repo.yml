@@ -40,7 +40,7 @@ jobs:
 
       - run: |
           mkdir -p .github/workflows
-          wget https://raw.githubusercontent.com/metanorma/metanorma-build-scripts/master/cimas-config/gh-actions/iso-10303-stepmod/update-repo.yml -O .github/workflows/update-repo.yml
+          wget https://raw.githubusercontent.com/metanorma/ci/master/cimas-config/gh-actions/iso-10303-stepmod/update-repo.yml -O .github/workflows/update-repo.yml
           git add .github/workflows/update-repo.yml
           git commit -m "Add GHA update-repo workflow"
 

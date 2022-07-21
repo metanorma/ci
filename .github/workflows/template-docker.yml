@@ -39,11 +39,11 @@ jobs:
           token: ${{ secrets.pat_token || github.token }}
           submodules: true
 
-      - uses: metanorma/metanorma-build-scripts/gh-rubygems-setup-action@main
+      - uses: metanorma/ci/gh-rubygems-setup-action@main
         with:
           token: ${{ secrets.pat_token }}
 
-      - uses: metanorma/metanorma-build-scripts/docker-gem-install@main
+      - uses: metanorma/ci/docker-gem-install@main
 
       - uses: actions/cache@v2
         with:
@@ -51,7 +51,7 @@ jobs:
           key: fontist-${{ runner.os }}
           restore-keys: fontist-${{ runner.os }}
 
-      - uses: metanorma/metanorma-build-scripts/docker-gem-install@main
+      - uses: metanorma/ci/docker-gem-install@main
 
       - uses: actions-mn/cli/new@main
         with:

@@ -1,6 +1,6 @@
 = Metanorma Build Scripts
 
-image:https://github.com/metanorma/metanorma-build-scripts/workflows/ubuntu/badge.svg["Lint Status", link="https://github.com/metanorma/metanorma-build-scripts/actions?query=workflow%3Aubuntu"]
+image:https://github.com/metanorma/ci/workflows/ubuntu/badge.svg["Lint Status", link="https://github.com/metanorma/ci/actions?query=workflow%3Aubuntu"]
 
 == Purpose
 
@@ -57,7 +57,7 @@ These are the commands to run:
 Setup repository structure (clone all repos to `$CIMAS_WD`)
 [source,sh]
 ----
-cd metanorma-build-scripts
+cd ci
 export CIMAS_CONFIG=cimas-config/cimas.yml
 export CIMAS_MASTER_DIR=cimas-config
 export CIMAS_WD=~/src/mn/cimas-wd

@@ -37,7 +37,7 @@ jobs:
           ruby-version: ${{ matrix.ruby }}
           bundler-cache: true
 
-      - uses: metanorma/metanorma-build-scripts/plantuml-setup-action@main
+      - uses: metanorma/ci/plantuml-setup-action@main
 
       - run: bundle exec rake
 
