@@ -870,6 +870,14 @@ repositories:
     remote: ssh://git@github.com/metanorma/mnconvert
     branch: main
     files: {}
+  mn-requirements:
+    remote: ssh://git@github.com/metanorma/mn-requirements
+    branch: master
+    files:
+      .hound.yml: gh-actions/master/.hound.yml
+      .rubocop.yml: gh-actions/master/.rubocop.yml
+      .github/workflows/rake.yml: gh-actions/master/rake.yml
+      .github/workflows/release.yml: gh-actions/master/release.yml
   lutaml:
     remote: ssh://git@github.com/lutaml/lutaml
     branch: master
