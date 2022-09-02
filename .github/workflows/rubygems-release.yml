@@ -18,10 +18,12 @@ on:
 jobs:
   release:
     runs-on: ubuntu-latest
+    env:
+      HAVE_PAT_TOKEN: ${{ secrets.pat_token != '' }}
     steps:
       - uses: actions/checkout@v2
 
-      - if: ${{ secrets.pat_token != '' }}
+      - if: ${{ env.HAVE_PAT_TOKEN == 'true' }}
         uses: metanorma/ci/gh-rubygems-setup-action@main
         with:
           token: ${{ secrets.pat_token }}
