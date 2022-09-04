@@ -365,7 +365,7 @@ repositories:
       .github/workflows/release.yml: gh-actions/master/release.yml
   iso690render:
     remote: ssh://git@github.com/metanorma/iso690render
-    branch: master
+    branch: main
     files:
       .hound.yml: gh-actions/master/.hound.yml
       .rubocop.yml: gh-actions/master/.rubocop.yml
@@ -605,7 +605,7 @@ repositories:
       .github/workflows/generate.yml: gh-actions/samples/generate.yml
   ogc-citygml2:
     remote: ssh://git@github.com/metanorma/ogc-citygml2
-    branch: master
+    branch: main
     files:
       .github/workflows/docker.yml: gh-actions/samples/docker.yml
   bipm-si-brochure:
@@ -783,7 +783,7 @@ repositories:
       .github/workflows/docker.yml: gh-actions/samples/docker.yml
   iso-8000-51:
     remote: ssh://git@github.com/metanorma/iso-8000-51
-    branch: master
+    branch: main
     files:
       .github/workflows/docker.yml: gh-actions/samples/docker.yml
   iso-8000-100-ed2:
@@ -810,12 +810,12 @@ repositories:
       .github/workflows/docker.yml: gh-actions/samples/docker.yml
   iso-10303-2:
     remote: ssh://git@github.com/metanorma/iso-10303-2
-    branch: master
+    branch: main
     files:
       .github/workflows/docker.yml: gh-actions/samples/docker.yml
   iso-19115-3:
     remote: ssh://git@github.com/metanorma/iso-19115-3
-    branch: master
+    branch: main
     files:
       .github/workflows/docker.yml: gh-actions/samples/docker.yml
   iso-19626-1:
@@ -866,7 +866,7 @@ repositories:
       .github/workflows/release.yml: gh-actions/master/release.yml
   metanorma-plugin-datastruct:
     remote: ssh://git@github.com/metanorma/metanorma-plugin-datastruct
-    branch: master
+    branch: main
     files:
       .hound.yml: gh-actions/master/.hound.yml
       .rubocop.yml: gh-actions/master/.rubocop.yml
@@ -890,7 +890,7 @@ repositories:
       .github/workflows/release.yml: gh-actions/master/release.yml
   bipm-data-importer:
     remote: ssh://git@github.com/metanorma/bipm-data-importer
-    branch: master
+    branch: main
     files:
       .hound.yml: gh-actions/master/.hound.yml
       .rubocop.yml: gh-actions/master/.rubocop.yml
