@@ -26,7 +26,9 @@ jobs:
     env:
       HAVE_PAT_TOKEN: ${{ secrets.pat_token != '' }}
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
+
+      - run: git fetch --tags origin
 
       - if: ${{ env.HAVE_PAT_TOKEN == 'true' }}
         uses: metanorma/ci/gh-rubygems-setup-action@main
@@ -51,10 +53,9 @@ jobs:
         env:
           RUBYGEMS_API_KEY: ${{ secrets.rubygems-api-key }}
         run: |
-          ${{ inputs.release_command }}
           envsubst << 'EOF' > ~/.gem/credentials
           ---
           :rubygems_api_key: ${RUBYGEMS_API_KEY}
           EOF
           chmod 0600 ~/.gem/credentials
-          gem release
+          ${{ inputs.release_command }}
