@@ -10,6 +10,11 @@ on:
         description: 'deprecated github.event_name used instead'
         required: false
         type: string
+      release_command:
+        description: 'command to release gem'
+        required: false
+        type: string
+        default: bundle exec rake release
     secrets:
       rubygems-api-key:
         required: true
@@ -32,20 +37,20 @@ jobs:
         with:
           ruby-version: '2.7'
 
-      - run: gem install gem-release
-
       - run: |
           git config user.name github-actions
           git config user.email github-actions@github.com
 
       - if: github.event_name == 'workflow_dispatch' && inputs.next_version != 'skip'
-        run: gem bump --version ${{ inputs.next_version }} --tag --push
+        run: |
+          gem install gem-release
+          gem bump --version ${{ inputs.next_version }} --tag --push
 
       - name: publish to rubygems.org
         env:
           RUBYGEMS_API_KEY: ${{ secrets.rubygems-api-key }}
         run: |
-          gem install gem-release
+          ${{ inputs.release_command }}
           envsubst << 'EOF' > ~/.gem/credentials
           ---
           :rubygems_api_key: ${RUBYGEMS_API_KEY}
