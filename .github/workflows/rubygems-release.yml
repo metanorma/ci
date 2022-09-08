@@ -28,7 +28,8 @@ jobs:
     steps:
       - uses: actions/checkout@v3
 
-      - run: git fetch --tags origin
+      - if: github.event_name == 'workflow_dispatch'
+        run: git fetch --tags origin
 
       - if: ${{ env.HAVE_PAT_TOKEN == 'true' }}
         uses: metanorma/ci/gh-rubygems-setup-action@main
