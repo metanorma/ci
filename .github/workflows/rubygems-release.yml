@@ -39,7 +39,6 @@ jobs:
       - uses: ruby/setup-ruby@v1
         with:
           ruby-version: '2.7'
-          bundler-cache: true
 
       - run: |
           git config user.name github-actions
@@ -60,3 +59,10 @@ jobs:
           EOF
           chmod 0600 ~/.gem/credentials
           ${{ inputs.release_command }}
+
+      - uses: peter-evans/repository-dispatch@v1
+        with:
+          token: ${{ secrets.pat_token || github.token }}
+          repository: ${{ github.repository }}
+          event-type: release-passed
+          client-payload: '{"ref": "${{ github.ref }}", "sha": "${{ github.sha }}"}'
