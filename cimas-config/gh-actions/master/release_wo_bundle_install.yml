@@ -16,6 +16,7 @@ jobs:
     uses: metanorma/ci/.github/workflows/rubygems-release.yml@main
     with:
       next_version: ${{ github.event.inputs.next_version }}
+      release_command: rake release
       bundler_cache: false
       post_install: gem install bundler rake rspec
     secrets:

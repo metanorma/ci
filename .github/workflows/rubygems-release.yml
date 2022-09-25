@@ -14,7 +14,7 @@ on:
         description: 'command to release gem'
         required: false
         type: string
-        default: rake release
+        default: bundle exec rake release
       bundler_cache:
         description: 'do bundle install'
         required: false
