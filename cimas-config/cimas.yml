@@ -25,7 +25,7 @@ repositories:
       .hound.yml: gh-actions/master/.hound.yml
       .rubocop.yml: gh-actions/master/.rubocop.yml
       .github/workflows/rake.yml: gh-actions/inkscape/rake.yml
-      .github/workflows/release.yml: gh-actions/master/release.yml
+      .github/workflows/release.yml: gh-actions/master/release_wo_bundle_install.yml
   metanorma-utils:
     remote: ssh://git@github.com/metanorma/metanorma-utils
     branch: main
@@ -855,7 +855,6 @@ repositories:
     files:
       .hound.yml: gh-actions/master/.hound.yml
       .rubocop.yml: gh-actions/master/.rubocop.yml
-      .github/workflows/rake.yml: gh-actions/master/rake.yml
   metanorma-plugin-lutaml:
     remote: ssh://git@github.com/metanorma/metanorma-plugin-lutaml
     branch: main
@@ -911,7 +910,7 @@ repositories:
       .hound.yml: gh-actions/master/.hound.yml
       .rubocop.yml: gh-actions/master/.rubocop.yml
       .github/workflows/rake.yml: gh-actions/master/rake.yml
-      .github/workflows/release.yml: gh-actions/master/release.yml
+      .github/workflows/release.yml: gh-actions/master/release_wo_bundle_install.yml
   lutaml:
     remote: ssh://git@github.com/lutaml/lutaml
     branch: master

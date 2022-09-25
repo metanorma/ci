@@ -14,7 +14,17 @@ on:
         description: 'command to release gem'
         required: false
         type: string
-        default: bundle exec rake release
+        default: rake release
+      bundler_cache:
+        description: 'do bundle install'
+        required: false
+        type: boolean
+        default: true
+      post_install:
+        description: 'comamnd to execute after bundle install'
+        required: false
+        type: string
+        default: ''
     secrets:
       rubygems-api-key:
         required: true
@@ -39,6 +49,10 @@ jobs:
       - uses: ruby/setup-ruby@v1
         with:
           ruby-version: '2.7'
+          bundler-cache: ${{ inputs.bundler_cache }}
+
+      - if: ${{ inputs.post_install != '' }}
+        run: ${{ inputs.post_install }}
 
       - run: |
           git config user.name github-actions
