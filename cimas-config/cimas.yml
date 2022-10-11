@@ -42,6 +42,7 @@ repositories:
       .rubocop.yml: gh-actions/master/.rubocop.yml
       .github/workflows/rake.yml: gh-actions/master/rake-notify.yml
       .github/workflows/release.yml: gh-actions/master/release.yml
+      .github/workflows/automerge.yml: gh-actions/master/automerge.yml
   metanorma-m3aawg:
     remote: ssh://git@github.com/metanorma/metanorma-m3aawg
     branch: main
@@ -50,6 +51,7 @@ repositories:
       .rubocop.yml: gh-actions/master/.rubocop.yml
       .github/workflows/rake.yml: gh-actions/master/rake-notify.yml
       .github/workflows/release.yml: gh-actions/master/release.yml
+      .github/workflows/automerge.yml: gh-actions/master/automerge.yml
   metanorma-cc:
     remote: ssh://git@github.com/metanorma/metanorma-cc
     branch: main
@@ -58,6 +60,7 @@ repositories:
       .rubocop.yml: gh-actions/master/.rubocop.yml
       .github/workflows/rake.yml: gh-actions/master/rake-notify.yml
       .github/workflows/release.yml: gh-actions/master/release.yml
+      .github/workflows/automerge.yml: gh-actions/master/automerge.yml
   metanorma-vg:
     remote: ssh://git@github.com/metanorma/metanorma-vg
     branch: main
@@ -66,6 +69,7 @@ repositories:
       .rubocop.yml: gh-actions/master/.rubocop.yml
       .github/workflows/rake.yml: gh-actions/master/rake-notify.yml
       .github/workflows/release.yml: gh-actions/master/release.yml
+      .github/workflows/automerge.yml: gh-actions/master/automerge.yml
   metanorma-ribose:
     remote: ssh://git@github.com/metanorma/metanorma-ribose
     branch: main
@@ -74,6 +78,7 @@ repositories:
       .rubocop.yml: gh-actions/master/.rubocop.yml
       .github/workflows/rake.yml: gh-actions/master/rake-notify.yml
       .github/workflows/release.yml: gh-actions/master/release.yml
+      .github/workflows/automerge.yml: gh-actions/master/automerge.yml
   metanorma-iho:
     remote: ssh://git@github.com/metanorma/metanorma-iho
     branch: main
@@ -82,6 +87,7 @@ repositories:
       .rubocop.yml: gh-actions/master/.rubocop.yml
       .github/workflows/rake.yml: gh-actions/master/rake.yml
       .github/workflows/release.yml: gh-actions/master/release.yml
+      .github/workflows/automerge.yml: gh-actions/master/automerge.yml
   metanorma-ieee:
     remote: ssh://git@github.com/metanorma/metanorma-ieee
     branch: main
@@ -90,6 +96,7 @@ repositories:
       .rubocop.yml: gh-actions/master/.rubocop.yml
       .github/workflows/rake.yml: gh-actions/master/rake-notify.yml
       .github/workflows/release.yml: gh-actions/master/release.yml
+      .github/workflows/automerge.yml: gh-actions/master/automerge.yml
   metanorma-gb:
     remote: ssh://git@github.com/metanorma/metanorma-gb
     branch: main
@@ -98,6 +105,7 @@ repositories:
       .rubocop.yml: gh-actions/master/.rubocop.yml
       .github/workflows/rake.yml: gh-actions/master/rake-notify.yml
       .github/workflows/release.yml: gh-actions/master/release.yml
+      .github/workflows/automerge.yml: gh-actions/master/automerge.yml
   metanorma-nist:
     remote: ssh://git@github.com/metanorma/metanorma-nist
     branch: main
@@ -106,6 +114,7 @@ repositories:
       .rubocop.yml: gh-actions/master/.rubocop.yml
       .github/workflows/rake.yml: gh-actions/master/rake-notify.yml
       .github/workflows/release_github_packages.yml: gh-actions/master/release_github_packages.yml
+      .github/workflows/automerge.yml: gh-actions/master/automerge.yml
   metanorma-iec:
     remote: ssh://git@github.com/metanorma/metanorma-iec
     branch: main
@@ -114,6 +123,7 @@ repositories:
       .rubocop.yml: gh-actions/master/.rubocop.yml
       .github/workflows/rake.yml: gh-actions/master/rake-notify.yml
       .github/workflows/release.yml: gh-actions/master/release.yml
+      .github/workflows/automerge.yml: gh-actions/master/automerge.yml
   metanorma-ietf:
     remote: ssh://git@github.com/metanorma/metanorma-ietf
     branch: main
@@ -122,6 +132,7 @@ repositories:
       .rubocop.yml: gh-actions/master/.rubocop.yml
       .github/workflows/rake.yml: gh-actions/xml2rfc/rake.yml
       .github/workflows/release.yml: gh-actions/master/release.yml
+      .github/workflows/automerge.yml: gh-actions/master/automerge.yml
   metanorma-standoc:
     remote: ssh://git@github.com/metanorma/metanorma-standoc
     branch: main
@@ -130,6 +141,7 @@ repositories:
       .rubocop.yml: gh-actions/master/.rubocop.yml
       .github/workflows/rake.yml: gh-actions/plantuml/rake.yml
       .github/workflows/release.yml: gh-actions/master/release.yml
+      .github/workflows/automerge.yml: gh-actions/master/automerge.yml
   metanorma-iso:
     remote: ssh://git@github.com/metanorma/metanorma-iso
     branch: main
@@ -138,6 +150,7 @@ repositories:
       .rubocop.yml: gh-actions/master/.rubocop.yml
       .github/workflows/rake.yml: gh-actions/master/rake.yml
       .github/workflows/release.yml: gh-actions/master/release.yml
+      .github/workflows/automerge.yml: gh-actions/master/automerge.yml
   metanorma-un:
     remote: ssh://git@github.com/metanorma/metanorma-un
     branch: main
@@ -146,6 +159,7 @@ repositories:
       .rubocop.yml: gh-actions/master/.rubocop.yml
       .github/workflows/rake.yml: gh-actions/master/rake-notify.yml
       .github/workflows/release.yml: gh-actions/master/release.yml
+      .github/workflows/automerge.yml: gh-actions/master/automerge.yml
   metanorma-itu:
     remote: ssh://git@github.com/metanorma/metanorma-itu
     branch: main
@@ -154,6 +168,7 @@ repositories:
       .rubocop.yml: gh-actions/master/.rubocop.yml
       .github/workflows/rake.yml: gh-actions/master/rake-notify.yml
       .github/workflows/release.yml: gh-actions/master/release.yml
+      .github/workflows/automerge.yml: gh-actions/master/automerge.yml
   metanorma-generic:
     remote: ssh://git@github.com/metanorma/metanorma-generic
     branch: main
@@ -162,6 +177,7 @@ repositories:
       .rubocop.yml: gh-actions/master/.rubocop.yml
       .github/workflows/rake.yml: gh-actions/master/rake-notify.yml
       .github/workflows/release.yml: gh-actions/master/release.yml
+      .github/workflows/automerge.yml: gh-actions/master/automerge.yml
   metanorma-csa:
     remote: ssh://git@github.com/metanorma/metanorma-csa
     branch: main
@@ -170,6 +186,7 @@ repositories:
       .rubocop.yml: gh-actions/master/.rubocop.yml
       .github/workflows/rake.yml: gh-actions/master/rake-notify.yml
       .github/workflows/release.yml: gh-actions/master/release.yml
+      .github/workflows/automerge.yml: gh-actions/master/automerge.yml
   metanorma-bipm:
     remote: ssh://git@github.com/metanorma/metanorma-bipm
     branch: main
@@ -178,6 +195,7 @@ repositories:
       .rubocop.yml: gh-actions/master/.rubocop.yml
       .github/workflows/rake.yml: gh-actions/master/rake-notify.yml
       .github/workflows/release.yml: gh-actions/master/release.yml
+      .github/workflows/automerge.yml: gh-actions/master/automerge.yml
   metanorma-bsi:
     remote: ssh://git@github.com/metanorma/metanorma-bsi
     branch: main
@@ -186,6 +204,7 @@ repositories:
       .rubocop.yml: gh-actions/master/.rubocop.yml
       .github/workflows/rake.yml: gh-actions/master/rake-notify.yml
       .github/workflows/release_github_packages.yml: gh-actions/master/release_github_packages.yml
+      .github/workflows/automerge.yml: gh-actions/master/automerge.yml
   # models
   metanorma-model-gb:
     remote: ssh://git@github.com/metanorma/metanorma-model-gb
