@@ -30,7 +30,7 @@ jobs:
     steps:
       - uses: actions/checkout@v3
 
-      - run: git fetch --tags origin
+      - run: git fetch --tags -f origin
 
       - uses: metanorma/ci/gh-rubygems-setup-action@main
         with:
