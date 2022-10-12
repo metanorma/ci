@@ -25,14 +25,15 @@ jobs:
         with:
           submodules: true
 
-      - if: matrix.ruby == '3.0'
+      # https://github.com/rubygems/rubygems/issues/5970
+      - if: matrix.os == 'windows-latest'
         uses: ruby/setup-ruby@v1
         with:
           ruby-version: ${{ matrix.ruby }}
           bundler-cache: true
-          rubygems: latest
+          rubygems: '3.3.22'
 
-      - if: matrix.ruby != '3.0'
+      - if: matrix.os != 'windows-latest'
         uses: ruby/setup-ruby@v1
         with:
           ruby-version: ${{ matrix.ruby }}
