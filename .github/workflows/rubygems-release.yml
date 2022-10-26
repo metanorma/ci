@@ -79,4 +79,4 @@ jobs:
           token: ${{ secrets.pat_token || github.token }}
           repository: ${{ github.repository }}
           event-type: release-passed
-          client-payload: '{"ref": "${{ github.ref }}", "sha": "${{ github.sha }}"}'
+          client-payload: '{"ref": "${{ github.ref }}", "sha": "${{ github.sha }}", "type": "release-passed"}'
