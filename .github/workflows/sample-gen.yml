@@ -23,12 +23,12 @@ jobs:
       matrix:
         os: [ ubuntu-latest, windows-latest, macos-latest ]
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
         with:
           token: ${{ secrets.pat_token || github.token }}
           submodules: true
 
-      - uses: actions/cache@v2
+      - uses: actions/cache@v3
         with:
           path: ~/.cache/xml2rfc
           key: xml2rfc
@@ -45,13 +45,13 @@ jobs:
           fontist repo setup metanorma https://metanorma-ci:${{ secrets.pat_token }}@github.com/metanorma/fontist-formulas-private
           fontist repo update metanorma
 
-      - uses: actions/cache@v2
+      - uses: actions/cache@v3
         with:
           path: ~/.fontist
           key: fontist-${{ runner.os }}
           restore-keys: fontist-${{ runner.os }}
 
-      - uses: actions/cache@v2
+      - uses: actions/cache@v3
         with:
           path: ~/.metanorma-ietf-workgroup-cache.json
           key: metanorma-ietf-workgroup-cache

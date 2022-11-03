@@ -20,18 +20,18 @@ jobs:
     runs-on: ubuntu-latest
     container: docker://metanorma/mn
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
         with:
           token: ${{ secrets.pat_token || github.token }}
           submodules: true
 
-      - uses: actions/cache@v2
+      - uses: actions/cache@v3
         with:
           path: /config/fonts
           key: fontist-docker
           restore-keys: fontist-docker
 
-      - uses: actions/cache@v2
+      - uses: actions/cache@v3
         with:
           path: ~/.metanorma-ietf-workgroup-cache.json
           key: metanorma-ietf-workgroup-cache
@@ -57,9 +57,9 @@ jobs:
     runs-on: ubuntu-latest
     needs: generate-site
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
 
-      - uses: actions/download-artifact@v1
+      - uses: actions/download-artifact@v3
         with:
           name: site
 

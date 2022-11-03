@@ -16,7 +16,7 @@ jobs:
         os: [ ubuntu-latest, windows-latest, macos-latest ]
         experimental: [ false ]
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
 
       - uses: ruby/setup-ruby@v1
         with:
@@ -33,7 +33,7 @@ jobs:
         os: [ ubuntu-latest, windows-latest, macos-latest ]
         experimental: [ false ]
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
 
       - uses: ./graphviz-setup-action
       - run: dot -V
@@ -53,7 +53,7 @@ jobs:
     runs-on: ubuntu-latest
     container: docker://metanorma/mn
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
 
       - uses: ./gh-rubygems-setup-action
         with:

@@ -17,7 +17,7 @@ jobs:
     outputs:
       matrix: ${{ steps.build-matrix.outputs.matrix }}
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
       - id: build-matrix
         run: echo "::set-output name=matrix::$(cat .github/workflows/matrix.json | tr '\n' ' ')"
 
@@ -34,7 +34,7 @@ jobs:
       fail-fast: false
       matrix: ${{ fromJson(needs.build-matrix.outputs.matrix) }}
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
         with:
           token: ${{ secrets.pat_token || github.token }}
           submodules: true
@@ -45,7 +45,7 @@ jobs:
 
       - uses: metanorma/ci/docker-gem-install@main
 
-      - uses: actions/cache@v2
+      - uses: actions/cache@v3
         with:
           path: /config/fonts
           key: fontist-${{ runner.os }}

@@ -18,7 +18,7 @@ jobs:
     outputs:
       matrix: ${{ steps.build-matrix.outputs.matrix }}
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
       - id: build-matrix
         run: |
           if cat .github/workflows/matrix.json | jq -e 'has("include")'; then
@@ -47,7 +47,7 @@ jobs:
       matrix: ${{ fromJson(needs.build-matrix.outputs.matrix) }}
 
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
 
       - uses: metanorma/ci/gh-rubygems-setup-action@main
         with:
@@ -97,7 +97,7 @@ jobs:
 
       - run: pip install xml2rfc
 
-      - uses: actions/cache@v2
+      - uses: actions/cache@v3
         with:
           path: |
             ~/.fontist
