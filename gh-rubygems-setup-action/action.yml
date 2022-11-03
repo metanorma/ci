@@ -15,8 +15,8 @@ inputs:
 runs:
   using: "composite"
   steps:
-    - run: bash ${GITHUB_ACTION_PATH//\\//}/gen-gemrc-for-gh-packages.sh ${{ inputs.owner }} ${{ inputs.token }}
+    - run: bash ${GITHUB_ACTION_PATH//\\//}/gen-gemrc-for-gh-packages.sh ${{ inputs.token }} ${{ inputs.owner }}
       shell: bash
 
-    - run: bash ${GITHUB_ACTION_PATH//\\//}/gen-bundle-config-for-gh-packages.sh ${{ inputs.owner }} ${{ inputs.token }} ${{ inputs.local && '--local' || '--global' }}
+    - run: bash ${GITHUB_ACTION_PATH//\\//}/gen-bundle-config-for-gh-packages.sh ${{ inputs.token }} ${{ inputs.owner }} ${{ inputs.local && '--local' || '--global' }}
       shell: bash

@@ -1,8 +1,8 @@
 #!/usr/bin/env bash
 # shellcheck disable=SC2086
 
-OWNER=${1:-metanorma}
-TOKEN=${2}
+TOKEN=${1}
+OWNER=${2:-metanorma}
 LOCALITY_FLAG=${3:---local}
 
 if command -v bundle &> /dev/null; then

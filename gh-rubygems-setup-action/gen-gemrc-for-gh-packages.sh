@@ -1,8 +1,8 @@
 #!/usr/bin/env bash
 
 # shellcheck disable=SC2034
-OWNER=${1:-metanorma}
-TOKEN=${2}
+TOKEN=${1}
+OWNER=${2:-metanorma}
 
 if [ -f "${HOME}/.gemrc" ]; then
   echo "WARNING! Overwriting ~/.gemrc."
