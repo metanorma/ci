@@ -71,12 +71,3 @@ jobs:
       - uses: actions-mn/site-gen@v1
         with:
           agree-to-terms: true
-
-      - if: hashFiles('collection.yml') != ''
-        uses: actions-mn/cli/collection@main
-        with:
-          manifest: collection.yml
-          formats: xml,html,presentation,pdf
-          cover-page: sources/collection_cover.html
-          output-dir: collection
-          agree-to-terms: true

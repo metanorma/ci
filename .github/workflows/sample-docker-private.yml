@@ -73,18 +73,6 @@ jobs:
         with:
           agree-to-terms: true
 
-      - if: hashFiles('collection.yml') != ''
-        uses: actions-mn/cli/collection@main
-        with:
-          manifest: collection.yml
-          formats: xml,html,presentation,pdf
-          cover-page: sources/collection_cover.html
-          output-dir: collection
-          agree-to-terms: true
-
-      - if: hashFiles('collection.yml') != ''
-        run: mv collection/collection* site/documents/
-
       - uses: actions/upload-artifact@v3
         with:
           name: site
