@@ -126,7 +126,7 @@ jobs:
 
       - run: cat test/${{ matrix.doctype }}/metanorma.yml
 
-      - uses: actions-mn/cli/site-gen@main
+      - uses: actions-mn/site-gen@v1
         with:
           source-path: test/${{ matrix.doctype }}
           config-file: test/${{ matrix.doctype }}/metanorma.yml

@@ -43,7 +43,7 @@ jobs:
 
       - uses: metanorma/ci/docker-gem-install@main
 
-      - uses: actions-mn/cli/site-gen@main
+      - uses: actions-mn/site-gen@v1
         with:
           agree-to-terms: true
 
