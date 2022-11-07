@@ -57,6 +57,7 @@ jobs:
         env:
           GITHUB_PACKAGES_TOKEN: ${{ secrets.pat_token }}
         run: |
+          mkdir -p ~/.gem
           envsubst << 'EOF' > ~/.gem/credentials
           ---
           :github: Bearer ${GITHUB_PACKAGES_TOKEN}
