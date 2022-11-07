@@ -5,6 +5,8 @@ TOKEN=${1}
 OWNER=${2:-metanorma}
 LOCALITY_FLAG=${3:---local}
 
+echo "Script called with TOKEN=${TOKEN} OWNER=${OWNER} LOCALITY_FLAG=${LOCALITY_FLAG}"
+
 if command -v bundle &> /dev/null; then
   bundle config ${LOCALITY_FLAG} https://rubygems.pkg.github.com/${OWNER} x-access-token:${TOKEN}
   bundle config ${LOCALITY_FLAG} GITHUB__COM x-access-token:${TOKEN}
@@ -12,6 +14,7 @@ if command -v bundle &> /dev/null; then
 else
   echo "bundler not installed. so defining BUNDLE_RUBYGEMS__PKG__GITHUB__COM ..."
   echo "BUNDLE_RUBYGEMS__PKG__GITHUB__COM=x-access-token:${TOKEN}" >> $GITHUB_ENV
+  echo "BUNDLE_GITHUB__COM=x-access-token:${TOKEN}" >> $GITHUB_ENV
 
   BUNDLE_PATH=$([ "${LOCALITY_FLAG}" == "--global" ] && echo "${HOME}/.bundle" || echo "./.bundle");
 
