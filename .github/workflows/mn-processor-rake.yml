@@ -76,7 +76,8 @@ jobs:
         with:
           submodules: true
 
-      - uses: metanorma/ci/gh-rubygems-setup-action@main
+      - if: github.repository != 'metanorma/metanorma-cli'
+        uses: metanorma/ci/gh-rubygems-setup-action@main
         with:
           token: ${{ secrets.pat_token }}
 
