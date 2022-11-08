@@ -15,13 +15,43 @@ inputs:
 runs:
   using: "composite"
   steps:
-    - run: ${GITHUB_ACTION_PATH//\\//}/gen-gemrc-for-gh-packages.sh ${{ inputs.token }} ${{ inputs.owner }}
-      shell: bash
-
-    - run: ${GITHUB_ACTION_PATH//\\//}/gen-bundle-config-for-gh-packages.sh ${{ inputs.token }} ${{ inputs.owner }} ${{ inputs.local && '--local' || '--global' }}
-      shell: bash
-
-    - run: |
-        cat ~/.gemrc
-        cat ~/.bundle/config
-      shell: bash
+    - shell: bash
+      run: |
+        if [ -f "~/.gemrc" ]; then
+          echo "WARNING! Overwriting ~/.gemrc."
+        fi
+        cat << 'EOF' > ~/.gemrc
+        ---
+        :backtrace: false
+        :bulk_threshold: 1000
+        :sources:
+        - https://x-access-token:${{ inputs.token }}@rubygems.pkg.github.com/${{ inputs.owner }}/
+        - https://rubygems.org/
+        :update_sources: true
+        :verbose: true
+        EOF
+        echo "~/.gemrc generated!"
+    - shell: bash
+      run: |
+        if command -v bundle &> /dev/null; then
+          bundle config ${{ inputs.local && '--local' || '--global' }} https://rubygems.pkg.github.com/${{ inputs.owner }} x-access-token:${{ inputs.token }}
+          bundle config ${{ inputs.local && '--local' || '--global' }} GITHUB__COM x-access-token:${{ inputs.token }}
+          echo "https://rubygems.pkg.github.com/${{ inputs.owner }} added to bundler's config"
+        else
+          echo "bundler not installed. so defining BUNDLE_RUBYGEMS__PKG__GITHUB__COM ..."
+          echo "BUNDLE_RUBYGEMS__PKG__GITHUB__COM=x-access-token:${{ inputs.token }}" >> $GITHUB_ENV
+          BUNDLE_PATH=$([ ! -z "${{ inputs.local }}" ] && echo './.bundle' || echo "~/.bundle");
+          echo "generating ${BUNDLE_PATH}/config ..."
+          if [ -f "${BUNDLE_PATH}/config" ]
+          then
+            echo "WARNING! Overwriting ${BUNDLE_PATH}/config"
+          fi
+          mkdir -p "${BUNDLE_PATH}"
+          OWNER_UPPER=$(echo "${{ inputs.owner }}" | tr '[:lower:]' '[:upper:]')
+          cat > "${BUNDLE_PATH}/config" << 'EOF'
+        ---
+        BUNDLE_HTTPS://RUBYGEMS__PKG__GITHUB__COM/${OWNER_UPPER}/: "x-access-token:${{ inputs.token }}"
+        BUNDLE_RUBYGEMS__PKG__GITHUB__COM: "x-access-token:${{ inputs.token }}"
+        BUNDLE_GITHUB__COM: "x-access-token:${{ inputs.token }}"
+        EOF
+        fi
