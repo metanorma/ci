@@ -59,7 +59,7 @@ jobs:
 
       - run: rm Gemfile
 
-      - uses: actions-mn/setup@master
+      - uses: actions-mn/setup@main
 
       - uses: actions-mn/site-gen@v1
         with:

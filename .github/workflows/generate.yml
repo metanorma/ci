@@ -19,7 +19,7 @@ jobs:
         key: fontist-ubuntu-latest
         restore-keys: fontist-ubuntu-latest
 
-    - uses: actions-mn/setup@master
+    - uses: actions-mn/setup@main
 
     - run: metanorma site generate --agree-to-terms
 
