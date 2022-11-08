@@ -75,7 +75,7 @@ jobs:
           chmod 0600 ~/.gem/credentials
           ${{ inputs.release_command }}
 
-      - uses: peter-evans/repository-dispatch@v1
+      - uses: peter-evans/repository-dispatch@v2
         with:
           token: ${{ secrets.pat_token || github.token }}
           repository: ${{ github.repository }}
