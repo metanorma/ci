@@ -20,3 +20,7 @@ runs:
 
     - run: ${GITHUB_ACTION_PATH//\\//}/gen-bundle-config-for-gh-packages.sh ${{ inputs.token }} ${{ inputs.owner }} ${{ inputs.local && '--local' || '--global' }}
       shell: bash
+
+    # declare BUNDLE_RUBYGEMS__PKG__GITHUB__COM on action level
+    - run: echo "BUNDLE_RUBYGEMS__PKG__GITHUB__COM=x-access-token:***" >> $GITHUB_ENV
+      shell: bash
