@@ -48,10 +48,10 @@ jobs:
       - uses: ./plantuml-setup-action
       - run: plantuml -version
 
-  test-composite-docker:
+  test-gh-rubygem-setup-action-docker:
     name: Test composite action for gem install workaround on docker
     runs-on: ubuntu-latest
-    container: docker://metanorma/mn
+    container: docker://metanorma/metanorma
     steps:
       - uses: actions/checkout@v3
 
@@ -70,18 +70,23 @@ jobs:
   test-gh-rubygem-setup-action:
     name: Test composite action for gem install workaround on docker
     runs-on: ubuntu-latest
-    container: docker://metanorma/mn
     steps:
       - uses: actions/checkout@v3
 
+      - uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: '3.1'
+
       - uses: ./gh-rubygems-setup-action
         with:
-          token: ${{ secrets.METANORMA_CI_PAT_TOKEN }}
+          token: dummy_token
 
       - run: |
-          echo 'gem "metanorma-cli"' > Gemfile
-          echo 'gem "metanorma", "~>1"' >> Gemfile
-          echo 'gem "metanorma-nist", source: "https://rubygems.pkg.github.com/metanorma"' >> Gemfile
-          echo 'gem "metanorma-standoc", git: "https://github.com/metanorma/metanorma-standoc", branch: "main"' >> Gemfile
+          echo "cat ~/.gemrc"
+          cat ~/.gemrc
+          echo "cat ~/.bundle/config"
+          cat ~/.bundle/config
 
-      - uses: ./docker-gem-install
+      - run: |
+          [ ${BUNDLE_GITHUB__COM} = "x-access-token:dummy_token" ] || exit 1
+          [ ${BUNDLE_RUBYGEMS__PKG__GITHUB__COM} = "x-access-token:dummy_token" ] || exit 1

@@ -26,7 +26,7 @@ else
   mkdir -p "${BUNDLE_PATH}"
   # shellcheck disable=SC2034
   OWNER_UPPER=$(echo "${OWNER}" | tr '[:lower:]' '[:upper:]')
-  envsubst << 'EOF' > "${BUNDLE_PATH}/config"
+  cat << 'EOF' > "${BUNDLE_PATH}/config"
 ---
 BUNDLE_HTTPS://RUBYGEMS__PKG__GITHUB__COM/${OWNER_UPPER}/: "x-access-token:${TOKEN}"
 BUNDLE_RUBYGEMS__PKG__GITHUB__COM: "x-access-token:${TOKEN}"

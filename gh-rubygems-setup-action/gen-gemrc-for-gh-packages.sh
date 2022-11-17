@@ -7,7 +7,7 @@ OWNER=${2:-metanorma}
 if [ -f "${HOME}/.gemrc" ]; then
   echo "WARNING! Overwriting ~/.gemrc."
 fi
-envsubst << 'EOF' > ~/.gemrc
+cat << 'EOF' > ~/.gemrc
 ---
 :backtrace: false
 :bulk_threshold: 1000

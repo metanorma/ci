@@ -20,8 +20,3 @@ runs:
 
     - run: source ${GITHUB_ACTION_PATH//\\//}/gen-bundle-config-for-gh-packages.sh ${{ inputs.token }} ${{ inputs.owner }} ${{ inputs.local && '--local' || '--global' }}
       shell: bash
-
-    - run: |
-        cat ~/.gemrc
-        cat ~/.bundle/config
-      shell: bash
