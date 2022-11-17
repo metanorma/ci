@@ -18,5 +18,8 @@ runs:
     - run: source ${GITHUB_ACTION_PATH//\\//}/gen-gemrc-for-gh-packages.sh ${{ inputs.token }} ${{ inputs.owner }}
       shell: bash
 
-    - run: source ${GITHUB_ACTION_PATH//\\//}/gen-bundle-config-for-gh-packages.sh ${{ inputs.token }} ${{ inputs.owner }} ${{ inputs.local && '--local' || '--global' }}
+    - run: |
+        source ${GITHUB_ACTION_PATH//\\//}/gen-bundle-config-for-gh-packages.sh ${{ inputs.token }} ${{ inputs.owner }} ${{ inputs.local && '--local' || '--global' }}
+        echo "BUNDLE_RUBYGEMS__PKG__GITHUB__COM=x-access-token:${{ inputs.token }}" >> $GITHUB_ENV
+        echo "BUNDLE_GITHUB__COM=x-access-token:${{ inputs.token }}" >> $GITHUB_ENV
       shell: bash

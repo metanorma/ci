@@ -88,6 +88,11 @@ jobs:
           echo "cat ~/.bundle/config"
           cat ~/.bundle/config
 
+      - uses: chrisdickinson/setup-yq@latest
+
+      - run: |
+          yq -i 'BUNDLE_GITHUB__COM = "x-access-token:dummy_token"' ~/.bundle/config
+
       - run: |
           env
           [ ${BUNDLE_GITHUB__COM} = "x-access-token:dummy_token" ] || exit 1
