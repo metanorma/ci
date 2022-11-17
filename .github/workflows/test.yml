@@ -48,10 +48,10 @@ jobs:
       - uses: ./plantuml-setup-action
       - run: plantuml -version
 
-  test-composite-docker:
-    name: Test composite action for gem install workaround on docker
+  test-gh-rubygem-setup-action-docker:
+    name: Test gh-rubygems-setup-action & docker-gem-install in docker
     runs-on: ubuntu-latest
-    container: docker://metanorma/mn
+    container: docker://metanorma/metanorma
     steps:
       - uses: actions/checkout@v3
 
@@ -66,3 +66,36 @@ jobs:
           echo 'gem "metanorma-standoc", git: "https://github.com/metanorma/metanorma-standoc", branch: "main"' >> Gemfile
 
       - uses: ./docker-gem-install
+
+  test-gh-rubygem-setup-action:
+    name: Test gh-rubygems-setup-action
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+
+      - uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: '3.1'
+
+      - uses: ./gh-rubygems-setup-action
+        with:
+          token: dummy_token
+
+      - run: |
+          echo "cat ~/.gemrc"
+          cat ~/.gemrc
+          echo "cat ~/.bundle/config"
+          cat ~/.bundle/config
+
+      - uses: chrisdickinson/setup-yq@latest
+        with:
+          yq-version: v4.30.4
+
+      - run: |
+          yq -e e '.["BUNDLE_HTTPS://RUBYGEMS__PKG__GITHUB__COM/METANORMA/"] == "x-access-token:dummy_token"' ~/.bundle/config
+          yq -e e '.[":sources"] | length == 2' ~/.gemrc
+
+      - run: |
+          env
+          [ ${BUNDLE_GITHUB__COM} = "x-access-token:dummy_token" ] || exit 1
+          [ ${BUNDLE_RUBYGEMS__PKG__GITHUB__COM} = "x-access-token:dummy_token" ] || exit 1
