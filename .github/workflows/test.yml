@@ -1,4 +1,3 @@
-
 name: test-composite
 
 on:
@@ -89,9 +88,12 @@ jobs:
           cat ~/.bundle/config
 
       - uses: chrisdickinson/setup-yq@latest
+        with:
+          yq-version: v4.30.4
 
       - run: |
-          yq -i 'BUNDLE_GITHUB__COM = "x-access-token:dummy_token"' ~/.bundle/config
+          yq -e e '.["BUNDLE_HTTPS://RUBYGEMS__PKG__GITHUB__COM/METANORMA/"] == "x-access-token:dummy_token"' ~/.bundle/config
+          yq -e e '.[":sources"] | length == 2' ~/.gemrc
 
       - run: |
           env
