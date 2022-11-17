@@ -1,3 +1,4 @@
+
 name: test-composite
 
 on:
@@ -49,7 +50,7 @@ jobs:
       - run: plantuml -version
 
   test-gh-rubygem-setup-action-docker:
-    name: Test composite action for gem install workaround on docker
+    name: Test gh-rubygems-setup-action & docker-gem-install in docker
     runs-on: ubuntu-latest
     container: docker://metanorma/metanorma
     steps:
@@ -68,7 +69,7 @@ jobs:
       - uses: ./docker-gem-install
 
   test-gh-rubygem-setup-action:
-    name: Test composite action for gem install workaround on docker
+    name: Test gh-rubygems-setup-action
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
@@ -88,5 +89,6 @@ jobs:
           cat ~/.bundle/config
 
       - run: |
+          env
           [ ${BUNDLE_GITHUB__COM} = "x-access-token:dummy_token" ] || exit 1
           [ ${BUNDLE_RUBYGEMS__PKG__GITHUB__COM} = "x-access-token:dummy_token" ] || exit 1
