@@ -66,3 +66,22 @@ jobs:
           echo 'gem "metanorma-standoc", git: "https://github.com/metanorma/metanorma-standoc", branch: "main"' >> Gemfile
 
       - uses: ./docker-gem-install
+
+  test-gh-rubygem-setup-action:
+    name: Test composite action for gem install workaround on docker
+    runs-on: ubuntu-latest
+    container: docker://metanorma/mn
+    steps:
+      - uses: actions/checkout@v3
+
+      - uses: ./gh-rubygems-setup-action
+        with:
+          token: ${{ secrets.METANORMA_CI_PAT_TOKEN }}
+
+      - run: |
+          echo 'gem "metanorma-cli"' > Gemfile
+          echo 'gem "metanorma", "~>1"' >> Gemfile
+          echo 'gem "metanorma-nist", source: "https://rubygems.pkg.github.com/metanorma"' >> Gemfile
+          echo 'gem "metanorma-standoc", git: "https://github.com/metanorma/metanorma-standoc", branch: "main"' >> Gemfile
+
+      - uses: ./docker-gem-install
