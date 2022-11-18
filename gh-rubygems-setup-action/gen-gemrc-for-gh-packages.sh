@@ -4,10 +4,12 @@
 TOKEN=${1}
 OWNER=${2:-metanorma}
 
-if [ -f "${HOME}/.gemrc" ]; then
-  echo "WARNING! Overwriting ~/.gemrc."
+GEMRC="${GEM_HOME:-${HOME}}/.gemrc"
+
+if [ -f "${GEMRC}" ]; then
+  echo "WARNING! Overwriting ${GEMRC}"
 fi
-cat << EOF > "${HOME}/.gemrc"
+cat << EOF > "${GEMRC}"
 ---
 :backtrace: false
 :bulk_threshold: 1000
@@ -17,4 +19,4 @@ cat << EOF > "${HOME}/.gemrc"
 :update_sources: true
 :verbose: true
 EOF
-echo "${HOME}/.gemrc generated!"
+echo "${GEMRC} generated!"
