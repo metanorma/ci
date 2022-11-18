@@ -48,7 +48,7 @@ jobs:
       - uses: ./plantuml-setup-action
       - run: plantuml -version
 
-  test-gh-rubygem-setup-action-docker:
+  test-bundler-docker-gh-rubygem-setup-action:
     name: Test gh-rubygems-setup-action & docker-gem-install in docker
     runs-on: ubuntu-latest
     container: docker://metanorma/metanorma
@@ -67,7 +67,24 @@ jobs:
 
       - uses: ./docker-gem-install
 
-  test-gh-rubygem-setup-action:
+  test-gem-docker-gh-rubygem-setup-action:
+    name: Test gh-rubygems-setup-action & docker-gem-install in docker
+    runs-on: ubuntu-latest
+    container: docker://metanorma/metanorma
+    steps:
+      - uses: actions/checkout@v3
+
+      - uses: ./gh-rubygems-setup-action
+        with:
+          token: ${{ secrets.METANORMA_CI_PAT_TOKEN }}
+
+      - shell: bash
+        run: |
+          for gem in metanorma-cli metanorma-nist; do
+            [[ "$(gem info --remote $gem)" =~ "$gem" ]] || (echo "Error gem '$gem' not found" && exit 1)
+          done
+
+  test-bundler-gh-rubygem-setup-action:
     name: Test gh-rubygems-setup-action
     runs-on: ubuntu-latest
     steps:
@@ -80,12 +97,6 @@ jobs:
       - uses: ./gh-rubygems-setup-action
         with:
           token: dummy_token
-
-      - run: |
-          echo "cat ~/.gemrc"
-          cat ~/.gemrc
-          echo "cat ~/.bundle/config"
-          cat ~/.bundle/config
 
       - uses: chrisdickinson/setup-yq@latest
         with:
