@@ -1,0 +1,11 @@
+name: generate
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+  workflow_dispatch:
+
+jobs:
+  test-docker:
+    uses: metanorma/ci/.github/workflows/user-docker.yml@main

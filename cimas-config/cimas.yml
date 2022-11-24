@@ -639,6 +639,16 @@ repositories:
     files:
       .github/workflows/docker.yml: gh-actions/samples/docker.yml
       .github/workflows/generate.yml: gh-actions/samples/generate.yml
+  bs-202000:
+    remote: ssh://git@github.com/metanorma/bs-202000
+    branch: main
+    files:
+      .github/workflows/generate.yml: gh-actions/samples/user-docker.yml
+  S-102-Product-Specification:
+    remote: git@github.com:metanorma/S-102-Product-Specification
+    branch: main
+    files:
+      .github/workflows/generate.yml: gh-actions/samples/user-docker.yml
   # templates
   mn-templates-cc:
     remote: ssh://git@github.com/metanorma/mn-templates-cc
