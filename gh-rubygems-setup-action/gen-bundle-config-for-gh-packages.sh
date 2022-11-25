@@ -17,6 +17,9 @@ else
   echo "BUNDLE_GITHUB__COM=x-access-token:${TOKEN}" >> $GITHUB_ENV
 
   BUNDLE_PATH=$([ "${LOCALITY_FLAG}" == "--global" ] && echo "${HOME}/.bundle" || echo "./.bundle");
+  if [ -d "${BUNDLE_APP_CONFIG}" ]; then
+    BUNDLE_PATH="${BUNDLE_APP_CONFIG}"
+  fi
 
   echo "generating ${BUNDLE_PATH}/config ..."
   if [ -f "${BUNDLE_PATH}/config" ]
