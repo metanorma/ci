@@ -3,9 +3,7 @@
 
 TOKEN=${1}
 OWNER=${2:-metanorma}
-LOCALITY_FLAG=${3:---local}
-
-echo "Script called with TOKEN=${TOKEN} OWNER=${OWNER} LOCALITY_FLAG=${LOCALITY_FLAG}"
+LOCALITY_FLAG=${3}
 
 if command -v bundle &> /dev/null; then
   bundle config ${LOCALITY_FLAG} https://rubygems.pkg.github.com/${OWNER} x-access-token:${TOKEN}
