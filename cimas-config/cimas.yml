@@ -644,6 +644,11 @@ repositories:
     branch: main
     files:
       .github/workflows/docker.yml: gh-actions/samples/docker.yml
+  ogc-development-workshop:
+    remote: ssh://git@github.com:metanorma/ogc-development-workshop
+    branch: main
+    files:
+      .github/workflows/docker.yml: gh-actions/samples/docker.yml
   # templates
   mn-templates-cc:
     remote: ssh://git@github.com/metanorma/mn-templates-cc
