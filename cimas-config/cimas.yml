@@ -645,10 +645,20 @@ repositories:
     files:
       .github/workflows/generate.yml: gh-actions/samples/user-docker.yml
   S-102-Product-Specification:
-    remote: git@github.com:metanorma/S-102-Product-Specification
+    remote: ssh://git@github.com:metanorma/S-102-Product-Specification
     branch: main
     files:
       .github/workflows/generate.yml: gh-actions/samples/user-docker.yml
+  annotated-express:
+    remote: ssh://git@github.com:metanorma/annotated-express
+    branch: main
+    files:
+      .github/workflows/docker.yml: gh-actions/samples/docker.yml
+  ogc-development-workshop:
+    remote: ssh://git@github.com:metanorma/ogc-development-workshop
+    branch: main
+    files:
+      .github/workflows/docker.yml: gh-actions/samples/docker.yml
   # templates
   mn-templates-cc:
     remote: ssh://git@github.com/metanorma/mn-templates-cc

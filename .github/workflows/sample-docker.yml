@@ -81,6 +81,7 @@ jobs:
       - uses: actions/download-artifact@v3
         with:
           name: site
+          path: site
 
       - uses: peaceiris/actions-gh-pages@v3
         with:
