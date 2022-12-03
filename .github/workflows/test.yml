@@ -48,6 +48,26 @@ jobs:
       - uses: ./plantuml-setup-action
       - run: plantuml -version
 
+  test-native-deps-action:
+    name: Test native-deps-action ${{ matrix.os }}
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+        - os: ubuntu-latest
+          library: /usr/bin/login
+        - os: windows-latest
+          library: C:\WINDOWS\System32\KERNELBASE.dll
+        - os: macos-latest
+          library: /usr/bin/login
+    steps:
+      - uses: actions/checkout@v3
+
+      - uses: ./native-deps-action
+        with:
+          filepath: ${{ matrix.library }}
+
   test-bundler-docker-gh-rubygem-setup-action:
     name: Test gh-rubygems-setup-action & docker-gem-install in docker
     runs-on: ubuntu-latest
