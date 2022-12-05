@@ -650,12 +650,12 @@ repositories:
     files:
       .github/workflows/generate.yml: gh-actions/samples/user-docker.yml
   annotated-express:
-    remote: ssh://git@github.com:metanorma/annotated-express
+    remote: ssh://git@github.com/metanorma/annotated-express
     branch: main
     files:
       .github/workflows/docker.yml: gh-actions/samples/docker.yml
   ogc-development-workshop:
-    remote: ssh://git@github.com:metanorma/ogc-development-workshop
+    remote: ssh://git@github.com/metanorma/ogc-development-workshop
     branch: main
     files:
       .github/workflows/docker.yml: gh-actions/samples/docker.yml
@@ -868,6 +868,12 @@ repositories:
     branch: master
     files:
       .github/workflows/docker.yml: gh-actions/samples/docker.yml
+  iso-10303-11:
+    remote: ssh://git@github.com/metanorma/iso-10303-11
+    branch: main
+    files:
+      .github/workflows/docker.yml: gh-actions/samples/docker.yml
+
   DGGS2ISO-19170:
     remote: ssh://git@github.com/metanorma/DGGS2ISO-19170
     branch: master
