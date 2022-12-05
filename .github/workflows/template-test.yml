@@ -116,6 +116,12 @@ jobs:
 
       - run: cp Gemfile test/${{ matrix.doctype }}/
 
+      - uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: ${{ matrix.ruby }}
+          bundler-cache: true
+          working-directory: test/${{ matrix.doctype }}
+
       - if: hashFiles(format('test/{0}/metanorma.yml', matrix.doctype )) == ''
         shell: bash
         run: |
