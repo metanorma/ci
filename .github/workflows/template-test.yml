@@ -137,6 +137,5 @@ jobs:
       - uses: actions-mn/site-gen@v1
         with:
           source-path: test/${{ matrix.doctype }}
-          config-file: test/${{ matrix.doctype }}/metanorma.yml
           agree-to-terms: true
           use-bundler: true
