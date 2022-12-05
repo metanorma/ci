@@ -54,7 +54,7 @@ jobs:
           bundler-cache: true
           rubygems: ${{ matrix.rubygems }}
 
-      - uses: actions/setup-python@v1
+      - uses: actions/setup-python@v4
         with:
           python-version: '3.10'
 
