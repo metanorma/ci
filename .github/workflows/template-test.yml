@@ -114,6 +114,8 @@ jobs:
           overwrite: true
           use-bundler: true
 
+      - run: cp Gemfile test/${{ matrix.doctype }}/
+
       - if: hashFiles(format('test/{0}/metanorma.yml', matrix.doctype )) == ''
         shell: bash
         run: |
