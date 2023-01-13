@@ -29,6 +29,11 @@ concurrency:
   group: '${{ github.workflow }}-${{ github.head_ref || github.ref_name }}'
   cancel-in-progress: true
 
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
 jobs:
   test-docker:
     runs-on: ubuntu-latest
@@ -49,18 +54,6 @@ jobs:
           fontist repo setup metanorma https://metanorma-ci:${{ secrets.pat_token }}@github.com/metanorma/fontist-formulas-private
           fontist repo update metanorma
 
-      - uses: actions/cache@v3
-        with:
-          path: /config/fonts
-          key: fontist-docker
-          restore-keys: fontist-docker
-
-      - uses: actions/cache@v3
-        with:
-          path: ~/.metanorma-ietf-workgroup-cache.json
-          key: metanorma-ietf-workgroup-cache
-          restore-keys: metanorma-ietf-workgroup-cache
-
       - uses: metanorma/ci/gh-rubygems-setup-action@main
         with:
           token: ${{ secrets.pat_token }}
@@ -69,36 +62,18 @@ jobs:
 
       - uses: metanorma/ci/docker-gem-install@main
 
-      - uses: actions-mn/site-gen@v1
+      - uses: actions-mn/build-and-publish@main
         with:
           agree-to-terms: true
 
-      - uses: actions/upload-artifact@v3
-        with:
-          name: site
-          path: site
-
   deploy-gh-pages:
     if: ${{ inputs.deploy-gh-pages == 'true' && (github.ref == 'refs/heads/master' || github.ref == 'refs/heads/main') }}
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
     runs-on: ubuntu-latest
     needs: test-docker
     steps:
-      - uses: actions/checkout@v3
-
-      - uses: actions/download-artifact@v3
-        with:
-          name: site
-
-      - uses: peaceiris/actions-gh-pages@v3
-        with:
-          github_token: ${{ github.token }}
-          publish_dir: ./site
-          force_orphan: true
-          user_name: ${{ github.actor }}
-          user_email: ${{ format('{0}@users.noreply.github.com', github.actor) }}
-          commit_message: "${{ format('Deploy to GitHub Pages: {0}', github.sha) }}"
-
-      - uses: kolpav/purge-artifacts-action@v1
-        with:
-          token: ${{ github.token }}
-          expire-in: 0
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v1
