@@ -19,7 +19,7 @@ jobs:
     steps:
       - uses: actions/checkout@v3
       - id: build-matrix
-        run: echo "::set-output name=matrix::$(cat .github/workflows/matrix.json | tr '\n' ' ')"
+        run: echo "matrix=$(cat .github/workflows/matrix.json | tr '\n' ' ')" >> $GITHUB_OUTPUT
 
   generate:
     runs-on: ubuntu-latest

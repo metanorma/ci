@@ -33,7 +33,7 @@ jobs:
             jq -c '. + {"os": ["macos-latest", "ubuntu-latest", "windows-latest" ]}' \
             > matrix.json.tmp && mv matrix.json.tmp .github/workflows/matrix.json
 
-          echo "::set-output name=matrix::$(cat .github/workflows/matrix.json)"
+          echo "matrix=$(cat .github/workflows/matrix.json)" >> $GITHUB_OUTPUT
 
   test:
     runs-on: ${{ matrix.os }}
