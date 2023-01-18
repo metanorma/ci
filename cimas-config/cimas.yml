@@ -13,7 +13,6 @@ repositories:
       .hound.yml: gh-actions/master/.hound.yml
       .rubocop.yml: gh-actions/master/.rubocop.yml
       .github/workflows/rake.yml: gh-actions/master/rake-notify.yml
-      .github/workflows/notify.yml: gh-actions/master/notify.yml
       .github/workflows/release.yml: gh-actions/master/release.yml
       templates/base/.github/workflows/docker.yml: gh-actions/samples/docker.yml
       templates/base/.github/workflows/generate.yml: gh-actions/samples/generate.yml
@@ -405,14 +404,6 @@ repositories:
       .hound.yml: gh-actions/master/.hound.yml
       .rubocop.yml: gh-actions/master/.rubocop.yml
       .github/workflows/rake.yml: gh-actions/master/rake.yml
-  unicode2latex:
-    remote: ssh://git@github.com/metanorma/unicode2latex
-    branch: master
-    files:
-      .hound.yml: gh-actions/master/.hound.yml
-      .rubocop.yml: gh-actions/master/.rubocop.yml
-      .github/workflows/rake.yml: gh-actions/master/rake.yml
-      .github/workflows/release.yml: gh-actions/master/release.yml
   reverse_adoc:
     remote: ssh://git@github.com/metanorma/reverse_adoc
     branch: main
@@ -423,22 +414,6 @@ repositories:
       .github/workflows/release.yml: gh-actions/master/release.yml
   gb-agencies:
     remote: ssh://git@github.com/metanorma/gb-agencies
-    branch: master
-    files:
-      .hound.yml: gh-actions/master/.hound.yml
-      .rubocop.yml: gh-actions/master/.rubocop.yml
-      .github/workflows/rake.yml: gh-actions/master/rake.yml
-      .github/workflows/release.yml: gh-actions/master/release.yml
-  mathml2asciimath:
-    remote: ssh://git@github.com/metanorma/mathml2asciimath
-    branch: master
-    files:
-      .hound.yml: gh-actions/master/.hound.yml
-      .rubocop.yml: gh-actions/master/.rubocop.yml
-      .github/workflows/rake.yml: gh-actions/master/rake.yml
-      .github/workflows/release.yml: gh-actions/master/release.yml
-  omml2mathml:
-    remote: ssh://git@github.com/metanorma/omml2mathml
     branch: master
     files:
       .hound.yml: gh-actions/master/.hound.yml
@@ -916,14 +891,6 @@ repositories:
       .rubocop.yml: gh-actions/master/.rubocop.yml
       .github/workflows/rake.yml: gh-actions/master/rake.yml
       .github/workflows/release.yml: gh-actions/master/release.yml
-  asciimath2unitsml:
-    remote: ssh://git@github.com/plurimath/asciimath2unitsml
-    branch: main
-    files:
-      .hound.yml: gh-actions/master/.hound.yml
-      .rubocop.yml: gh-actions/master/.rubocop.yml
-      .github/workflows/rake.yml: gh-actions/master/rake.yml
-      .github/workflows/release.yml: gh-actions/master/release.yml
   stepmod-utils:
     remote: ssh://git@github.com/metanorma/stepmod-utils
     branch: main
@@ -978,12 +945,9 @@ groups:
   - metanorma.org
   converter:
   - html2doc
-  - mathml2asciimath
-  - omml2mathml
   - rfc2md
   - mn2pdf
   - mn2sts
-  - unicode2latex
   - mn2pdf-ruby
   - mn2sts-ruby
   - stepmod2mn
