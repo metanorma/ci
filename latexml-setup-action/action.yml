@@ -4,10 +4,12 @@ runs:
   using: "composite"
   steps:
   - if: runner.os == 'ubuntu-latest'
+    shell: 'bash'
     run: |
       sudo snap install latexml --edge
       echo "/snap/bin" >> $GITHUB_PATH
   - if: runner.os == 'macos-latest'
+    shell: 'bash'
     run: |
       brew install libxml2 cpanminus
       env PATH=$(brew --prefix libxml2)/bin:$PATH \
