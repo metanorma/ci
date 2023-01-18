@@ -3,23 +3,30 @@ description: 'composite action which installs latexml for all OSes'
 runs:
   using: "composite"
   steps:
-  - if: runner.os == 'ubuntu-latest'
-    shell: 'bash'
-    run: |
-      sudo snap install latexml --edge
-      echo "/snap/bin" >> $GITHUB_PATH
-  - if: runner.os == 'macos-latest'
-    shell: 'bash'
-    run: |
-      brew install libxml2 cpanminus
-      env PATH=$(brew --prefix libxml2)/bin:$PATH \
-        cpanm --notest XML::LibXSLT LaTeXML
-      echo "$(brew --prefix perl)/bin" >> $GITHUB_PATH
-  - if: runner.os == 'windows-latest'
-    shell: cmd
-    run: |
-      cinst -y latexml
-      refreshenv
-      set PATH=C:\Strawberry\c\bin;C:\Strawberry\perl\site\bin;C:\Strawberry\perl\bin;%PATH%
-      where latexmlmath
-      echo "C:\Strawberry\c\bin;C:\Strawberry\perl\site\bin;C:\Strawberry\perl\bin" >> %GITHUB_PATH%
+    - shell: python
+      run: |
+        import os
+        import sys
+        import platform
+
+        cmds = {
+          "Darwin": [
+            "brew install libxml2 cpanminus",
+            "env PATH=/usr/local/opt/libxml2/bin:$PATH cpanm --notest XML::LibXSLT LaTeXML"
+          ],
+          "Windows": [ "cinst -y latexml" ],
+          "Linux": [ "sudo snap install latexml --edge" ]
+        }.get(platform.system(), [ "echo \"Unsupported platform: {}\"".format(platform.system()), "exit 1" ])
+
+        for cmd in cmds:
+          if os.system(cmd) != 0:
+            print("Command {} FAILED!".format(cmd))
+            sys.exit(1)
+
+        path = {
+          "Darwin": "/usr/local/opt/perl/bin",
+          "Windows": "C:\Strawberry\c\bin;C:\Strawberry\perl\site\bin;C:\Strawberry\perl\bin",
+          "Linux": "/snap/bin"
+        }.get(platform.system(), "")
+
+        os.system("echo {} >> {}".format(path, os.environ["GITHUB_PATH"]))
