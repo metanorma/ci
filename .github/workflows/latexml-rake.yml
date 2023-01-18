@@ -1,0 +1,87 @@
+name: rake
+
+on:
+  workflow_call:
+    secrets:
+      pat_token:
+        required: false
+
+jobs:
+  # https://wildwolf.name/github-actions-how-to-avoid-running-the-same-workflow-multiple-times/
+  prepare:
+    runs-on: ubuntu-latest
+    outputs:
+      head_tag: ${{ steps.check.outputs.head_tag }}
+      foreign_pr: ${{ steps.check.outputs.foreign_pr }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+      - name: Retrieve tags
+        run: git fetch --depth=1 origin +refs/tags/*:refs/tags/* || true
+      - name: Set output variables
+        id: check
+        run: |
+          fpr="no"
+          tag=""
+          if [[ "${{ github.ref }}" == refs/heads/* ]]; then
+            tag="$(git tag --points-at HEAD)"
+          elif [[ "${{ github.ref }}" == refs/pull/* ]] && [ "${{ github.event.pull_request.head.repo.full_name }}" != "${{ github.event.pull_request.base.repo.full_name }}" ]; then
+            fpr="yes"
+          fi
+          echo "foreign_pr=${fpr}" >> $GITHUB_OUTPUT
+          echo "head_tag=${tag}" >> $GITHUB_OUTPUT
+
+  rake:
+    name: Test on Ruby ${{ matrix.ruby }} ${{ matrix.os }}
+    needs: prepare
+    if: "(github.event_name == 'push' && needs.prepare.outputs.head_tag == '') || github.event_name == 'pull_request'"
+    runs-on: ${{ matrix.os }}
+    continue-on-error: ${{ matrix.experimental }}
+    concurrency:
+      group: '${{ github.workflow }}-${{ matrix.os }}-${{ matrix.ruby }}-${{ github.head_ref || github.ref_name }}'
+      cancel-in-progress: true
+    strategy:
+      fail-fast: false
+      max-parallel: 5
+      matrix:
+        ruby: [ '3.1', '2.7' ]
+        os: [ ubuntu-latest, macos-latest ]
+        experimental: [ false ]
+        rubygems: [ default ]
+        include:
+          # https://github.com/rubygems/rubygems/issues/5970
+          - ruby: '2.7'
+            os: 'windows-latest'
+            experimental: false
+            rubygems: '3.3.22'
+          - ruby: '3.0'
+            os: 'windows-latest'
+            experimental: false
+            rubygems: '3.3.22'
+          - ruby: '3.1'
+            os: 'windows-latest'
+            experimental: false
+            rubygems: '3.3.22'
+          # https://github.com/metanorma/metanorma-standoc/issues/620
+          - ruby: '3.0'
+            os: ubuntu-latest
+            experimental: false
+            rubygems: latest
+          - ruby: '3.0'
+            os: macos-latest
+            experimental: false
+            rubygems: latest
+    steps:
+      - uses: actions/checkout@v3
+        with:
+          submodules: true
+
+      - uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: ${{ matrix.ruby }}
+          bundler-cache: true
+          rubygems: ${{ matrix.rubygems }}
+
+      - uses: metanorma/ci/latexml-setup-action@main
+
+      - run: bundle exec rake

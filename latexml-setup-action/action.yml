@@ -1,0 +1,23 @@
+name: 'latexml-setup-action'
+description: 'composite action which installs latexml for all OSes'
+runs:
+  using: "composite"
+  steps:
+  - if: runner.os == 'ubuntu-latest'
+    run: |
+      sudo snap install latexml --edge
+      echo "/snap/bin" >> $GITHUB_PATH
+  - if: runner.os == 'macos-latest'
+    run: |
+      brew install libxml2 cpanminus
+      env PATH=$(brew --prefix libxml2)/bin:$PATH \
+        cpanm --notest XML::LibXSLT LaTeXML
+      echo "$(brew --prefix perl)/bin" >> $GITHUB_PATH
+  - if: runner.os == 'windows-latest'
+    shell: cmd
+    run: |
+      cinst -y latexml
+      refreshenv
+      set PATH=C:\Strawberry\c\bin;C:\Strawberry\perl\site\bin;C:\Strawberry\perl\bin;%PATH%
+      where latexmlmath
+      echo "C:\Strawberry\c\bin;C:\Strawberry\perl\site\bin;C:\Strawberry\perl\bin" >> %GITHUB_PATH%
