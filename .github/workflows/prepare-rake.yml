@@ -2,6 +2,16 @@ name: prepare-rake
 
 on:
   workflow_call:
+    outputs:
+      head-tag:
+        description: "Will be empty if there is not tag on HEAD"
+        value: ${{ jobs.prepare.outputs.head_tag }}
+      foreign-pr:
+        description: "Return yes if this is a foreign PR"
+        value: ${{ jobs.prepare.outputs.foreign_pr }}
+      matrix:
+        description: "JSON string to be used in job.strategy.matrix"
+        value: ${{ jobs.prepare.outputs.matrix }}
 
 jobs:
   # https://wildwolf.name/github-actions-how-to-avoid-running-the-same-workflow-multiple-times/
