@@ -1,0 +1,31 @@
+name: prepare-rake
+
+on:
+  workflow_call:
+
+jobs:
+  # https://wildwolf.name/github-actions-how-to-avoid-running-the-same-workflow-multiple-times/
+  prepare:
+    runs-on: ubuntu-latest
+    outputs:
+      head_tag: ${{ steps.check.outputs.head_tag }}
+      foreign_pr: ${{ steps.check.outputs.foreign_pr }}
+      matrix: ${{ steps.matrix.outputs.matrix }}
+    steps:
+      - uses: actions/checkout@v3
+      - name: retrieve tags
+        run: git fetch --depth=1 origin +refs/tags/*:refs/tags/* || true
+      - name: set output variables
+        id: check
+        run: |
+          fpr="no"
+          tag=""
+          if [[ "${{ github.ref }}" == refs/heads/* ]]; then
+            tag="$(git tag --points-at HEAD)"
+          elif [[ "${{ github.ref }}" == refs/pull/* ]] && [ "${{ github.event.pull_request.head.repo.full_name }}" != "${{ github.event.pull_request.base.repo.full_name }}" ]; then
+            fpr="yes"
+          fi
+          echo "foreign_pr=${fpr}" >> $GITHUB_OUTPUT
+          echo "head_tag=${tag}" >> $GITHUB_OUTPUT
+      - id: matrix
+        run: echo "matrix=$(cat .github/workflows/ruby-matrix.json | tr '\n' ' ')" >> $GITHUB_OUTPUT
