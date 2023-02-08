@@ -9,12 +9,12 @@ on:
       foreign-pr:
         description: "Return yes if this is a foreign PR"
         value: ${{ jobs.prepare.outputs.foreign_pr }}
-      matrix:
-        description: "JSON string to be used in job.strategy.matrix"
-        value: ${{ jobs.prepare.outputs.matrix }}
       push-on-tag:
         description: "Return true if duplicatet run on tag exists and this can be skipped"
         value: ${{ jobs.prepare.outputs.push_on_tag }}
+      matrix:
+        description: "JSON string to be used in job.strategy.matrix"
+        value: ${{ jobs.prepare.outputs.matrix }}
 
 jobs:
   # https://wildwolf.name/github-actions-how-to-avoid-running-the-same-workflow-multiple-times/
@@ -49,4 +49,7 @@ jobs:
           echo "value=${value}" >> $GITHUB_OUTPUT
 
       - id: matrix
-        run: echo "value=$(curl -L https://raw.githubusercontent.com/metanorma/ci/main/.github/workflows/ruby-matrix.json | tr '\n' ' ')" >> $GITHUB_OUTPUT
+        run: |
+          value="$(curl -L https://raw.githubusercontent.com/metanorma/ci/main/.github/workflows/ruby-matrix.json)"
+          echo "value=${value}"
+          echo "value=$(echo ${value} | tr '\n' ' ')" >> $GITHUB_OUTPUT
