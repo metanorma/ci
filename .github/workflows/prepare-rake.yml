@@ -12,6 +12,9 @@ on:
       matrix:
         description: "JSON string to be used in job.strategy.matrix"
         value: ${{ jobs.prepare.outputs.matrix }}
+      push-on-tag:
+        description: "Return true if duplicatet run on tag exists and this can be skipped"
+        value: ${{ (github.event_name == 'push' && jobs.prepare.outputs.head_tag == '') || github.event_name == 'pull_request' }}
 
 jobs:
   # https://wildwolf.name/github-actions-how-to-avoid-running-the-same-workflow-multiple-times/
