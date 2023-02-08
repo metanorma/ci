@@ -5,45 +5,27 @@ on:
     secrets:
       pat_token:
         required: false
+
 jobs:
+  prepare:
+    uses: metanorma/ci/.github/workflows/prepare-rake.yml@main
+
   rake:
-    name: Test on Ruby ${{ matrix.ruby }} ${{ matrix.os }}
+    name: Test on Ruby ${{ matrix.ruby.version }} ${{ matrix.os }}
     runs-on: ${{ matrix.os }}
-    continue-on-error: ${{ matrix.experimental }}
+
+    needs: prepare
+    if: needs.prepare.outputs.push-for-tag != 'true'
+
     concurrency:
-      group: '${{ github.workflow }}-${{ matrix.os }}-${{ matrix.ruby }}-${{ github.head_ref || github.ref_name }}'
+      group: '${{ github.workflow }}-${{ matrix.os }}-${{ matrix.ruby.version }}-${{ github.head_ref || github.ref_name }}'
       cancel-in-progress: true
+
+    continue-on-error: ${{ matrix.ruby.experimental }}
     strategy:
       fail-fast: false
       max-parallel: 5
-      matrix:
-        ruby: [ '3.1', '2.7' ]
-        os: [ ubuntu-latest, macos-latest ]
-        experimental: [ false ]
-        rubygems: [ default ]
-        include:
-          # https://github.com/rubygems/rubygems/issues/5970
-          - ruby: '2.7'
-            os: 'windows-latest'
-            experimental: false
-            rubygems: '3.3.22'
-          - ruby: '3.0'
-            os: 'windows-latest'
-            experimental: false
-            rubygems: '3.3.22'
-          - ruby: '3.1'
-            os: 'windows-latest'
-            experimental: false
-            rubygems: '3.3.22'
-          # https://github.com/metanorma/metanorma-standoc/issues/620
-          - ruby: '3.0'
-            os: ubuntu-latest
-            experimental: false
-            rubygems: latest
-          - ruby: '3.0'
-            os: macos-latest
-            experimental: false
-            rubygems: latest
+      matrix: ${{ fromJson(needs.prepare.outputs.matrix) }}
 
     steps:
       - uses: actions/checkout@v3
@@ -52,9 +34,9 @@ jobs:
 
       - uses: ruby/setup-ruby@v1
         with:
-          ruby-version: ${{ matrix.ruby }}
+          ruby-version: ${{ matrix.ruby.version }}
           bundler-cache: true
-          rubygems: ${{ matrix.rubygems }}
+          rubygems: ${{ matrix.ruby.rubygems }}
 
       - uses: metanorma/ci/inkscape-setup-action@main
 
@@ -69,4 +51,4 @@ jobs:
           token: ${{ secrets.pat_token || github.token }}
           repository: ${{ github.repository }}
           event-type: tests-passed
-          client-payload: '{"ref": "${{ github.ref }}", "sha": "${{ github.sha }}"}'
+          client-payload: '{"ref": "${{ github.ref }}", "sha": "${{ github.sha }}", "type": "tests-passed"}'
