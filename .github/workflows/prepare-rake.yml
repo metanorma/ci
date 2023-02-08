@@ -38,4 +38,4 @@ jobs:
           echo "foreign_pr=${fpr}" >> $GITHUB_OUTPUT
           echo "head_tag=${tag}" >> $GITHUB_OUTPUT
       - id: matrix
-        run: echo "matrix=$(cat .github/workflows/ruby-matrix.json | tr '\n' ' ')" >> $GITHUB_OUTPUT
+        run: echo "matrix=$(curl -L https://raw.githubusercontent.com/metanorma/ci/main/.github/workflows/ruby-matrix.json | tr '\n' ' ')" >> $GITHUB_OUTPUT
