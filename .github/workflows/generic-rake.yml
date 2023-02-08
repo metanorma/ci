@@ -15,7 +15,7 @@ jobs:
     runs-on: ${{ matrix.os }}
 
     needs: prepare
-    if: needs.prepare.outputs.push-on-tag != 'true'
+    if: needs.prepare.outputs.push-for-tag != 'true'
 
     concurrency:
       group: '${{ github.workflow }}-${{ matrix.os }}-${{ matrix.ruby.version }}-${{ github.head_ref || github.ref_name }}'
