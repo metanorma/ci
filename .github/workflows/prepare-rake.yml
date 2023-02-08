@@ -14,7 +14,7 @@ on:
         value: ${{ jobs.prepare.outputs.matrix }}
       push-on-tag:
         description: "Return true if duplicatet run on tag exists and this can be skipped"
-        value: ${{ (github.event_name == 'push' && jobs.prepare.outputs.head_tag == '') || github.event_name == 'pull_request' }}
+        value: ${{ jobs.prepare.outputs.push_on_tag }}
 
 jobs:
   # https://wildwolf.name/github-actions-how-to-avoid-running-the-same-workflow-multiple-times/
@@ -23,7 +23,8 @@ jobs:
     outputs:
       head_tag: ${{ steps.check.outputs.head_tag }}
       foreign_pr: ${{ steps.check.outputs.foreign_pr }}
-      matrix: ${{ steps.matrix.outputs.matrix }}
+      matrix: ${{ steps.matrix.outputs.value }}
+      push_on_tag: ${{ steps.push_on_tag.outputs.value }}
     steps:
       - uses: actions/checkout@v3
       - name: retrieve tags
@@ -40,5 +41,12 @@ jobs:
           fi
           echo "foreign_pr=${fpr}" >> $GITHUB_OUTPUT
           echo "head_tag=${tag}" >> $GITHUB_OUTPUT
+
+      - id: push_on_tag
+        run: |
+          value="${{ (github.event_name == 'push' && steps.check.outputs.head_tag == '') || github.event_name == 'pull_request' }}"
+          echo "value=${value}"
+          echo "value=${value}" >> $GITHUB_OUTPUT
+
       - id: matrix
-        run: echo "matrix=$(curl -L https://raw.githubusercontent.com/metanorma/ci/main/.github/workflows/ruby-matrix.json | tr '\n' ' ')" >> $GITHUB_OUTPUT
+        run: echo "value=$(curl -L https://raw.githubusercontent.com/metanorma/ci/main/.github/workflows/ruby-matrix.json | tr '\n' ' ')" >> $GITHUB_OUTPUT
