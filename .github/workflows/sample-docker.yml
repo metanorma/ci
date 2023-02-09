@@ -55,7 +55,13 @@ jobs:
 
       - uses: metanorma/ci/docker-gem-install@main
 
-      - uses: actions-mn/build-and-publish@main
+      - if: ${{ inputs.deploy-gh-pages == 'true' }}
+        uses: actions-mn/build-and-publish@main
+        with:
+          agree-to-terms: true
+
+      - if: ${{ inputs.deploy-gh-pages == 'false' }}
+        uses: actions-mn/site-gen@main
         with:
           agree-to-terms: true
 
