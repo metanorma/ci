@@ -32,7 +32,7 @@ jobs:
 
       - uses: ruby/setup-ruby@v1
         with:
-          ruby-version: ${{ matrix.ruby.vrsion }}
+          ruby-version: ${{ matrix.ruby.version }}
           bundler-cache: true
           rubygems: ${{ matrix.ruby.rubygems }}
 
