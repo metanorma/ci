@@ -15,6 +15,10 @@ on:
       matrix:
         description: "JSON string to be used in job.strategy.matrix"
         value: ${{ jobs.prepare.outputs.matrix }}
+      default-ruby-version:
+        description: "Default ruby version used for release or scripts"
+        value: ${{ jobs.prepare.outputs.default_ruby_version }}
+
 
 jobs:
   # https://wildwolf.name/github-actions-how-to-avoid-running-the-same-workflow-multiple-times/
@@ -25,6 +29,7 @@ jobs:
       foreign_pr: ${{ steps.check.outputs.foreign_pr }}
       matrix: ${{ steps.matrix.outputs.value }}
       push_for_tag: ${{ steps.push_for_tag.outputs.value }}
+      default_ruby_version: ${{ steps.config.outputs.default_ruby_version }}
     steps:
       - uses: actions/checkout@v3
       - name: retrieve tags
@@ -51,5 +56,9 @@ jobs:
       - id: matrix
         run: |
           value="$(curl -L https://raw.githubusercontent.com/metanorma/ci/main/.github/workflows/ruby-matrix.json)"
-          echo "value=${value}"
           echo "value=$(echo ${value} | tr '\n' ' ')" >> $GITHUB_OUTPUT
+
+      - id: config
+        run: |
+          value="=$(curl -L https://raw.githubusercontent.com/metanorma/ci/main/.github/workflows/config.json | jq .ruby.version -r)"
+          echo "default_ruby_version=${value}" >> $GITHUB_OUTPUT
