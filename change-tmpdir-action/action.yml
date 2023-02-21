@@ -19,9 +19,11 @@ runs:
           "Linux": [ "TMPDIR" ]
         }.get(platform.system(), [ "TMPDIR" ])
 
-        os.makedirs("${{ inputs.tmpdir }}", exist_ok=True)
+        tmpdir = "${{ inputs.tmpdir }}"
+        if not os.path.exists(tmpdir):
+          os.makedirs(tmpdir)
 
         for ename in enames:
-          if os.system("echo {}=${{ inputs.tmpdir }} >> {}".format(ename, os.environ['GITHUB_ENV'])) != 0:
+          if os.system("echo {}={} >> {}".format(ename, tmpdir, os.environ['GITHUB_ENV'])) != 0:
             print("Cannot set {} environment variable!".format(ename))
             sys.exit(1)
