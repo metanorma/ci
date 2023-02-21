@@ -147,7 +147,7 @@ jobs:
 
       - run: latexmlmath --VERSION
  
-   test-change-tmpdir-action:
+  test-change-tmpdir-action:
     name: Test latexml-setup-action ${{ matrix.os }}
     runs-on: ${{ matrix.os }}
     strategy:

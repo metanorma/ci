@@ -19,7 +19,6 @@ on:
         description: "Default ruby version used for release or scripts"
         value: ${{ jobs.prepare.outputs.default_ruby_version }}
 
-
 jobs:
   # https://wildwolf.name/github-actions-how-to-avoid-running-the-same-workflow-multiple-times/
   prepare:
