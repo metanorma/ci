@@ -20,6 +20,6 @@ runs:
         }.get(platform.system(), [ "TMPDIR" ])
 
         for ename in enames:
-          if os.system(f"echo '{}=${{ inputs.tmpdir }}' >> {}".format(ename, os.environ['GITHUB_ENV'])) != 0:
+          if os.system("echo '{}=${{ inputs.tmpdir }}' >> {}".format(ename, os.environ['GITHUB_ENV'])) != 0:
             print("Cannot set {} environment variable!".format(ename))
             sys.exit(1)
