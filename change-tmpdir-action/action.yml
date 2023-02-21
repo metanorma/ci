@@ -1,0 +1,25 @@
+name: 'graphviz-setup-action'
+description: 'composite action which installs graphviz for all OSes'
+inputs:
+  tmpdir:
+    description: 'Temp dir value'
+    required: true
+runs:
+  using: "composite"
+  steps:
+    - shell: python
+      run: |
+        import os
+        import sys
+        import platform
+
+        enames = {
+          "Darwin": [ "TMPDIR" ],
+          "Windows": [ "TMPDIR", "TEMP", "TMP" ],
+          "Linux": [ "TMPDIR" ]
+        }.get(platform.system(), [ "TMPDIR" ])
+
+        for ename in enames:
+          if os.system(f"echo '{}=${{ inputs.tmpdir }}' >> {}".format(ename, os.environ['GITHUB_ENV'])) != 0:
+            print("Cannot set {} environment variable!".format(ename))
+            sys.exit(1)

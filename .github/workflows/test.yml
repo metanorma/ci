@@ -147,3 +147,19 @@ jobs:
 
       - run: latexmlmath --VERSION
  
+   test-change-tmpdir-action:
+    name: Test latexml-setup-action ${{ matrix.os }}
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, windows-latest, macos-latest]
+    steps:
+      - uses: actions/checkout@v3
+
+      - uses: ./change-tmpdir-action
+        with:
+          tmpdir: ${{ github.workspace }}/tmp
+
+      - run: env
+        shell: bash
