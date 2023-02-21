@@ -19,7 +19,7 @@ runs:
           "Linux": [ "TMPDIR" ]
         }.get(platform.system(), [ "TMPDIR" ])
 
-        tmpdir = "${{ inputs.tmpdir }}"
+        tmpdir = r"${{ inputs.tmpdir }}" # raw string to correctly handle Windows pathes
         if not os.path.exists(tmpdir):
           os.makedirs(tmpdir)
 
