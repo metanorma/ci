@@ -8,6 +8,7 @@ runs:
   using: "composite"
   steps:
     - run: apt-get update -y && apt-get install -y gcc g++ ruby-dev
+      shell: bash
 
     # https://github.com/actions/runner/issues/1066 GITHUB_ACTION_PATH vs github.action_path
     - run: bash ${GITHUB_ACTION_PATH//\\//}/gemfile-to-bundle-add.sh ${{ inputs.gemfile }} gh
