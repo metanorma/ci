@@ -27,7 +27,7 @@ jobs:
       if: startsWith(github.ref, 'refs/tags/v') || github.ref == 'refs/heads/main'
       with:
         name: site
-        path: site
+        path: _site
 
   release:
     name: Release package
