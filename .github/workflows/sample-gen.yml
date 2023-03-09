@@ -30,8 +30,6 @@ jobs:
 
       - uses: actions-mn/setup@main
 
-      - uses: actions-mn/cache@v1
-
       - uses: ruby/setup-ruby@v1
         with:
           ruby-version: '3.0'
@@ -45,6 +43,8 @@ jobs:
 
       - run: rm Gemfile
 
-      - uses: actions-mn/site-gen@v1
+      - uses: actions-mn/build-and-publish@main
         with:
+          token: ${{ secrets.GITHUB_TOKEN }}
           agree-to-terms: true
+          destination: artifact

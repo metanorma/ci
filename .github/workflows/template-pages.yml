@@ -38,6 +38,7 @@ jobs:
 
       - uses: actions-mn/build-and-publish@main
         with:
+          token: ${{ secrets.GITHUB_TOKEN }}
           agree-to-terms: true
 
   deploy-gh-pages:

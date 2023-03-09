@@ -55,15 +55,11 @@ jobs:
 
       - uses: metanorma/ci/docker-gem-install@main
 
-      - if: ${{ inputs.deploy-gh-pages == 'true' }}
-        uses: actions-mn/build-and-publish@main
+      - uses: actions-mn/build-and-publish@main
         with:
+          token: ${{ secrets.GITHUB_TOKEN }}
           agree-to-terms: true
 
-      - if: ${{ inputs.deploy-gh-pages == 'false' }}
-        uses: actions-mn/site-gen@main
-        with:
-          agree-to-terms: true
 
   deploy-gh-pages:
     if: ${{ inputs.deploy-gh-pages == 'true' && (github.ref == 'refs/heads/master' || github.ref == 'refs/heads/main') }}
