@@ -28,21 +28,23 @@ jobs:
   build-matrix:
     runs-on: ubuntu-latest
     outputs:
-      samples-matrix: ${{ steps.build-samples-matrix.outputs.matrix }}
+      samples-matrix: ${{ steps.build.outputs.matrix }}
     steps:
-      - id: build-samples-matrix
-        run: |
-          curl -L https://raw.githubusercontent.com/metanorma/metanorma-cli/${{ inputs.ref }}/.github/workflows/samples-smoke-matrix.json > matrix.json
+    - id: build
+      run: |
+        curl -L https://raw.githubusercontent.com/metanorma/metanorma-cli/${{ inputs.ref }}/.github/workflows/samples-smoke-matrix.json | grep -v '//' > matrix.json
 
-          if [ "${{ inputs.flavors-only }}" = 'true' ]; then
-            echo "$(jq 'del(.ruby, .os)' matrix.json)" > matrix.json
-          fi
+        if [ "${{ inputs.flavors-only }}" = "true" ]; then
+          echo "$(jq 'del(.ruby, .os)' matrix.json)" > matrix.json
+        fi
 
-          if [ "${{ inputs.smoke }}" != 'true' ]; then
-            echo "$(jq 'del(.flavor[].manifest)' matrix.json)" > matrix.json
-          fi
+        if [ "${{ inputs.smoke }}" != "true" ]; then
+          echo "$(jq 'del(.flavor[].manifest)' matrix.json)" > matrix.json
+        fi
 
-          if [ "${{ inputs.public-only }}" = 'true' ]; then
-            echo "$(jq 'walk(if (type == "object" and (.public == false or .id == "ribose")) then del(.) else . end )' matrix.json)" > matrix.json
-            echo "$(jq 'del(.flavor[] | nulls)' matrix.json)" > matrix.json
-          fi
+        if [ "${{ inputs.public-only }}" = "true" ]; then
+          echo "$(jq 'walk(if (type == "object" and (.public == false or .id == "ribose")) then del(.) else . end )' matrix.json)" > matrix.json
+          echo "$(jq 'del(.flavor[] | nulls)' matrix.json)" > matrix.json
+        fi
+
+        echo "matrix=$(cat matrix.json | tr '\n' ' ')" >> $GITHUB_OUTPUT
