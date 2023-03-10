@@ -1,0 +1,48 @@
+name: build-sample-matrix
+
+on:
+  workflow_call:
+    inputs:
+      ref:
+        description: Branch name or sha commit for metanorma/metanorma-cli's samples-smoke-matrix.json
+        required: false
+        default: main
+        type: string
+      flavors-only:
+        description: Return only flavors matrix without os and ruby
+        required: false
+        default: false
+        type: boolean
+      smoke:
+        description: Return test matrix with minimal files for metanorma.yml
+        required: false
+        default: true
+        type: boolean
+      public-only:
+        description: Exclude private flavors
+        required: false
+        default: false
+        type: boolean
+
+jobs:
+  build-matrix:
+    runs-on: ubuntu-latest
+    outputs:
+      samples-matrix: ${{ steps.build-samples-matrix.outputs.matrix }}
+    steps:
+      - id: build-samples-matrix
+        run: |
+          curl -L https://raw.githubusercontent.com/metanorma/metanorma-cli/${{ inputs.ref }}/.github/workflows/samples-smoke-matrix.json > matrix.json
+
+          if [ "${{ inputs.flavors-only }}" = 'true' ]; then
+            echo "$(jq 'del(.ruby, .os)' matrix.json)" > matrix.json
+          fi
+
+          if [ "${{ inputs.smoke }}" != 'true' ]; then
+            echo "$(jq 'del(.flavor[].manifest)' matrix.json)" > matrix.json
+          fi
+
+          if [ "${{ inputs.public-only }}" = 'true' ]; then
+            echo "$(jq 'walk(if (type == "object" and (.public == false or .id == "ribose")) then del(.) else . end )' matrix.json)" > matrix.json
+            echo "$(jq 'del(.flavor[] | nulls)' matrix.json)" > matrix.json
+          fi
