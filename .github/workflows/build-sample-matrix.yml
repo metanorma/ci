@@ -23,6 +23,10 @@ on:
         required: false
         default: false
         type: boolean
+    outputs:
+      samples-matrix:
+        description: "Will be empty if there is not tag on HEAD"
+        value: ${{ jobs.build-matrix.outputs.samples-matrix }}
 
 jobs:
   build-matrix:
@@ -46,5 +50,8 @@ jobs:
           echo "$(jq 'walk(if (type == "object" and (.public == false or .id == "ribose")) then del(.) else . end )' matrix.json)" > matrix.json
           echo "$(jq 'del(.flavor[] | nulls)' matrix.json)" > matrix.json
         fi
+
+        echo "Result matrix JSON is:"
+        cat matrix.json
 
         echo "matrix=$(cat matrix.json | tr '\n' ' ')" >> $GITHUB_OUTPUT
