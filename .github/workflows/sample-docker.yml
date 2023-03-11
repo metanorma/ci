@@ -31,8 +31,10 @@ permissions:
   id-token: write
 
 jobs:
-  test-docker:
+  build:
     runs-on: ubuntu-latest
+    outputs:
+      deploy-gh-pages: ${{ steps.build-and-publish.outputs.gh-pages-enabled }}
     container:
       image: ${{ inputs.docker-image }}
     steps:
@@ -55,19 +57,19 @@ jobs:
 
       - uses: metanorma/ci/docker-gem-install@main
 
-      - uses: actions-mn/build-and-publish@main
+      - id: build-and-publish
+        uses: actions-mn/build-and-publish@main
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
           agree-to-terms: true
 
-
   deploy-gh-pages:
-    if: ${{ inputs.deploy-gh-pages == 'true' && (github.ref == 'refs/heads/master' || github.ref == 'refs/heads/main') }}
+    if: ${{ needs.build.deploy-gh-pages == 'true' && (github.ref == 'refs/heads/master' || github.ref == 'refs/heads/main') }}
     environment:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}
     runs-on: ubuntu-latest
-    needs: test-docker
+    needs: build
     steps:
       - name: Deploy to GitHub Pages
         id: deployment
