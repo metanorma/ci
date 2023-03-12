@@ -846,6 +846,17 @@ repositories:
     branch: main
     files:
       .github/workflows/docker.yml: gh-actions/samples/docker.yml
+  iso-19135:
+    remote: ssh://git@github.com/metanorma/iso-19135
+    branch: main
+    files:
+      .github/workflows/docker.yml: gh-actions/samples/docker.yml
+  iso-15926-6:
+    remote: ssh://git@github.com/metanorma/iso-15926-6
+    branch: main
+    files:
+      .github/workflows/docker.yml: gh-actions/samples/docker.yml
+
 
   DGGS2ISO-19170:
     remote: ssh://git@github.com/metanorma/DGGS2ISO-19170
