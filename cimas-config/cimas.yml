@@ -204,6 +204,15 @@ repositories:
       .github/workflows/rake.yml: gh-actions/master/rake-notify.yml
       .github/workflows/release_github_packages.yml: gh-actions/master/release_github_packages.yml
       .github/workflows/automerge.yml: gh-actions/master/automerge.yml
+  metanorma-jis:
+    remote: ssh://git@github.com/metanorma/metanorma-jis
+    branch: main
+    files:
+      .hound.yml: gh-actions/master/.hound.yml
+      .rubocop.yml: gh-actions/master/.rubocop.yml
+      .github/workflows/rake.yml: gh-actions/master/rake-notify.yml
+      .github/workflows/release.yml: gh-actions/master/release.yml
+      .github/workflows/automerge.yml: gh-actions/master/automerge.yml
   # models
   metanorma-model-gb:
     remote: ssh://git@github.com/metanorma/metanorma-model-gb
