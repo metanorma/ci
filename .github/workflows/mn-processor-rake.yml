@@ -44,8 +44,141 @@ jobs:
 
       - run: bundle exec rake
 
+  build-matrices:
+    runs-on: ubuntu-latest
+    outputs:
+      flavor: ${{ steps.flavor.outputs.value }}
+      samples-matrix: ${{ steps.build-samples-matrix.outputs.matrix }}
+      templates-matrix: ${{ steps.build-templates-matrix.outputs.matrix }}
+    steps:
+      - uses: actions/checkout@v3
+
+      - id: flavor
+        run: |
+          FLAVOR=$(echo "${{ github.repository }}" | rev | cut -d- -f1 | rev)
+          echo "value=${FLAVOR}" >> $GITHUB_OUTPUT
+
+      - id: build-samples-matrix
+        env:
+          FLAVOR: ${{ steps.flavor.outputs.value }}
+        run: |
+          if [ ! -f .github/workflows/samples-matrix-part.json ]; then
+            echo '{ "flavor": [ { "id": "${FLAVOR}", "experimental": false } ] }' > .github/workflows/samples-matrix-part.json
+          fi
+          wget https://raw.githubusercontent.com/metanorma/ci/main/.github/workflows/ruby-matrix.json
+          echo "matrix=$(jq -s add ruby-matrix.json .github/workflows/samples-matrix-part.json | tr '\n' ' ')" >> $GITHUB_OUTPUT
+
+      - id: build-templates-matrix
+        env:
+          FLAVOR: ${{ steps.flavor.outputs.value }}
+        run: |
+          wget https://raw.githubusercontent.com/metanorma/mn-templates-${FLAVOR}/master/.github/workflows/matrix.json -O templates-matrix.json
+          echo "matrix=$(jq -s add ruby-matrix.json templates-matrix.json | tr '\n' ' ')" >> $GITHUB_OUTPUT
+
+  test-templates:
+    name: Test templates-${{ matrix.flavor.type }} ${{ matrix.ruby.version }}-${{ matrix.os }}
+    runs-on: ${{ matrix.os }}
+    needs: build-matrices
+
+    concurrency:
+      group: 'template-${{ matrix.type }}-${{ matrix.doctype }}-${{ matrix.os }}-${{ matrix.ruby.version }}-${{ github.head_ref || github.ref_name }}'
+      cancel-in-progress: true
+
+    continue-on-error: ${{ matrix.experimental || matrix.ruby.experimental }}
+    strategy:
+      max-parallel: 5
+      fail-fast: false
+      matrix: ${{ fromJson(needs.build-matrices.outputs.templates-matrix) }}
+
+    steps:
+    - uses: actions/checkout@v3
+      with:
+        submodules: true
+
+    - uses: metanorma/ci/gh-rubygems-setup-action@main
+      with:
+        token: ${{ secrets.METANORMA_CI_PAT_TOKEN }}
+
+    - uses: ruby/setup-ruby@v1
+      with:
+        ruby-version: ${{ matrix.ruby.version }}
+        rubygems: ${{ matrix.ruby.rubygems }}
+        bundler-cache: true
+
+    - run: gem install metanorma-cli
+
+    - uses: actions-mn/cli/new@main
+      with:
+        type: ${{ matrix.type }}
+        doctype: ${{ matrix.doctype }}
+        output-path: template
+        template: https://github.com/metanorma/mn-templates-${{ matrix.type }}
+        overwrite: true
+
+    - run: |
+        bundle remove metanorma-${{ matrix.type }} || true
+        bundle add metanorma-${{ matrix.type }} --path ..
+        bundle add sassc
+      working-directory: template
+
+    - uses: actions-mn/site-gen@v1
+      with:
+        source-path: template
+        agree-to-terms: true
+        use-bundler: true
+
+  test-samples:
+    name: Test samples-${{ matrix.flavor.id }} ${{ matrix.ruby.version }}-${{ matrix.os }}
+    runs-on: ${{ matrix.os }}
+    needs: build-matrices
+
+    concurrency:
+      group: 'sample-${{ matrix.ruby.version }}-${{ github.head_ref || github.ref_name }}'
+      cancel-in-progress: true
+
+    continue-on-error: ${{ matrix.flavor.experimental || matrix.ruby.experimental }}
+    strategy:
+      max-parallel: 5
+      fail-fast: false
+      matrix: ${{ fromJson(needs.build-matrices.outputs.samples-matrix) }}
+
+    steps:
+    - uses: actions/checkout@v3
+      with:
+        submodules: true
+
+    - uses: metanorma/ci/gh-rubygems-setup-action@main
+      with:
+        token: ${{ secrets.METANORMA_CI_PAT_TOKEN }}
+
+    - uses: ruby/setup-ruby@v1
+      with:
+        ruby-version: ${{ matrix.ruby.version }}
+        rubygems: ${{ matrix.ruby.rubygems }}
+        bundler-cache: true
+
+    - uses: actions/checkout@v3
+      with:
+        submodules: recursive
+        repository: metanorma/mn-samples-${{ matrix.flavor.id }}
+        token: ${{ secrets.METANORMA_CI_PAT_TOKEN }}
+        path: samples
+        fetch-depth: 1
+
+    - run: |
+        bundle remove metanorma-${{ matrix.flavor.id }} || true
+        bundle add metanorma-${{ matrix.flavor.id }} --path ..
+        bundle add sassc
+      working-directory: samples
+
+    - uses: actions-mn/site-gen@v1
+      with:
+        source-path: samples
+        agree-to-terms: true
+        use-bundler: true
+
   tests-passed:
-    needs: rake
+    needs: [rake, test-samples, test-templates]
     runs-on: ubuntu-latest
     steps:
       - uses: peter-evans/repository-dispatch@v2
