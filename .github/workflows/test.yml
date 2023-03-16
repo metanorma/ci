@@ -163,3 +163,17 @@ jobs:
 
       - run: env
         shell: bash
+
+  test-xml2rfc-action:
+    name: Test xml2rfc-setup-action ${{ matrix.os }}
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, windows-latest, macos-latest]
+    steps:
+      - uses: actions/checkout@v3
+
+      - uses: ./xml2rfc-setup-action
+
+      - run: xml2rfc --version
