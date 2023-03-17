@@ -109,7 +109,7 @@ jobs:
 
     - uses: metanorma/ci/gh-rubygems-setup-action@main
       with:
-        token: ${{ secrets.METANORMA_CI_PAT_TOKEN }}
+        token: ${{ secrets.pat_token }}
 
     - uses: ruby/setup-ruby@v1
       with:
@@ -161,7 +161,7 @@ jobs:
 
     - uses: metanorma/ci/gh-rubygems-setup-action@main
       with:
-        token: ${{ secrets.METANORMA_CI_PAT_TOKEN }}
+        token: ${{ secrets.pat_token }}
 
     - uses: ruby/setup-ruby@v1
       with:
@@ -173,7 +173,7 @@ jobs:
       with:
         submodules: recursive
         repository: metanorma/mn-samples-${{ matrix.flavor.id }}
-        token: ${{ secrets.METANORMA_CI_PAT_TOKEN }}
+        token: ${{ secrets.pat_token }}
         path: samples
         fetch-depth: 1
 
