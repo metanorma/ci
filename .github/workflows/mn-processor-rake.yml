@@ -64,7 +64,7 @@ jobs:
         run: |
           if [ ! -f .github/workflows/samples-matrix-part.json ]; then
             if curl -I "https://github.com/metanorma/mn-samples-${FLAVOR}"; then
-              echo '{ "flavor": [ { "id": "${FLAVOR}", "experimental": false } ] }' > .github/workflows/samples-matrix-part.json
+              echo "{ \"flavor\": [ { \"id\": \"${FLAVOR}\", \"experimental\": false } ] }" > .github/workflows/samples-matrix-part.json
             else
               echo "No https://github.com/metanorma/mn-samples-${FLAVOR} found!"
               echo "Commit .github/workflows/samples-matrix-part.json with samples repositories to test"
@@ -88,7 +88,7 @@ jobs:
           echo "matrix=${MATRIX}" >> $GITHUB_OUTPUT
 
   test-templates:
-    name: Test templates-${{ matrix.flavor.type }} ${{ matrix.ruby.version }}-${{ matrix.os }}
+    name: Test templates ${{ matrix.ruby.version }}-${{ matrix.os }}
     runs-on: ${{ matrix.os }}
     needs: build-matrices
 
@@ -140,7 +140,7 @@ jobs:
         use-bundler: true
 
   test-samples:
-    name: Test samples-${{ matrix.flavor.id }} ${{ matrix.ruby.version }}-${{ matrix.os }}
+    name: Test samples ${{ matrix.ruby.version }}-${{ matrix.os }}
     runs-on: ${{ matrix.os }}
     needs: build-matrices
 
