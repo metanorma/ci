@@ -88,7 +88,7 @@ jobs:
           echo "matrix=${MATRIX}" >> $GITHUB_OUTPUT
 
   test-templates:
-    name: Test templates ${{ matrix.ruby.version }}-${{ matrix.os }}
+    name: Test ${{ matrix.doctype }} template ${{ matrix.ruby.version }}-${{ matrix.os }}
     runs-on: ${{ matrix.os }}
     needs: build-matrices
 
