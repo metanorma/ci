@@ -893,6 +893,14 @@ repositories:
     files:
       .hound.yml: gh-actions/master/.hound.yml
       .rubocop.yml: gh-actions/master/.rubocop.yml
+  oscal-ruby:
+    remote: ssh://git@github.com/metanorma/oscal-ruby
+    branch: main
+    files:
+      .hound.yml: gh-actions/master/.hound.yml
+      .rubocop.yml: gh-actions/master/.rubocop.yml
+      .github/workflows/rake.yml: gh-actions/master/rake.yml
+      .github/workflows/release.yml: gh-actions/master/release.yml
   metanorma-plugin-lutaml:
     remote: ssh://git@github.com/metanorma/metanorma-plugin-lutaml
     branch: main
