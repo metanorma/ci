@@ -73,6 +73,8 @@ jobs:
             fi
           fi
           wget https://raw.githubusercontent.com/metanorma/ci/main/.github/workflows/ruby-matrix.json
+          # remove 'middle' & 'experimental' versions
+          echo "$(jq 'del(.ruby[1, 3])' ruby-matrix.json)" > ruby-matrix.json
           echo "matrix=$(jq -s add ruby-matrix.json .github/workflows/samples-matrix-part.json | tr '\n' ' ')" >> $GITHUB_OUTPUT
 
       - id: build-templates-matrix
