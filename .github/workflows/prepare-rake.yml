@@ -54,10 +54,10 @@ jobs:
 
       - id: matrix
         run: |
-          value="$(curl -L https://raw.githubusercontent.com/metanorma/ci/main/.github/workflows/ruby-matrix.json)"
+          value="$(curl -L -k https://raw.githubusercontent.com/metanorma/ci/main/.github/workflows/ruby-matrix.json)"
           echo "value=$(echo ${value} | tr '\n' ' ')" >> $GITHUB_OUTPUT
 
       - id: config
         run: |
-          value="$(curl -L https://raw.githubusercontent.com/metanorma/ci/main/.github/workflows/config.json | jq .ruby.version -r)"
+          value="$(curl -L -k https://raw.githubusercontent.com/metanorma/ci/main/.github/workflows/config.json | jq .ruby.version -r)"
           echo "default_ruby_version=${value}" >> $GITHUB_OUTPUT
