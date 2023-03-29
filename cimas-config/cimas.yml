@@ -12,7 +12,6 @@ repositories:
     files:
       .hound.yml: gh-actions/master/.hound.yml
       .rubocop.yml: gh-actions/master/.rubocop.yml
-      .github/workflows/rake.yml: gh-actions/master/rake-notify.yml
       .github/workflows/release.yml: gh-actions/master/release.yml
       templates/base/.github/workflows/docker.yml: gh-actions/samples/docker.yml
       templates/base/.github/workflows/generate.yml: gh-actions/samples/generate.yml
@@ -39,7 +38,7 @@ repositories:
     files:
       .hound.yml: gh-actions/master/.hound.yml
       .rubocop.yml: gh-actions/master/.rubocop.yml
-      .github/workflows/rake.yml: gh-actions/master/rake-notify.yml
+      .github/workflows/rake.yml: gh-actions/master/rake-flavor.yml
       .github/workflows/release.yml: gh-actions/master/release.yml
       .github/workflows/automerge.yml: gh-actions/master/automerge.yml
   metanorma-m3aawg:
@@ -48,7 +47,7 @@ repositories:
     files:
       .hound.yml: gh-actions/master/.hound.yml
       .rubocop.yml: gh-actions/master/.rubocop.yml
-      .github/workflows/rake.yml: gh-actions/master/rake-notify.yml
+      .github/workflows/rake.yml: gh-actions/master/rake-flavor.yml
       .github/workflows/release.yml: gh-actions/master/release.yml
       .github/workflows/automerge.yml: gh-actions/master/automerge.yml
   metanorma-cc:
@@ -57,7 +56,7 @@ repositories:
     files:
       .hound.yml: gh-actions/master/.hound.yml
       .rubocop.yml: gh-actions/master/.rubocop.yml
-      .github/workflows/rake.yml: gh-actions/master/rake-notify.yml
+      .github/workflows/rake.yml: gh-actions/master/rake-flavor.yml
       .github/workflows/release.yml: gh-actions/master/release.yml
       .github/workflows/automerge.yml: gh-actions/master/automerge.yml
   metanorma-vg:
@@ -66,7 +65,7 @@ repositories:
     files:
       .hound.yml: gh-actions/master/.hound.yml
       .rubocop.yml: gh-actions/master/.rubocop.yml
-      .github/workflows/rake.yml: gh-actions/master/rake-notify.yml
+      .github/workflows/rake.yml: gh-actions/master/rake-flavor.yml
       .github/workflows/release.yml: gh-actions/master/release.yml
       .github/workflows/automerge.yml: gh-actions/master/automerge.yml
   metanorma-ribose:
@@ -75,7 +74,7 @@ repositories:
     files:
       .hound.yml: gh-actions/master/.hound.yml
       .rubocop.yml: gh-actions/master/.rubocop.yml
-      .github/workflows/rake.yml: gh-actions/master/rake-notify.yml
+      .github/workflows/rake.yml: gh-actions/master/rake-flavor.yml
       .github/workflows/release.yml: gh-actions/master/release.yml
       .github/workflows/automerge.yml: gh-actions/master/automerge.yml
   metanorma-iho:
@@ -84,7 +83,7 @@ repositories:
     files:
       .hound.yml: gh-actions/master/.hound.yml
       .rubocop.yml: gh-actions/master/.rubocop.yml
-      .github/workflows/rake.yml: gh-actions/master/rake.yml
+      .github/workflows/rake.yml: gh-actions/master/rake-flavor.yml
       .github/workflows/release.yml: gh-actions/master/release.yml
       .github/workflows/automerge.yml: gh-actions/master/automerge.yml
   metanorma-ieee:
@@ -93,7 +92,7 @@ repositories:
     files:
       .hound.yml: gh-actions/master/.hound.yml
       .rubocop.yml: gh-actions/master/.rubocop.yml
-      .github/workflows/rake.yml: gh-actions/master/rake-notify.yml
+      .github/workflows/rake.yml: gh-actions/master/rake-flavor.yml
       .github/workflows/release.yml: gh-actions/master/release.yml
       .github/workflows/automerge.yml: gh-actions/master/automerge.yml
   metanorma-gb:
@@ -102,7 +101,7 @@ repositories:
     files:
       .hound.yml: gh-actions/master/.hound.yml
       .rubocop.yml: gh-actions/master/.rubocop.yml
-      .github/workflows/rake.yml: gh-actions/master/rake-notify.yml
+      .github/workflows/rake.yml: gh-actions/master/rake-flavor.yml
       .github/workflows/release.yml: gh-actions/master/release.yml
       .github/workflows/automerge.yml: gh-actions/master/automerge.yml
   metanorma-nist:
@@ -111,7 +110,7 @@ repositories:
     files:
       .hound.yml: gh-actions/master/.hound.yml
       .rubocop.yml: gh-actions/master/.rubocop.yml
-      .github/workflows/rake.yml: gh-actions/master/rake-notify.yml
+      .github/workflows/rake.yml: gh-actions/master/rake-flavor.yml
       .github/workflows/release_github_packages.yml: gh-actions/master/release_github_packages.yml
       .github/workflows/automerge.yml: gh-actions/master/automerge.yml
   metanorma-iec:
@@ -120,7 +119,7 @@ repositories:
     files:
       .hound.yml: gh-actions/master/.hound.yml
       .rubocop.yml: gh-actions/master/.rubocop.yml
-      .github/workflows/rake.yml: gh-actions/master/rake-notify.yml
+      .github/workflows/rake.yml: gh-actions/master/rake-flavor.yml
       .github/workflows/release.yml: gh-actions/master/release.yml
       .github/workflows/automerge.yml: gh-actions/master/automerge.yml
   metanorma-ietf:
@@ -138,7 +137,7 @@ repositories:
     files:
       .hound.yml: gh-actions/master/.hound.yml
       .rubocop.yml: gh-actions/master/.rubocop.yml
-      .github/workflows/rake.yml: gh-actions/master/rake.yml
+      .github/workflows/rake.yml: gh-actions/master/rake-flavor.yml
       .github/workflows/release.yml: gh-actions/master/release.yml
       .github/workflows/automerge.yml: gh-actions/master/automerge.yml
   metanorma-iso:
@@ -147,7 +146,7 @@ repositories:
     files:
       .hound.yml: gh-actions/master/.hound.yml
       .rubocop.yml: gh-actions/master/.rubocop.yml
-      .github/workflows/rake.yml: gh-actions/master/rake.yml
+      .github/workflows/rake.yml: gh-actions/master/rake-flavor.yml
       .github/workflows/release.yml: gh-actions/master/release.yml
       .github/workflows/automerge.yml: gh-actions/master/automerge.yml
   metanorma-un:
@@ -156,7 +155,7 @@ repositories:
     files:
       .hound.yml: gh-actions/master/.hound.yml
       .rubocop.yml: gh-actions/master/.rubocop.yml
-      .github/workflows/rake.yml: gh-actions/master/rake-notify.yml
+      .github/workflows/rake.yml: gh-actions/master/rake-flavor.yml
       .github/workflows/release.yml: gh-actions/master/release.yml
       .github/workflows/automerge.yml: gh-actions/master/automerge.yml
   metanorma-itu:
@@ -165,7 +164,7 @@ repositories:
     files:
       .hound.yml: gh-actions/master/.hound.yml
       .rubocop.yml: gh-actions/master/.rubocop.yml
-      .github/workflows/rake.yml: gh-actions/master/rake-notify.yml
+      .github/workflows/rake.yml: gh-actions/master/rake-flavor.yml
       .github/workflows/release.yml: gh-actions/master/release.yml
       .github/workflows/automerge.yml: gh-actions/master/automerge.yml
   metanorma-generic:
@@ -174,7 +173,7 @@ repositories:
     files:
       .hound.yml: gh-actions/master/.hound.yml
       .rubocop.yml: gh-actions/master/.rubocop.yml
-      .github/workflows/rake.yml: gh-actions/master/rake-notify.yml
+      .github/workflows/rake.yml: gh-actions/master/rake-flavor.yml
       .github/workflows/release.yml: gh-actions/master/release.yml
       .github/workflows/automerge.yml: gh-actions/master/automerge.yml
   metanorma-csa:
@@ -183,7 +182,7 @@ repositories:
     files:
       .hound.yml: gh-actions/master/.hound.yml
       .rubocop.yml: gh-actions/master/.rubocop.yml
-      .github/workflows/rake.yml: gh-actions/master/rake-notify.yml
+      .github/workflows/rake.yml: gh-actions/master/rake-flavor.yml
       .github/workflows/release.yml: gh-actions/master/release.yml
       .github/workflows/automerge.yml: gh-actions/master/automerge.yml
   metanorma-bipm:
@@ -192,7 +191,7 @@ repositories:
     files:
       .hound.yml: gh-actions/master/.hound.yml
       .rubocop.yml: gh-actions/master/.rubocop.yml
-      .github/workflows/rake.yml: gh-actions/master/rake-notify.yml
+      .github/workflows/rake.yml: gh-actions/master/rake-flavor.yml
       .github/workflows/release.yml: gh-actions/master/release.yml
       .github/workflows/automerge.yml: gh-actions/master/automerge.yml
   metanorma-bsi:
@@ -201,7 +200,7 @@ repositories:
     files:
       .hound.yml: gh-actions/master/.hound.yml
       .rubocop.yml: gh-actions/master/.rubocop.yml
-      .github/workflows/rake.yml: gh-actions/master/rake-notify.yml
+      .github/workflows/rake.yml: gh-actions/master/rake-flavor.yml
       .github/workflows/release_github_packages.yml: gh-actions/master/release_github_packages.yml
       .github/workflows/automerge.yml: gh-actions/master/automerge.yml
   metanorma-jis:
@@ -210,7 +209,7 @@ repositories:
     files:
       .hound.yml: gh-actions/master/.hound.yml
       .rubocop.yml: gh-actions/master/.rubocop.yml
-      .github/workflows/rake.yml: gh-actions/master/rake-notify.yml
+      .github/workflows/rake.yml: gh-actions/master/rake-flavor.yml
       .github/workflows/release.yml: gh-actions/master/release.yml
       .github/workflows/automerge.yml: gh-actions/master/automerge.yml
   # models

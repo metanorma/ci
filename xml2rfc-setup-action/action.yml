@@ -1,0 +1,47 @@
+name: 'xml2rfc-setup-action'
+description: 'composite action which installs xml2rfc for all OSes'
+runs:
+  using: "composite"
+  steps:
+  - uses: actions/setup-python@v4
+    with:
+      python-version: '3.10'
+
+  - name: set PIP_DOWNLOAD_CACHE
+    shell: python
+    run: |
+      import os
+      import platform
+      from os.path import expanduser
+
+      home = expanduser("~")
+      cache_path = {
+        "Linux": f"{home}/.cache/pip",
+        "Darwin": f"{home}Library/Caches/pip",
+        "Windows": f"{home}\\AppData\\Local\\pip\\Cache"
+      }[platform.system()]
+
+      os.system(f"echo PIP_DOWNLOAD_CACHE={cache_path} >> {os.environ['GITHUB_ENV']}")
+
+  - uses: actions/cache@v3
+    with:
+      path: ${{ env.PIP_DOWNLOAD_CACHE }}
+      key: ${{ runner.os }}-pip-${{ hashFiles('**/requirements.txt') }}
+      restore-keys: ${{ runner.os }}-pip-
+
+  - uses: actions/cache@v3
+    with:
+      path: ~/.cache/xml2rfc
+      key: xml2rfc
+      restore-keys: xml2rfc
+
+  - if: matrix.os == 'macos-latest'
+    run: brew install libmagic
+    shell: bash
+
+  - if: matrix.os == 'windows-latest'
+    run: pip install python-magic-bin
+    shell: bash
+
+  - run: pip install xml2rfc
+    shell: bash
