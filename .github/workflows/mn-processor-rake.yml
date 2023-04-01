@@ -176,6 +176,8 @@ jobs:
       with:
         private-fonts-pat: ${{ secrets.pat_token }}
 
+    - uses: metanorma/ci/inkscape-setup-action@main
+
     - uses: actions/checkout@v3
       with:
         submodules: recursive
