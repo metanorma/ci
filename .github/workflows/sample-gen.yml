@@ -30,16 +30,10 @@ jobs:
 
       - uses: actions-mn/setup@main
 
-      - uses: ruby/setup-ruby@v1
-        with:
-          ruby-version: '3.0'
-
       - if: ${{ inputs.private-fonts == 'true' }}
-        run: |
-          gem install fontist
-          fontist update
-          fontist repo setup metanorma https://metanorma-ci:${{ secrets.pat_token }}@github.com/metanorma/fontist-formulas-private
-          fontist repo update metanorma
+        uses: metanorma/ci/fontist-setup@main
+        with:
+          private-fonts-pat: ${{ secrets.pat_token }}
 
       - run: rm Gemfile
 

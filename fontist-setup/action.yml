@@ -1,0 +1,52 @@
+name: 'fontist-setup-action'
+description: 'composite action which setup metanorma private GitHub packages for rubygems'
+inputs:
+  force-install:
+    description: 'Force install if already installed'
+    required: false
+    default: ''
+  private-fonts-pat:
+    description: 'Setup private formulas with PAT'
+    required: false
+    default: ''
+runs:
+  using: "composite"
+  steps:
+  - id: check
+    run: |
+      if command -v fontist &> /dev/null
+      then
+        echo "fontist-installed=true" >> $GITHUB_OUTPUT
+      else
+        echo "fontist-installed=false" >> $GITHUB_OUTPUT
+      fi
+
+      if command -v ruby &> /dev/null
+      then
+        echo "ruby-installed=true" >> $GITHUB_OUTPUT
+      else
+        echo "ruby-installed=false" >> $GITHUB_OUTPUT
+      fi
+    shell: bash
+
+  - if: ${{ steps.check.outputs.ruby-installed == 'false' || runner.os == 'Windows' }}
+    uses: ruby/setup-ruby@v1
+    with:
+      ruby-version: '3.0'
+
+  - if: ${{ steps.check.outputs.fontist-installed == 'false' || inputs.force-install == 'true' }}
+    run: |
+      uid_line=$(gem env | grep 'USER INSTALLATION DIRECTORY')
+      USER_GEM_INSTALL_PATH="${uid_line#*: }"
+      echo "${USER_GEM_INSTALL_PATH}/bin" >> $GITHUB_PATH
+      gem env
+      echo "USER_GEM_INSTALL_PATH=${USER_GEM_INSTALL_PATH}"
+      gem install --user-install fontist
+    shell: bash
+
+  - if: ${{ inputs.private-fonts-pat != '' }}
+    run: |
+      fontist update
+      fontist repo setup metanorma https://metanorma-ci:${{ inputs.private-fonts-pat }}@github.com/metanorma/fontist-formulas-private
+      fontist repo update metanorma
+    shell: bash

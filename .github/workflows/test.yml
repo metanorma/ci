@@ -5,6 +5,10 @@ on:
     branches: [ master, main ]
   pull_request:
 
+concurrency:
+  group: '${{ github.workflow }}-${{ github.head_ref || github.ref_name }}'
+  cancel-in-progress: true
+
 jobs:
   test-scripts:
     name: Test scripts
@@ -177,3 +181,24 @@ jobs:
       - uses: ./xml2rfc-setup-action
 
       - run: xml2rfc --version
+
+  test-fontist-action:
+    name: Test fontist-setup-action ${{ matrix.os }}
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      max-parallel: 5
+      matrix:
+        os: [ubuntu-latest, windows-latest, macos-latest]
+        force-install: [false, true]
+        private-fonts-pat: [ 'y', 'n' ]
+    steps:
+      - uses: actions/checkout@v3
+
+      - uses: ./fontist-setup
+        with:
+          force-install: ${{ matrix.force-install }}
+          private-fonts-pat: ${{ matrix.private-fonts-pat == 'y' && secrets.METANORMA_CI_PAT_TOKEN || '' }}
+
+      - run: command -v fontist
+        shell: bash

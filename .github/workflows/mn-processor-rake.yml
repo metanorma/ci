@@ -171,6 +171,11 @@ jobs:
         rubygems: ${{ matrix.ruby.rubygems }}
         bundler-cache: true
 
+    - if: ${{ matrix.flavor.id == 'bsi' }}
+      uses: metanorma/ci/fontist-setup@main
+      with:
+        private-fonts-pat: ${{ secrets.pat_token }}
+
     - uses: actions/checkout@v3
       with:
         submodules: recursive
