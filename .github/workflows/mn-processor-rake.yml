@@ -68,7 +68,7 @@ jobs:
             else
               echo "No https://github.com/metanorma/mn-samples-${FLAVOR} found!"
               echo "Commit .github/workflows/samples-matrix-part.json with samples repositories to test"
-              echo "matrix={}" >> $GITHUB_OUTPUT
+              echo "matrix=[]" >> $GITHUB_OUTPUT
               exit 0
             fi
           fi
@@ -84,7 +84,7 @@ jobs:
           if wget https://raw.githubusercontent.com/metanorma/mn-templates-${FLAVOR}/master/.github/workflows/matrix.json -O templates-matrix.json; then
             MATRIX="$(jq -s add ruby-matrix.json templates-matrix.json | tr '\n' ' ')"
           else
-            MATRIX="{}"
+            MATRIX="[]"
           fi
 
           echo "matrix=${MATRIX}" >> $GITHUB_OUTPUT
