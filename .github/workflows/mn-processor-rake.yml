@@ -63,7 +63,7 @@ jobs:
           FLAVOR: ${{ steps.flavor.outputs.value }}
         run: |
           if [ ! -f .github/workflows/samples-matrix-part.json ]; then
-            if curl -I "https://github.com/metanorma/mn-samples-${FLAVOR}"; then
+            if curl --fail --head "https://github.com/metanorma/mn-samples-${FLAVOR}"; then
               echo "{ \"flavor\": [ { \"id\": \"${FLAVOR}\", \"experimental\": false } ] }" > .github/workflows/samples-matrix-part.json
             else
               echo "No https://github.com/metanorma/mn-samples-${FLAVOR} found!"
