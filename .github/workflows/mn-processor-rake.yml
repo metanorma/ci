@@ -94,6 +94,8 @@ jobs:
     runs-on: ${{ matrix.os }}
     needs: build-matrices
 
+    if: ${{ needs.build-matrices.outputs.templates-matrix != '[]' }}
+
     concurrency:
       group: 'template-${{ matrix.doctype }}-${{ matrix.os }}-${{ matrix.ruby.version }}-${{ github.head_ref || github.ref_name }}'
       cancel-in-progress: true
@@ -145,6 +147,8 @@ jobs:
     name: Test samples ${{ matrix.ruby.version }}-${{ matrix.os }}
     runs-on: ${{ matrix.os }}
     needs: build-matrices
+
+    if: ${{ needs.build-matrices.outputs.samples-matrix != '[]' }}
 
     concurrency:
       group: 'sample-${{ matrix.os }}-${{ matrix.ruby.version }}-${{ github.head_ref || github.ref_name }}'
