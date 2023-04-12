@@ -110,7 +110,7 @@ jobs:
     if: ${{ needs.build-matrices.outputs.templates-matrix != '[]' }}
 
     concurrency:
-      group: 'template-${{ matrix.doctype }}-${{ matrix.os }}-${{ matrix.ruby.version }}-${{ github.head_ref || github.ref_name }}'
+      group: 'template-${{ matrix.flavor.id }}-${{ matrix.doctype }}-${{ matrix.os }}-${{ matrix.ruby.version }}-${{ github.head_ref || github.ref_name }}'
       cancel-in-progress: true
 
     continue-on-error: ${{ matrix.experimental || matrix.ruby.experimental }}
@@ -164,7 +164,7 @@ jobs:
     if: ${{ needs.build-matrices.outputs.samples-matrix != '[]' }}
 
     concurrency:
-      group: 'sample-${{ matrix.os }}-${{ matrix.ruby.version }}-${{ github.head_ref || github.ref_name }}'
+      group: 'sample-${{ matrix.flavor.id }}-${{ matrix.os }}-${{ matrix.ruby.version }}-${{ github.head_ref || github.ref_name }}'
       cancel-in-progress: true
 
     continue-on-error: ${{ matrix.ruby.experimental }}
