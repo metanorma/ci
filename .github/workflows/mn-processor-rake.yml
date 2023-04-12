@@ -130,12 +130,6 @@ jobs:
       with:
         token: ${{ secrets.pat_token }}
 
-    - uses: ruby/setup-ruby@v1
-      with:
-        ruby-version: ${{ matrix.ruby.version }}
-        rubygems: ${{ matrix.ruby.rubygems }}
-        bundler-cache: true
-
     - run: gem install metanorma-cli
 
     - uses: actions-mn/cli/new@main
@@ -145,6 +139,13 @@ jobs:
         output-path: template
         template: https://github.com/metanorma/mn-templates-${{ matrix.type }}
         overwrite: true
+
+    - uses: ruby/setup-ruby@v1
+      with:
+        ruby-version: ${{ matrix.ruby.version }}
+        rubygems: ${{ matrix.ruby.rubygems }}
+        bundler-cache: true
+        working-directory: template
 
     - run: |
         bundle remove metanorma-${{ needs.build-matrices.outputs.flavor }} || true
@@ -182,6 +183,14 @@ jobs:
       with:
         submodules: true
 
+    - uses: actions/checkout@v3
+      with:
+        submodules: recursive
+        repository: metanorma/mn-samples-${{ matrix.flavor.id }}
+        token: ${{ secrets.pat_token }}
+        path: samples
+        fetch-depth: 1
+
     - uses: metanorma/ci/gh-rubygems-setup-action@main
       with:
         token: ${{ secrets.pat_token }}
@@ -191,6 +200,13 @@ jobs:
         ruby-version: ${{ matrix.ruby.version }}
         rubygems: ${{ matrix.ruby.rubygems }}
         bundler-cache: true
+        working-directory: samples
+
+    - run: |
+        bundle remove metanorma-${{ needs.build-matrices.outputs.flavor }} || true
+        bundle add metanorma-${{ needs.build-matrices.outputs.flavor }} --path ..
+        bundle add sassc
+      working-directory: samples
 
     - if: ${{ matrix.flavor.id == 'bsi' }}
       uses: metanorma/ci/fontist-setup@main
@@ -198,20 +214,6 @@ jobs:
         private-fonts-pat: ${{ secrets.pat_token }}
 
     - uses: metanorma/ci/inkscape-setup-action@main
-
-    - uses: actions/checkout@v3
-      with:
-        submodules: recursive
-        repository: metanorma/mn-samples-${{ matrix.flavor.id }}
-        token: ${{ secrets.pat_token }}
-        path: samples
-        fetch-depth: 1
-
-    - run: |
-        bundle remove metanorma-${{ needs.build-matrices.outputs.flavor }} || true
-        bundle add metanorma-${{ needs.build-matrices.outputs.flavor }} --path ..
-        bundle add sassc
-      working-directory: samples
 
     - uses: actions-mn/site-gen@v1
       with:
