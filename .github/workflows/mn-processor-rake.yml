@@ -86,7 +86,7 @@ jobs:
           wget https://raw.githubusercontent.com/metanorma/ci/main/.github/workflows/ruby-matrix.json
           # remove 'middle' & 'experimental' versions
           echo "$(jq 'del(.ruby[1, 2])' ruby-matrix.json)" > ruby-matrix.json
-          echo "matrix=$(jq -s add ruby-matrix.json ${{ inputs.samples-matrix-json-file }} | tr '\n' ' ')" >> $GITHUB_OUTPUT
+          echo "matrix=$(jq -s add ${{ inputs.samples-matrix-json-file }} ruby-matrix.json | tr '\n' ' ')" >> $GITHUB_OUTPUT
 
       - id: build-templates-matrix
         env:
@@ -100,7 +100,7 @@ jobs:
               exit 0
             fi
           fi
-          echo "matrix=$(jq -s add ruby-matrix.json ${{ inputs.templates-matrix-json-file }} | tr '\n' ' ')" >> $GITHUB_OUTPUT
+          echo "matrix=$(jq -s add ${{ inputs.templates-matrix-json-file }} ruby-matrix.json | tr '\n' ' ')" >> $GITHUB_OUTPUT
 
   test-templates:
     name: Test ${{ matrix.doctype }} template ${{ matrix.ruby.version }}-${{ matrix.os }}
@@ -134,7 +134,8 @@ jobs:
         rubygems: ${{ matrix.ruby.rubygems }}
         bundler-cache: true
 
-    - run: gem install metanorma-cli
+    - if: needs.build-matrices.outputs.flavor != 'cli'
+      run: gem install metanorma-cli
 
     - uses: actions-mn/cli/new@main
       with:
