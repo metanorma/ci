@@ -145,8 +145,8 @@ jobs:
         overwrite: true
 
     - run: |
-        bundle remove metanorma-${{ matrix.type }} || true
-        bundle add metanorma-${{ matrix.type }} --path ..
+        bundle remove metanorma-${{ needs.build-matrices.outputs.flavor }} || true
+        bundle add metanorma-${{ needs.build-matrices.outputs.flavor }} --path ..
         bundle add sassc
       working-directory: template
 
@@ -204,8 +204,8 @@ jobs:
         fetch-depth: 1
 
     - run: |
-        bundle remove metanorma-${{ matrix.flavor.id }} || true
-        bundle add metanorma-${{ matrix.flavor.id }} --path ..
+        bundle remove metanorma-${{ needs.build-matrices.outputs.flavor }} || true
+        bundle add metanorma-${{ needs.build-matrices.outputs.flavor }} --path ..
         bundle add sassc
       working-directory: samples
 
