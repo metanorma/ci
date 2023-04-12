@@ -2,6 +2,17 @@ name: rake
 
 on:
   workflow_call:
+    inputs:
+      samples-matrix-json-file:
+        description: 'Samples testing matrix JSON file'
+        default: '.github/workflows/samples-matrix-part.json'
+        required: false
+        type: string
+      templates-matrix-json-file:
+        description: 'Templates testing matrix JSON file'
+        default: '.github/workflows/templates-matrix-part.json'
+        required: false
+        type: string
     secrets:
       pat_token:
         required: true
@@ -62,32 +73,34 @@ jobs:
         env:
           FLAVOR: ${{ steps.flavor.outputs.value }}
         run: |
-          if [ ! -f .github/workflows/samples-matrix-part.json ]; then
+          if [ ! -f ${{ inputs.samples-matrix-json-file }} ]; then
             if curl --fail --head "https://github.com/metanorma/mn-samples-${FLAVOR}"; then
-              echo "{ \"flavor\": [ { \"id\": \"${FLAVOR}\", \"experimental\": false } ] }" > .github/workflows/samples-matrix-part.json
+              echo "{ \"flavor\": [ { \"id\": \"${FLAVOR}\", \"experimental\": false } ] }" > ${{ inputs.samples-matrix-json-file }}
             else
-              echo "No https://github.com/metanorma/mn-samples-${FLAVOR} found!"
-              echo "Commit .github/workflows/samples-matrix-part.json with samples repositories to test"
+              echo "No ${{ inputs.samples-matrix-json-file }} or https://github.com/metanorma/mn-samples-${FLAVOR} found!"
+              echo "Commit ${{ inputs.samples-matrix-json-file }} or pass custom file in samples-matrix-json-file"
               echo "matrix=[]" >> $GITHUB_OUTPUT
               exit 0
             fi
           fi
           wget https://raw.githubusercontent.com/metanorma/ci/main/.github/workflows/ruby-matrix.json
           # remove 'middle' & 'experimental' versions
-          echo "$(jq 'del(.ruby[1, 3])' ruby-matrix.json)" > ruby-matrix.json
-          echo "matrix=$(jq -s add ruby-matrix.json .github/workflows/samples-matrix-part.json | tr '\n' ' ')" >> $GITHUB_OUTPUT
+          echo "$(jq 'del(.ruby[1, 2])' ruby-matrix.json)" > ruby-matrix.json
+          echo "matrix=$(jq -s add ruby-matrix.json ${{ inputs.samples-matrix-json-file }} | tr '\n' ' ')" >> $GITHUB_OUTPUT
 
       - id: build-templates-matrix
         env:
           FLAVOR: ${{ steps.flavor.outputs.value }}
         run: |
-          if wget https://raw.githubusercontent.com/metanorma/mn-templates-${FLAVOR}/master/.github/workflows/matrix.json -O templates-matrix.json; then
-            MATRIX="$(jq -s add ruby-matrix.json templates-matrix.json | tr '\n' ' ')"
-          else
-            MATRIX="[]"
+          if [ ! -f ${{ inputs.templates-matrix-json-file }} ]; then
+            if ! wget https://raw.githubusercontent.com/metanorma/mn-templates-${FLAVOR}/master/.github/workflows/matrix.json -O ${{ inputs.templates-matrix-json-file }}; then
+              echo "No ${{ inputs.templates-matrix-json-file }} or https://github.com/metanorma/mn-templates-${FLAVOR} found!"
+              echo "Commit ${{ inputs.templates-matrix-json-file }} or pass custom file in templates-matrix-json-file"
+              echo "matrix=[]" >> $GITHUB_OUTPUT
+              exit 0
+            fi
           fi
-
-          echo "matrix=${MATRIX}" >> $GITHUB_OUTPUT
+          echo "matrix=$(jq -s add ruby-matrix.json ${{ inputs.templates-matrix-json-file }} | tr '\n' ' ')" >> $GITHUB_OUTPUT
 
   test-templates:
     name: Test ${{ matrix.doctype }} template ${{ matrix.ruby.version }}-${{ matrix.os }}
