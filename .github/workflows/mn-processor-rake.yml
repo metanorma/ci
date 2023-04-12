@@ -105,7 +105,9 @@ jobs:
   test-templates:
     name: Test template ${{ matrix.type }}-${{ matrix.doctype }}-${{ matrix.ruby.version }}-${{ matrix.os }}
     runs-on: ${{ matrix.os }}
-    needs: build-matrices
+    needs:
+    - rake
+    - build-matrices
 
     if: ${{ needs.build-matrices.outputs.templates-matrix != '[]' }}
 
@@ -159,7 +161,9 @@ jobs:
   test-samples:
     name: Test sample ${{ matrix.flavor.id }}-${{ matrix.ruby.version }}-${{ matrix.os }}
     runs-on: ${{ matrix.os }}
-    needs: build-matrices
+    needs:
+    - rake
+    - build-matrices
 
     if: ${{ needs.build-matrices.outputs.samples-matrix != '[]' }}
 
