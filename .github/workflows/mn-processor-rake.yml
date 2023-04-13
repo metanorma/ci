@@ -136,14 +136,7 @@ jobs:
         rubygems: ${{ matrix.ruby.rubygems }}
         bundler-cache: true
 
-    - run: |
-        if [ "${{ needs.build-matrices.outputs.flavor }}" = "cli" ]
-        then
-          echo "${{ github.workspace }}/exe" >> $GITHUB_PATH
-        else
-          gem install metanorma-cli
-        fi
-      shell: bash
+    - run: gem install metanorma-cli
 
     - uses: actions-mn/cli/new@main
       with:
