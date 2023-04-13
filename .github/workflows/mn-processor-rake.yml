@@ -130,7 +130,21 @@ jobs:
       with:
         token: ${{ secrets.pat_token }}
 
-    - run: gem install metanorma-cli
+    - uses: ruby/setup-ruby@v1
+      with:
+        ruby-version: ${{ matrix.ruby.version }}
+        rubygems: ${{ matrix.ruby.rubygems }}
+        bundler-cache: true
+        working-directory: template
+
+    - run: |
+        if [ "${{ needs.build-matrices.outputs.flavor }}" = "cli" ]
+        then
+          echo "${{ github.workspace }}/exe" >> $GITHUB_PATH
+        else
+          gem install metanorma-cli
+        fi
+      shell: bash
 
     - uses: actions-mn/cli/new@main
       with:
@@ -139,13 +153,6 @@ jobs:
         output-path: template
         template: https://github.com/metanorma/mn-templates-${{ matrix.type }}
         overwrite: true
-
-    - uses: ruby/setup-ruby@v1
-      with:
-        ruby-version: ${{ matrix.ruby.version }}
-        rubygems: ${{ matrix.ruby.rubygems }}
-        bundler-cache: true
-        working-directory: template
 
     - run: |
         bundle remove metanorma-${{ needs.build-matrices.outputs.flavor }} || true
@@ -174,7 +181,7 @@ jobs:
 
     continue-on-error: ${{ matrix.ruby.experimental }}
     strategy:
-      max-parallel: 5
+      max-parallel: 10
       fail-fast: false
       matrix: ${{ fromJson(needs.build-matrices.outputs.samples-matrix) }}
 
