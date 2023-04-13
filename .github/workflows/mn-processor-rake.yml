@@ -135,7 +135,6 @@ jobs:
         ruby-version: ${{ matrix.ruby.version }}
         rubygems: ${{ matrix.ruby.rubygems }}
         bundler-cache: true
-        working-directory: template
 
     - run: |
         if [ "${{ needs.build-matrices.outputs.flavor }}" = "cli" ]
