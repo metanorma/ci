@@ -49,10 +49,10 @@ jobs:
           git config user.name github-actions
           git config user.email github-actions@github.com
 
-      - if: github.event_name == 'repository_dispatch' || (github.event_name == 'workflow_dispatch' && inputs.next_version != 'skip')
-        run: |
-          gem install gem-release
-          gem bump --version ${{ inputs.next_version }} --tag --push
+      - run: gem install gem-release
+
+      - if: github.event_name == 'workflow_dispatch' && inputs.next_version != 'skip'
+        run: gem bump --version ${{ inputs.next_version }} --tag --push
 
       - name: publish to GitHub Packages
         env:
