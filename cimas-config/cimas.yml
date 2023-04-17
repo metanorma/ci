@@ -436,6 +436,14 @@ repositories:
       .rubocop.yml: gh-actions/master/.rubocop.yml
       .github/workflows/rake.yml: gh-actions/master/rake.yml
       .github/workflows/release.yml: gh-actions/master/release.yml
+  pubid-nist:
+    remote: ssh://git@github.com/metanorma/pubid-nist
+    branch: main
+    files:
+      .hound.yml: gh-actions/master/.hound.yml
+      .rubocop.yml: gh-actions/master/.rubocop.yml
+      .github/workflows/rake.yml: gh-actions/master/rake.yml
+      .github/workflows/release.yml: gh-actions/master/release.yml
   # samples
   ogc-wfs:
     remote: ssh://git@github.com/metanorma/ogc-wfs
