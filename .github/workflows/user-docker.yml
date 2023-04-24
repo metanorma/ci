@@ -2,6 +2,11 @@ name: generate
 
 on:
   workflow_call:
+    inputs:
+      deploy:
+        default: true
+        required: false
+        type: boolean
 
 permissions:
   contents: read
@@ -30,7 +35,7 @@ jobs:
           agree-to-terms: true
 
   deploy:
-    if: ${{ github.ref == 'refs/heads/main' }}
+    if: ${{ github.ref == 'refs/heads/main' && inputs.deploy }}
     environment:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}
