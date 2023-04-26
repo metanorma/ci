@@ -86,7 +86,7 @@ begin
   repos = []
 
   options.organization.split(',').each do |org|
-  	page = 1
+    page = 1
     loop do 
       uri = URI("https://api.github.com/orgs/#{org}/repos?page=#{page}&per_page=100")
       response = Net::HTTP.get(uri)
@@ -101,7 +101,7 @@ begin
         repo_name = repo['name'].to_s
         next if existing_manifest["repositories"].key?(repo_name)
 
-        if existing_manifest["groups"]["ignore"].include?(repo_name)
+        if (existing_manifest.dig("groups", "ignore") || []).include?(repo_name)
           warn "Skip #{repo_name} because it's in ignore group" if options.verbose
           next
         elsif repo['fork'] && !options.include_forks
@@ -126,8 +126,8 @@ begin
         end
 
         groups.each do |g|
-          if manifest["groups"][g]
-            manifest["groups"][g] << repo_name
+          if manifest.dig("groups", g)
+            manifest.dig("groups", g) << repo_name
           else
             manifest["groups"][g] = [repo_name]
           end
