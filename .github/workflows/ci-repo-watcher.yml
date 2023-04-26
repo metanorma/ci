@@ -1,4 +1,4 @@
-name: ubuntu
+name: ci-repo-watcher
 
 on:
   schedule:
