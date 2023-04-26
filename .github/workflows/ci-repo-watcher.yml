@@ -17,12 +17,19 @@ jobs:
         ruby-version: 2.7
         bundler-cache: true
 
-    - id: cimas-diff
+    - name: Check for new repos
+      id: cimas-diff
       run: |
         mkdir -p bin
         wget https://raw.githubusercontent.com/metanorma/ci/main/bin/gh-repo-manifest -O bin/gh-repo-manifest
-        ruby bin/gh-repo-manifest -o ${{ github.repository_owner }} -m cimas-config/cimas.yml > cimas-diff.yml
-        echo "YAML_DIFF=$(cat cimas-diff.yml)" >> $GITHUB_ENV
+        ruby bin/gh-repo-manifest -o ${{ github.repository_owner }} -m cimas-config/cimas.yml | yq e '.repositories | keys' - > new-repos.yaml
+        echo "YAML_DIFF=$(cat new-repos.yaml)" >> $GITHUB_ENV
+
+        if [ ! -f .github/templates/new-repos.md ]
+        then
+          mkdir -p .github/templates
+          wget https://raw.githubusercontent.com/metanorma/ci/main/bin/gh-repo-manifest -O .github/templates/new-repos.md
+        fi
 
     - if: ${{ env.YAML_DIFF != '' }}
       uses: JasonEtco/create-an-issue@v2
