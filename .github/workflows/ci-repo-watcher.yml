@@ -6,7 +6,7 @@ on:
   workflow_dispatch:
   workflow_call:
     secrets:
-      GITHUB_TOKEN:
+      token:
         required: true
 
 jobs:
@@ -48,7 +48,7 @@ jobs:
     - if: ${{ env.NEW_REPOSITORIES != '' }}
       uses: JasonEtco/create-an-issue@v2
       env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN || secrets.token }}
       with:
         assignees: CAMOBAP
         update_existing: true
