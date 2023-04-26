@@ -10,6 +10,7 @@ options.organization = 'metanorma'
 options.include_forks = false
 options.include_archived = false
 options.manifest_file = nil
+options.verbose = false
 
 OptionParser.new do |opts|
   opts.banner = "Usage: gh-repo-manifest [options]"
@@ -30,6 +31,10 @@ OptionParser.new do |opts|
     options.manifest_file = manifest_file
   end
 
+  opts.on("-v", "--verbose", "Enable verbose logging") do |verbose|
+    options.verbose = verbose
+  end
+
   opts.on("-h", "--help", "Prints this help") do
     puts opts
     exit
@@ -45,10 +50,16 @@ manifest = {
   groups: {},
 }.transform_keys(&:to_s)
 
-existing_manifest = nil
-if options.manifest_file && File.exists?(options.manifest_file)
-  existing_manifest = YAML.load_file(options.manifest_file)
-end
+existing_manifest = if File.exists?(options.manifest_file)
+                      YAML.load_file(options.manifest_file)
+                    else
+                      {
+                        "repositories": [],
+                        "groups": {
+                          "ignore": []
+                        }
+                      }
+                    end
 
 groups_matchers = {
   'processor': /^metanorma-\w*$/,
@@ -88,21 +99,24 @@ begin
 
       result_set.each do |repo|
         repo_name = repo['name'].to_s
-        next if existing_manifest && existing_manifest["repositories"].key?(repo_name)
+        next if existing_manifest["repositories"].key?(repo_name)
 
-        if repo['fork'] && !options.include_forks
-          puts "Skip #{repo_name} because it's a fork repo"
+        if existing_manifest["groups"]["ignore"].include?(repo_name)
+          warn "Skip #{repo_name} because it's in ignore group" if options.verbose
+          next
+        elsif repo['fork'] && !options.include_forks
+          warn "Skip #{repo_name} because it's a fork repo" if options.verbose
           next
         elsif repo['archived'] && !options.include_archived
-          puts "Skip #{repo_name} because this repo is archived"
+          warn "Skip #{repo_name} because this repo is archived" if options.verbose
           next
         elsif repo['size'] == 0
-          puts "Skip #{repo_name} because it's empty"
+          warn "Skip #{repo_name} because it's empty" if options.verbose
           next
         end
 
         project = {
-          remote: "ssh://git@github.com/relaton/#{repo_name}",
+          remote: "ssh://git@github.com/#{org}/#{repo_name}",
           branch: repo["default_branch"],
         }.transform_keys(&:to_s)
 
@@ -132,4 +146,4 @@ end
 
 manifest["groups"].transform_keys!(&:to_s)
 
-puts YAML.dump(manifest.transform_keys(&:to_s))
+puts YAML.dump(manifest.transform_keys(&:to_s)) if manifest["repositories"].size > 0
