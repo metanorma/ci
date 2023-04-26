@@ -4,6 +4,7 @@ on:
   schedule:
   - cron: "0 0 * * *" # once a day https://crontab.guru/#0_0_*_*
   workflow_dispatch:
+  workflow_call:
 
 jobs:
   watcher:
@@ -18,6 +19,7 @@ jobs:
 
     - id: cimas-diff
       run: |
+        wget https://raw.githubusercontent.com/metanorma/ci/main/bin/gh-repo-manifest -O bin/gh-repo-manifest
         ruby bin/gh-repo-manifest -o ${{ github.repository_owner }} -m cimas-config/cimas.yml > cimas-diff.yml
         echo "YAML_DIFF=$(cat cimas-diff.yml)" >> $GITHUB_ENV
 
