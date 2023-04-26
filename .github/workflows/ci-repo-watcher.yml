@@ -1,0 +1,32 @@
+name: ubuntu
+
+on:
+  schedule:
+  - cron: "0 0 * * *" # once a day https://crontab.guru/#0_0_*_*
+  workflow_dispatch:
+
+jobs:
+  watcher:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v3
+
+    - uses: ruby/setup-ruby@v1
+      with:
+        ruby-version: 2.7
+        bundler-cache: true
+
+    - id: cimas-diff
+      run: |
+        ruby bin/gh-repo-manifest -o ${{ github.repository_owner }} -m cimas-config/cimas.yml > cimas-diff.yml
+        echo "YAML_DIFF=$(cat cimas-diff.yml)" >> $GITHUB_ENV
+
+    - if: ${{ env.YAML_DIFF != '' }}
+      uses: JasonEtco/create-an-issue@v2
+      env:
+        GITHUB_TOKEN: ${{ secrets.METANORMA_CI_PAT_TOKEN }}
+      with:
+        assignees: CAMOBAP
+        update_existing: true
+        search_existing: all
+        filename: .github/templates/new-repos.md

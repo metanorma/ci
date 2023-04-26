@@ -212,6 +212,80 @@ repositories:
       .github/workflows/rake.yml: gh-actions/master/rake-flavor.yml
       .github/workflows/release.yml: gh-actions/master/release.yml
       .github/workflows/automerge.yml: gh-actions/master/automerge.yml
+  metanorma-document:
+    remote: ssh://git@github.com/metanorma/metanorma-document
+    branch: main
+    files:
+      .hound.yml: gh-actions/master/.hound.yml
+      .rubocop.yml: gh-actions/master/.rubocop.yml
+      .github/workflows/rake.yml: gh-actions/master/rake.yml
+      .github/workflows/release.yml: gh-actions/master/release.yml
+  # pubid
+  pubid:
+    remote: ssh://git@github.com/metanorma/pubid
+    branch: main
+    files:
+      .hound.yml: gh-actions/master/.hound.yml
+      .rubocop.yml: gh-actions/master/.rubocop.yml
+      .github/workflows/rake.yml: gh-actions/master/rake.yml
+      .github/workflows/release.yml: gh-actions/master/release.yml
+  pubid-core:
+    remote: ssh://git@github.com/metanorma/pubid-core
+    branch: main
+    files:
+      .hound.yml: gh-actions/master/.hound.yml
+      .rubocop.yml: gh-actions/master/.rubocop.yml
+      .github/workflows/rake.yml: gh-actions/master/rake.yml
+      .github/workflows/release.yml: gh-actions/master/release.yml
+  pubid-ieee:
+    remote: ssh://git@github.com/metanorma/pubid-ieee
+    branch: main
+    files:
+      .hound.yml: gh-actions/master/.hound.yml
+      .rubocop.yml: gh-actions/master/.rubocop.yml
+      .github/workflows/rake.yml: gh-actions/master/rake.yml
+      .github/workflows/release.yml: gh-actions/master/release.yml
+  pubid-iso:
+    remote: ssh://git@github.com/metanorma/pubid-iso
+    branch: main
+    files:
+      .hound.yml: gh-actions/master/.hound.yml
+      .rubocop.yml: gh-actions/master/.rubocop.yml
+      .github/workflows/rake.yml: gh-actions/master/rake.yml
+      .github/workflows/release.yml: gh-actions/master/release.yml
+  pubid-iec:
+    remote: ssh://git@github.com/metanorma/pubid-iec
+    branch: main
+    files:
+      .hound.yml: gh-actions/master/.hound.yml
+      .rubocop.yml: gh-actions/master/.rubocop.yml
+      .github/workflows/rake.yml: gh-actions/master/rake.yml
+      .github/workflows/release.yml: gh-actions/master/release.yml
+  pubid-bsi:
+    remote: ssh://git@github.com/metanorma/pubid-bsi
+    branch: main
+    files:
+      .hound.yml: gh-actions/master/.hound.yml
+      .rubocop.yml: gh-actions/master/.rubocop.yml
+      .github/workflows/rake.yml: gh-actions/master/rake.yml
+      .github/workflows/release.yml: gh-actions/master/release.yml
+  pubid-cen:
+    remote: ssh://git@github.com/metanorma/pubid-cen
+    branch: main
+    files:
+      .hound.yml: gh-actions/master/.hound.yml
+      .rubocop.yml: gh-actions/master/.rubocop.yml
+      .github/workflows/rake.yml: gh-actions/master/rake.yml
+      .github/workflows/release.yml: gh-actions/master/release.yml
+  pubid-jis:
+    remote: ssh://git@github.com/metanorma/pubid-jis
+    branch: main
+    files:
+      .hound.yml: gh-actions/master/.hound.yml
+      .rubocop.yml: gh-actions/master/.rubocop.yml
+      .github/workflows/rake.yml: gh-actions/master/rake.yml
+      .github/workflows/release.yml: gh-actions/master/release.yml
+
   # models
   metanorma-model-gb:
     remote: ssh://git@github.com/metanorma/metanorma-model-gb
@@ -341,6 +415,22 @@ repositories:
       Makefile: gh-actions/model/Makefile
       .github/workflows/make.yml: gh-actions/model/make.yml
       .github/workflows/automerge.yml: gh-actions/master/automerge.yml
+  metanorma-model-ribose:
+    remote: ssh://git@github.com/metanorma/metanorma-model-ribose
+    branch: main
+    files:
+      Gemfile: gh-actions/model/Gemfile
+      Makefile: gh-actions/model/Makefile
+      .github/workflows/make.yml: gh-actions/model/make.yml
+      .github/workflows/automerge.yml: gh-actions/master/automerge.yml
+  metanorma-model-m3aawg:
+    remote: ssh://git@github.com/metanorma/metanorma-model-m3aawg
+    branch: main
+    files:
+      Gemfile: gh-actions/model/Gemfile
+      Makefile: gh-actions/model/Makefile
+      .github/workflows/make.yml: gh-actions/model/make.yml
+      .github/workflows/automerge.yml: gh-actions/master/automerge.yml
   basicdoc-models:
     remote: ssh://git@github.com/metanorma/basicdoc-models
     branch: master
@@ -436,6 +526,14 @@ repositories:
       .rubocop.yml: gh-actions/master/.rubocop.yml
       .github/workflows/rake.yml: gh-actions/master/rake.yml
       .github/workflows/release.yml: gh-actions/master/release.yml
+  edoxen:
+    remote: ssh://git@github.com/metanorma/edoxen
+    branch: main
+    files:
+      .hound.yml: gh-actions/master/.hound.yml
+      .rubocop.yml: gh-actions/master/.rubocop.yml
+      .github/workflows/rake.yml: gh-actions/master/rake.yml
+      .github/workflows/release.yml: gh-actions/master/release.yml
   pubid-nist:
     remote: ssh://git@github.com/metanorma/pubid-nist
     branch: main
@@ -445,18 +543,6 @@ repositories:
       .github/workflows/rake.yml: gh-actions/master/rake.yml
       .github/workflows/release.yml: gh-actions/master/release.yml
   # samples
-  ogc-wfs:
-    remote: ssh://git@github.com/metanorma/ogc-wfs
-    branch: master
-    files:
-      .github/workflows/docker.yml: gh-actions/samples/docker.yml
-      .github/workflows/generate.yml: gh-actions/samples/generate.yml
-  isodoc-rice:
-    remote: ssh://git@github.com/metanorma/isodoc-rice
-    branch: main
-    files:
-      .github/workflows/docker.yml: gh-actions/samples/docker.yml
-      .github/workflows/generate.yml: gh-actions/samples/generate.yml
   mn-samples-ogc:
     remote: ssh://git@github.com/metanorma/mn-samples-ogc
     branch: main
@@ -579,6 +665,31 @@ repositories:
     files:
       .github/workflows/docker.yml: gh-actions/samples/docker.yml
       .github/workflows/test.yml: gh-actions/samples/test.yml
+  mn-samples-ieee:
+    remote: ssh://git@github.com/metanorma/mn-samples-ieee
+    branch: main
+    files:
+      .github/workflows/docker.yml: gh-actions/samples/docker.yml
+      .github/workflows/test.yml: gh-actions/samples/generate.yml
+  mn-samples-standoc:
+    remote: ssh://git@github.com/metanorma/mn-samples-standoc
+    branch: main
+    files:
+      .github/workflows/docker.yml: gh-actions/samples/docker.yml
+      .github/workflows/test.yml: gh-actions/samples/generate.yml
+  # docs
+  ogc-wfs:
+    remote: ssh://git@github.com/metanorma/ogc-wfs
+    branch: master
+    files:
+      .github/workflows/docker.yml: gh-actions/samples/docker.yml
+      .github/workflows/generate.yml: gh-actions/samples/generate.yml
+  isodoc-rice:
+    remote: ssh://git@github.com/metanorma/isodoc-rice
+    branch: master
+    files:
+      .github/workflows/docker.yml: gh-actions/samples/docker.yml
+      .github/workflows/generate.yml: gh-actions/samples/generate.yml
   hk-ogcio-infosec-docs:
     remote: ssh://git@github.com/metanorma/hk-ogcio-infosec-docs
     branch: master
@@ -648,6 +759,58 @@ repositories:
     branch: main
     files:
       .github/workflows/docker.yml: gh-actions/samples/docker.yml
+  bipm-editor-guides:
+    remote: ssh://git@github.com/metanorma/bipm-editor-guides
+    branch: main
+    files:
+      .github/workflows/docker.yml: gh-actions/samples/docker.yml
+      .github/workflows/generate.yml: gh-actions/samples/generate.yml
+  iho-standards-manual:
+    remote: ssh://git@github.com/metanorma/iho-standards-manual
+    branch: main
+    files:
+      .github/workflows/generate.yml: gh-actions/samples/user-docker.yml
+  ogc-muddi-mds:
+    remote: ssh://git@github.com/metanorma/ogc-muddi-mds
+    branch: main
+    files:
+      .github/workflows/generate.yml: gh-actions/samples/user-docker.yml
+  scc-ab-docs:
+    remote: ssh://git@github.com/metanorma/scc-ab-docs
+    branch: main
+    files:
+      .github/workflows/generate.yml: gh-actions/samples/user-docker.yml
+  OGCNANameTypeSpecificationForDefinitions:
+    remote: ssh://git@github.com/metanorma/OGCNANameTypeSpecificationForDefinitions
+    branch: main
+    files:
+      .github/workflows/generate.yml: gh-actions/samples/user-docker.yml
+  iso-tc184-sc4-boilerplate:
+    remote: ssh://git@github.com/metanorma/iso-tc184-sc4-boilerplate
+    branch: main
+    files:
+      .github/workflows/generate.yml: gh-actions/samples/user-docker.yml
+  metanorma-tutorial:
+    remote: ssh://git@github.com/metanorma/metanorma-tutorial
+    branch: master
+    files:
+      .github/workflows/generate.yml: gh-actions/samples/user-docker.yml
+  sample-ogc-discussion-paper:
+    remote: ssh://git@github.com/metanorma/sample-ogc-discussion-paper
+    branch: master
+    files:
+      .github/workflows/docker.yml: gh-actions/samples/user-docker.yml
+  ietf-rfc-3339:
+    remote: ssh://git@github.com/metanorma/ietf-rfc-3339
+    branch: master
+    files:
+      .github/workflows/docker.yml: gh-actions/samples/docker.yml
+      .github/workflows/generate.yml: gh-actions/samples/generate.yml
+  ogc-modspec:
+    remote: ssh://git@github.com/metanorma/ogc-modspec
+    branch: main
+    files:
+      .github/workflows/generate.yml: gh-actions/samples/generate.yml
   # templates
   mn-templates-cc:
     remote: ssh://git@github.com/metanorma/mn-templates-cc
@@ -779,6 +942,13 @@ repositories:
       .hound.yml: gh-actions/master/.hound.yml
       .rubocop.yml: gh-actions/master/.rubocop.yml
       .github/workflows/rake.yml: gh-actions/master/rake.yml
+  metanorma-ietf-data:
+    remote: ssh://git@github.com/metanorma/metanorma-ietf-data
+    branch: master
+    files:
+      .hound.yml: gh-actions/master/.hound.yml
+      .rubocop.yml: gh-actions/master/.rubocop.yml
+      .github/workflows/rake.yml: gh-actions/master/rake.yml
   # rfc
   rfc-divination-cfapi:
     remote: ssh://git@github.com/metanorma/rfc-divination-cfapi
@@ -872,7 +1042,16 @@ repositories:
     branch: main
     files:
       .github/workflows/docker.yml: gh-actions/samples/docker.yml
-
+  iso-19156:
+    remote: ssh://git@github.com/metanorma/iso-19156
+    branch: main
+    files:
+      .github/workflows/docker.yml: gh-actions/samples/docker.yml
+  iso-tc184-sc4-directives:
+    remote: ssh://git@github.com/metanorma/iso-tc184-sc4-directives
+    branch: master
+    files:
+      .github/workflows/docker.yml: gh-actions/samples/docker.yml
 
   DGGS2ISO-19170:
     remote: ssh://git@github.com/metanorma/DGGS2ISO-19170
@@ -894,6 +1073,13 @@ repositories:
       .hound.yml: gh-actions/master/.hound.yml
       .rubocop.yml: gh-actions/master/.rubocop.yml
       .github/workflows/rake.yml: gh-actions/master/rake.yml
+  sts2mn-ruby:
+    remote: ssh://git@github.com/metanorma/sts2mn-ruby
+    branch: master
+    files:
+      .hound.yml: gh-actions/master/.hound.yml
+      .rubocop.yml: gh-actions/master/.rubocop.yml
+      .github/workflows/rake.yml: gh-actions/master/rake.yml
   mnconvert-ruby:
     remote: ssh://git@github.com/metanorma/mnconvert-ruby
     branch: main
@@ -908,6 +1094,14 @@ repositories:
       .rubocop.yml: gh-actions/master/.rubocop.yml
       .github/workflows/rake.yml: gh-actions/master/rake.yml
       .github/workflows/release.yml: gh-actions/master/release.yml
+  pngcheck-ruby:
+    remote: ssh://git@github.com/metanorma/pngcheck-ruby
+    branch: main
+    files: []
+  emf2svg-ruby:
+    remote: ssh://git@github.com/metanorma/emf2svg-ruby
+    branch: main
+    files: []
   metanorma-plugin-lutaml:
     remote: ssh://git@github.com/metanorma/metanorma-plugin-lutaml
     branch: main
@@ -984,6 +1178,8 @@ repositories:
 groups:
   site:
   - metanorma.org
+  - asciirfc.org
+  - asciiiso.org
   converter:
   - html2doc
   - rfc2md
@@ -1028,10 +1224,15 @@ groups:
   - metanorma-bipm
   - metanorma-bsi
   - metanorma-ieee
-  # not maintained anymore:
-  # - metanorma-gb
-  # - metanorma-vg
-  # - metanorma-mpfa
+  pubid:
+  - pubid
+  - pubid-core
+  - pubid-ieee
+  - pubid-iso
+  - pubid-iec
+  - pubid-bsi
+  - pubid-cen
+  - pubid-jis
   metanorma:
   - metanorma
   - metanorma-cli
@@ -1052,11 +1253,12 @@ groups:
   - metanorma-model-bipm
   - metanorma-model-ieee
   - metanorma-model-bsi
+  - metanorma-model-ribose
+  - metanorma-model-m3aawg
   - basicdoc-models
   - metanorma-requirements-models
   - metanorma-model-iho
-  # not maintained anymore:
-  # - metanorma-model-gb
+  - metanorma-model-gb
   infrastructure:
   - metanorma-release
   - metanorma-document-gh-pages
@@ -1066,6 +1268,7 @@ groups:
   - cimas
   - lapidist
   - oss-guides
+  - plantuml-install
   style:
   - csd-style
   - csand-style
@@ -1078,7 +1281,6 @@ groups:
   - metanorma-nist-style
   - metanorma-itu-style
   - metanorma-nist-style
-  - metanorma-ogc-style
   site:
   - asciirfc.com
   - metanorma.com
@@ -1097,11 +1299,29 @@ groups:
   - mn-samples-bipm
   - mn-samples-jcgm
   - mn-samples-ribose
+  - mn-samples-ieee
+  - mn-samples-standoc
+  docs:
   - bipm-si-brochure
   - isodoc-rice
-  # not maintained anymore:
-  # - mn-samples-gb
-  # - mn-samples-mpfa
+  - ogc-wfs:
+  - isodoc-rice
+  - hk-ogcio-infosec-docs
+  - csa-caiq
+  - ogc-tcpnp
+  - ogc-dggs-xmi
+  - ogc-citygml-xmi
+  - ogc-citygml2
+  - bipm-si-brochure
+  - eccma-iso-scor-vocab
+  - bs-202000
+  - S-102-Product-Specification
+  - annotated-express
+  - ogc-development-workshop
+  - gmt-0009-2012
+  - gmt-0010-2012
+  - gmt-0015-2012
+  - iso-tc184-sc4-directives
   setup:
   - metanorma-macos-setup
   - metanorma-windows-setup
@@ -1129,6 +1349,8 @@ groups:
   - ogc-wfs
   - ogc-tcpnp
   - csa-caiq
+  - ietf-rfc-3339
+  - ogc-modspec
   asciirfc:
   - rfc-divination-cfapi
   - rfc-camelot-holy-grenade
@@ -1157,3 +1379,99 @@ groups:
   plugins:
   - metanorma-plugin-lutaml
   - metanorma-plugin-datastruct
+  ignore: # obsolete
+  # infrastructure
+  - ci
+  - ".github"
+  - oss-guides
+  - metanorma-linux-setup
+  - plantuml-install
+  - metanorma-release
+  - iso-ics-codes-scripts
+  # processors
+  - metanorma-gb
+  - metanorma-vg
+  - metanorma-mpfa
+  # samples
+  - mn-samples-gb
+  - mn-samples-mpfa
+  # cron data repos
+  - iso-ics-codes
+  - iso-ics-codes-script
+  - visual-diff
+  - ooo-word-xslt
+  - iso-10303-stepmod-migration
+  # sites
+  - asciiiso.org
+  - asciirfc.org
+  - metanorma.org
+  # styles
+  - csd-style
+  - csand-style
+  - gbdoc-style
+  - isodoc-style
+  - rsd-style
+  - m3d-style
+  - mpfd-style
+  - metanorma-nist-style
+  - metanorma-itu-style
+  - metanorma-nist-style
+  - metanorma-ogc-style
+  # models
+  - edoxen-model
+  - metanorma-model-gb
+  - iso690xml
+  # docs
+  - csd-metanorma-training
+  - metanorma-document-gh-pages
+  - metanorma-mrr-samples
+  - mn-samples-iho-pdf
+  - meeting-minutes-model
+  - ACVP-standalone
+  - metanorma-tutorial
+  - gsod
+  - ietf-rfc-6047
+  - editor-guide
+  - us-trade-agreements
+  - rfc-camelot-holy-grenade-tex
+  - mn-samples-tex-iso
+  - csd-subscription-upgrade
+  - ogc-modspec
+  - gmt-0009-2012
+  - gmt-0010-2012
+  - gmt-0015-2012
+  # data
+  - cipm-resolutions
+  - cgpm-resolutions
+  - mn-registry-sample-data
+  - iso-639-codes
+  - iec-cdd-samples
+  - cn-ccs-codes
+  # apps
+  - packed-mn
+  - chocolatey-metanorma
+  - chocolatey-latexml
+  - homebrew-metanorma
+  - metanorma-snap
+  - latexml-snap
+  - metanorma-docker
+  - pngcheck
+  # agregation data
+  - mn-native-pdf
+  - iso-10303-stepmod-annotate
+  - iso-10303-stepmod-migration
+  - bipm-data-outcomes
+  # node
+  - mmel-ts
+  - firelight
+  # xsd
+  - xs3p
+  - xsd-doc-tools
+  # dummy
+  - bs-l3-demo
+  # java
+  - xsdvi
+  - mn2pdf
+  - mn2sts
+  - stepmod2mn
+  - barcode4j
