@@ -32,7 +32,7 @@ jobs:
       id: cimas-diff
       run: |
         ruby bin/gh-repo-manifest -o ${{ github.repository_owner }} -m cimas-config/cimas.yml | yq e '.repositories | keys' - > new-repos.yaml
-        echo "NEW_REPOSITORIES=$(cat new-repos.yaml | tr '\n' ' ')" >> $GITHUB_ENV
+        echo "NEW_REPOSITORIES=$(cat new-repos.yaml | tr '\n' '<br/>')" >> $GITHUB_ENV
         echo "New repositories:"
         cat new-repos.yaml
 
