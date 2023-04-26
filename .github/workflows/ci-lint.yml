@@ -8,7 +8,7 @@ on:
 
 jobs:
   lint-linux:
-    name: Lint on Ubuntu
+    name: Lint sources
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v3
@@ -18,6 +18,10 @@ jobs:
         yamllint cimas-config/
     - name: Shellcheck lint
       run: |
-        sudo apt-get install shellcheck
-        shellcheck *.sh
+        if stat -t *.sh >/dev/null 2>&1
+          sudo apt-get install shellcheck
+          shellcheck *.sh
+        else
+          echo "No shell scripts files found"
+        fi
 
