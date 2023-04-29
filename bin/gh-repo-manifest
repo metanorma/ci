@@ -146,4 +146,4 @@ end
 
 manifest["groups"].transform_keys!(&:to_s)
 
-puts YAML.dump(manifest.transform_keys(&:to_s)) if manifest["repositories"].size > 0
+puts YAML.dump(manifest.transform_keys(&:to_s))
