@@ -34,13 +34,13 @@ jobs:
         ruby bin/gh-repo-manifest -o ${{ github.repository_owner }} -m cimas-config/cimas.yml > cimas-diff.yml
         cat cimas-diff.yml
         yq --version
-        cat cimas-diff.yml | yq e '.repositories | keys' - > new-repos.yaml
-        NEW_REPOSITORIES=$(cat new-repos.yaml)
+        cat cimas-diff.yml | yq e '.repositories | keys' - > new-repos.yml
+        NEW_REPOSITORIES=$(cat new-repos.yml)
         echo "NEW_REPOSITORIES=${NEW_REPOSITORIES//$'\n'/<br/>}" >> $GITHUB_ENV
         echo "New repositories:"
         echo "$NEW_REPOSITORIES"
 
-    - if: ${{ env.NEW_REPOSITORIES != '' && hashFiles('.github/templates/new-repos.md') == '' }}
+    - if: ${{ env.NEW_REPOSITORIES != '' && env.NEW_REPOSITORIES != '\n' }}
       name: Download template if missing
       run: |
         if [ ! -f .github/templates/new-repos.md ]
