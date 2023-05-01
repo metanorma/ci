@@ -1,0 +1,2 @@
+include:
+- remote: 'https://raw.githubusercontent.com/metanorma/ci/main/cimas-config/gitlab-ci/samples/docker.shared.yml'

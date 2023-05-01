@@ -15,7 +15,7 @@ repositories:
       .github/workflows/release.yml: gh-actions/master/release.yml
       templates/base/.github/workflows/docker.yml: gh-actions/samples/docker.yml
       templates/base/.github/workflows/generate.yml: gh-actions/samples/generate.yml
-      templates/base/.gitlab-ci.yml: gh-actions/samples/.gitlab-ci.yml
+      templates/base/.gitlab-ci.yml: gitlab-ci/samples/docker.yml
   metanorma:
     remote: ssh://git@github.com/metanorma/metanorma
     branch: main
@@ -994,13 +994,13 @@ repositories:
     branch: master
     files:
       .github/workflows/docker.yml: gh-actions/samples/docker.yml
-      .gitlab-ci.yml: gh-actions/samples/.gitlab-ci.yml
+      .gitlab-ci.yml: gitlab-ci/samples/docker.yml
   iso-8601-2:
     remote: ssh://git@github.com/metanorma/iso-8601-2
     branch: master
     files:
       .github/workflows/docker.yml: gh-actions/samples/docker.yml
-      .gitlab-ci.yml: gh-actions/samples/.gitlab-ci.yml
+      .gitlab-ci.yml: gitlab-ci/samples/docker.yml
   iso-10303:
     remote: ssh://git@github.com/metanorma/iso-10303
     branch: main
