@@ -1,5 +1,5 @@
 image:
-  name: metanorma/mn
+  name: metanorma/metanorma
   entrypoint: [ "" ]
 
 cache:
@@ -13,7 +13,7 @@ stages:
 build:
   stage: build
   script:
-    - curl -L --retry 3 https://raw.githubusercontent.com/metanorma/ci/master/gemfile-to-bundle-add.sh | bash
+    - curl -L --retry 3 https://raw.githubusercontent.com/metanorma/ci/main/gemfile-to-bundle-add.sh | bash
     - bundle install
     - metanorma site generate --output-dir public --agree-to-terms .
 
