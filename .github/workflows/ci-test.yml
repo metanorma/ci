@@ -202,3 +202,49 @@ jobs:
 
       - run: command -v fontist
         shell: bash
+
+  test-gh-pages-status-action:
+    name: Test gh-pages-status-action ${{ matrix.os }}
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      max-parallel: 5
+      matrix:
+        os: [ubuntu-latest, macos-latest]
+        force-install: [false, true]
+        include:
+        - os: windows-latest
+          force-install: false
+    steps:
+      - uses: actions/checkout@v3
+
+      - id: gh-pages-status
+        uses: ./gh-pages-status-action
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          gh-force-install: ${{ matrix.force-install }}
+
+      - run: |
+          [ ${{ steps.gh-pages-status.outputs.enabled }} = "false" ]
+        shell: bash
+
+  test-docker-gh-pages-status-action:
+    name: Test gh-pages-status-action on docker
+    runs-on: ubuntu-latest
+    container: docker://metanorma/metanorma
+    strategy:
+      fail-fast: false
+      matrix:
+        force-install: [false, true]
+    steps:
+      - uses: actions/checkout@v3
+
+      - id: gh-pages-status
+        uses: ./gh-pages-status-action
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          gh-force-install: ${{ matrix.force-install }}
+
+      - run: |
+          [ ${{ steps.gh-pages-status.outputs.enabled }} = "false" ]
+        shell: bash
