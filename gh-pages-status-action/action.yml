@@ -1,0 +1,36 @@
+name: 'gh-pages-status-action'
+description: 'composite action to test GitHub Pages status'
+inputs:
+  token:
+    description: Token for gh CLI. For most cases `secrets.GITHUB_TOKEN` is good
+    required: true
+  gh-force-install:
+    description: Install gh CLI
+    default: '' # false
+  gh-cli-version:
+    description: Version to install
+    required: false
+    default: '2.24.3'
+outputs:
+  enabled:
+    description: GitHub Pages enabled (true/false)
+    value: ${{ steps.status.outputs.enabled }}
+
+runs:
+  using: "composite"
+  steps:
+  - id: status
+    env:
+      GH_TOKEN: ${{ inputs.token }}
+    run: |
+      if ! type gh > /dev/null || [ "${{ inputs.gh-force-install }}" = "true" ]; then
+        gh_ver=${{ inputs.gh-cli-version }}
+        curl -L https://github.com/cli/cli/releases/download/v${gh_ver}/gh_${gh_ver}_linux_amd64.tar.gz | tar xz --strip-components=2 -C /usr/local/bin/ gh_${gh_ver}_linux_amd64/bin/gh
+      fi
+
+      if gh api -H "Accept: application/vnd.github+json" -H "X-GitHub-Api-Version: 2022-11-28" "repos/${GITHUB_REPOSITORY}/pages"; then
+        echo "enabled=true" >> $GITHUB_OUTPUT
+      else
+        echo "enabled=false" >> $GITHUB_OUTPUT
+      fi
+    shell: bash
