@@ -20,7 +20,7 @@ on:
         value: ${{ jobs.prepare.outputs.default_ruby_version }}
       public:
         description: "Returns 'true' if the repo is public"
-        value: ${{ jobs.prepare.outputs.default_ruby_version }}
+        value: ${{ jobs.prepare.outputs.public }}
 
 
 jobs:

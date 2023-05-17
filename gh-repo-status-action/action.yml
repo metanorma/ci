@@ -14,7 +14,8 @@ runs:
   steps:
   - id: status
     run: |
-      if curl --fail --head "https://github.com/${{ inputs.repository || env.GITHUB_REPOSITORY }}"; then
+      repository=$([ "${{ inputs.repository }}" != "" ] && echo "${{ inputs.repository }}" || echo "${GITHUB_REPOSITORY}")
+      if curl --fail --head "https://github.com/${repository}"; then
         echo "public=true" >> $GITHUB_OUTPUT
       else
         echo "public=false" >> $GITHUB_OUTPUT
