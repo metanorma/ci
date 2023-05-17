@@ -69,6 +69,8 @@ jobs:
     steps:
       - uses: actions/checkout@v3
 
+      - run: wget https://raw.githubusercontent.com/metanorma/ci/main/.github/workflows/ruby-matrix.json
+
       - id: flavor
         run: |
           FLAVOR=$(echo "${{ github.repository }}" | rev | cut -d- -f1 | rev)
@@ -88,7 +90,6 @@ jobs:
               exit 0
             fi
           fi
-          wget https://raw.githubusercontent.com/metanorma/ci/main/.github/workflows/ruby-matrix.json
           # remove 'middle' & 'experimental' versions
           echo "$(jq 'del(.ruby[1, 2])' ruby-matrix.json)" > ruby-matrix.json
           echo "matrix=$(jq -s add ${{ inputs.samples-matrix-json-file }} ruby-matrix.json | tr '\n' ' ')" >> $GITHUB_OUTPUT
