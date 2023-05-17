@@ -1,0 +1,22 @@
+name: gh-repo-status-action
+description: The action checks GitHub Reporitory visiblity (public/private)
+inputs:
+  repository:
+    description: Repository to check, in format 'organisaton/repository-name'
+    required: false
+outputs:
+  public:
+    description: GitHub Repository is public (true/false)
+    value: ${{ steps.status.outputs.public }}
+
+runs:
+  using: "composite"
+  steps:
+  - id: status
+    run: |
+      if curl --fail --head "https://github.com/${{ inputs.repository || env.GITHUB_REPOSITORY }}"; then
+        echo "public=true" >> $GITHUB_OUTPUT
+      else
+        echo "public=false" >> $GITHUB_OUTPUT
+      fi
+    shell: bash

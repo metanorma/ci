@@ -248,3 +248,35 @@ jobs:
       - run: |
           [ ${{ steps.gh-pages-status.outputs.enabled }} = "false" ]
         shell: bash
+
+  test-gh-repo-status-action:
+    name: Test gh-repo-status-action ${{ matrix.os }}
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      max-parallel: 5
+      matrix:
+        os: [ubuntu-latest, macos-latest, windows-latest]
+        repository: ['']
+        result: [true]
+        include:
+        - os: ubuntu-latest
+          repository: 'metanorma/metanorma-docker-private'
+          result: false
+        - os: macos-latest
+          repository: 'metanorma/metanorma-docker-private'
+          result: false
+        - os: windows-latest
+          repository: 'metanorma/metanorma-docker-private'
+          result: false
+    steps:
+      - uses: actions/checkout@v3
+
+      - id: gh-repo-status
+        uses: ./gh-repo-status-action
+        with:
+          repository: ${{ matrix.repository }}
+
+      - run: |
+          [ ${{ steps.gh-repo-status.outputs.public }} = "${{ matrix.result }}" ]
+        shell: bash
