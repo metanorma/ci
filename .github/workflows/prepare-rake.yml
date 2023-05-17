@@ -33,7 +33,7 @@ jobs:
       matrix: ${{ steps.matrix.outputs.value }}
       push_for_tag: ${{ steps.push_for_tag.outputs.value }}
       default_ruby_version: ${{ steps.config.outputs.default_ruby_version }}
-      public: ${{ steps.repo_status,outputs.public }}
+      public: ${{ steps.repo_status.outputs.public }}
     steps:
       - uses: actions/checkout@v3
       - name: retrieve tags
