@@ -7,7 +7,9 @@ inputs:
 runs:
   using: "composite"
   steps:
-    - run: apt-get update -y && apt-get install -y gcc g++ ruby-dev
+    - run: |
+        add-apt-repository ppa:inkscape.dev/stable
+        apt-get update -y && apt-get install -y gcc g++ ruby-dev
       shell: bash
 
     # https://github.com/actions/runner/issues/1066 GITHUB_ACTION_PATH vs github.action_path
