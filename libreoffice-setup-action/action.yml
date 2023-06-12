@@ -13,7 +13,7 @@ runs:
         cmds = {
           "Darwin": [ ],
           "Windows": [
-            "cinst --no-progress -y libreoffice-still",
+            "choco install --no-progress -y libreoffice-still",
             "echo {}>> {}".format(win_prefix, os.environ["GITHUB_PATH"]),
             "\"{}soffice\" --version".format(win_prefix)
           ],

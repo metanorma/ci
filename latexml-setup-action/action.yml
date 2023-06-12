@@ -14,7 +14,7 @@ runs:
             "brew install libxml2 cpanminus",
             "env PATH=/usr/local/opt/libxml2/bin:$PATH cpanm --notest XML::LibXSLT LaTeXML"
           ],
-          "Windows": [ "cinst -y latexml" ],
+          "Windows": [ "choco install -y latexml" ],
           "Linux": [ "sudo snap install latexml --edge" ]
         }.get(platform.system(), [ "echo \"Unsupported platform: {}\"".format(platform.system()), "exit 1" ])
 
