@@ -146,7 +146,13 @@ jobs:
         rubygems: ${{ matrix.ruby.rubygems }}
         bundler-cache: true
 
-    - run: gem install metanorma-cli
+    # Worlaround for https://github.com/metanorma/metanorma-un/issues/196
+    - run: |
+        if [ "${{ matrix.ruby.version }}" = "2.7" ]; then
+          gem install lightly -v 0.3.3
+        fi
+        gem install metanorma-cli
+      shell: bash
 
     - uses: actions-mn/cli/new@main
       with:

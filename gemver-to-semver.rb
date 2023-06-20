@@ -146,6 +146,11 @@ test_suite = {
     { expected: "1.2.3-pre", options: [CHOCOLATEY] },
     { expected: "1.2.3-pre", options: [STRIP] },
   ],
+  "1.6.0.1": [
+    { expected: "1.6.0-rc.1", options: [DEFAULTS] },
+    { expected: "1.6.0.1", options: [CHOCOLATEY] },
+    { expected: "1.6.0-rc.1", options: [STRIP] },
+  ]
 }
 succeed = true
 test_suite.each do |inver, test_cases|
