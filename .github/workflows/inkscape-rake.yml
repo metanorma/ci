@@ -34,7 +34,9 @@ jobs:
 
       # workaround for https://github.com/actions/runner-images/issues/37
       - if: matrix.os == 'ubuntu-latest'
-        run: sudo apt-get install libcurl4-openssl-dev
+        run: |
+          sudo apt-get update
+          sudo apt-get install libcurl4-openssl-dev
 
       - uses: ruby/setup-ruby@v1
         with:
