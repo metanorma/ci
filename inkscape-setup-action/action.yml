@@ -43,7 +43,7 @@ runs:
         home_path = os.path.expanduser("~")
 
         eps_input_paths = {
-          "Darwin": ["/Applications/Inkscape.app/Contents/Resources/share/inkscape/extensions/eps_input.inx"],
+          "Darwin": ["/Applications/Inkscape.app/Contents/Resources/share/inkscape/extensions/eps_input.inx", "/usr/share/inkscape/extensions/eps_input.inx"],
           "Windows": ["{}\\AppData\\Roaming\\inkscape\\eps_input.inx".format(home_path)],
           "Linux": ["/usr/share/inkscape/extensions/eps_input.inx"]
         }.get(platform.system(), [])
@@ -63,7 +63,7 @@ runs:
           print("{} before processing:".format(inx))
           print(minidom.parseString(ET.tostring(root)).toprettyxml(indent="  "))
 
-          orig_param = tree.find("/inkscape-extension/param[@name='autorotate']")
+          orig_param = root.find("./param[@name='autorotate']")
           if orig_param is not None:
             parent = orig_param.getparent()
             parent.remove(orig_param)
