@@ -96,7 +96,8 @@ jobs:
   test-gem-docker-gh-rubygem-setup-action:
     name: Test gh-rubygems-setup-action & docker-gem-install in docker
     runs-on: ubuntu-latest
-    container: docker://metanorma/metanorma
+    container:
+      image: metanorma/metanorma:ubuntu-latest
     steps:
       - uses: actions/checkout@v3
 
