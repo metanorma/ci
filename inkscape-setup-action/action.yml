@@ -50,7 +50,8 @@ runs:
 
         eps_input_paths.append("~/.config/inkscape/eps_input.inx")
 
-        ET.register_namespace("", "http://www.inkscape.org/namespace/inkscape/extension")
+        default_ns = "http://www.inkscape.org/namespace/inkscape/extension"
+        ET.register_namespace("", default_ns)
 
         for inx in eps_input_paths:
           if not os.path.exists(inx):
@@ -63,11 +64,10 @@ runs:
           print("{} before processing:".format(inx))
           print(minidom.parseString(ET.tostring(root)).toprettyxml(indent="  "))
 
-          orig_param = root.find("./param[@name='autorotate']")
+          orig_param = tree.find("./param[@name='autorotate']", namespaces={"": default_ns})
           if orig_param is not None:
-            parent = orig_param.getparent()
-            parent.remove(orig_param)
-            print("Original autorotate param {} deleted".format(orig_param))
+            root.remove(orig_param)
+            print("Original autorotate param {} removed".format(orig_param))
 
           new_param = ET.Element("param",
                                  attrib={"name": "autorotate",
@@ -78,4 +78,4 @@ runs:
           tree.write("./test.xml")
 
           print("{} after processing:".format(inx))
-          print(minidom.parseString(ET.tostring(root)).toprettyxml(indent="  "))
+          print(minidom.parseString(ET.tostring(root)).toprettyxml())
