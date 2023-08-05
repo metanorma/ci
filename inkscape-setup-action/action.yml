@@ -30,3 +30,13 @@ runs:
           if os.system(cmd) != 0:
             print("Command {} FAILED!".format(cmd))
             sys.exit(1)
+
+    # https://github.com/metanorma/metanorma-cli/issues/309
+    - name: Update eps_input.inx to allow noninteractive EPS processing
+      run: |
+        if [ "$RUNNER_OS" == "Linux" ]; then
+          sudo python ${GITHUB_ACTION_PATH//\\//}/fix_eps_input_autorotate_param.py
+        else
+          python ${GITHUB_ACTION_PATH//\\//}/fix_eps_input_autorotate_param.py
+        fi
+      shell: bash
