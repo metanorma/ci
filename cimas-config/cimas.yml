@@ -762,7 +762,12 @@ repositories:
     files:
       .github/workflows/generate.yml: gh-actions/samples/user-docker.yml
   S-102-Product-Specification:
-    remote: ssh://git@github.com:metanorma/S-102-Product-Specification
+    remote: ssh://git@github.com/metanorma/S-102-Product-Specification
+    branch: main
+    files:
+      .github/workflows/generate.yml: gh-actions/samples/user-docker.yml
+  pdfa-iso-32000-2:
+    remote: ssh://git@github.com/metanorma/pdfa-iso-32000-2
     branch: main
     files:
       .github/workflows/generate.yml: gh-actions/samples/user-docker.yml
@@ -966,6 +971,14 @@ repositories:
       .hound.yml: gh-actions/master/.hound.yml
       .rubocop.yml: gh-actions/master/.rubocop.yml
       .github/workflows/rake.yml: gh-actions/master/rake.yml
+  vectory:
+    remote: ssh://git@github.com/metanorma/vectory
+    branch: master
+    files:
+      .hound.yml: gh-actions/master/.hound.yml
+      .rubocop.yml: gh-actions/master/.rubocop.yml
+      .github/workflows/rake.yml: gh-actions/master/rake.yml
+      .github/workflows/automerge.yml: gh-actions/master/automerge.yml
   # rfc
   rfc-divination-cfapi:
     remote: ssh://git@github.com/metanorma/rfc-divination-cfapi
