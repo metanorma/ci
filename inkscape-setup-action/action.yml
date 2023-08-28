@@ -11,14 +11,27 @@ runs:
 
         win_prefix = "C:\\Program Files\\Inkscape\\bin"
 
-        def get_platform_name():
+        def os_release():
           try:
-            os_release_id = platform.freedesktop_os_release()["ID"]
-            return "Ubuntu" if os_release_id == "Ubuntu" else platform.system()
+            return platform.freedesktop_os_release()
           except AttributeError:
-            return platform.system()
+            properties = {}
+            try:
+              with open("/etc/os-release", "r") as file:
+                for line in file:
+                  line = line.strip()
+                  if line and not line.startswith("#"):
+                    key, value = line.split("=", 1)
+                    properties[key] = value.strip('"')
+            except:
+              pass
+            return properties
 
-        platform_name = get_platform_name()
+        os_release_dict = os_release()
+
+        print(os_release_dict)
+
+        platform_name = "Ubuntu" if os_release_dict.get("ID", None) == "ubuntu" else platform.system()
 
         cmds = {
           "Darwin": [ "HOMEBREW_CASK_OPTS='--no-quarantine' brew install --cask inkscape", "inkscape --version" ],
