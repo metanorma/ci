@@ -11,6 +11,28 @@ runs:
 
         win_prefix = "C:\\Program Files\\Inkscape\\bin"
 
+        def os_release():
+          try:
+            return platform.freedesktop_os_release()
+          except AttributeError:
+            properties = {}
+            try:
+              with open("/etc/os-release", "r") as file:
+                for line in file:
+                  line = line.strip()
+                  if line and not line.startswith("#"):
+                    key, value = line.split("=", 1)
+                    properties[key] = value.strip('"')
+            except:
+              pass
+            return properties
+
+        os_release_dict = os_release()
+
+        print(os_release_dict)
+
+        platform_name = "Ubuntu" if os_release_dict.get("ID", None) == "ubuntu" else platform.system()
+
         cmds = {
           "Darwin": [ "HOMEBREW_CASK_OPTS='--no-quarantine' brew install --cask inkscape", "inkscape --version" ],
           "Windows": [
@@ -18,13 +40,19 @@ runs:
             "echo {}>> {}".format(win_prefix, os.environ["GITHUB_PATH"]),
             "\"{}\\inkscape\" --version".format(win_prefix)
           ],
-          "Linux": [
+          "Ubuntu": [
             "sudo add-apt-repository ppa:inkscape.dev/stable",
             "sudo apt update",
             "sudo apt install inkscape",
+            "which inkscape",
+            "inkscape --version"
+          ],
+          "Linux": [
+            "wget https://inkscape.org/gallery/item/42330/Inkscape-0e150ed-x86_64.AppImage -O /usr/local/bin/inkscape",
+            "sudo chmod +x /usr/local/bin/inkscape",
             "inkscape --version"
           ]
-        }.get(platform.system(), [ "echo \"Unsupported platform: {}\"".format(platform.system()), "exit 1" ])
+        }.get(platform_name, [ "echo \"Unsupported platform: {}\"".format(platform_name), "exit 1" ])
 
         for cmd in cmds:
           if os.system(cmd) != 0:
