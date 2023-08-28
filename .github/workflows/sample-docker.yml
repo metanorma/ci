@@ -53,8 +53,6 @@ jobs:
         with:
           token: ${{ secrets.pat_token }}
 
-      - run: apt-get update -y && apt-get install -y gcc g++ ruby-dev
-
       - uses: metanorma/ci/docker-gem-install@main
 
       - id: build-and-publish
