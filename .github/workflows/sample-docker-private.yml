@@ -33,6 +33,7 @@ permissions:
   contents: read
   pages: write
   id-token: write
+  packages: read
 
 jobs:
   test-docker:
@@ -58,7 +59,8 @@ jobs:
         with:
           token: ${{ secrets.pat_token }}
 
-      - uses: metanorma/ci/docker-gem-install@main
+      # https://github.com/metanorma/metanorma-docker-private/issues/16
+      # - uses: metanorma/ci/docker-gem-install@main
 
       - uses: actions-mn/build-and-publish@main
         with:
