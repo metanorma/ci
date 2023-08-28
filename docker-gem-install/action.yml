@@ -8,7 +8,9 @@ runs:
   using: "composite"
   steps:
     - run: |
-        add-apt-repository ppa:inkscape.dev/stable
+        if uname -a | grep -qi ubuntu; then
+          add-apt-repository ppa:inkscape.dev/stable
+        fi
         apt-get update -y && apt-get install -y gcc g++ ruby-dev
       shell: bash
 
