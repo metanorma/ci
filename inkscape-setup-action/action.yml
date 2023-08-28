@@ -11,7 +11,14 @@ runs:
 
         win_prefix = "C:\\Program Files\\Inkscape\\bin"
 
-        platform_name = "Ubuntu" if 'ubuntu' in platform.version().lower() else platform.system()
+        def get_platform_name():
+          try:
+            os_release_id = platform.freedesktop_os_release()["ID"]
+            return "Ubuntu" if os_release_id == "Ubuntu" else platform.system()
+          except AttributeError:
+            return platform.system()
+
+        platform_name = get_platform_name()
 
         cmds = {
           "Darwin": [ "HOMEBREW_CASK_OPTS='--no-quarantine' brew install --cask inkscape", "inkscape --version" ],

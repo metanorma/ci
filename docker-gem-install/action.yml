@@ -8,7 +8,8 @@ runs:
   using: "composite"
   steps:
     - run: |
-        if uname -a | grep -qi ubuntu; then
+        source /etc/os-release
+        if [ "$ID" == "ubuntu" ]; then
           add-apt-repository ppa:inkscape.dev/stable
         fi
         apt-get update -y && apt-get install -y gcc g++ ruby-dev
