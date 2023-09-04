@@ -293,6 +293,14 @@ repositories:
       .rubocop.yml: gh-actions/master/.rubocop.yml
       .github/workflows/rake.yml: gh-actions/master/rake.yml
       .github/workflows/release.yml: gh-actions/master/release.yml
+  pubid-ccsds:
+    remote: ssh://git@github.com/metanorma/pubid-ccsds
+    branch: main
+    files:
+      .hound.yml: gh-actions/master/.hound.yml
+      .rubocop.yml: gh-actions/master/.rubocop.yml
+      .github/workflows/rake.yml: gh-actions/master/rake.yml
+      .github/workflows/release.yml: gh-actions/master/release.yml
 
   # models
   metanorma-model-gb:
@@ -833,6 +841,15 @@ repositories:
     branch: main
     files:
       .github/workflows/generate.yml: gh-actions/samples/generate.yml
+  enisa-eucs:
+    remote: ssh://git@github.com/metanorma/enisa-eucs
+    branch: main
+    files: []
+  X.icd-schemas
+    remote: ssh://git@github.com/metanorma/X.icd-schemas
+    branch: main
+    files:
+      .github/workflows/generate.yml: gh-actions/samples/generate.yml
   # templates
   mn-templates-cc:
     remote: ssh://git@github.com/metanorma/mn-templates-cc
@@ -1264,6 +1281,7 @@ groups:
   - pubid-cen
   - pubid-jis
   - pubid-itu
+  - pubid-ccsds
   metanorma:
   - metanorma
   - metanorma-cli
@@ -1353,6 +1371,8 @@ groups:
   - gmt-0010-2012
   - gmt-0015-2012
   - iso-tc184-sc4-directives
+  - enisa-eucs
+  - X.icd-schemas
   setup:
   - metanorma-macos-setup
   - metanorma-windows-setup
@@ -1506,3 +1526,5 @@ groups:
   - mn2sts
   - stepmod2mn
   - barcode4j
+  # convert
+  - coradoc-oscal
