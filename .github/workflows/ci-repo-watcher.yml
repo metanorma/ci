@@ -55,6 +55,4 @@ jobs:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN || secrets.token }}
       with:
         assignees: CAMOBAP
-        update_existing: true
-        search_existing: all
         filename: .github/templates/new-repos.md
