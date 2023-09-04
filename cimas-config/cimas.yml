@@ -845,7 +845,7 @@ repositories:
     remote: ssh://git@github.com/metanorma/enisa-eucs
     branch: main
     files: []
-  X.icd-schemas
+  X.icd-schemas:
     remote: ssh://git@github.com/metanorma/X.icd-schemas
     branch: main
     files:
