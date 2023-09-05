@@ -572,23 +572,24 @@ repositories:
     remote: ssh://git@github.com/metanorma/mn-samples-ogc
     branch: main
     files:
-      .github/workflows/docker.yml: gh-actions/samples/docker.yml
-      .github/workflows/generate.yml: gh-actions/samples/generate.yml
+      .github/workflows/docker.yml: gh-actions/samples/public-docker.yml
+      .github/workflows/generate.yml: gh-actions/samples/public-generate.yml
       .github/workflows/test.yml: gh-actions/samples/test.yml
+      .github/workflows/automerge.yml: gh-actions/master/automerge.yml
   mn-samples-itu:
     remote: ssh://git@github.com/metanorma/mn-samples-itu
     branch: main
     files:
-      .github/workflows/docker.yml: gh-actions/samples/docker.yml
-      .github/workflows/generate.yml: gh-actions/samples/generate.yml
+      .github/workflows/docker.yml: gh-actions/samples/public-docker.yml
+      .github/workflows/generate.yml: gh-actions/samples/public-generate.yml
       .github/workflows/test.yml: gh-actions/samples/test.yml
       .github/workflows/automerge.yml: gh-actions/master/automerge.yml
   mn-samples-iec:
     remote: ssh://git@github.com/metanorma/mn-samples-iec
     branch: main
     files:
-      .github/workflows/docker.yml: gh-actions/samples/docker.yml
-      .github/workflows/generate.yml: gh-actions/samples/generate.yml
+      .github/workflows/docker.yml: gh-actions/samples/public-docker.yml
+      .github/workflows/generate.yml: gh-actions/samples/public-generate.yml
       .github/workflows/test.yml: gh-actions/samples/test.yml
       .github/workflows/automerge.yml: gh-actions/master/automerge.yml
   mn-samples-ietf:
@@ -603,244 +604,259 @@ repositories:
     remote: ssh://git@github.com/metanorma/mn-samples-un
     branch: main
     files:
-      .github/workflows/docker.yml: gh-actions/samples/docker.yml
-      .github/workflows/generate.yml: gh-actions/samples/generate.yml
+      .github/workflows/docker.yml: gh-actions/samples/public-docker.yml
+      .github/workflows/generate.yml: gh-actions/samples/public-generate.yml
       .github/workflows/test.yml: gh-actions/samples/test.yml
       .github/workflows/automerge.yml: gh-actions/master/automerge.yml
   mn-samples-mpfa:
     remote: ssh://git@github.com/metanorma/mn-samples-mpfa
     branch: main
     files:
-      .github/workflows/docker.yml: gh-actions/samples/docker.yml
-      .github/workflows/generate.yml: gh-actions/samples/generate.yml
+      .github/workflows/docker.yml: gh-actions/samples/public-docker.yml
+      .github/workflows/generate.yml: gh-actions/samples/public-generate.yml
       .github/workflows/test.yml: gh-actions/samples/test.yml
       .github/workflows/automerge.yml: gh-actions/master/automerge.yml
   mn-samples-iso:
     remote: ssh://git@github.com/metanorma/mn-samples-iso
     branch: main
     files:
-      .github/workflows/docker.yml: gh-actions/samples/docker.yml
-      .github/workflows/generate.yml: gh-actions/samples/generate.yml
+      .github/workflows/docker.yml: gh-actions/samples/public-docker.yml
+      .github/workflows/generate.yml: gh-actions/samples/public-generate.yml
       .github/workflows/test.yml: gh-actions/samples/test.yml
       .github/workflows/automerge.yml: gh-actions/master/automerge.yml
   mn-samples-cc:
     remote: ssh://git@github.com/metanorma/mn-samples-cc
     branch: main
     files:
-      .github/workflows/docker.yml: gh-actions/samples/docker.yml
-      .github/workflows/generate.yml: gh-actions/samples/generate.yml
+      .github/workflows/docker.yml: gh-actions/samples/public-docker.yml
+      .github/workflows/generate.yml: gh-actions/samples/public-generate.yml
       .github/workflows/test.yml: gh-actions/samples/test.yml
       .github/workflows/automerge.yml: gh-actions/master/automerge.yml
   mn-samples-iho:
     remote: ssh://git@github.com/metanorma/mn-samples-iho
     branch: main
     files:
-      .github/workflows/docker.yml: gh-actions/samples/docker.yml
-      .github/workflows/generate.yml: gh-actions/samples/generate.yml
+      .github/workflows/docker.yml: gh-actions/samples/public-docker.yml
+      .github/workflows/generate.yml: gh-actions/samples/public-generate.yml
       .github/workflows/test.yml: gh-actions/samples/test.yml
       .github/workflows/automerge.yml: gh-actions/master/automerge.yml
   mn-samples-nist:
     remote: ssh://git@github.com/metanorma/mn-samples-nist
     branch: main
     files:
-      .github/workflows/docker.yml: gh-actions/samples/docker.yml
+      .github/workflows/docker.yml: gh-actions/samples/private-docker.yml
       .github/workflows/test.yml: gh-actions/samples/test.yml
       .github/workflows/automerge.yml: gh-actions/master/automerge.yml
   mn-samples-m3aawg:
     remote: ssh://git@github.com/metanorma/mn-samples-m3aawg
     branch: main
     files:
-      .github/workflows/docker.yml: gh-actions/samples/docker.yml
-      .github/workflows/generate.yml: gh-actions/samples/generate.yml
+      .github/workflows/docker.yml: gh-actions/samples/public-docker.yml
+      .github/workflows/generate.yml: gh-actions/samples/public-generate.yml
       .github/workflows/test.yml: gh-actions/samples/test.yml
       .github/workflows/automerge.yml: gh-actions/master/automerge.yml
   mn-samples-csa:
     remote: ssh://git@github.com/metanorma/mn-samples-csa
     branch: main
     files:
-      .github/workflows/docker.yml: gh-actions/samples/docker.yml
-      .github/workflows/generate.yml: gh-actions/samples/generate.yml
+      .github/workflows/docker.yml: gh-actions/samples/public-docker.yml
+      .github/workflows/generate.yml: gh-actions/samples/public-generate.yml
       .github/workflows/test.yml: gh-actions/samples/test.yml
       .github/workflows/automerge.yml: gh-actions/master/automerge.yml
   mn-samples-bipm:
     remote: ssh://git@github.com/metanorma/mn-samples-bipm
     branch: main
     files:
-      .github/workflows/docker.yml: gh-actions/samples/docker.yml
-      .github/workflows/generate.yml: gh-actions/samples/generate.yml
+      .github/workflows/docker.yml: gh-actions/samples/public-docker.yml
+      .github/workflows/generate.yml: gh-actions/samples/public-generate.yml
       .github/workflows/test.yml: gh-actions/samples/test.yml
       .github/workflows/automerge.yml: gh-actions/master/automerge.yml
   mn-samples-jcgm:
     remote: ssh://git@github.com/metanorma/mn-samples-jcgm
     branch: main
     files:
-      .github/workflows/docker.yml: gh-actions/samples/docker.yml
-      .github/workflows/generate.yml: gh-actions/samples/generate.yml
+      .github/workflows/docker.yml: gh-actions/samples/public-docker.yml
+      .github/workflows/generate.yml: gh-actions/samples/public-generate.yml
       .github/workflows/test.yml: gh-actions/samples/test.yml
       .github/workflows/automerge.yml: gh-actions/master/automerge.yml
   mn-samples-ribose:
     remote: ssh://git@github.com/metanorma/mn-samples-ribose
     branch: main
     files:
-      .github/workflows/docker.yml: gh-actions/samples/docker.yml
+      .github/workflows/docker.yml: gh-actions/samples/public-docker.yml
       .github/workflows/test.yml: gh-actions/samples/test.yml
   mn-samples-bsi:
     remote: ssh://git@github.com/metanorma/mn-samples-bsi
     branch: main
     files:
-      .github/workflows/docker.yml: gh-actions/samples/docker.yml
+      .github/workflows/docker.yml: gh-actions/samples/private-docker.yml
       .github/workflows/test.yml: gh-actions/samples/test.yml
   mn-samples-ieee:
     remote: ssh://git@github.com/metanorma/mn-samples-ieee
     branch: main
     files:
-      .github/workflows/docker.yml: gh-actions/samples/docker.yml
-      .github/workflows/test.yml: gh-actions/samples/generate.yml
+      .github/workflows/docker.yml: gh-actions/samples/public-docker.yml
+      .github/workflows/generate.yml: gh-actions/samples/public-generate.yml
+      .github/workflows/test.yml: gh-actions/samples/test.yml
+      .github/workflows/automerge.yml: gh-actions/master/automerge.yml
   mn-samples-standoc:
     remote: ssh://git@github.com/metanorma/mn-samples-standoc
     branch: main
     files:
-      .github/workflows/docker.yml: gh-actions/samples/docker.yml
-      .github/workflows/test.yml: gh-actions/samples/generate.yml
+      .github/workflows/docker.yml: gh-actions/samples/public-docker.yml
+      .github/workflows/generate.yml: gh-actions/samples/public-generate.yml
+      .github/workflows/test.yml: gh-actions/samples/test.yml
+      .github/workflows/automerge.yml: gh-actions/master/automerge.yml
   # docs
   ogc-wfs:
     remote: ssh://git@github.com/metanorma/ogc-wfs
     branch: master
     files:
-      .github/workflows/docker.yml: gh-actions/samples/docker.yml
-      .github/workflows/generate.yml: gh-actions/samples/generate.yml
-  isodoc-rice:
-    remote: ssh://git@github.com/metanorma/isodoc-rice
-    branch: master
-    files:
-      .github/workflows/docker.yml: gh-actions/samples/docker.yml
-      .github/workflows/generate.yml: gh-actions/samples/generate.yml
+      .github/workflows/docker.yml: gh-actions/samples/public-docker.yml
+      .github/workflows/generate.yml: gh-actions/samples/public-generate.yml
+      .github/workflows/automerge.yml: gh-actions/master/automerge.yml
   hk-ogcio-infosec-docs:
     remote: ssh://git@github.com/metanorma/hk-ogcio-infosec-docs
     branch: master
     files:
-      .github/workflows/docker.yml: gh-actions/samples/docker.yml
-      .github/workflows/generate.yml: gh-actions/samples/generate.yml
+      .github/workflows/docker.yml: gh-actions/samples/public-docker.yml
+      .github/workflows/generate.yml: gh-actions/samples/public-generate.yml
+      .github/workflows/automerge.yml: gh-actions/master/automerge.yml
   csa-caiq:
     remote: ssh://git@github.com/metanorma/csa-caiq
     branch: master
     files:
-      .github/workflows/docker.yml: gh-actions/samples/docker.yml
-      .github/workflows/generate.yml: gh-actions/samples/generate.yml
-      .github/workflows/test.yml: gh-actions/samples/test.yml
+      .github/workflows/docker.yml: gh-actions/samples/public-docker.yml
+      .github/workflows/generate.yml: gh-actions/samples/public-generate.yml
       .github/workflows/automerge.yml: gh-actions/master/automerge.yml
   ogc-tcpnp:
     remote: ssh://git@github.com/metanorma/ogc-tcpnp
-    branch: master
+    branch: main
     files:
-      .github/workflows/docker.yml: gh-actions/samples/docker.yml
-      .github/workflows/generate.yml: gh-actions/samples/generate.yml
+      .github/workflows/docker.yml: gh-actions/samples/public-docker.yml
+      .github/workflows/generate.yml: gh-actions/samples/public-generate.yml
+      .github/workflows/automerge.yml: gh-actions/master/automerge.yml
   ogc-dggs-xmi:
     remote: ssh://git@github.com/metanorma/ogc-dggs-xmi
-    branch: master
+    branch: main
     files:
-      .github/workflows/docker.yml: gh-actions/samples/docker.yml
-      .github/workflows/generate.yml: gh-actions/samples/generate.yml
+      .github/workflows/docker.yml: gh-actions/samples/public-docker.yml
+      .github/workflows/generate.yml: gh-actions/samples/public-generate.yml
+      .github/workflows/automerge.yml: gh-actions/master/automerge.yml
   ogc-citygml-xmi:
     remote: ssh://git@github.com/metanorma/ogc-citygml-xmi
-    branch: master
+    branch: main
     files:
-      .github/workflows/docker.yml: gh-actions/samples/docker.yml
-      .github/workflows/generate.yml: gh-actions/samples/generate.yml
+      .github/workflows/docker.yml: gh-actions/samples/public-docker.yml
+      .github/workflows/generate.yml: gh-actions/samples/public-generate.yml
+      .github/workflows/automerge.yml: gh-actions/master/automerge.yml
   ogc-citygml2:
     remote: ssh://git@github.com/metanorma/ogc-citygml2
     branch: main
     files:
-      .github/workflows/docker.yml: gh-actions/samples/docker.yml
+      .github/workflows/docker.yml: gh-actions/samples/public-docker.yml
+      .github/workflows/generate.yml: gh-actions/samples/public-generate.yml
+      .github/workflows/automerge.yml: gh-actions/master/automerge.yml
   bipm-si-brochure:
     remote: ssh://git@github.com/metanorma/bipm-si-brochure
     branch: main
     files:
-      .github/workflows/docker.yml: gh-actions/samples/docker.yml
-      .github/workflows/generate.yml: gh-actions/samples/generate.yml
+      .github/workflows/docker.yml: gh-actions/samples/public-docker.yml
+      .github/workflows/generate.yml: gh-actions/samples/public-generate.yml
+      .github/workflows/automerge.yml: gh-actions/master/automerge.yml
   eccma-iso-scor-vocab:
     remote: ssh://git@github.com/metanorma/eccma-iso-scor-vocab
     branch: main
     files:
-      .github/workflows/docker.yml: gh-actions/samples/docker.yml
-      .github/workflows/generate.yml: gh-actions/samples/generate.yml
+      .github/workflows/docker.yml: gh-actions/samples/public-docker.yml
+      .github/workflows/generate.yml: gh-actions/samples/public-generate.yml
+      .github/workflows/automerge.yml: gh-actions/master/automerge.yml
   bs-202000:
     remote: ssh://git@github.com/metanorma/bs-202000
     branch: main
     files:
-      .github/workflows/generate.yml: gh-actions/samples/user-docker.yml
+      .github/workflows/generate.yml: gh-actions/samples/private-docker.yml
   S-102-Product-Specification:
     remote: ssh://git@github.com/metanorma/S-102-Product-Specification
     branch: main
     files:
-      .github/workflows/generate.yml: gh-actions/samples/user-docker.yml
+      .github/workflows/generate.yml: gh-actions/samples/public-docker.yml
   pdfa-iso-32000-2:
     remote: ssh://git@github.com/metanorma/pdfa-iso-32000-2
     branch: main
     files:
-      .github/workflows/generate.yml: gh-actions/samples/user-docker.yml
+      .github/workflows/generate.yml: gh-actions/samples/public-docker.yml
   annotated-express:
     remote: ssh://git@github.com/metanorma/annotated-express
     branch: main
     files:
-      .github/workflows/docker.yml: gh-actions/samples/docker.yml
+      .github/workflows/docker.yml: gh-actions/samples/public-docker.yml
   ogc-development-workshop:
     remote: ssh://git@github.com/metanorma/ogc-development-workshop
     branch: main
     files:
-      .github/workflows/docker.yml: gh-actions/samples/docker.yml
+      .github/workflows/docker.yml: gh-actions/samples/public-docker.yml
+      .github/workflows/generate.yml: gh-actions/samples/public-generate.yml
   bipm-editor-guides:
     remote: ssh://git@github.com/metanorma/bipm-editor-guides
     branch: main
     files:
-      .github/workflows/docker.yml: gh-actions/samples/docker.yml
-      .github/workflows/generate.yml: gh-actions/samples/generate.yml
+      .github/workflows/docker.yml: gh-actions/samples/public-docker.yml
+      .github/workflows/generate.yml: gh-actions/samples/public-generate.yml
   iho-standards-manual:
     remote: ssh://git@github.com/metanorma/iho-standards-manual
     branch: main
     files:
-      .github/workflows/generate.yml: gh-actions/samples/user-docker.yml
+      .github/workflows/docker.yml: gh-actions/samples/public-docker.yml
+      .github/workflows/generate.yml: gh-actions/samples/public-generate.yml
   ogc-muddi-mds:
     remote: ssh://git@github.com/metanorma/ogc-muddi-mds
     branch: main
     files:
-      .github/workflows/generate.yml: gh-actions/samples/user-docker.yml
+      .github/workflows/docker.yml: gh-actions/samples/public-docker.yml
+      .github/workflows/generate.yml: gh-actions/samples/public-generate.yml
   scc-ab-docs:
     remote: ssh://git@github.com/metanorma/scc-ab-docs
     branch: main
     files:
-      .github/workflows/generate.yml: gh-actions/samples/user-docker.yml
+      .github/workflows/docker.yml: gh-actions/samples/public-docker.yml
+      .github/workflows/generate.yml: gh-actions/samples/public-generate.yml
   OGCNANameTypeSpecificationForDefinitions:
     remote: ssh://git@github.com/metanorma/OGCNANameTypeSpecificationForDefinitions
     branch: main
     files:
-      .github/workflows/generate.yml: gh-actions/samples/user-docker.yml
+      .github/workflows/docker.yml: gh-actions/samples/public-docker.yml
+      .github/workflows/generate.yml: gh-actions/samples/public-generate.yml
   iso-tc184-sc4-boilerplate:
     remote: ssh://git@github.com/metanorma/iso-tc184-sc4-boilerplate
     branch: main
     files:
-      .github/workflows/generate.yml: gh-actions/samples/user-docker.yml
+      .github/workflows/docker.yml: gh-actions/samples/public-docker.yml
+      .github/workflows/generate.yml: gh-actions/samples/public-generate.yml
   metanorma-tutorial:
     remote: ssh://git@github.com/metanorma/metanorma-tutorial
     branch: master
     files:
-      .github/workflows/generate.yml: gh-actions/samples/user-docker.yml
+      .github/workflows/docker.yml: gh-actions/samples/public-docker.yml
+      .github/workflows/generate.yml: gh-actions/samples/public-generate.yml
   sample-ogc-discussion-paper:
     remote: ssh://git@github.com/metanorma/sample-ogc-discussion-paper
     branch: master
     files:
-      .github/workflows/docker.yml: gh-actions/samples/user-docker.yml
+      .github/workflows/docker.yml: gh-actions/samples/public-docker.yml
+      .github/workflows/generate.yml: gh-actions/samples/public-generate.yml
   ietf-rfc-3339:
     remote: ssh://git@github.com/metanorma/ietf-rfc-3339
     branch: master
     files:
-      .github/workflows/docker.yml: gh-actions/samples/docker.yml
-      .github/workflows/generate.yml: gh-actions/samples/generate.yml
+      .github/workflows/docker.yml: gh-actions/samples/public-docker.yml
+      .github/workflows/generate.yml: gh-actions/samples/public-generate.yml
   ogc-modspec:
     remote: ssh://git@github.com/metanorma/ogc-modspec
     branch: main
     files:
-      .github/workflows/generate.yml: gh-actions/samples/generate.yml
+      .github/workflows/docker.yml: gh-actions/samples/public-docker.yml
+      .github/workflows/generate.yml: gh-actions/samples/public-generate.yml
   enisa-eucs:
     remote: ssh://git@github.com/metanorma/enisa-eucs
     branch: main
@@ -849,7 +865,14 @@ repositories:
     remote: ssh://git@github.com/metanorma/X.icd-schemas
     branch: main
     files:
-      .github/workflows/generate.yml: gh-actions/samples/generate.yml
+      .github/workflows/docker.yml: gh-actions/samples/public-docker.yml
+      .github/workflows/generate.yml: gh-actions/samples/public-generate.yml
+  DGGS2ISO-19170:
+    remote: ssh://git@github.com/metanorma/DGGS2ISO-19170
+    branch: master
+    files:
+      .github/workflows/docker.yml: gh-actions/samples/public-docker.yml
+      .github/workflows/generate.yml: gh-actions/samples/public-generate.yml
   # templates
   mn-templates-cc:
     remote: ssh://git@github.com/metanorma/mn-templates-cc
@@ -1001,110 +1024,105 @@ repositories:
     remote: ssh://git@github.com/metanorma/rfc-divination-cfapi
     branch: master
     files:
-      .github/workflows/docker.yml: gh-actions/samples/docker.yml
-      .github/workflows/generate.yml: gh-actions/samples/generate.yml
+      .github/workflows/docker.yml: gh-actions/samples/public-docker.yml
+      .github/workflows/generate.yml: gh-actions/samples/public-generate.yml
   rfc-camelot-holy-grenade:
     remote: ssh://git@github.com/metanorma/rfc-camelot-holy-grenade
     branch: master
     files:
-      .github/workflows/docker.yml: gh-actions/samples/docker.yml
-      .github/workflows/generate.yml: gh-actions/samples/generate.yml
+      .github/workflows/docker.yml: gh-actions/samples/public-docker.yml
+      .github/workflows/generate.yml: gh-actions/samples/public-generate.yml
   rfc-asciidoc-rfc:
     remote: ssh://git@github.com/metanorma/rfc-asciidoc-rfc
     branch: master
     files:
-      .github/workflows/docker.yml: gh-actions/samples/docker.yml
-      .github/workflows/generate.yml: gh-actions/samples/generate.yml
+      .github/workflows/docker.yml: gh-actions/samples/public-docker.yml
+      .github/workflows/generate.yml: gh-actions/samples/public-generate.yml
   rfc-asciirfc-minimal:
     remote: ssh://git@github.com/metanorma/rfc-asciirfc-minimal
     branch: master
     files:
-      .github/workflows/docker.yml: gh-actions/samples/docker.yml
-      .github/workflows/generate.yml: gh-actions/samples/generate.yml
+      .github/workflows/docker.yml: gh-actions/samples/public-docker.yml
+      .github/workflows/generate.yml: gh-actions/samples/public-generate.yml
   iso-690:
     remote: ssh://git@github.com/metanorma/iso-690
     branch: master
     files:
-      .github/workflows/docker.yml: gh-actions/samples/docker.yml
+      .github/workflows/docker.yml: gh-actions/samples/public-docker.yml
   iso-8000-51:
     remote: ssh://git@github.com/metanorma/iso-8000-51
     branch: main
     files:
-      .github/workflows/docker.yml: gh-actions/samples/docker.yml
+      .github/workflows/docker.yml: gh-actions/samples/public-docker.yml
   iso-8000-100-ed2:
     remote: ssh://git@github.com/metanorma/iso-8000-100-ed2
     branch: master
     files:
-      .github/workflows/docker.yml: gh-actions/samples/docker.yml
+      .github/workflows/docker.yml: gh-actions/samples/public-docker.yml
   iso-8601-1:
     remote: ssh://git@github.com/metanorma/iso-8601-1
     branch: master
     files:
-      .github/workflows/docker.yml: gh-actions/samples/docker.yml
+      .github/workflows/docker.yml: gh-actions/samples/public-docker.yml
       .gitlab-ci.yml: gitlab-ci/samples/docker.yml
   iso-8601-2:
     remote: ssh://git@github.com/metanorma/iso-8601-2
     branch: master
     files:
-      .github/workflows/docker.yml: gh-actions/samples/docker.yml
+      .github/workflows/docker.yml: gh-actions/samples/public-docker.yml
       .gitlab-ci.yml: gitlab-ci/samples/docker.yml
   iso-10303:
     remote: ssh://git@github.com/metanorma/iso-10303
     branch: main
     files:
-      .github/workflows/docker.yml: gh-actions/samples/docker.yml
+      .github/workflows/docker.yml: gh-actions/samples/public-docker.yml
   iso-10303-2:
     remote: ssh://git@github.com/metanorma/iso-10303-2
     branch: main
     files:
-      .github/workflows/docker.yml: gh-actions/samples/docker.yml
+      .github/workflows/docker.yml: gh-actions/samples/public-docker.yml
   iso-19115-3:
     remote: ssh://git@github.com/metanorma/iso-19115-3
     branch: main
     files:
-      .github/workflows/docker.yml: gh-actions/samples/docker.yml
+      .github/workflows/docker.yml: gh-actions/samples/public-docker.yml
   iso-19626-1:
     remote: ssh://git@github.com/metanorma/iso-19626-1
     branch: master
     files:
-      .github/workflows/docker.yml: gh-actions/samples/docker.yml
-      .github/workflows/generate.yml: gh-actions/samples/generate.yml
+      .github/workflows/docker.yml: gh-actions/samples/public-docker.yml
   iso-tc184-sc4:
     remote: ssh://git@github.com/metanorma/iso-tc184-sc4
     branch: master
     files:
-      .github/workflows/docker.yml: gh-actions/samples/docker.yml
+      .github/workflows/docker.yml: gh-actions/samples/public-docker.yml
   iso-10303-11:
     remote: ssh://git@github.com/metanorma/iso-10303-11
     branch: main
     files:
-      .github/workflows/docker.yml: gh-actions/samples/docker.yml
+      .github/workflows/docker.yml: gh-actions/samples/public-docker.yml
   iso-19135:
     remote: ssh://git@github.com/metanorma/iso-19135
     branch: main
     files:
-      .github/workflows/docker.yml: gh-actions/samples/docker.yml
+      .github/workflows/docker.yml: gh-actions/samples/public-docker.yml
   iso-15926-6:
     remote: ssh://git@github.com/metanorma/iso-15926-6
     branch: main
     files:
-      .github/workflows/docker.yml: gh-actions/samples/docker.yml
+      .github/workflows/docker.yml: gh-actions/samples/public-docker.yml
   iso-19156:
     remote: ssh://git@github.com/metanorma/iso-19156
     branch: main
     files:
-      .github/workflows/docker.yml: gh-actions/samples/docker.yml
+      .github/workflows/docker.yml: gh-actions/samples/public-docker.yml
+      .github/workflows/generate.yml: gh-actions/samples/public-generate.yml
   iso-tc184-sc4-directives:
     remote: ssh://git@github.com/metanorma/iso-tc184-sc4-directives
     branch: master
     files:
-      .github/workflows/docker.yml: gh-actions/samples/docker.yml
-
-  DGGS2ISO-19170:
-    remote: ssh://git@github.com/metanorma/DGGS2ISO-19170
-    branch: master
-    files:
-      .github/workflows/docker.yml: gh-actions/samples/docker.yml
+      .github/workflows/docker.yml: gh-actions/samples/public-docker.yml
+      .github/workflows/generate.yml: gh-actions/samples/public-generate.yml
 
   mn2pdf-ruby:
     remote: ssh://git@github.com/metanorma/mn2pdf-ruby
@@ -1352,9 +1370,7 @@ groups:
   - mn-samples-standoc
   docs:
   - bipm-si-brochure
-  - isodoc-rice
-  - ogc-wfs:
-  - isodoc-rice
+  - ogc-wfs
   - hk-ogcio-infosec-docs
   - csa-caiq
   - ogc-tcpnp
