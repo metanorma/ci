@@ -718,6 +718,15 @@ repositories:
       .github/workflows/generate.yml: gh-actions/samples/public-generate.yml
       .github/workflows/test.yml: gh-actions/samples/test.yml
       .github/workflows/automerge.yml: gh-actions/master/automerge.yml
+  mn-samples-jis:
+    remote: ssh://git@github.com/metanorma/mn-samples-jis
+    branch: main
+    files:
+      .github/workflows/docker.yml: gh-actions/samples/private-fonts.yml.erb
+      .github/workflows/test.yml: gh-actions/samples/test.yml
+    template:
+      binding:
+        flavor: jis
   # docs
   ogc-wfs:
     remote: ssh://git@github.com/metanorma/ogc-wfs
@@ -1408,6 +1417,7 @@ groups:
   - mn-samples-ribose
   - mn-samples-nist
   - mn-samples-bsi
+  - mn-samples-jis
   - bs-202000
   setup:
   - metanorma-macos-setup

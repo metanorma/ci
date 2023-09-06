@@ -1,0 +1,47 @@
+name: docker
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+  packages: read
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.head_ref || github.ref_name }}
+  cancel-in-progress: true
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    container:
+      image: metanorma/metanorma:latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+        with:
+          submodules: true
+
+      - name: Setup Flavor
+        uses: actions-mn/setup-flavors@v1
+        with:
+          extra-flavors: <%= flavor %>
+          github-pakages-token: ${{ secrets.METANORMA_CI_PAT_TOKEN }}
+          use-bundler: true
+
+      - name: Setup Fonts
+        run: |
+          fontist update
+          fontist repo setup metanorma https://metanorma-ci:${{ secrets.METANORMA_CI_PAT_TOKEN }}@github.com/metanorma/fontist-formulas-private
+          fontist repo update metanorma
+
+      - name: Metanorma generate site
+        uses: actions-mn/build-and-publish@v1
+        with:
+          agree-to-terms: true
+          destination: artifact
