@@ -786,7 +786,7 @@ repositories:
     remote: ssh://git@github.com/metanorma/bs-202000
     branch: main
     files:
-      .github/workflows/generate.yml: gh-actions/samples/private-docker.yml
+      .github/workflows/generate.yml: gh-actions/samples/private-docker.yml.erb
     template:
       binding:
         flavor: bsi
