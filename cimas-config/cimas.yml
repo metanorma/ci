@@ -644,9 +644,12 @@ repositories:
     remote: ssh://git@github.com/metanorma/mn-samples-nist
     branch: main
     files:
-      .github/workflows/docker.yml: gh-actions/samples/private-docker.yml
+      .github/workflows/docker.yml: gh-actions/samples/private-docker.yml.erb
       .github/workflows/test.yml: gh-actions/samples/test.yml
       .github/workflows/automerge.yml: gh-actions/master/automerge.yml
+    template:
+      binding:
+        flavor: nist
   mn-samples-m3aawg:
     remote: ssh://git@github.com/metanorma/mn-samples-m3aawg
     branch: main
@@ -683,14 +686,22 @@ repositories:
     remote: ssh://git@github.com/metanorma/mn-samples-ribose
     branch: main
     files:
-      .github/workflows/docker.yml: gh-actions/samples/public-docker.yml
+      .github/workflows/docker.yml: gh-actions/samples/private-docker.yml.erb
       .github/workflows/test.yml: gh-actions/samples/test.yml
+      .github/workflows/automerge.yml: gh-actions/master/automerge.yml
+    template:
+      binding:
+        flavor: ribose
   mn-samples-bsi:
     remote: ssh://git@github.com/metanorma/mn-samples-bsi
     branch: main
     files:
-      .github/workflows/docker.yml: gh-actions/samples/private-docker.yml
+      .github/workflows/docker.yml: gh-actions/samples/private-docker.yml.erb
       .github/workflows/test.yml: gh-actions/samples/test.yml
+      .github/workflows/automerge.yml: gh-actions/master/automerge.yml
+    template:
+      binding:
+        flavor: bsi
   mn-samples-ieee:
     remote: ssh://git@github.com/metanorma/mn-samples-ieee
     branch: main
@@ -776,6 +787,9 @@ repositories:
     branch: main
     files:
       .github/workflows/generate.yml: gh-actions/samples/private-docker.yml
+    template:
+      binding:
+        flavor: bsi
   S-102-Product-Specification:
     remote: ssh://git@github.com/metanorma/S-102-Product-Specification
     branch: main
@@ -860,7 +874,7 @@ repositories:
   enisa-eucs:
     remote: ssh://git@github.com/metanorma/enisa-eucs
     branch: main
-    files: []
+    files: {}
   X.icd-schemas:
     remote: ssh://git@github.com/metanorma/X.icd-schemas
     branch: main
@@ -1352,11 +1366,11 @@ groups:
   - asciirfc.com
   - metanorma.com
   samples:
-  - mn-samples-cc
-  - mn-samples-iec
-  - mn-samples-ietf
-  - mn-samples-iso
-  - mn-samples-itu
+  - mn-samples-cc       # +
+  - mn-samples-iec      # +
+  - mn-samples-ietf     # +
+  - mn-samples-iso      # -w
+  - mn-samples-itu      # -w
   - mn-samples-ogc
   - mn-samples-un
   - mn-samples-iho
@@ -1389,6 +1403,12 @@ groups:
   - iso-tc184-sc4-directives
   - enisa-eucs
   - X.icd-schemas
+  - ietf-rfc-3339
+  private-docs:
+  - mn-samples-ribose
+  - mn-samples-nist
+  - mn-samples-bsi
+  - bs-202000
   setup:
   - metanorma-macos-setup
   - metanorma-windows-setup
@@ -1411,19 +1431,12 @@ groups:
   snap:
   - metanorma-snap
   - latexml-snap
-  docs:
-  - hk-ogcio-infosec-docs
-  - ogc-wfs
-  - ogc-tcpnp
-  - csa-caiq
-  - ietf-rfc-3339
-  - ogc-modspec
   asciirfc:
   - rfc-divination-cfapi
   - rfc-camelot-holy-grenade
   - rfc-asciidoc-rfc
   - rfc-asciirfc-minimal
-  private:
+  iso:
   - iso-690
   - iso-8000-51
   - iso-8000-100-ed2
@@ -1435,7 +1448,6 @@ groups:
   - iso-19626-1
   - iso-tc184-sc4
   - DGGS2ISO-19170
-  - mn-samples-nist
   - ogc-dggs-xmi
   apps:
   - packed-mn
