@@ -18,6 +18,8 @@ concurrency:
 jobs:
   build:
     runs-on: ubuntu-latest
+    outputs:
+      deploy-gh-pages: ${{ steps.build-and-publish.outputs.gh-pages-enabled }}
     container:
       image: metanorma/metanorma:latest
     steps:
@@ -27,13 +29,14 @@ jobs:
           submodules: true
 
       - name: Metanorma generate site
+        id: build-and-publish
         uses: actions-mn/build-and-publish@v1
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
           agree-to-terms: true
 
   deploy:
-    if: ${{ github.ref_name == github.event.repository.default_branch }}
+    if: ${{ needs.build.deploy-gh-pages == 'true' && github.ref_name == github.event.repository.default_branch }}
     environment:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}
