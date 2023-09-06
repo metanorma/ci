@@ -2,7 +2,7 @@ name: ci-repo-watcher
 
 on:
   schedule:
-  - cron: "0 0 * * *" # once a day https://crontab.guru/#0_0_*_*
+  - cron: "0 0 * * Mon" # once a week https://crontab.guru/#0_0_*_*
   workflow_dispatch:
   workflow_call:
     secrets:
@@ -40,7 +40,7 @@ jobs:
         echo "New repositories:"
         echo "$NEW_REPOSITORIES"
 
-    - if: ${{ env.NEW_REPOSITORIES != '' && env.NEW_REPOSITORIES != '\n' }}
+    - if: ${{ env.NEW_REPOSITORIES != '' && env.NEW_REPOSITORIES != '\n', && env.NEW_REPOSITORIES != '[]' }}
       name: Download template if missing
       run: |
         if [ ! -f .github/templates/new-repos.md ]
@@ -49,7 +49,7 @@ jobs:
           wget https://raw.githubusercontent.com/metanorma/ci/main/.github/templates/new-repos.md -O .github/templates/new-repos.md
         fi
 
-    - if: ${{ env.NEW_REPOSITORIES != '' }}
+    - if: ${{ env.NEW_REPOSITORIES != '' && env.NEW_REPOSITORIES != '\n', && env.NEW_REPOSITORIES != '[]'  }}
       uses: JasonEtco/create-an-issue@v2
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN || secrets.token }}
