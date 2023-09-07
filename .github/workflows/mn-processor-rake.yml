@@ -189,7 +189,7 @@ jobs:
       group: 'sample-${{ matrix.flavor.id }}-${{ matrix.os }}-${{ matrix.ruby.version }}-${{ github.head_ref || github.ref_name }}'
       cancel-in-progress: true
 
-    continue-on-error: ${{ matrix.ruby.experimental || matrix.experimental }}
+    continue-on-error: ${{ matrix.ruby.experimental || matrix.flavor.experimental }}
     strategy:
       max-parallel: 10
       fail-fast: false
