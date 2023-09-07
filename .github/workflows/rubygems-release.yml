@@ -84,9 +84,17 @@ jobs:
           chmod 0600 ~/.gem/credentials
           ${{ inputs.release_command }}
 
+      # This workflow usually called via repository_dispatch or direct workflow_dispatch
+      # in both cases `github.ref` doesn't reflect real version so we calculate it from gemspecfile
+      - name: get current gem ref
+        id: gem-tag-ref
+        run: |
+          GEM_VERSION=$(ruby -e "puts Gem::Specification.load(Dir.glob('*.gemspec').first).version.to_s")
+          echo "value=refs/tag/v${FLAVOR}" >> $GITHUB_OUTPUT
+
       - uses: peter-evans/repository-dispatch@v2
         with:
           token: ${{ secrets.pat_token || github.token }}
           repository: ${{ github.repository }}
           event-type: release-passed
-          client-payload: '{"ref": "${{ github.ref }}", "sha": "${{ github.sha }}", "type": "release-passed"}'
+          client-payload: '{"ref": "${{ steps.gem-tag-ref.outputs.value }}", "sha": "${{ github.sha }}", "type": "release-passed"}'
