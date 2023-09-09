@@ -18,7 +18,6 @@ jobs:
     - uses: ruby/setup-ruby@v1
       with:
         ruby-version: 2.7
-        bundler-cache: true
 
     - name: Setup gh-repo-manifest
       run: |
@@ -36,9 +35,9 @@ jobs:
         yq --version
         cat cimas-diff.yml | yq e '.repositories | keys' - > new-repos.yml
         NEW_REPOSITORIES=$(cat new-repos.yml)
-        echo "NEW_REPOSITORIES=${NEW_REPOSITORIES//$'\n'/<br/>}" >> $GITHUB_ENV
         echo "New repositories:"
         echo "$NEW_REPOSITORIES"
+        echo "NEW_REPOSITORIES=${NEW_REPOSITORIES//$'\n'/'\n'}" >> $GITHUB_ENV
 
     - if: ${{ env.NEW_REPOSITORIES != '' && env.NEW_REPOSITORIES != '\n' && env.NEW_REPOSITORIES != '[]' }}
       name: Download template if missing
@@ -48,6 +47,10 @@ jobs:
           mkdir -p .github/templates
           wget https://raw.githubusercontent.com/metanorma/ci/main/.github/templates/new-repos.md -O .github/templates/new-repos.md
         fi
+
+        sed -i -e "s/REPOSITOY_MARKDOWN_LIST/${REPOSITOY_MARKDOWN_LIST}/g" .github/templates/new-repos.md
+      env:
+        REPOSITOY_MARKDOWN_LIST: ${{ env.NEW_REPOSITORIES }}
 
     - if: ${{ env.NEW_REPOSITORIES != '' && env.NEW_REPOSITORIES != '\n' && env.NEW_REPOSITORIES != '[]' }}
       uses: JasonEtco/create-an-issue@v2
