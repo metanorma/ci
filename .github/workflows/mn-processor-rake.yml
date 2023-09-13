@@ -165,7 +165,6 @@ jobs:
         overwrite: true
 
     - run: |
-        rm Gemfile.lock
         bundle remove metanorma-${{ needs.build-matrices.outputs.flavor }} --skip-install
         bundle add metanorma-${{ needs.build-matrices.outputs.flavor }} --path ..
         bundle add sassc
