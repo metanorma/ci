@@ -151,7 +151,7 @@ jobs:
       - uses: ./latexml-setup-action
 
       - run: latexmlmath --VERSION
- 
+
   test-change-tmpdir-action:
     name: Test change-tmpdir-action ${{ matrix.os }}
     runs-on: ${{ matrix.os }}
@@ -182,6 +182,24 @@ jobs:
       - uses: ./xml2rfc-setup-action
 
       - run: xml2rfc --version
+
+  test-ghostscript-action:
+    name: Test ghostscript-setup-action ${{ matrix.os }}
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, windows-latest, macos-latest]
+    steps:
+      - uses: actions/checkout@v3
+
+      - uses: ./ghostscript-setup-action
+
+      - if: matrix.os != 'windows-latest'
+        run: gs --version
+
+      - if: matrix.os == 'windows-latest'
+        run: gswin64c.exe --version
 
   test-fontist-action:
     name: Test fontist-setup-action ${{ matrix.os }}

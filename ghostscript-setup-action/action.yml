@@ -1,0 +1,59 @@
+name: 'ghostscript-setup-action'
+description: 'composite action which installs ghostscript for all OSes'
+runs:
+  using: "composite"
+  steps:
+    - shell: python
+      run: |
+        import os
+        import sys
+        import platform
+
+        win_bin_prefix = "C:\\Program Files\\gs\\gs10.00.0\\bin"
+        win_lib_prefix = "C:\\Program Files\\gs\\gs10.00.0\\lib"
+
+        def os_release():
+          try:
+            return platform.freedesktop_os_release()
+          except AttributeError:
+            properties = {}
+            try:
+              with open("/etc/os-release", "r") as file:
+                for line in file:
+                  line = line.strip()
+                  if line and not line.startswith("#"):
+                    key, value = line.split("=", 1)
+                    properties[key] = value.strip('"')
+            except:
+              pass
+            return properties
+          except OSError:
+            return {}
+
+        os_release_dict = os_release()
+
+        print(os_release_dict)
+
+        platform_name = "Ubuntu" if os_release_dict.get("ID", None) == "ubuntu" else platform.system()
+
+        cmds = {
+          "Darwin": [ "gs --version" ],
+          "Windows": [
+            "choco install --no-progress -y ghostscript --version 10.0.0.20230317",
+            "echo {}>> {}".format(win_bin_prefix, os.environ["GITHUB_PATH"]),
+            "echo {}>> {}".format(win_lib_prefix, os.environ["GITHUB_PATH"]),
+            "\"{}\\gswin64c.exe\" --version".format(win_bin_prefix),
+            "\"{}\\ps2pdf\" --version".format(win_lib_prefix),
+          ],
+          "Ubuntu": [
+            "sudo apt install ghostscript",
+            "which gs",
+            "gs --version",
+            "which ps2pdf",
+          ],
+        }.get(platform_name, [ "echo \"Unsupported platform: {}\"".format(platform_name), "exit 1" ])
+
+        for cmd in cmds:
+          if os.system(cmd) != 0:
+            print("Command {} FAILED!".format(cmd))
+            sys.exit(1)
