@@ -306,7 +306,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        os: [ubuntu-latest, windows-latest] # no docker on macos-latest
+        os: [ubuntu-latest] # macos-latest - no docker installed , windows-latest - no experimental options enabled by default
     steps:
       - uses: actions/checkout@v3
 
