@@ -45,12 +45,8 @@ runs:
         echo "EOF" >> $GITHUB_OUTPUT
 
     - if: ${{ inputs.github-token != '' && github.event_name == 'pull_request' }}
-      uses: actions/github-script@v6
+      uses: thollander/actions-comment-pull-request@v2
       with:
-        script: |
-          github.rest.issues.createComment({
-            issue_number: context.issue.number,
-            owner: context.repo.owner,
-            repo: context.repo.repo,
-            body: github.outputs.report
-          })
+        message: ${{ steps.dive.outputs.report }}
+        comment_tag: execution
+        GITHUB_TOKEN: ${{ inputs.github-token }}
