@@ -1,0 +1,32 @@
+name: dive
+description: Action for the Dive, a tool for exploring a docker image, layer contents, and discovering ways to shrink the size of your Docker/OCI image.
+
+inputs:
+  image:
+    description: Docker image to analyze
+    required: true
+  dive-version:
+    description: Version of Dive
+    default: v0.11.0
+
+outputs:
+  output:
+    description: Dive report
+    value: ${{ steps.dive.outputs.report }}
+
+runs:
+  using: "composite"
+  steps:
+    - id: dive
+      run: |
+        docker pull wagoodman/dive:${{ inputs.dive-version }}
+
+        docker run \
+          -e CI=true -e DOCKER_API_VERSION=1.37 \
+          --rm \
+          -v /var/run/docker.sock:/var/run/docker.sock \
+          wagoodman/dive:${{ inputs.dive-version }} \
+          ${{ inputs.image }} > output.txt
+
+        cat "report=$(cat output.txt)" >> $GITHUB_OUTPUT
+      shell: bash

@@ -299,3 +299,25 @@ jobs:
       - run: |
           [ ${{ steps.gh-repo-status.outputs.public }} = "${{ matrix.result }}" ]
         shell: bash
+
+  test-dive-action:
+    name: Test dive-action ${{ matrix.os }}
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, macos-latest, windows-latest]
+    steps:
+      - uses: actions/checkout@v3
+
+      - run: |
+          cat > Dockerfile << EOF
+          FROM alpine:latest
+          CMD ["echo", "'Hello World!'"]
+          EOF
+
+          docker build . -t ci-test-image
+
+      - uses: ./dive-action
+        with:
+          image: ci-test-image
