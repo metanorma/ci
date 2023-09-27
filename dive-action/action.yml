@@ -1,0 +1,56 @@
+name: dive
+description: |
+  Action for the Dive, a tool for exploring a docker image, layer contents.
+  https://github.com/wagoodman/dive
+
+inputs:
+  image:
+    description: Docker image to analyze
+    required: true
+  github-token:
+    description: Token to be able post comment on PR
+    default: ''
+  dive-version:
+    description: Version of Dive
+    default: v0.11.0
+  dive-output-file:
+    description: Path to file where output will be stored temporarelly
+    default: ./.dive.output.txt
+
+outputs:
+  output:
+    description: Dive report
+    value: ${{ steps.dive.outputs.report }}
+
+runs:
+  using: "composite"
+  steps:
+    - id: dive
+      shell: bash
+      run: |
+        docker pull wagoodman/dive:${{ inputs.dive-version }}
+
+        docker run \
+          -e CI=true -e DOCKER_API_VERSION=1.37 \
+          --rm \
+          -v /var/run/docker.sock:/var/run/docker.sock \
+          wagoodman/dive:${{ inputs.dive-version }} \
+          ${{ inputs.image }} > ${{ inputs.dive-output-file }}
+
+        echo "Dive report:"
+        cat ${{ inputs.dive-output-file }}
+
+        echo "report<<EOF" >> $GITHUB_OUTPUT
+        cat ${{ inputs.dive-output-file }} >> $GITHUB_OUTPUT
+        echo "EOF" >> $GITHUB_OUTPUT
+
+    - if: ${{ inputs.github-token != '' && github.event_name == 'pull_request' }}
+      uses: actions/github-script@v6
+      with:
+        script: |
+          github.rest.issues.createComment({
+            issue_number: context.issue.number,
+            owner: context.repo.owner,
+            repo: context.repo.repo,
+            body: github.outputs.report
+          })
