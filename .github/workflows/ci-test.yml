@@ -316,7 +316,7 @@ jobs:
           FROM alpine:latest
           CMD ["echo", "'Hello World!'"]
           EOF
-          docker build . -t ci-test-image
+          docker build . -t ci-test-image --platform=linux/amd64
 
       - uses: ./dive-action
         with:
