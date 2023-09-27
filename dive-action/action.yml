@@ -26,6 +26,7 @@ runs:
   using: "composite"
   steps:
     - id: dive
+      shell: bash
       run: |
         docker pull wagoodman/dive:${{ inputs.dive-version }}
 
@@ -42,7 +43,6 @@ runs:
         echo "report<<EOF" >> $GITHUB_OUTPUT
         cat ${{ inputs.dive-output-file }} >> $GITHUB_OUTPUT
         echo "EOF" >> $GITHUB_OUTPUT
-      shell: bash
 
     - if: ${{ inputs.github-token != '' && github.event_name == 'pull_request' }}
       uses: actions/github-script@v6
