@@ -310,12 +310,12 @@ jobs:
     steps:
       - uses: actions/checkout@v3
 
-      - run: |
+      - shell: bash
+        run: |
           cat > Dockerfile << EOF
           FROM alpine:latest
           CMD ["echo", "'Hello World!'"]
           EOF
-
           docker build . -t ci-test-image
 
       - uses: ./dive-action
