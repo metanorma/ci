@@ -168,6 +168,7 @@ jobs:
         bundle remove metanorma-${{ needs.build-matrices.outputs.flavor }} --skip-install || true
         bundle add metanorma-${{ needs.build-matrices.outputs.flavor }} --path ..
         bundle add sassc
+        bundle install # https://github.com/metanorma/metanorma-cli/issues/315#issuecomment-1776941839
       working-directory: template
 
     - uses: actions-mn/site-gen@v1
@@ -224,6 +225,7 @@ jobs:
         bundle remove metanorma-${{ needs.build-matrices.outputs.flavor }} --skip-install || true
         bundle add metanorma-${{ needs.build-matrices.outputs.flavor }} --path ..
         bundle add sassc
+        bundle install # https://github.com/metanorma/metanorma-cli/issues/315#issuecomment-1776941839
       working-directory: samples
 
     - if: ${{ matrix.flavor.id == 'bsi' }}
