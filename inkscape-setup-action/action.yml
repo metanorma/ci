@@ -14,6 +14,9 @@ runs:
         def os_release():
           try:
             return platform.freedesktop_os_release()
+          except FileNotFoundError:
+            # https://github.com/metanorma/metanorma-cli/issues/315
+            return {}
           except AttributeError:
             properties = {}
             try:
