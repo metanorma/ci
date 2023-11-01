@@ -35,18 +35,4 @@ runs:
           --rm \
           -v /var/run/docker.sock:/var/run/docker.sock \
           wagoodman/dive:${{ inputs.dive-version }} \
-          ${{ inputs.image }} > ${{ inputs.dive-output-file }}
-
-        echo "Dive report:"
-        cat ${{ inputs.dive-output-file }}
-
-        echo "report<<EOF" >> $GITHUB_OUTPUT
-        cat ${{ inputs.dive-output-file }} >> $GITHUB_OUTPUT
-        echo "EOF" >> $GITHUB_OUTPUT
-
-    - if: ${{ inputs.github-token != '' && github.event_name == 'pull_request' }}
-      uses: thollander/actions-comment-pull-request@v2
-      with:
-        message: ${{ steps.dive.outputs.report }}
-        comment_tag: execution
-        GITHUB_TOKEN: ${{ inputs.github-token }}
+          ${{ inputs.image }}
