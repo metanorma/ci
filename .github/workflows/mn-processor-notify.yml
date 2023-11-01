@@ -18,6 +18,10 @@ jobs:
           GH_USERNAME: metanorma-ci
           GH_ACCESS_TOKEN: ${{ secrets.pat_token }}
         run: |
+          local RUBYGEMS_POST_PUSH_COOLDOWN=120
+          echo "Waiting for ${RUBYGEMS_POST_PUSH_COOLDOWN} seconds after publishing to rubygems.org..."
+          sleep $RUBYGEMS_POST_PUSH_COOLDOWN
+
           curl -LO --retry 3 https://raw.githubusercontent.com/metanorma/ci/master/trigger-gh-actions.sh
           [[ -f ".github/workflows/dependent_repos.env" ]] && source .github/workflows/dependent_repos.env
           CLIENT_PAYLOAD=$(cat <<EOF
