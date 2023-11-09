@@ -29,7 +29,7 @@ on:
         type: string
         default: ''
       submodules:
-        description: 'command to also load submodules'
+        description: 'command to load submodules'
         required: false
         type: boolean
         default: false
