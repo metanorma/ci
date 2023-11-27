@@ -176,10 +176,11 @@ jobs:
         overwrite: true
 
     - run: |
+        rm Gemfile.lock
+        echo 'eval_gemfile("../Gemfile.devel") rescue nil' >> Gemfile
         bundle remove metanorma-${{ needs.build-matrices.outputs.flavor }} --skip-install || true
         bundle add metanorma-${{ needs.build-matrices.outputs.flavor }} --path ..
         bundle add sassc
-        echo 'eval_gemfile("../Gemfile.devel") rescue nil' >> Gemfile
         bundle install # https://github.com/metanorma/metanorma-cli/issues/315#issuecomment-1776941839
       working-directory: template
 
@@ -234,10 +235,10 @@ jobs:
 
     - run: |
         rm Gemfile.lock
+        echo 'eval_gemfile("../Gemfile.devel") rescue nil' >> Gemfile
         bundle remove metanorma-${{ needs.build-matrices.outputs.flavor }} --skip-install || true
         bundle add metanorma-${{ needs.build-matrices.outputs.flavor }} --path ..
         bundle add sassc
-        echo 'eval_gemfile("../Gemfile.devel") rescue nil' >> Gemfile
         bundle install # https://github.com/metanorma/metanorma-cli/issues/315#issuecomment-1776941839
       working-directory: samples
 
