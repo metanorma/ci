@@ -176,7 +176,7 @@ jobs:
         overwrite: true
 
     - run: |
-        rm Gemfile.lock
+        rm -f Gemfile.lock
         echo 'eval_gemfile("../Gemfile.devel") rescue nil' >> Gemfile
         bundle remove metanorma-${{ needs.build-matrices.outputs.flavor }} --skip-install || true
         bundle add metanorma-${{ needs.build-matrices.outputs.flavor }} --path ..
@@ -234,7 +234,7 @@ jobs:
         working-directory: samples
 
     - run: |
-        rm Gemfile.lock
+        rm -f Gemfile.lock
         echo 'eval_gemfile("../Gemfile.devel") rescue nil' >> Gemfile
         bundle remove metanorma-${{ needs.build-matrices.outputs.flavor }} --skip-install || true
         bundle add metanorma-${{ needs.build-matrices.outputs.flavor }} --path ..
