@@ -48,12 +48,15 @@ jobs:
           elif [[ "${{ github.ref }}" == refs/pull/* ]] && [ "${{ github.event.pull_request.head.repo.full_name }}" != "${{ github.event.pull_request.base.repo.full_name }}" ]; then
             fpr="yes"
           fi
+          echo "foreign_pr=${fpr}"
+          echo "head_tag=${tag}"
           echo "foreign_pr=${fpr}" >> $GITHUB_OUTPUT
           echo "head_tag=${tag}" >> $GITHUB_OUTPUT
 
-      - id: push_for_tag
+      - name: Push for tag
+        id: push_for_tag
         run: |
-          value="${{ !(github.event_name == 'push' && steps.check.outputs.head_tag == '') && github.event_name != 'pull_request' }}"
+          value="${{ !(github.event_name == 'push' && steps.check.outputs.head_tag == '') && github.event_name != 'pull_request' && github.event_name != 'workflow_dispatch' && github.event_name != 'repository_dispatch' }}"
           echo "value=${value}"
           echo "value=${value}" >> $GITHUB_OUTPUT
 
