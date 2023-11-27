@@ -1253,6 +1253,7 @@ groups:
   - metanorma-bipm
   - metanorma-bsi
   - metanorma-ieee
+  - metanorma-jis
   pubid:
   - pubid
   - pubid-core
