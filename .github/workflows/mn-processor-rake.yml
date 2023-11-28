@@ -166,6 +166,7 @@ jobs:
         output-path: template
         template: https://github.com/metanorma/mn-templates-${{ matrix.type }}
         overwrite: true
+        use-bundler: true
 
     - run: |
         rm -f Gemfile.lock
