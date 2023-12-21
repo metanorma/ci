@@ -1131,6 +1131,13 @@ repositories:
       .rubocop.yml: gh-actions/master/.rubocop.yml
       .github/workflows/rake.yml: gh-actions/master/rake.yml
       .github/workflows/release.yml: gh-actions/master/release.yml
+  sts-ruby:
+    remote: ssh://git@github.com/metanorma/sts-ruby
+    branch: main
+    files:
+      .rubocop.yml: gh-actions/master/.rubocop.yml
+      .github/workflows/rake.yml: gh-actions/master/rake.yml
+      .github/workflows/release.yml: gh-actions/master/release.yml
   pngcheck-ruby:
     remote: ssh://git@github.com/metanorma/pngcheck-ruby
     branch: main
@@ -1223,6 +1230,7 @@ groups:
   - tex2mn
   - isodoc
   - mnconvert-ruby
+  - sts-ruby
   java:
   - mn2pdf
   - mn2sts
@@ -1316,6 +1324,7 @@ groups:
   site:
   - asciirfc.com
   - metanorma.com
+  - asciiiso.github.io
   samples:
   - mn-samples-cc       # +
   - mn-samples-iec      # +
@@ -1355,6 +1364,8 @@ groups:
   - enisa-eucs
   - X.icd-schemas
   - ietf-rfc-3339
+  - ref-iso-iec-directives
+  - iso-10303-templates
   private-docs:
   - mn-samples-ribose
   - mn-samples-nist
@@ -1436,6 +1447,7 @@ groups:
   - asciiiso.org
   - asciirfc.org
   - metanorma.org
+  - asciiiso.github.io
   # styles
   - csd-style
   - csand-style
@@ -1471,6 +1483,8 @@ groups:
   - gmt-0009-2012
   - gmt-0010-2012
   - gmt-0015-2012
+  - ref-iso-iec-directives
+  - iso-10303-templates
   # data
   - cipm-resolutions
   - cgpm-resolutions
