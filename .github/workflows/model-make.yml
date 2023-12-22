@@ -3,17 +3,26 @@ name: make
 on:
   workflow_call:
 
+concurrency:
+  group: '${{ github.workflow }}-${{ matrix.os }}-${{ github.head_ref || github.ref_name }}'
+  cancel-in-progress: true
+
 jobs:
+  prepare:
+    uses: metanorma/ci/.github/workflows/prepare-rake.yml@main
+
   make:
     name: Test on LutaML ${{ matrix.os }}
     runs-on: ${{ matrix.os }}
-    concurrency:
-      group: '${{ github.workflow }}-${{ matrix.os }}-${{ github.head_ref || github.ref_name }}'
-      cancel-in-progress: true
+
+    needs: prepare
+    if: needs.prepare.outputs.push-for-tag != 'true'
+
     strategy:
       fail-fast: false
       matrix:
-        os: [ ubuntu-latest, windows-latest, macos-latest ]
+        os: ${{ fromJson(needs.prepare.outputs.matrix).os }}
+
     steps:
       - uses: actions/checkout@v3
 
@@ -21,7 +30,7 @@ jobs:
 
       - uses: ruby/setup-ruby@v1
         with:
-          ruby-version: '2.7'
+          ruby-version: ${{ needs.prepare.outputs.default-ruby-version }}
           bundler-cache: true
 
       - run: bundle exec make clean all
