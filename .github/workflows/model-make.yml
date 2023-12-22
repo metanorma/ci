@@ -4,7 +4,7 @@ on:
   workflow_call:
 
 concurrency:
-  group: '${{ github.workflow }}-${{ matrix.os }}-${{ github.head_ref || github.ref_name }}'
+  group: '${{ github.workflow }}-${{ runner.os }}-${{ github.head_ref || github.ref_name }}'
   cancel-in-progress: true
 
 jobs:
