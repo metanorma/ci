@@ -3,10 +3,6 @@ name: make
 on:
   workflow_call:
 
-concurrency:
-  group: '${{ github.workflow }}-${{ runner.os }}-${{ github.head_ref || github.ref_name }}'
-  cancel-in-progress: true
-
 jobs:
   prepare:
     uses: metanorma/ci/.github/workflows/prepare-rake.yml@main
@@ -17,6 +13,10 @@ jobs:
 
     needs: prepare
     if: needs.prepare.outputs.push-for-tag != 'true'
+
+    concurrency:
+      group: '${{ github.workflow }}-${{ matrix.os }}-${{ github.head_ref || github.ref_name }}'
+      cancel-in-progress: true
 
     strategy:
       fail-fast: false
