@@ -1325,6 +1325,7 @@ groups:
   - asciirfc.com
   - metanorma.com
   - asciiiso.github.io
+  - asciirfc.github.io
   samples:
   - mn-samples-cc       # +
   - mn-samples-iec      # +
@@ -1448,6 +1449,7 @@ groups:
   - asciirfc.org
   - metanorma.org
   - asciiiso.github.io
+  - asciirfc.github.io
   # styles
   - csd-style
   - csand-style
