@@ -20,7 +20,7 @@ jobs:
         os: [ ubuntu-latest, windows-latest, macos-latest ]
         experimental: [ false ]
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
 
       - uses: ruby/setup-ruby@v1
         with:
@@ -37,7 +37,7 @@ jobs:
         os: [ ubuntu-latest, windows-latest, macos-latest ]
         experimental: [ false ]
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
 
       - uses: ./graphviz-setup-action
       - run: dot -V
@@ -66,7 +66,7 @@ jobs:
         - os: macos-latest
           library: /usr/bin/login
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
 
       - uses: ./native-deps-action
         with:
@@ -77,7 +77,7 @@ jobs:
     runs-on: ubuntu-latest
     container: docker://metanorma/metanorma
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
 
       - uses: ./gh-rubygems-setup-action
         with:
@@ -99,7 +99,7 @@ jobs:
     container:
       image: metanorma/metanorma:ubuntu-latest
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
 
       - uses: ./gh-rubygems-setup-action
         with:
@@ -115,7 +115,7 @@ jobs:
     name: Test gh-rubygems-setup-action
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
 
       - uses: ruby/setup-ruby@v1
         with:
@@ -146,7 +146,7 @@ jobs:
       matrix:
         os: [ubuntu-latest, windows-latest, macos-latest]
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
 
       - uses: ./latexml-setup-action
 
@@ -160,7 +160,7 @@ jobs:
       matrix:
         os: [ubuntu-latest, windows-latest, macos-latest]
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
 
       - uses: ./change-tmpdir-action
         with:
@@ -177,7 +177,7 @@ jobs:
       matrix:
         os: [ubuntu-latest, windows-latest, macos-latest]
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
 
       - uses: ./xml2rfc-setup-action
 
@@ -191,7 +191,7 @@ jobs:
       matrix:
         os: [ubuntu-latest, windows-latest, macos-latest]
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
 
       - uses: ./ghostscript-setup-action
 
@@ -212,7 +212,7 @@ jobs:
         force-install: [false, true]
         private-fonts-pat: [ 'y', 'n' ]
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
 
       - uses: ./fontist-setup
         with:
@@ -235,7 +235,7 @@ jobs:
         - os: windows-latest
           force-install: false
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
 
       - id: gh-pages-status
         uses: ./gh-pages-status-action
@@ -256,7 +256,7 @@ jobs:
       matrix:
         force-install: [false, true]
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
 
       - id: gh-pages-status
         uses: ./gh-pages-status-action
@@ -289,7 +289,7 @@ jobs:
           repository: 'metanorma/metanorma-docker-private'
           result: false
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
 
       - id: gh-repo-status
         uses: ./gh-repo-status-action
@@ -308,7 +308,7 @@ jobs:
       matrix:
         os: [ubuntu-latest] # macos-latest - no docker installed , windows-latest - no experimental options enabled by default
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
 
       - shell: bash
         run: |

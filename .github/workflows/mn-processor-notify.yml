@@ -10,7 +10,7 @@ jobs:
     name: Notify dependent repos
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
 
       - name: Trigger release repositories
         if: github.event.client_payload.type == 'release-passed'
