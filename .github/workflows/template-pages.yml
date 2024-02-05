@@ -25,7 +25,7 @@ jobs:
     runs-on: ubuntu-latest
     container: docker://metanorma/mn
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
         with:
           token: ${{ secrets.pat_token || github.token }}
           submodules: true
