@@ -43,6 +43,7 @@ jobs:
           ruby-version: ${{ matrix.ruby }}
           bundler-cache: true
           rubygems: ${{ matrix.rubygems }}
+          bundler: ${{ matrix.ruby.bundler }}
 
       - uses: metanorma/ci/latexml-setup-action@main
 

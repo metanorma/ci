@@ -41,6 +41,7 @@ jobs:
           ruby-version: ${{ matrix.ruby.version }}
           bundler-cache: true
           rubygems: ${{ matrix.ruby.rubygems }}
+          bundler: ${{ matrix.ruby.bundler }}
 
       - uses: metanorma/ci/xml2rfc-setup-action@main
 
