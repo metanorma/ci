@@ -274,6 +274,13 @@ repositories:
       .rubocop.yml: gh-actions/master/.rubocop.yml
       .github/workflows/rake.yml: gh-actions/master/rake.yml
       .github/workflows/release.yml: gh-actions/master/release.yml
+  pubid-nist:
+    remote: ssh://git@github.com/metanorma/pubid-nist
+    branch: main
+    files:
+      .rubocop.yml: gh-actions/master/.rubocop.yml
+      .github/workflows/rake.yml: gh-actions/master/rake.yml
+      .github/workflows/release.yml: gh-actions/master/release.yml
 
   # models
   metanorma-model-gb:
@@ -512,15 +519,15 @@ repositories:
       .rubocop.yml: gh-actions/master/.rubocop.yml
       .github/workflows/rake.yml: gh-actions/master/rake.yml
       .github/workflows/release.yml: gh-actions/master/release.yml
-  pubid-nist:
-    remote: ssh://git@github.com/metanorma/pubid-nist
+  coradoc:
+    remote: ssh://git@github.com/metanorma/coradoc
     branch: main
     files:
       .rubocop.yml: gh-actions/master/.rubocop.yml
       .github/workflows/rake.yml: gh-actions/master/rake.yml
       .github/workflows/release.yml: gh-actions/master/release.yml
-  coradoc:
-    remote: ssh://git@github.com/metanorma/coradoc
+  atmospheric:
+    remote: ssh://git@github.com/metanorma/atmospheric
     branch: main
     files:
       .rubocop.yml: gh-actions/master/.rubocop.yml
@@ -687,6 +694,15 @@ repositories:
     template:
       binding:
         flavor: jis
+  mn-samples-mlit:
+    remote: ssh://git@github.com/metanorma/mn-samples-mlit
+    branch: main
+    files: {}
+  mn-samples-mbxif:
+    remote: ssh://git@github.com/metanorma/mn-samples-mbxif
+    branch: main
+    files: {}
+
   # docs
   ogc-wfs:
     remote: ssh://git@github.com/metanorma/ogc-wfs
@@ -1273,6 +1289,7 @@ groups:
   - pubid-jis
   - pubid-itu
   - pubid-ccsds
+  - pubid-nist
   metanorma:
   - metanorma
   - metanorma-cli
@@ -1343,6 +1360,8 @@ groups:
   - mn-samples-ribose
   - mn-samples-ieee
   - mn-samples-standoc
+  - mn-samples-mlit
+  - mn-samples-mbxif
   docs:
   - bipm-si-brochure
   - ogc-wfs
