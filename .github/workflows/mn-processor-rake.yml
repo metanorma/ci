@@ -244,6 +244,9 @@ jobs:
 
     - uses: metanorma/ci/inkscape-setup-action@main
 
+    - if: matrix.flavor.id == 'ietf'
+      uses: metanorma/ci/xml2rfc-setup-action@main
+
     - uses: actions-mn/site-gen@v1
       with:
         source-path: samples
