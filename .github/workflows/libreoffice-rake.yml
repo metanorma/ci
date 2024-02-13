@@ -40,6 +40,7 @@ jobs:
           ruby-version: ${{ matrix.ruby.version }}
           bundler-cache: true
           rubygems: ${{ matrix.rubygems }}
+          bundler: ${{ matrix.ruby.bundler }}
 
       - uses: metanorma/ci/libreoffice-setup-action@main
 
