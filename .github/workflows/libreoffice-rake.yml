@@ -42,6 +42,9 @@ jobs:
           rubygems: ${{ matrix.rubygems }}
           bundler: ${{ matrix.ruby.bundler }}
 
+      - if: runner.os == 'Windows'
+        uses: metanorma/ci/choco-cache-action@main
+
       - uses: metanorma/ci/libreoffice-setup-action@main
 
       - run: bundle exec rake
