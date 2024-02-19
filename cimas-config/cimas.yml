@@ -617,14 +617,6 @@ repositories:
     template:
       binding:
         flavor: nist
-  mn-samples-m3aawg:
-    remote: ssh://git@github.com/metanorma/mn-samples-m3aawg
-    branch: main
-    files:
-      .github/workflows/docker.yml: gh-actions/samples/public-docker.yml
-      .github/workflows/generate.yml: gh-actions/samples/public-generate.yml
-      .github/workflows/test.yml: gh-actions/samples/test.yml
-      .github/workflows/automerge.yml: gh-actions/master/automerge.yml
   mn-samples-csa:
     remote: ssh://git@github.com/metanorma/mn-samples-csa
     branch: main
@@ -1506,6 +1498,7 @@ groups:
   - gmt-0015-2012
   - ref-iso-iec-directives
   - iso-10303-templates
+  - mn-samples-m3aawg # freezed on 1.6.15
   # data
   - cipm-resolutions
   - cgpm-resolutions
