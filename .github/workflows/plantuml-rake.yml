@@ -42,6 +42,9 @@ jobs:
           bundler-cache: true
           rubygems: ${{ matrix.ruby.rubygems }}
 
+      - if: runner.os == 'Windows'
+        uses: metanorma/ci/choco-cache-action@main
+
       - uses: metanorma/ci/plantuml-setup-action@main
 
       - run: bundle exec rake
