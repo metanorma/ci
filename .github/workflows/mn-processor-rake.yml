@@ -166,10 +166,10 @@ jobs:
     - run: |
         rm -f Gemfile.lock
         bundle remove metanorma-${{ needs.build-matrices.outputs.flavor }} --skip-install || true
-        bundle add metanorma-${{ needs.build-matrices.outputs.flavor }} --path ..
-        bundle add sassc
+        bundle add metanorma-${{ needs.build-matrices.outputs.flavor }} --path .. --skip-install
+        bundle add sassc --skip-install
         echo 'eval_gemfile("../Gemfile.devel") rescue nil' >> Gemfile
-        bundle install # https://github.com/metanorma/metanorma-cli/issues/315#issuecomment-1776941839
+        bundle install
       shell: bash
       working-directory: template
 
@@ -181,6 +181,7 @@ jobs:
         source-path: template
         agree-to-terms: true
         use-bundler: true
+        strict: true
 
   test-samples:
     name: Test sample ${{ matrix.flavor.id }}-${{ matrix.ruby.version }}-${{ matrix.os }}
@@ -228,10 +229,11 @@ jobs:
     - run: |
         rm -f Gemfile.lock
         bundle remove metanorma-${{ needs.build-matrices.outputs.flavor }} --skip-install || true
-        bundle add metanorma-${{ needs.build-matrices.outputs.flavor }} --path ..
-        bundle add sassc
+        bundle add metanorma-${{ needs.build-matrices.outputs.flavor }} --path .. --skip-install
+        bundle add sassc --skip-install
         echo 'eval_gemfile("../Gemfile.devel") rescue nil' >> Gemfile
-        bundle install # https://github.com/metanorma/metanorma-cli/issues/315#issuecomment-1776941839
+        cat Gemfile
+        bundle install
       shell: bash
       working-directory: samples
 
@@ -250,6 +252,7 @@ jobs:
         source-path: samples
         agree-to-terms: true
         use-bundler: true
+        strict: true
 
   tests-passed:
     needs: [rake, test-samples, test-templates]
