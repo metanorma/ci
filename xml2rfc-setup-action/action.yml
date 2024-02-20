@@ -3,7 +3,7 @@ description: 'composite action which installs xml2rfc for all OSes'
 runs:
   using: "composite"
   steps:
-  - uses: actions/setup-python@v4
+  - uses: actions/setup-python@v5
     with:
       python-version: '3.10'
 
@@ -23,13 +23,13 @@ runs:
 
       os.system(f"echo PIP_DOWNLOAD_CACHE={cache_path} >> {os.environ['GITHUB_ENV']}")
 
-  - uses: actions/cache@v3
+  - uses: actions/cache@v4
     with:
       path: ${{ env.PIP_DOWNLOAD_CACHE }}
       key: ${{ runner.os }}-pip-${{ hashFiles('**/requirements.txt') }}
       restore-keys: ${{ runner.os }}-pip-
 
-  - uses: actions/cache@v3
+  - uses: actions/cache@v4
     with:
       path: ~/.cache/xml2rfc
       key: xml2rfc
