@@ -93,7 +93,7 @@ jobs:
           GEM_VERSION=$(ruby -e "puts Gem::Specification.load(Dir.glob('*.gemspec').first).version.to_s")
           echo "value=refs/tags/v${GEM_VERSION}" >> $GITHUB_OUTPUT
 
-      - uses: peter-evans/repository-dispatch@v2
+      - uses: peter-evans/repository-dispatch@v3
         with:
           token: ${{ secrets.pat_token || github.token }}
           repository: ${{ github.repository }}
