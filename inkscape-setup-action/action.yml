@@ -39,7 +39,7 @@ runs:
         cmds = {
           "Darwin": [ "HOMEBREW_CASK_OPTS='--no-quarantine' brew install --cask inkscape", "inkscape --version" ],
           "Windows": [
-            "choco install --no-progress -y inkscape --version=1.3.0",
+            "choco install --no-progress -y inkscape",
             "echo {}>> {}".format(win_prefix, os.environ["GITHUB_PATH"]),
             "\"{}\\inkscape\" --version".format(win_prefix)
           ],
