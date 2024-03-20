@@ -32,19 +32,19 @@ jobs:
         with:
           submodules: true
 
-      - uses: ruby/setup-ruby@v1
-        with:
-          ruby-version: ${{ matrix.ruby.version }}
-          bundler-cache: true
-          rubygems: ${{ matrix.ruby.rubygems }}
-          bundler: ${{ matrix.ruby.bundler }}
-
       - if: runner.os == 'Windows'
         uses: metanorma/ci/choco-cache-action@main
 
       - uses: metanorma/ci/inkscape-setup-action@main
 
       - uses: metanorma/ci/ghostscript-setup-action@main
+
+      - uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: ${{ matrix.ruby.version }}
+          bundler-cache: true
+          rubygems: ${{ matrix.ruby.rubygems }}
+          bundler: ${{ matrix.ruby.bundler }}
 
       - run: bundle exec rake
 
