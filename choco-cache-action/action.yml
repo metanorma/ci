@@ -1,9 +1,9 @@
-name: choco-action-action
+name: choco-cache-action
 description: This action cache chocolatey cache location
 inputs:
   cache-path:
     description: path to store chocolatey cache
-    default: 'vendor/choco'
+    default: 'vendor\\choco'
 
 runs:
   using: "composite"
