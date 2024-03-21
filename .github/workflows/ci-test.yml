@@ -331,4 +331,5 @@ jobs:
       - uses: ./choco-cache-action
 
       - run: |
-          choco install 7zip; gc C:\ProgramData\chocolatey\logs\chocolatey.log
+          choco install 7zip
+          gc C:\ProgramData\chocolatey\logs\chocolatey.log

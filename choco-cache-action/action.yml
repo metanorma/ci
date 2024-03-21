@@ -3,16 +3,22 @@ description: This action cache chocolatey cache location
 inputs:
   cache-path:
     description: path to store chocolatey cache
-    default: 'vendor\\choco'
+    default: 'vendor\choco'
 
 runs:
   using: "composite"
   steps:
-  - shell: bash
+  - shell: pwsh
     run: |
-      mkdir -p ${{ inputs.cache-path }}
+      $cachePath = "${{ inputs.cache-path }}"
+      if (-not [System.IO.Path]::IsPathRooted($cachePath)) {
+          $cachePath = Join-Path -Path (Get-Location).Path -ChildPath $cachePath
+      }
+      New-Item -Path $cachePath -ItemType Directory -Force
+
       choco config get cacheLocation
-      choco config set cacheLocation ${{ inputs.cache-path }}
+      choco config set cacheLocation "$cachePath"
+      choco config get cacheLocation
 
   - uses: actions/cache@v4
     with:
