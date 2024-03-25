@@ -453,7 +453,7 @@ repositories:
       .github/workflows/release.yml: gh-actions/master/release.yml
   html2doc:
     remote: ssh://git@github.com/metanorma/html2doc
-    branch: master
+    branch: main
     files:
       .rubocop.yml: gh-actions/master/.rubocop.yml
       .github/workflows/rake.yml: gh-actions/master/rake.yml
@@ -466,7 +466,7 @@ repositories:
       .github/workflows/release.yml: gh-actions/master/release.yml
   isoics:
     remote: ssh://git@github.com/metanorma/isoics
-    branch: master
+    branch: main
     files:
       .rubocop.yml: gh-actions/master/.rubocop.yml
       .github/workflows/rake.yml: gh-actions/master/rake.yml
@@ -507,7 +507,7 @@ repositories:
       .github/workflows/release.yml: gh-actions/master/release.yml
   isodoc-i18n:
     remote: ssh://git@github.com/metanorma/isodoc-i18n
-    branch: master
+    branch: main
     files:
       .rubocop.yml: gh-actions/master/.rubocop.yml
       .github/workflows/rake.yml: gh-actions/master/rake.yml
@@ -967,7 +967,7 @@ repositories:
   # other
   iev:
     remote: ssh://git@github.com/metanorma/iev
-    branch: master
+    branch: main
     files:
       .rubocop.yml: gh-actions/master/.rubocop.yml
       .github/workflows/rake.yml: gh-actions/master/rake.yml
@@ -1003,7 +1003,6 @@ repositories:
     files:
       .rubocop.yml: gh-actions/master/.rubocop.yml
       .github/workflows/rake.yml: gh-actions/master/rake.yml
-      .github/workflows/automerge.yml: gh-actions/master/automerge.yml
   # rfc
   rfc-divination-cfapi:
     remote: ssh://git@github.com/metanorma/rfc-divination-cfapi
