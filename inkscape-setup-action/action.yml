@@ -1,5 +1,9 @@
 name: 'inkscape-setup-action'
 description: 'composite action which installs inkscape for all OSes'
+inputs:
+  filepath:
+    description: 'Full path to native executable (can be skipped in favor of libname+directory)'
+    required: false
 runs:
   using: "composite"
   steps:
@@ -36,22 +40,29 @@ runs:
 
         platform_name = "Ubuntu" if os_release_dict.get("ID", None) == "ubuntu" else platform.system()
 
+        version = {
+          "Darwin": "https://raw.githubusercontent.com/Homebrew/homebrew-cask/4504f6d228818baef6105891cabc085429da38b2/Casks/i/inkscape.rb", # 1.3.1
+          "Windows": "1.3.0",
+          "Ubuntu": "1:1.3.2+202311252150+091e20ef0f~ubuntu22.04.1",
+          "Linux": "https://inkscape.org/gallery/item/42330/Inkscape-0e150ed-x86_64.AppImage"
+        }.get(platform_name, None)
+
         cmds = {
-          "Darwin": [ "HOMEBREW_CASK_OPTS='--no-quarantine' brew install --cask inkscape", "inkscape --version" ],
+          "Darwin": [ "HOMEBREW_CASK_OPTS='--no-quarantine' brew install --cask {}".format(version), "inkscape --version" ],
           "Windows": [
-            "choco install --no-progress -y inkscape --verbose --version 1.3.0",
+            "choco install --no-progress -y inkscape --verbose --version {}".format(version),
             "echo {}>> {}".format(win_prefix, os.environ["GITHUB_PATH"]),
             "\"{}\\inkscape\" --version".format(win_prefix)
           ],
           "Ubuntu": [
             "sudo add-apt-repository ppa:inkscape.dev/stable",
             "sudo apt update",
-            "sudo apt install inkscape",
+            "sudo apt install inkscape={}".format(version),
             "which inkscape",
             "inkscape --version"
           ],
           "Linux": [
-            "wget https://inkscape.org/gallery/item/42330/Inkscape-0e150ed-x86_64.AppImage -O /usr/local/bin/inkscape",
+            "wget {} -O /usr/local/bin/inkscape".format(version),
             "sudo chmod +x /usr/local/bin/inkscape",
             "inkscape --version"
           ]
