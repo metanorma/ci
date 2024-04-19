@@ -17,6 +17,12 @@
       "rubygems": "default",
       "bundler": "default",
       "experimental": false
+    },
+    {
+      "version": "3.3",
+      "rubygems": "default",
+      "bundler": "default",
+      "experimental": false
     }
   ],
   "os": [
