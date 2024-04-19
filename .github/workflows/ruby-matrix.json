@@ -22,7 +22,7 @@
       "version": "3.3",
       "rubygems": "default",
       "bundler": "default",
-      "experimental": false
+      "experimental": true
     }
   ],
   "os": [
