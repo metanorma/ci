@@ -183,6 +183,12 @@ jobs:
         use-bundler: true
         strict: true
 
+    - if: ${{ failure() }}
+      uses: actions/upload-artifact@v4
+      with:
+        name: template-${{ needs.build-matrices.outputs.flavor }}-${{ matrix.ruby.version }}-error-log
+        path: template/_site/**/*.err.html
+
   test-samples:
     name: Test sample ${{ matrix.flavor.id }}-${{ matrix.ruby.version }}-${{ matrix.os }}
     runs-on: ${{ matrix.os }}
@@ -253,6 +259,12 @@ jobs:
         agree-to-terms: true
         use-bundler: true
         strict: true
+
+    - if: ${{ failure() }}
+      uses: actions/upload-artifact@v4
+      with:
+        name: samples-${{ needs.build-matrices.outputs.flavor }}-${{ matrix.ruby.version }}-error-log
+        path: samples/_site/**/*.err.html
 
   tests-passed:
     needs: [rake, test-samples, test-templates]
