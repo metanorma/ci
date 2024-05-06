@@ -4,6 +4,8 @@ on:
   push:
     branches: [ master, main ]
   pull_request:
+  schedule:
+  - cron: "0 0 * * Mon" # once a week https://crontab.guru/#0_0_*_*
 
 concurrency:
   group: '${{ github.workflow }}-${{ github.head_ref || github.ref_name }}'
