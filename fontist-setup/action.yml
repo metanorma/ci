@@ -29,7 +29,7 @@ runs:
       fi
     shell: bash
 
-  - if: ${{ steps.check.outputs.ruby-installed == 'false' || runner.os == 'Windows' }}
+  - if: ${{ steps.check.outputs.ruby-installed == 'false' }}
     uses: ruby/setup-ruby@v1
     with:
       ruby-version: '3.0'
