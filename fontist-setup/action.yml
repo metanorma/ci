@@ -36,17 +36,14 @@ runs:
 
   - if: ${{ steps.check.outputs.fontist-installed == 'false' || inputs.force-install == 'true' }}
     run: |
-      uid_line=$(gem env | grep 'USER INSTALLATION DIRECTORY')
-      USER_GEM_INSTALL_PATH="${uid_line#*: }"
-      echo "${USER_GEM_INSTALL_PATH}/bin" >> $GITHUB_PATH
-      gem env
-      echo "USER_GEM_INSTALL_PATH=${USER_GEM_INSTALL_PATH}"
-      gem install --user-install fontist
-    shell: bash
+      import os
+      os.system("gem install --user-install fontist")
+    shell: python
 
   - if: ${{ inputs.private-fonts-pat != '' }}
     run: |
-      fontist update
-      fontist repo setup metanorma https://metanorma-ci:${{ inputs.private-fonts-pat }}@github.com/metanorma/fontist-formulas-private
-      fontist repo update metanorma
-    shell: bash
+      import os
+      os.system("fontist update")
+      os.system("fontist repo setup metanorma https://metanorma-ci:${{ inputs.private-fonts-pat }}@github.com/metanorma/fontist-formulas-private")
+      os.system("fontist repo update metanorma")
+    shell: python
