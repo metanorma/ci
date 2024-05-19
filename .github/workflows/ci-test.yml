@@ -216,6 +216,11 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
+      - if: ${{ !matrix.force-install }}
+        uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: '3.1'
+
       - uses: ./fontist-setup
         with:
           force-install: ${{ matrix.force-install }}

@@ -37,7 +37,7 @@ runs:
   - if: ${{ steps.check.outputs.fontist-installed == 'false' || inputs.force-install == 'true' }}
     run: |
       import os
-      os.system("gem install --user-install fontist")
+      os.system("gem install fontist")
     shell: python
 
   - if: ${{ inputs.private-fonts-pat != '' }}
