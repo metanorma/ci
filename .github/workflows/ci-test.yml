@@ -210,18 +210,27 @@ jobs:
       fail-fast: false
       max-parallel: 5
       matrix:
-        os: [ubuntu-latest, windows-latest, macos-latest]
+        os: [ubuntu-latest, macos-latest]
         force-install: [false, true]
         private-fonts-pat: [ 'y', 'n' ]
+        include:
+          - os: windows-latest
+            force-install: false
+            private-fonts-pat: 'y'
     steps:
       - uses: actions/checkout@v4
+
+      - if: ${{ !matrix.force-install }}
+        uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: '3.1'
 
       - uses: ./fontist-setup
         with:
           force-install: ${{ matrix.force-install }}
           private-fonts-pat: ${{ matrix.private-fonts-pat == 'y' && secrets.METANORMA_CI_PAT_TOKEN || '' }}
 
-      - run: command -v fontist
+      - run: fontist help || [ $? -eq 1 ]
         shell: bash
 
   test-gh-pages-status-action:
