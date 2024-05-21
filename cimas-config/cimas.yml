@@ -189,6 +189,13 @@ repositories:
       .github/workflows/rake.yml: gh-actions/plantuml/rake.yml
       .github/workflows/release.yml: gh-actions/master/release.yml
       .github/workflows/automerge.yml: gh-actions/master/automerge.yml
+  metanorma-plateau:
+    remote: ssh://git@github.com/metanorma/metanorma-plateau
+    branch: main
+    files:
+      .rubocop.yml: gh-actions/master/.rubocop.yml
+      .github/workflows/rake.yml: gh-actions/plantuml/rake.yml
+      .github/workflows/release_github_packages.yml: gh-actions/master/release_github_packages.yml
   metanorma-document:
     remote: ssh://git@github.com/metanorma/metanorma-document
     branch: main
@@ -700,6 +707,15 @@ repositories:
     template:
       binding:
         flavor: jis
+  mn-samples-plateau:
+    remote: ssh://git@github.com/metanorma/mn-samples-plateau
+    branch: main
+    files:
+      .github/workflows/docker.yml: gh-actions/samples/private-docker.yml.erb
+      .github/workflows/test.yml: gh-actions/samples/test.yml
+    template:
+      binding:
+        flavor: plateau
   mn-samples-mlit:
     remote: ssh://git@github.com/metanorma/mn-samples-mlit
     branch: main
