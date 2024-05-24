@@ -6,6 +6,9 @@ on:
     tags: [ v* ]
   pull_request:
 
+permissions:
+  contents: write
+
 jobs:
   rake:
     uses: metanorma/ci/.github/workflows/plantuml-rake.yml@main

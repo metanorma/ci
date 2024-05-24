@@ -1,0 +1,125 @@
+name: test
+
+on:
+  push:
+    branches: [ master ]
+  pull_request:
+    paths-ignore:
+      - .github/workflows/debian.yml
+  repository_dispatch:
+    types: [ metanorma/mn-native-pdf ]
+
+jobs:
+  build:
+    runs-on: ${{ matrix.os }}-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ 'windows', 'ubuntu' ]
+
+    steps:
+      - uses: actions/setup-ruby@v1
+        with:
+          ruby-version: 2.6
+          architecture: 'x64'
+
+      - uses: actions/checkout@v4
+        with:
+          token: ${{ secrets.METANORMA_CI_PAT_TOKEN }}
+          submodules: recursive
+
+      - name: Fix soft links
+        if: matrix.os == 'windows'
+        shell: pwsh
+        run: |
+          git ls-files -s xslt_src | grep "^12" | cut -f2 | % {
+            $linkPath = Resolve-Path -Path $_
+            $targetFileName = Join-Path -Path $(Split-Path -Path $linkPath -Parent) -ChildPath $(Get-Content $linkPath -Raw)
+            Copy-Item $targetFileName -Destination $linkPath
+          }
+
+      - name: Setup prerequisites
+        if: matrix.os == 'windows'
+        run: |
+          choco install --no-progress make gnuwin32-coreutils.install curl xsltproc unzip grep xmlstarlet yq
+          make --version
+          curl --version
+
+      # cabextract for fonts, gettext-base for envsubst
+      - name: Setup prerequisites
+        if: matrix.os == 'macos'
+        run: |
+          # Install `envsubst`
+          brew install gettext
+          brew link --force gettext
+
+          brew install yq
+          brew install xmlstarlet
+
+      - name: Setup prerequisites
+        if: matrix.os == 'ubuntu'
+        run: |
+          sudo apt-get update
+          sudo apt-get -y install gettext-base cabextract wget libxml2-utils curl \
+            software-properties-common gcc ruby ruby-dev libffi-dev make libxml2-dev libxslt1-dev
+
+          sudo apt-get -y install xmlstarlet
+
+          sudo snap install yq
+          # echo "::add-path::/snap/bin"
+          echo "/snap/bin" >> $GITHUB_PATH
+
+      - name: Update gems
+        run: |
+          gem install bundler
+          make Gemfile
+          bundle install --jobs 4 --retry 3
+
+      - run: make all published
+
+      - uses: actions/upload-artifact@v3
+        with:
+          name: published-${{ matrix.os }}
+          path: published
+
+      - if: matrix.os == 'ubuntu'
+        uses: actions/upload-artifact@v3
+        with:
+          name: xslt
+          path: xslt
+
+  deploy-gh-pages:
+    if: github.ref == 'refs/heads/master'
+    runs-on: ubuntu-latest
+    needs: build
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+
+    - uses: actions/download-artifact@v3
+      with:
+        name: published-ubuntu
+        path: published
+
+    - name: GitHub Pages action
+      uses: docker://peaceiris/gh-pages:v2
+      with:
+        emptyCommits: false
+        forceOrphan: true
+      env:
+        ACTIONS_DEPLOY_KEY: ${{ secrets.GH_DEPLOY_KEY }}
+        PUBLISH_BRANCH: gh-pages
+        PUBLISH_DIR: ./published
+
+    - uses: actions/download-artifact@v3
+      with:
+        name: xslt
+        path: xslt
+
+    - name: Update XSLTs in processor gems
+      env:
+        GIT_CREDS: metanorma-ci:${{ secrets.METANORMA_CI_PAT_TOKEN }}@
+      run: |
+        git config --global user.name "metanorma-ci"
+        git config --global user.email "metanorma-ci@users.noreply.github.com"
+        make update-xslts-in-processor-all
