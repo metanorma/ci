@@ -498,6 +498,7 @@ repositories:
     files:
       .rubocop.yml: gh-actions/master/.rubocop.yml
       .github/workflows/rake.yml: gh-actions/master/rake.yml
+      .github/workflows/release.yml: gh-actions/master/release.yml
   reverse_adoc:
     remote: ssh://git@github.com/metanorma/reverse_adoc
     branch: main
@@ -1299,6 +1300,7 @@ groups:
   - metanorma-bsi
   - metanorma-ieee
   - metanorma-jis
+  - metanorma-plateau
   pubid:
   - pubid
   - pubid-core
@@ -1383,6 +1385,7 @@ groups:
   - mn-samples-standoc
   - mn-samples-mlit
   - mn-samples-mbxif
+  - mn-samples-plateau
   docs:
   - bipm-si-brochure
   - ogc-wfs
