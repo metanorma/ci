@@ -176,7 +176,7 @@ jobs:
     - if: matrix.type == 'ietf'
       uses: metanorma/ci/xml2rfc-setup-action@main
 
-    - uses: actions-mn/site-gen@feature/rename-install-fonts-cli-arg
+    - uses: actions-mn/site-gen@v2
       with:
         source-path: template
         agree-to-terms: true
@@ -253,7 +253,7 @@ jobs:
     - if: matrix.flavor.id == 'ietf'
       uses: metanorma/ci/xml2rfc-setup-action@main
 
-    - uses: actions-mn/site-gen@feature/rename-install-fonts-cli-arg
+    - uses: actions-mn/site-gen@v2
       with:
         source-path: samples
         agree-to-terms: true
