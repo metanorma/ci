@@ -39,7 +39,7 @@ jobs:
         echo "$NEW_REPOSITORIES"
         echo "NEW_REPOSITORIES=${NEW_REPOSITORIES//$'\n'/'\n'}" >> $GITHUB_ENV
 
-    - if: ${{ env.NEW_REPOSITORIES != '' && env.NEW_REPOSITORIES != '\n' && env.NEW_REPOSITORIES != '[]' }}
+    - if: ${{ env.NEW_REPOSITORIES != 'null' }}
       name: Download template if missing
       run: |
         if [ ! -f .github/templates/new-repos.md ]
@@ -52,7 +52,7 @@ jobs:
       env:
         REPOSITOY_MARKDOWN_LIST: ${{ env.NEW_REPOSITORIES }}
 
-    - if: ${{ env.NEW_REPOSITORIES != '' && env.NEW_REPOSITORIES != '\n' && env.NEW_REPOSITORIES != '[]' }}
+    - if: ${{ env.NEW_REPOSITORIES != 'null' }}
       uses: JasonEtco/create-an-issue@v2
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN || secrets.token }}
