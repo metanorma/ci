@@ -72,7 +72,7 @@ jobs:
 
       - run: cat test/${{ matrix.doctype }}/metanorma.yml
 
-      - uses: actions-mn/site-gen@v1
+      - uses: actions-mn/site-gen@main
         with:
           source-path: test/${{ matrix.doctype }}
           config-file: test/${{ matrix.doctype }}/metanorma.yml

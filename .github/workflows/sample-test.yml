@@ -68,6 +68,6 @@ jobs:
           os.system("gem install specific_install")
           os.system("gem specific_install -l https://github.com/{}.git -b {}".format(repo, branch))
 
-      - uses: actions-mn/site-gen@v1
+      - uses: actions-mn/site-gen@main
         with:
           agree-to-terms: true

@@ -28,7 +28,7 @@ jobs:
           submodules: true
 
       - name: Setup Flavor
-        uses: actions-mn/setup-flavors@v1
+        uses: actions-mn/setup-flavors@main
         with:
           extra-flavors: <%= flavor %>
           github-pakages-token: ${{ secrets.METANORMA_CI_PAT_TOKEN }}
@@ -41,7 +41,7 @@ jobs:
           fontist repo update metanorma
 
       - name: Metanorma generate site
-        uses: actions-mn/build-and-publish@v1
+        uses: actions-mn/build-and-publish@main
         with:
           agree-to-terms: true
           destination: artifact
