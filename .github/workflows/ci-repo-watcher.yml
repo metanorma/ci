@@ -48,7 +48,7 @@ jobs:
           wget https://raw.githubusercontent.com/metanorma/ci/main/.github/templates/new-repos.md -O .github/templates/new-repos.md
         fi
 
-        sed -i -e "s/REPOSITOY_MARKDOWN_LIST/${REPOSITOY_MARKDOWN_LIST}/g" .github/templates/new-repos.md
+        sed -i -e "s|REPOSITOY_MARKDOWN_LIST|${REPOSITOY_MARKDOWN_LIST}|g" .github/templates/new-repos.md
       env:
         REPOSITOY_MARKDOWN_LIST: ${{ env.NEW_REPOSITORIES }}
 
