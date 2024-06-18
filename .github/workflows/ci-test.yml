@@ -331,7 +331,7 @@ jobs:
 
       - uses: ./dive-action
         with:
-          image: ci-test-image
+          image: docker.io/library/ci-test-image
 
   test-choco-cache-action:
     name: Test choco-cache-action
