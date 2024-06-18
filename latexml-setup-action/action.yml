@@ -12,7 +12,7 @@ runs:
         cmds = {
           "Darwin": [
             "brew install libxml2 cpanminus",
-            "env PATH=/usr/local/opt/libxml2/bin:$PATH cpanm --notest XML::LibXSLT LaTeXML"
+            "env PATH=/usr/local/opt/libxml2/bin:$PATH cpanm --verbose --notest XML::LibXSLT LaTeXML"
           ],
           "Windows": [ "choco install -y latexml" ],
           "Linux": [ "sudo snap install latexml --edge" ]
