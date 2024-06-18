@@ -50,7 +50,7 @@ manifest = {
   groups: {},
 }.transform_keys(&:to_s)
 
-existing_manifest = if File.exists?(options.manifest_file)
+existing_manifest = if File.exist?(options.manifest_file)
                       YAML.load_file(options.manifest_file)
                     else
                       {
