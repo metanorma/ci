@@ -1,0 +1,15 @@
+name: integration
+
+on:
+  schedule:
+  - cron: '0 0 * * *'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  rake:
+    uses: metanorma/ci/.github/workflows/plantuml-rake.yml@main
+    secrets:
+      pat_token: ${{ secrets.METANORMA_CI_PAT_TOKEN }}

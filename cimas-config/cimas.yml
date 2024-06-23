@@ -133,6 +133,7 @@ repositories:
       .github/workflows/rake.yml: gh-actions/plantuml/rake.yml
       .github/workflows/release.yml: gh-actions/master/release.yml
       .github/workflows/automerge.yml: gh-actions/master/automerge.yml
+      .github/workflows/integration.yml: gh-actions/plantuml/rake-daily.yml
   metanorma-un:
     remote: ssh://git@github.com/metanorma/metanorma-un
     branch: main
@@ -157,6 +158,7 @@ repositories:
       .github/workflows/rake.yml: gh-actions/plantuml/rake.yml
       .github/workflows/release.yml: gh-actions/master/release.yml
       .github/workflows/automerge.yml: gh-actions/master/automerge.yml
+      .github/workflows/integration.yml: gh-actions/plantuml/rake-daily.yml
   metanorma-csa:
     remote: ssh://git@github.com/metanorma/metanorma-csa
     branch: main
@@ -458,6 +460,7 @@ repositories:
       .rubocop.yml: gh-actions/master/.rubocop.yml
       .github/workflows/rake.yml: gh-actions/inkscape/rake.yml
       .github/workflows/release.yml: gh-actions/master/release.yml
+      .github/workflows/integration.yml: gh-actions/inkscape/rake-daily.yml
   html2doc:
     remote: ssh://git@github.com/metanorma/html2doc
     branch: main
