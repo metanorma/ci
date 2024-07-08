@@ -125,6 +125,7 @@ repositories:
       .github/workflows/rake.yml: gh-actions/plantuml/rake.yml
       .github/workflows/release.yml: gh-actions/master/release.yml
       .github/workflows/automerge.yml: gh-actions/master/automerge.yml
+      .github/workflows/integration.yml: gh-actions/plantuml/rake-daily.yml
   metanorma-iso:
     remote: ssh://git@github.com/metanorma/metanorma-iso
     branch: main
@@ -895,6 +896,12 @@ repositories:
   DGGS2ISO-19170:
     remote: ssh://git@github.com/metanorma/DGGS2ISO-19170
     branch: master
+    files:
+      .github/workflows/docker.yml: gh-actions/samples/public-docker.yml
+      .github/workflows/generate.yml: gh-actions/samples/public-generate.yml
+  C-17:
+    remote: ssh://git@github.com/metanorma/C-17
+    branch: main
     files:
       .github/workflows/docker.yml: gh-actions/samples/public-docker.yml
       .github/workflows/generate.yml: gh-actions/samples/public-generate.yml
