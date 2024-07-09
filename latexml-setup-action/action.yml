@@ -24,7 +24,7 @@ runs:
             sys.exit(1)
 
         path = {
-          "Darwin": "/usr/local/opt/perl/bin",
+          "Darwin": "/opt/homebrew/opt/perl/bin",
           "Windows": "C:\Strawberry\c\bin;C:\Strawberry\perl\site\bin;C:\Strawberry\perl\bin",
           "Linux": "/snap/bin"
         }.get(platform.system(), "")
