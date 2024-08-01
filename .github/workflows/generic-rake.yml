@@ -5,12 +5,10 @@ on:
     inputs:
       tests-passed-event:
         description: Name of event sent with repository-dispatch after rake tests are passed successfully
-        required: true
         default: 'tests-passed'
         type: string
       release-event:
         description: Name of event sent to initiate release
-        required: true
         default: 'do-release'
         type: string
     secrets:
