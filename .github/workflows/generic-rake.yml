@@ -2,6 +2,15 @@ name: rake
 
 on:
   workflow_call:
+    inputs:
+      tests-passed-event:
+        description: Name of event sent with repository-dispatch after rake tests are passed successfully
+        required: true
+        default: 'tests-passed'
+      release-event:
+        description: Name of event sent to initiate release
+        required: true
+        default: 'do-release'
     secrets:
       pat_token:
         required: false
@@ -55,8 +64,8 @@ jobs:
         with:
           token: ${{ secrets.pat_token || github.token }}
           repository: ${{ github.repository }}
-          event-type: tests-passed
-          client-payload: '{"ref": "${{ github.ref }}", "sha": "${{ github.sha }}", "type": "tests-passed"}'
+          event-type: ${{ inputs.tests-passed-event }}
+          client-payload: '{"ref": "${{ github.ref }}", "sha": "${{ github.sha }}", "type": "${{ inputs.tests-passed-event }}"}'
 
       - if: startsWith(github.ref, 'refs/tags/v')
         name: Repository ready for release
@@ -64,5 +73,5 @@ jobs:
         with:
           token: ${{ secrets.pat_token || github.token }}
           repository: ${{ github.repository }}
-          event-type: do-release
-          client-payload: '{"ref": "${{ github.ref }}", "sha": "${{ github.sha }}", "type": "do-release"}'
+          event-type: ${{ inputs.elease-event }}
+          client-payload: '{"ref": "${{ github.ref }}", "sha": "${{ github.sha }}", "type": "${{ inputs.elease-event }}"}'
