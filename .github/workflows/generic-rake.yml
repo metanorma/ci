@@ -73,5 +73,5 @@ jobs:
         with:
           token: ${{ secrets.pat_token || github.token }}
           repository: ${{ github.repository }}
-          event-type: ${{ inputs.elease-event }}
-          client-payload: '{"ref": "${{ github.ref }}", "sha": "${{ github.sha }}", "type": "${{ inputs.elease-event }}"}'
+          event-type: ${{ inputs.release-event }}
+          client-payload: '{"ref": "${{ github.ref }}", "sha": "${{ github.sha }}", "type": "${{ inputs.release-event }}"}'
