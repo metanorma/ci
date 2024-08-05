@@ -1004,6 +1004,17 @@ repositories:
       common/Gemfile: gh-actions/templates/common/Gemfile
       common/.github/workflows/docker.yml: gh-actions/samples/docker.yml
       common/.github/workflows/generate.yml: gh-actions/samples/generate.yml
+  mn-templates-iho:
+    remote: ssh://git@github.com/metanorma/mn-templates-iho
+    branch: main
+    files:
+      .github/workflows/test.yml: gh-actions/templates/test.yml
+      .github/workflows/pages.yml: gh-actions/templates/pages.yml
+      .github/workflows/docker.yml: gh-actions/templates/docker.yml
+      default/.gitignore: gh-actions/templates/common/.gitignore
+      default/Gemfile: gh-actions/templates/common/Gemfile
+      default/.github/workflows/docker.yml: gh-actions/samples/docker.yml
+      default/.github/workflows/generate.yml: gh-actions/samples/generate.yml
   # other
   iev:
     remote: ssh://git@github.com/metanorma/iev
@@ -1434,6 +1445,7 @@ groups:
   - ietf-rfc-3339
   - ref-iso-iec-directives
   - iso-10303-templates
+  - C-17-Publication
   private-docs:
   - mn-samples-ribose
   - mn-samples-nist
@@ -1459,6 +1471,7 @@ groups:
   - mn-templates-ogc
   - mn-templates-nist
   - mn-templates-m3aawg
+  - mn-templates-iho
   snap:
   - metanorma-snap
   - latexml-snap
@@ -1555,6 +1568,7 @@ groups:
   - ref-iso-iec-directives
   - iso-10303-templates
   - mn-samples-m3aawg # freezed on 1.6.15
+  - C-17
   # data
   - cipm-resolutions
   - cgpm-resolutions
