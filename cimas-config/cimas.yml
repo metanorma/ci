@@ -199,6 +199,7 @@ repositories:
       .rubocop.yml: gh-actions/master/.rubocop.yml
       .github/workflows/rake.yml: gh-actions/plantuml/rake.yml
       .github/workflows/release.yml: gh-actions/master/release.yml
+      .github/workflows/automerge.yml: gh-actions/master/automerge.yml
   metanorma-document:
     remote: ssh://git@github.com/metanorma/metanorma-document
     branch: main
