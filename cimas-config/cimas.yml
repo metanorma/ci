@@ -122,8 +122,9 @@ repositories:
     branch: main
     files:
       .rubocop.yml: gh-actions/master/.rubocop.yml
-      .github/workflows/rake.yml: gh-actions/plantuml/rake.yml
-      .github/workflows/release.yml: gh-actions/master/release.yml
+      # metanorma-standoc do immediate release without waiting for unit tests pass
+      # .github/workflows/rake.yml: gh-actions/inkscape/rake.yml
+      # .github/workflows/release.yml: gh-actions/master/release.yml
       .github/workflows/automerge.yml: gh-actions/master/automerge.yml
       .github/workflows/integration.yml: gh-actions/plantuml/rake-daily.yml
   metanorma-iso:
@@ -460,8 +461,9 @@ repositories:
     branch: main
     files:
       .rubocop.yml: gh-actions/master/.rubocop.yml
-      .github/workflows/rake.yml: gh-actions/inkscape/rake.yml
-      .github/workflows/release.yml: gh-actions/master/release.yml
+      # isodoc do immediate release without waiting for unit tests pass
+      # .github/workflows/rake.yml: gh-actions/inkscape/rake.yml
+      # .github/workflows/release.yml: gh-actions/master/release.yml
       .github/workflows/integration.yml: gh-actions/inkscape/rake-daily.yml
   html2doc:
     remote: ssh://git@github.com/metanorma/html2doc
