@@ -48,7 +48,11 @@ runs:
         }.get(platform_name, None)
 
         cmds = {
-          "Darwin": [ "HOMEBREW_CASK_OPTS='--no-quarantine' brew install --cask {}".format(version), "inkscape --version" ],
+          "Darwin": [
+            "wget {} -O /tmp/inkscape.rb".format(version),
+            "HOMEBREW_CASK_OPTS='--no-quarantine' brew install --cask --HEAD -s /tmp/inkscape.rb",
+            "inkscape --version"
+          ],
           "Windows": [
             "choco install --no-progress -y inkscape --verbose --version {}".format(version),
             "echo {}>> {}".format(win_prefix, os.environ["GITHUB_PATH"]),
