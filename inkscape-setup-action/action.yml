@@ -50,7 +50,7 @@ runs:
         cmds = {
           "Darwin": [
             "wget {} -O /tmp/inkscape.rb".format(version),
-            "HOMEBREW_CASK_OPTS='--no-quarantine' brew install --cask --HEAD /tmp/inkscape.rb",
+            "HOMEBREW_CASK_OPTS='--no-quarantine' brew install --cask /tmp/inkscape.rb",
             "inkscape --version"
           ],
           "Windows": [
