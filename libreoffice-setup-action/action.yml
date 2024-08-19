@@ -18,6 +18,7 @@ runs:
             "\"{}soffice\" --version".format(win_prefix)
           ],
           "Linux": [
+            "sudo apt-get update",
             "sudo apt-get -y --no-install-recommends install libreoffice",
             "soffice --version"
           ]
