@@ -37,25 +37,18 @@ jobs:
         NEW_REPOSITORIES=$(cat new-repos.yml)
         echo "New repositories:"
         echo "$NEW_REPOSITORIES"
-        echo "NEW_REPOSITORIES=${NEW_REPOSITORIES//$'\n'/'\n'}" >> $GITHUB_ENV
+        echo "NEW_REPOSITORIES<<EOF"$'\n'"${NEW_REPOSITORIES}"$'\n'EOF >> $GITHUB_OUTPUT
 
-    - if: ${{ env.NEW_REPOSITORIES != 'null' }}
-      name: Download template if missing
-      run: |
-        if [ ! -f .github/templates/new-repos.md ]
-        then
-          mkdir -p .github/templates
-          wget https://raw.githubusercontent.com/metanorma/ci/main/.github/templates/new-repos.md -O .github/templates/new-repos.md
-        fi
-
-        sed -i -e "s|REPOSITOY_MARKDOWN_LIST|${REPOSITOY_MARKDOWN_LIST}|g" .github/templates/new-repos.md
-      env:
-        REPOSITOY_MARKDOWN_LIST: ${{ env.NEW_REPOSITORIES }}
-
-    - if: ${{ env.NEW_REPOSITORIES != 'null' }}
-      uses: JasonEtco/create-an-issue@v2
-      env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN || secrets.token }}
+    - name: Create or update issue
+      if: ${{ steps.cimas-diff.outputs.NEW_REPOSITORIES != 'null' }}
+      uses: ./comment-or-create
       with:
+        token: ${{ secrets.GITHUB_TOKEN || secrets.token }}
+        title: New repos in ${{ github.repository_owner }} found
         assignees: CAMOBAP
-        filename: .github/templates/new-repos.md
+        comment: |
+          Review new discovered repositories during run ${{ env.GITHUB_SERVER_URL }}/${{ env.GITHUB_REPOSITORY }}/actions/runs/${{ env.GITHUB_RUN_ID }}:
+
+          ${{ steps.cimas-diff.outputs.NEW_REPOSITORIES }}
+
+          And add them to `cimas-config/cimas.yml` with the right set of `files`

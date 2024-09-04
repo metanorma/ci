@@ -1,0 +1,67 @@
+name: comment-or-create
+description: |
+  Action to comment or create issue if missing
+
+inputs:
+  token:
+    description: Token
+    required: true
+  title:
+    description: Issue title
+    required: true
+  comment:
+    description: Comment/topic string
+    required: true
+  assignees:
+    description: Usernames to assign
+    required: true
+
+outputs:
+  issue:
+    description: GitHub issue number
+    value: ${{ steps.comment-or-create.outputs.issue }}
+
+runs:
+  using: "composite"
+  steps:
+    - id: comment-or-create
+      env:
+        INPUT_TITLE: ${{ inputs.title }}
+        INPUT_COMMENT: ${{ inputs.comment }}
+        INPUT_ASSIGNEES: ${{ inputs.assignees }}
+      uses: actions/github-script@v7
+      with:
+        github-token: ${{ inputs.token }}
+        script: |
+          const issueTitle = process.env.INPUT_TITLE;
+          const issueBody = process.env.INPUT_COMMENT;
+          const assignees = process.env.INPUT_ASSIGNEES.split(",").map(user => user.trim());
+
+          const { data: issues } = await github.rest.issues.listForRepo({
+            owner: context.repo.owner,
+            repo: context.repo.repo,
+            state: 'open'
+          });
+
+          let issueNumber;
+          const existingIssue = issues.find(issue => issue.title === issueTitle);
+          if (existingIssue) {
+            issueNumber = existingIssue.number;
+            await github.rest.issues.createComment({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              issue_number: issueNumber,
+              body: issueBody
+            });
+          } else {
+            const newIssue = await github.rest.issues.create({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              title: issueTitle,
+              body: issueBody,
+              assignees: assignees
+            });
+            issueNumber = newIssue.data.number;
+          }
+
+          core.setOutput('issue', issueNumber);
