@@ -293,6 +293,13 @@ repositories:
       .rubocop.yml: gh-actions/master/.rubocop.yml
       .github/workflows/rake.yml: gh-actions/master/rake.yml
       .github/workflows/release.yml: gh-actions/master/release.yml
+  pubid-plateau:
+    remote: ssh://git@github.com/metanorma/pubid-plateau
+    branch: main
+    files:
+      .rubocop.yml: gh-actions/master/.rubocop.yml
+      .github/workflows/rake.yml: gh-actions/master/rake.yml
+      .github/workflows/release.yml: gh-actions/master/release.yml
 
   # models
   metanorma-model-gb:
@@ -557,6 +564,20 @@ repositories:
       .github/workflows/release.yml: gh-actions/master/release.yml
   obp-access:
     remote: ssh://git@github.com/metanorma/obp-access
+    branch: main
+    files:
+      .rubocop.yml: gh-actions/master/.rubocop.yml
+      .github/workflows/rake.yml: gh-actions/master/rake.yml
+      .github/workflows/release.yml: gh-actions/master/release.yml
+  rfcxml:
+    remote: ssh://git@github.com/metanorma/rfcxml
+    branch: main
+    files:
+      .rubocop.yml: gh-actions/master/.rubocop.yml
+      .github/workflows/rake.yml: gh-actions/master/rake.yml
+      .github/workflows/release.yml: gh-actions/master/release.yml
+  niso-jats:
+    remote: ssh://git@github.com/metanorma/niso-jats
     branch: main
     files:
       .rubocop.yml: gh-actions/master/.rubocop.yml
@@ -904,6 +925,11 @@ repositories:
       .github/workflows/generate.yml: gh-actions/samples/public-generate.yml
   C-17-Publication:
     remote: ssh://git@github.com/metanorma/C-17-Publication
+    branch: main
+    files:
+      .github/workflows/generate.yml: gh-actions/samples/public-docker.yml
+  iec-iso-jseg-15:
+    remote: ssh://git@github.com/metanorma/iec-iso-jseg-15
     branch: main
     files:
       .github/workflows/generate.yml: gh-actions/samples/public-docker.yml
@@ -1292,7 +1318,7 @@ groups:
   - metanorma.org
   - asciirfc.org
   - asciiiso.org
-  converter:
+  tools:
   - html2doc
   - rfc2md
   - mn2pdf
@@ -1307,6 +1333,8 @@ groups:
   - isodoc
   - mnconvert-ruby
   - sts-ruby
+  - rfcxml
+  - niso-jats
   java:
   - mn2pdf
   - mn2sts
@@ -1351,6 +1379,7 @@ groups:
   - pubid-itu
   - pubid-ccsds
   - pubid-nist
+  - pubid-plateau
   metanorma:
   - metanorma
   - metanorma-cli
@@ -1449,6 +1478,7 @@ groups:
   - ref-iso-iec-directives
   - iso-10303-templates
   - C-17-Publication
+  - iec-iso-jseg-15
   private-docs:
   - mn-samples-ribose
   - mn-samples-nist
