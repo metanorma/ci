@@ -47,7 +47,7 @@ jobs:
         title: New repos in ${{ github.repository_owner }} found
         assignees: CAMOBAP
         comment: |
-          Review new discovered repositories during run ${{ env.GITHUB_SERVER_URL }}/${{ env.GITHUB_REPOSITORY }}/actions/runs/${{ env.GITHUB_RUN_ID }}:
+          Review new discovered repositories during run ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}:
 
           ${{ steps.cimas-diff.outputs.NEW_REPOSITORIES }}
 
