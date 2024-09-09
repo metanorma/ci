@@ -1611,6 +1611,7 @@ groups:
   - cn-ccs-codes
   # apps
   - packed-mn
+  - winget-metanorma
   - chocolatey-metanorma
   - chocolatey-latexml
   - homebrew-metanorma
