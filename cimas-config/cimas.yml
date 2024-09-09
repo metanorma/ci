@@ -933,6 +933,17 @@ repositories:
     branch: main
     files:
       .github/workflows/generate.yml: gh-actions/samples/public-docker.yml
+  iso-iec-smart-terms:
+    remote: ssh://git@github.com/metanorma/iso-iec-smart-terms
+    branch: main
+    files:
+      .github/workflows/publish.yml: gh-actions/samples/public-docker.yml
+  laozi:
+    remote: ssh://git@github.com/metanorma/laozi
+    branch: main
+    files:
+      .github/workflows/generate.yml: gh-actions/samples/public-docker.yml
+
   # templates
   mn-templates-cc:
     remote: ssh://git@github.com/metanorma/mn-templates-cc
@@ -1479,6 +1490,8 @@ groups:
   - iso-10303-templates
   - C-17-Publication
   - iec-iso-jseg-15
+  - iso-iec-smart-terms
+  - laozi
   private-docs:
   - mn-samples-ribose
   - mn-samples-nist
@@ -1532,6 +1545,7 @@ groups:
   - homebrew-metanorma
   - metanorma-snap
   - metanorma-docker
+  - winget-metanorma
   plugins:
   - metanorma-plugin-lutaml
   - metanorma-plugin-datastruct
