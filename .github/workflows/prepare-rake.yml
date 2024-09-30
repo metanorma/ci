@@ -69,7 +69,7 @@ jobs:
           is_excluded_event = event_name in excluded_events
           push_condition = event_name == 'push' and (head_tag == '' or repository in excluded_repositories)
           
-          result = not (is_excluded_event or push_condition)
+          result = str(not (is_excluded_event or push_condition)).lower()
 
           print(f"The result is: {result}")
           os.system(f"echo value={result} >> {os.environ['GITHUB_OUTPUT']}")
