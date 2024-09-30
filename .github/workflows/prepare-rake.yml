@@ -57,6 +57,8 @@ jobs:
         id: push_for_tag
         shell: python
         run: |
+          import os
+
           event_name = '${{ github.event_name }}'
           repository = '${{ github.repository }}'
           head_tag = '${{ steps.check.outputs.head_tag }}'
