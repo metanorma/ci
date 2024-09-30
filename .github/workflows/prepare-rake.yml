@@ -55,10 +55,22 @@ jobs:
 
       - name: Push for tag
         id: push_for_tag
+        shell: python
         run: |
-          value="${{ !(github.event_name == 'push' && (steps.check.outputs.head_tag == '' || github.repository == 'metanorma/isodoc')) && github.event_name != 'pull_request' && github.event_name != 'workflow_dispatch' && github.event_name != 'repository_dispatch' && github.event_name != 'cron' }}"
-          echo "value=${value}"
-          echo "value=${value}" >> $GITHUB_OUTPUT
+          event_name = '${{ github.event_name }}'
+          repository = '${{ github.repository }}'
+          head_tag = '${{ steps.check.outputs.head_tag }}'
+
+          excluded_events = ['pull_request', 'workflow_dispatch', 'repository_dispatch', 'cron']
+          excluded_repositories = ['metanorma/isodoc', 'metanorma/metanorma-standoc']
+
+          is_excluded_event = event_name in excluded_events
+          push_condition = event_name == 'push' and (head_tag == '' or repository in excluded_repositories)
+          
+          result = not (is_excluded_event or push_condition)
+
+          print(f"The result is: {result}")
+          os.system(f"echo value={result} >> {os.environ['GITHUB_OUTPUT']}")
 
       - id: matrix
         run: |
