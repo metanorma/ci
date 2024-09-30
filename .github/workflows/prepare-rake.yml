@@ -56,7 +56,7 @@ jobs:
       - name: Push for tag
         id: push_for_tag
         run: |
-          value="${{ !(github.event_name == 'push' && steps.check.outputs.head_tag == '') && github.event_name != 'pull_request' && github.event_name != 'workflow_dispatch' && github.event_name != 'repository_dispatch' && github.event_name != 'cron' }}"
+          value="${{ !(github.event_name == 'push' && (steps.check.outputs.head_tag == '' || github.repository == 'metanorma/isodoc')) && github.event_name != 'pull_request' && github.event_name != 'workflow_dispatch' && github.event_name != 'repository_dispatch' && github.event_name != 'cron' }}"
           echo "value=${value}"
           echo "value=${value}" >> $GITHUB_OUTPUT
 
