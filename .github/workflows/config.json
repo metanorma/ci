@@ -1,6 +1,6 @@
 {
   "ruby": {
-    "version": "3.3",
+    "version": "3.3.5",
     "rubygems": "default",
     "bundler": "default"
   },
