@@ -42,3 +42,4 @@ jobs:
           token: ${{ secrets.GITHUB_TOKEN }}
           agree-to-terms: true
           destination: artifact
+          artifact-name: site-${{ matrix.os }}
