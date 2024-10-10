@@ -28,11 +28,12 @@ runs:
         curl -L https://github.com/cli/cli/releases/download/v${gh_ver}/gh_${gh_ver}_linux_amd64.tar.gz | tar xz --strip-components=2 -C /usr/local/bin/ gh_${gh_ver}_linux_amd64/bin/gh
       fi
 
-      echo "Check if pages enabled for '${{ github.repository }}' repository"
-
+      gh_pages_enabled="false"
       if gh api -H "Accept: application/vnd.github+json" -H "X-GitHub-Api-Version: 2022-11-28" "repos/${{ github.repository }}/pages"; then
-        echo "enabled=true" >> $GITHUB_OUTPUT
-      else
-        echo "enabled=false" >> $GITHUB_OUTPUT
+        gh_pages_enabled="true"
       fi
+
+      echo "Pages enabled: ${gh_pages_enabled} for '${{ github.repository }}' repository"
+
+      echo "enabled=${gh_pages_enabled}" >> $GITHUB_OUTPUT
     shell: bash
