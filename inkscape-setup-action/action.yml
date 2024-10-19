@@ -41,16 +41,15 @@ runs:
         platform_name = "Ubuntu" if os_release_dict.get("ID", None) == "ubuntu" else platform.system()
 
         version = {
-          "Darwin": "https://raw.githubusercontent.com/Homebrew/homebrew-cask/4504f6d228818baef6105891cabc085429da38b2/Casks/i/inkscape.rb", # 1.3.1
-          "Windows": "1.3.0",
-          "Ubuntu": "1:1.3.2+202311252150+091e20ef0f~ubuntu22.04.1",
-          "Linux": "https://inkscape.org/gallery/item/42330/Inkscape-0e150ed-x86_64.AppImage"
+          "Darwin": "inkscape", # latest is 1.4.+
+          "Windows": "1.3.2", # outate
+          "Ubuntu": "1:1.4+202410161351+e7c3feb100~ubuntu22.04.1",
+          "Linux": "https://inkscape.org/gallery/item/53678/Inkscape-e7c3feb-x86_64.AppImage"
         }.get(platform_name, None)
 
         cmds = {
           "Darwin": [
-            "wget {} -O /tmp/inkscape.rb".format(version),
-            "HOMEBREW_CASK_OPTS='--no-quarantine' brew install --cask /tmp/inkscape.rb",
+            "HOMEBREW_CASK_OPTS='--no-quarantine' brew install --cask inkscape",
             "inkscape --version"
           ],
           "Windows": [
