@@ -1,6 +1,7 @@
 #!/usr/bin/env ruby
 
 require 'optparse'
+require 'ostruct'
 require 'net/http'
 require 'json'
 require 'yaml'
