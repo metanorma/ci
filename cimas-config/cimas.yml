@@ -1492,6 +1492,7 @@ groups:
   - iec-iso-jseg-15
   - iso-iec-smart-terms
   - laozi
+  - docs
   private-docs:
   - mn-samples-ribose
   - mn-samples-nist
@@ -1505,8 +1506,10 @@ groups:
   choco:
   - chocolatey-metanorma
   - chocolatey-latexml
+  - chocolatey-xml2rfc
   homebrew:
   - homebrew-metanorma
+  - homebrew-xml2rfc
   templates:
   - mn-templates-cc
   - mn-templates-un
@@ -1616,6 +1619,7 @@ groups:
   - iso-10303-templates
   - mn-samples-m3aawg # freezed on 1.6.15
   - C-17
+  - docs
   # data
   - cipm-resolutions
   - cgpm-resolutions
@@ -1628,7 +1632,9 @@ groups:
   - winget-metanorma
   - chocolatey-metanorma
   - chocolatey-latexml
+  - chocolatey-xml2rfc
   - homebrew-metanorma
+  - homebrew-xml2rfc
   - metanorma-snap
   - latexml-snap
   - metanorma-docker
