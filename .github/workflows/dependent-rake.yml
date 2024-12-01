@@ -45,8 +45,6 @@ jobs:
       with:
         submodules: true
 
-    # - run: ruby -e 'puts Gem::Specification.load(Dir.glob("*.gemspec").first)&.name' >> 
-
     - uses: actions/checkout@v4
       with:
         submodules: recursive
@@ -65,15 +63,16 @@ jobs:
       shell: python
       run: |
         import fileinput
+        import glob
         import sys
         import os
         gem_name = '${{ github.event.repository.name }}'
-        dependent_gem_name = '${{ matrix.repo }}'.split('/')[-1]
-        with fileinput.FileInput(dependent_gem_name + '.gemspec', inplace=True) as file:
+        gemspec = glob.glob('*.gemspec')[0]
+        with fileinput.FileInput(gemspec, inplace=True) as file:
           for line in file:
             if gem_name not in line:
               print(line, end='')
-        print("'{}' removed from {}.gemspec".format(gem_name, dependent_gem_name))
+        print("'{}' removed from {}".format(gem_name, gemspec))
         if os.path.exists("Gemfile.lock"):
           os.remove("Gemfile.lock")
           print("Gemfile.lock dropped")
