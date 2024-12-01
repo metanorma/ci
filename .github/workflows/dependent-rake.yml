@@ -1,0 +1,89 @@
+name: dependent-rake
+
+on:
+  workflow_call:
+    inputs:
+      repos-json-file:
+        description: json file with array of gems to test
+        required: true
+        default: .github/workflows/dependent-repos.json
+
+jobs:
+  build-matrix:
+    runs-on: ubuntu-latest
+    outputs:
+      matrix: ${{ steps.build-matrix.outputs.matrix }}
+    steps:
+    - uses: actions/checkout@v4
+
+    - id: build-matrix
+      run: |
+        wget https://raw.githubusercontent.com/metanorma/ci/main/.github/workflows/ruby-matrix.json
+        # remove 'middle' & 'experimental' versions
+        echo "$(jq 'del(.ruby[1, 2])' ruby-matrix.json)" > ruby-matrix.json
+
+        echo "matrix=$(jq -s add ${{ inputs.repos-json-file }} ruby-matrix.json | tr '\n' ' ')" >> $GITHUB_OUTPUT
+
+  rake:
+    name: Test dependent gem ${{ matrix.repo }} ${{ matrix.ruby.version }}-${{ matrix.os }}
+    runs-on: ${{ matrix.os }}
+    needs:
+    - build-matrix
+
+    concurrency:
+      group: '${{ matrix.repo }}-${{ matrix.os }}-${{ matrix.ruby.version }}-${{ github.head_ref || github.ref_name }}'
+      cancel-in-progress: true
+
+    continue-on-error: ${{ matrix.experimental || matrix.ruby.experimental }}
+    strategy:
+      max-parallel: 10
+      fail-fast: false
+      matrix: ${{ fromJson(needs.build-matrix.outputs.matrix) }}
+
+    steps:
+    - uses: actions/checkout@v4
+      with:
+        submodules: true
+
+    - run: ruby -e 'puts Gem::Specification.load(Dir.glob("*.gemspec").first)&.name' >> 
+
+    - uses: actions/checkout@v4
+      with:
+        submodules: recursive
+        repository: ${{ matrix.repo }}
+        path: dependent
+        fetch-depth: 1
+
+    - uses: ruby/setup-ruby@v1
+      with:
+        ruby-version: ${{ matrix.ruby.version }}
+        rubygems: ${{ matrix.ruby.rubygems }}
+        bundler-cache: true
+        working-directory: dependent
+
+    - name: Replace rubygems's gem with git's one
+      shell: python
+      run: |
+        import fileinput
+        import sys
+        import os
+        gem_name = '${{ github.event.repository.name }}'
+        dependent_gem_name = '${{ matrix.repo }}'.split('/')[-1]
+        with fileinput.FileInput(dependent_gem_name + '.gemspec', inplace=True) as file:
+          for line in file:
+            if gem_name not in line:
+              print(line, end='')
+        print("'{}' removed from {}.gemspec".format(gem_name, dependent_gem_name))
+        if os.path.exists("Gemfile.lock"):
+          os.remove("Gemfile.lock")
+          print("Gemfile.lock dropped")
+        print("> git diff")
+        sys.stdout.flush()
+        os.system("git diff")
+        print("> bundle add {} --path ..".format(gem_name))
+        sys.stdout.flush()
+        os.system("bundle add {} --path ..".format(gem_name))
+      working-directory: dependent
+
+    - run: bundle exec rake
+      working-directory: dependent
