@@ -5,7 +5,6 @@ on:
     inputs:
       repos-json-file:
         description: json file with array of gems to test
-        required: true
         type: string
         default: .github/workflows/dependent-repos.json
 
