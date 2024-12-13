@@ -1309,13 +1309,6 @@ repositories:
       .rubocop.yml: gh-actions/master/.rubocop.yml
       .github/workflows/rake.yml: gh-actions/master/rake.yml
       .github/workflows/release.yml: gh-actions/master/release_wo_bundle_install.yml
-  lutaml:
-    remote: ssh://git@github.com/lutaml/lutaml
-    branch: master
-    files:
-      .rubocop.yml: gh-actions/master/.rubocop.yml
-      .github/workflows/rake.yml: gh-actions/graphviz/rake.yml
-      .github/workflows/release.yml: gh-actions/master/release.yml
   ammitto:
     remote: ssh://git@github.com/ammitto/ammitto
     branch: master
@@ -1323,6 +1316,11 @@ repositories:
       .rubocop.yml: gh-actions/master/.rubocop.yml
       .github/workflows/rake.yml: gh-actions/master/rake.yml
       .github/workflows/release.yml: gh-actions/master/release.yml
+  bipm-data-outcomes:
+    remote: ssh://git@github.com/metanorma/bipm-data-outcomes
+    branch: main
+    files:
+      .github/workflows/keep-alive.yml: gh-actions/master/keep-alive.yml
 
 groups:
   site:
@@ -1643,7 +1641,6 @@ groups:
   - mn-native-pdf
   - iso-10303-stepmod-annotate
   - iso-10303-stepmod-migration
-  - bipm-data-outcomes
   # node
   - mmel-ts
   - firelight
