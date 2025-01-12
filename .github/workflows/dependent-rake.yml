@@ -7,6 +7,10 @@ on:
         description: json file with array of gems to test
         type: string
         default: .github/workflows/dependent-repos.json
+      command:
+        description: test command for dependent gem
+        type: string
+        default: bundle exec rake
 
 jobs:
   build-matrix:
@@ -84,5 +88,5 @@ jobs:
         os.system("bundle add {} --path ..".format(gem_name))
       working-directory: dependent
 
-    - run: bundle exec rake
+    - run: ${{ inputs.command }}
       working-directory: dependent
