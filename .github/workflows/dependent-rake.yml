@@ -29,7 +29,7 @@ jobs:
         echo "matrix=$(jq -s add ${{ inputs.repos-json-file }} ruby-matrix.json | tr '\n' ' ')" >> $GITHUB_OUTPUT
 
   rake:
-    name: Test dependent gem ${{ matrix.repo }} ${{ matrix.ruby.version }}-${{ matrix.os }}
+    name: ${{ matrix.repo }} ${{ matrix.ruby.version }}-${{ matrix.os }}
     runs-on: ${{ matrix.os }}
     needs:
     - build-matrix
