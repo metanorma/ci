@@ -11,6 +11,9 @@ on:
         description: test command for dependent gem
         type: string
         default: bundle exec rake
+      matrix_os:
+        description: define the operating systems on which to execute jobs
+        type: string
 
 jobs:
   build-matrix:
@@ -25,7 +28,9 @@ jobs:
         wget https://raw.githubusercontent.com/metanorma/ci/main/.github/workflows/ruby-matrix.json
         # remove 'middle' & 'experimental' versions
         echo "$(jq 'del(.ruby[1, 2])' ruby-matrix.json)" > ruby-matrix.json
-
+        if [ -n "${{ inputs.matrix_os }}" ]; then
+          echo "$(jq '.os = ${{inputs.matrix_os}}' ruby-matrix.json)" > ruby-matrix.json
+        fi
         echo "matrix=$(jq -s add ${{ inputs.repos-json-file }} ruby-matrix.json | tr '\n' ' ')" >> $GITHUB_OUTPUT
 
   rake:
@@ -71,12 +76,13 @@ jobs:
         import sys
         import os
         gem_name = '${{ github.event.repository.name }}'
-        gemspec = glob.glob('*.gemspec')[0]
-        with fileinput.FileInput(gemspec, inplace=True) as file:
-          for line in file:
-            if gem_name not in line:
-              print(line, end='')
-        print("'{}' removed from {}".format(gem_name, gemspec))
+        if glob.glob('*.gemspec'):
+          gemspec = glob.glob('*.gemspec')[0]
+          with fileinput.FileInput(gemspec, inplace=True) as file:
+            for line in file:
+              if gem_name not in line:
+                print(line, end='')
+          print("'{}' removed from {}".format(gem_name, gemspec))
         if os.path.exists("Gemfile.lock"):
           os.remove("Gemfile.lock")
           print("Gemfile.lock dropped")
