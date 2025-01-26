@@ -943,6 +943,16 @@ repositories:
     branch: main
     files:
       .github/workflows/generate.yml: gh-actions/samples/public-docker.yml
+  itu-X.arch-design:
+    remote: ssh://git@github.com/metanorma/itu-X.arch-design
+    branch: main
+    files:
+      .github/workflows/docker.yml: gh-actions/samples/public-docker.yml
+  itu-contribution-samples:
+    remote: ssh://git@github.com/metanorma/itu-contribution-samples
+    branch: main
+    files:
+      .github/workflows/generate.yml: gh-actions/samples/public-docker.yml
 
   # templates
   mn-templates-cc:
@@ -1491,6 +1501,8 @@ groups:
   - iso-iec-smart-terms
   - laozi
   - docs
+  - itu-X.arch-design
+  - itu-contribution-samples
   private-docs:
   - mn-samples-ribose
   - mn-samples-nist
@@ -1625,6 +1637,7 @@ groups:
   - iso-639-codes
   - iec-cdd-samples
   - cn-ccs-codes
+  - mn-samples-plateau-html
   # apps
   - packed-mn
   - winget-metanorma
