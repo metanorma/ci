@@ -26,7 +26,7 @@ jobs:
 
       - uses: ruby/setup-ruby@v1
         with:
-          ruby-version: '3.1'
+          ruby-version: '3.3'
 
       - run: ./gemver-to-semver.rb --self-test
   test-composite:
@@ -121,7 +121,7 @@ jobs:
 
       - uses: ruby/setup-ruby@v1
         with:
-          ruby-version: '3.1'
+          ruby-version: '3.3'
 
       - uses: ./gh-rubygems-setup-action
         with:
@@ -223,7 +223,7 @@ jobs:
       - if: ${{ !matrix.force-install }}
         uses: ruby/setup-ruby@v1
         with:
-          ruby-version: '3.1'
+          ruby-version: '3.3'
 
       - uses: ./fontist-setup
         with:
