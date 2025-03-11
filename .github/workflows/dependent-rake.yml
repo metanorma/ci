@@ -83,6 +83,12 @@ jobs:
               if gem_name not in line:
                 print(line, end='')
           print("'{}' removed from {}".format(gem_name, gemspec))
+        if os.path.exists("Gemfile"):
+          with fileinput.FileInput("Gemfile", inplace=True) as file:
+            for line in file:
+              if gem_name not in line:
+                print(line, end='')
+          print("'{}' removed from Gemfile".format(gem_name))
         if os.path.exists("Gemfile.lock"):
           os.remove("Gemfile.lock")
           print("Gemfile.lock dropped")
