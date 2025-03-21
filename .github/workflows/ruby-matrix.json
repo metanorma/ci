@@ -7,18 +7,6 @@
       "experimental": false
     },
     {
-      "version": "3.2",
-      "rubygems": "default",
-      "bundler": "default",
-      "experimental": false
-    },
-    {
-      "version": "3.3",
-      "rubygems": "default",
-      "bundler": "default",
-      "experimental": false
-    },
-    {
       "version": "3.4",
       "rubygems": "default",
       "bundler": "default",
