@@ -1276,13 +1276,6 @@ repositories:
       .rubocop.yml: gh-actions/master/.rubocop.yml
       .github/workflows/rake.yml: gh-actions/plantuml/rake.yml
       .github/workflows/release.yml: gh-actions/master/release.yml
-  metanorma-plugin-datastruct:
-    remote: ssh://git@github.com/metanorma/metanorma-plugin-datastruct
-    branch: main
-    files:
-      .rubocop.yml: gh-actions/master/.rubocop.yml
-      .github/workflows/rake.yml: gh-actions/master/rake.yml
-      .github/workflows/release.yml: gh-actions/master/release.yml
   metanorma-plugin-glossarist:
     remote: ssh://git@github.com/metanorma/metanorma-plugin-glossarist
     branch: main
