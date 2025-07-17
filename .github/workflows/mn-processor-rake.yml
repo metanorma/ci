@@ -56,10 +56,10 @@ jobs:
 
       - run: bundle exec rake
 
-      - if: needs.prepare.outputs.public == 'true' && matrix.os == 'ubuntu-latest' && matrix.ruby.version == needs.prepare.outputs.default-ruby-version
-        uses: codecov/codecov-action@v4
-        with:
-          file: coverage/.resultset.json
+      # - if: needs.prepare.outputs.public == 'true' && matrix.os == 'ubuntu-latest' && matrix.ruby.version == needs.prepare.outputs.default-ruby-version
+      #   uses: codecov/codecov-action@v4
+      #   with:
+      #     file: coverage/.resultset.json
 
   build-matrices:
     runs-on: ubuntu-latest
