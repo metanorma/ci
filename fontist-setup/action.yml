@@ -32,21 +32,22 @@ runs:
   - if: ${{ steps.check.outputs.ruby-installed == 'false' }}
     uses: ruby/setup-ruby@v1
     with:
-      ruby-version: '3.0'
+      ruby-version: '3.3'
 
   - if: ${{ steps.check.outputs.fontist-installed == 'false' || inputs.force-install == 'true' }}
     run: |
-      import os
-      import platform
-      rc = os.system("gem install fontist")
-      if rc != 0 and platform.system() != "Windows":
-        os.system("sudo gem install fontist")
-    shell: python
+      if gem install fontist; then
+        echo "Fontist installed successfully"
+      elif [[ "$RUNNER_OS" != "Windows" ]]; then
+        sudo gem install fontist
+      else
+        echo "Failed to install fontist" && exit 1
+      fi
+    shell: bash
 
   - if: ${{ inputs.private-fonts-pat != '' }}
     run: |
-      import os
-      os.system("fontist update")
-      os.system("fontist repo setup metanorma https://metanorma-ci:${{ inputs.private-fonts-pat }}@github.com/metanorma/fontist-formulas-private")
-      os.system("fontist repo update metanorma")
-    shell: python
+      fontist update
+      fontist repo setup metanorma https://metanorma-ci:${{ inputs.private-fonts-pat }}@github.com/metanorma/fontist-formulas-private
+      fontist repo update metanorma
+    shell: bash
