@@ -42,7 +42,7 @@ runs:
 
         version = {
           "Darwin": "inkscape", # latest is 1.4.+
-          "Windows": "1.3.0", # test propose
+          "Windows": "1.4.2",
           "Ubuntu": "1:1.4*",
           "Linux": "https://inkscape.org/gallery/item/53678/Inkscape-e7c3feb-x86_64.AppImage"
         }.get(platform_name, None)
