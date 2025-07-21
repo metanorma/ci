@@ -38,7 +38,7 @@ runs:
     run: |
       if gem install fontist; then
         echo "Fontist installed successfully"
-      elif [[ "$RUNNER_OS" != "Windows" ]]; then
+      elif [[ "${{ runner.os }}" != "Windows" ]]; then
         sudo gem install fontist
       else
         echo "Failed to install fontist" && exit 1
