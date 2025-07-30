@@ -11,8 +11,8 @@ on:
         description: Name of event sent to initiate release
         default: 'do-release'
         type: string
-      before-bundle-install:
-        description: Command to execute before bundle install
+      before-setup-ruby:
+        description: Command to execute before setting up Ruby
         type: string
         default: ''
         required: false
@@ -46,18 +46,15 @@ jobs:
         with:
           submodules: 'recursive'
 
+      - if: ${{ inputs.before-setup-ruby != '' }}
+        run: ${{ inputs.before-setup-ruby }}
+
       - uses: ruby/setup-ruby@v1
         with:
           ruby-version: ${{ matrix.ruby.version }}
-          bundler-cache: false
+          bundler-cache: true
           rubygems: ${{ matrix.ruby.rubygems }}
           bundler: ${{ matrix.ruby.bundler }}
-
-      - if: ${{ inputs.before-bundle-install != '' }}
-        run: ${{ inputs.before-bundle-install }}
-
-      - name: Install dependencies
-        run: bundle install
 
       - run: bundle exec rake
 
