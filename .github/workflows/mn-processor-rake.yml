@@ -173,12 +173,23 @@ jobs:
       shell: bash
       working-directory: template
 
+    - name: Determine config file for template
+      id: config-file-template
+      run: |
+        if [ -f template/metanorma.test.yml ]; then
+          echo "config-file=metanorma.test.yml" >> $GITHUB_OUTPUT
+        else
+          echo "config-file=metanorma.yml" >> $GITHUB_OUTPUT
+        fi
+      shell: bash
+
     - if: matrix.type == 'ietf'
       uses: metanorma/ci/xml2rfc-setup-action@main
 
     - uses: actions-mn/site-gen@v2
       with:
         source-path: template
+        config-file: ${{ steps.config-file-template.outputs.config-file }}
         agree-to-terms: true
         use-bundler: true
         strict: true
@@ -221,6 +232,16 @@ jobs:
         path: samples
         fetch-depth: 1
 
+    - name: Determine config file for samples
+      id: config-file-samples
+      run: |
+        if [ -f samples/metanorma.test.yml ]; then
+          echo "config-file=metanorma.test.yml" >> $GITHUB_OUTPUT
+        else
+          echo "config-file=metanorma.yml" >> $GITHUB_OUTPUT
+        fi
+      shell: bash
+
     - uses: metanorma/ci/gh-rubygems-setup-action@main
       with:
         token: ${{ secrets.pat_token }}
@@ -256,6 +277,7 @@ jobs:
     - uses: actions-mn/site-gen@v2
       with:
         source-path: samples
+        config-file: ${{ steps.config-file-samples.outputs.config-file }}
         agree-to-terms: true
         use-bundler: true
         strict: true
