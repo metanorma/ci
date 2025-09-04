@@ -29,8 +29,6 @@ jobs:
       - if: runner.os == 'Windows'
         uses: metanorma/ci/choco-cache-action@main
 
-      - uses: metanorma/ci/plantuml-setup-action@main
-
       - uses: ruby/setup-ruby@v1
         with:
           ruby-version: ${{ needs.prepare.outputs.default-ruby-version }}

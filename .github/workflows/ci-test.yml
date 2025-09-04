@@ -51,9 +51,6 @@ jobs:
       - if: matrix.os != 'macos-latest'
         run: soffice --version
 
-      - uses: ./plantuml-setup-action
-      - run: plantuml -version
-
   test-native-deps-action:
     name: Test native-deps-action ${{ matrix.os }}
     runs-on: ${{ matrix.os }}
