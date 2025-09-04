@@ -34,7 +34,6 @@ repositories:
     branch: main
     files:
       .rubocop.yml: gh-actions/master/.rubocop.yml
-      .github/workflows/rake.yml: gh-actions/plantuml/rake.yml
       .github/workflows/release.yml: gh-actions/master/release.yml
       .github/workflows/automerge.yml: gh-actions/master/automerge.yml
   metanorma-m3aawg:
@@ -42,7 +41,6 @@ repositories:
     branch: main
     files:
       .rubocop.yml: gh-actions/master/.rubocop.yml
-      .github/workflows/rake.yml: gh-actions/plantuml/rake.yml
       .github/workflows/release.yml: gh-actions/master/release.yml
       .github/workflows/automerge.yml: gh-actions/master/automerge.yml
   metanorma-cc:
@@ -50,7 +48,6 @@ repositories:
     branch: main
     files:
       .rubocop.yml: gh-actions/master/.rubocop.yml
-      .github/workflows/rake.yml: gh-actions/plantuml/rake.yml
       .github/workflows/release.yml: gh-actions/master/release.yml
       .github/workflows/automerge.yml: gh-actions/master/automerge.yml
   metanorma-vg:
@@ -58,7 +55,6 @@ repositories:
     branch: main
     files:
       .rubocop.yml: gh-actions/master/.rubocop.yml
-      .github/workflows/rake.yml: gh-actions/plantuml/rake.yml
       .github/workflows/release.yml: gh-actions/master/release.yml
       .github/workflows/automerge.yml: gh-actions/master/automerge.yml
   metanorma-ribose:
@@ -66,7 +62,6 @@ repositories:
     branch: main
     files:
       .rubocop.yml: gh-actions/master/.rubocop.yml
-      .github/workflows/rake.yml: gh-actions/plantuml/rake.yml
       .github/workflows/release.yml: gh-actions/master/release.yml
       .github/workflows/automerge.yml: gh-actions/master/automerge.yml
   metanorma-iho:
@@ -74,7 +69,6 @@ repositories:
     branch: main
     files:
       .rubocop.yml: gh-actions/master/.rubocop.yml
-      .github/workflows/rake.yml: gh-actions/plantuml/rake.yml
       .github/workflows/release.yml: gh-actions/master/release.yml
       .github/workflows/automerge.yml: gh-actions/master/automerge.yml
   metanorma-ieee:
@@ -82,7 +76,6 @@ repositories:
     branch: main
     files:
       .rubocop.yml: gh-actions/master/.rubocop.yml
-      .github/workflows/rake.yml: gh-actions/plantuml/rake.yml
       .github/workflows/release.yml: gh-actions/master/release.yml
       .github/workflows/automerge.yml: gh-actions/master/automerge.yml
   metanorma-gb:
@@ -90,7 +83,6 @@ repositories:
     branch: main
     files:
       .rubocop.yml: gh-actions/master/.rubocop.yml
-      .github/workflows/rake.yml: gh-actions/plantuml/rake.yml
       .github/workflows/release.yml: gh-actions/master/release.yml
       .github/workflows/automerge.yml: gh-actions/master/automerge.yml
   metanorma-nist:
@@ -98,7 +90,6 @@ repositories:
     branch: main
     files:
       .rubocop.yml: gh-actions/master/.rubocop.yml
-      .github/workflows/rake.yml: gh-actions/plantuml/rake.yml
       .github/workflows/release_github_packages.yml: gh-actions/master/release_github_packages.yml
       .github/workflows/automerge.yml: gh-actions/master/automerge.yml
   metanorma-iec:
@@ -106,7 +97,6 @@ repositories:
     branch: main
     files:
       .rubocop.yml: gh-actions/master/.rubocop.yml
-      .github/workflows/rake.yml: gh-actions/plantuml/rake.yml
       .github/workflows/release.yml: gh-actions/master/release.yml
       .github/workflows/automerge.yml: gh-actions/master/automerge.yml
   metanorma-ietf:
@@ -126,22 +116,18 @@ repositories:
       # .github/workflows/rake.yml: gh-actions/inkscape/rake.yml
       # .github/workflows/release.yml: gh-actions/master/release.yml
       .github/workflows/automerge.yml: gh-actions/master/automerge.yml
-      .github/workflows/integration.yml: gh-actions/plantuml/rake-daily.yml
   metanorma-iso:
     remote: ssh://git@github.com/metanorma/metanorma-iso
     branch: main
     files:
       .rubocop.yml: gh-actions/master/.rubocop.yml
-      .github/workflows/rake.yml: gh-actions/plantuml/rake.yml
       .github/workflows/release.yml: gh-actions/master/release.yml
       .github/workflows/automerge.yml: gh-actions/master/automerge.yml
-      .github/workflows/integration.yml: gh-actions/plantuml/rake-daily.yml
   metanorma-un:
     remote: ssh://git@github.com/metanorma/metanorma-un
     branch: main
     files:
       .rubocop.yml: gh-actions/master/.rubocop.yml
-      .github/workflows/rake.yml: gh-actions/plantuml/rake.yml
       .github/workflows/release.yml: gh-actions/master/release.yml
       .github/workflows/automerge.yml: gh-actions/master/automerge.yml
   metanorma-itu:
@@ -149,7 +135,6 @@ repositories:
     branch: main
     files:
       .rubocop.yml: gh-actions/master/.rubocop.yml
-      .github/workflows/rake.yml: gh-actions/plantuml/rake.yml
       .github/workflows/release.yml: gh-actions/master/release.yml
       .github/workflows/automerge.yml: gh-actions/master/automerge.yml
   metanorma-generic:
@@ -157,16 +142,13 @@ repositories:
     branch: main
     files:
       .rubocop.yml: gh-actions/master/.rubocop.yml
-      .github/workflows/rake.yml: gh-actions/plantuml/rake.yml
       .github/workflows/release.yml: gh-actions/master/release.yml
       .github/workflows/automerge.yml: gh-actions/master/automerge.yml
-      .github/workflows/integration.yml: gh-actions/plantuml/rake-daily.yml
   metanorma-csa:
     remote: ssh://git@github.com/metanorma/metanorma-csa
     branch: main
     files:
       .rubocop.yml: gh-actions/master/.rubocop.yml
-      .github/workflows/rake.yml: gh-actions/plantuml/rake.yml
       .github/workflows/release.yml: gh-actions/master/release.yml
       .github/workflows/automerge.yml: gh-actions/master/automerge.yml
   metanorma-bipm:
@@ -174,7 +156,6 @@ repositories:
     branch: main
     files:
       .rubocop.yml: gh-actions/master/.rubocop.yml
-      .github/workflows/rake.yml: gh-actions/plantuml/rake.yml
       .github/workflows/release.yml: gh-actions/master/release.yml
       .github/workflows/automerge.yml: gh-actions/master/automerge.yml
   metanorma-bsi:
@@ -182,7 +163,6 @@ repositories:
     branch: main
     files:
       .rubocop.yml: gh-actions/master/.rubocop.yml
-      .github/workflows/rake.yml: gh-actions/plantuml/rake.yml
       .github/workflows/release_github_packages.yml: gh-actions/master/release_github_packages.yml
       .github/workflows/automerge.yml: gh-actions/master/automerge.yml
   metanorma-jis:
@@ -190,7 +170,6 @@ repositories:
     branch: main
     files:
       .rubocop.yml: gh-actions/master/.rubocop.yml
-      .github/workflows/rake.yml: gh-actions/plantuml/rake.yml
       .github/workflows/release.yml: gh-actions/master/release.yml
       .github/workflows/automerge.yml: gh-actions/master/automerge.yml
   metanorma-plateau:
@@ -198,7 +177,6 @@ repositories:
     branch: main
     files:
       .rubocop.yml: gh-actions/master/.rubocop.yml
-      .github/workflows/rake.yml: gh-actions/plantuml/rake.yml
       .github/workflows/release.yml: gh-actions/master/release.yml
       .github/workflows/automerge.yml: gh-actions/master/automerge.yml
   metanorma-document:
@@ -1274,7 +1252,6 @@ repositories:
     branch: main
     files:
       .rubocop.yml: gh-actions/master/.rubocop.yml
-      .github/workflows/rake.yml: gh-actions/plantuml/rake.yml
       .github/workflows/release.yml: gh-actions/master/release.yml
   metanorma-plugin-glossarist:
     remote: ssh://git@github.com/metanorma/metanorma-plugin-glossarist
@@ -1441,7 +1418,6 @@ groups:
   - cimas
   - lapidist
   - oss-guides
-  - plantuml-install
   style:
   - csd-style
   - csand-style
@@ -1575,7 +1551,6 @@ groups:
   - ".github"
   - oss-guides
   - metanorma-linux-setup
-  - plantuml-install
   - metanorma-release
   - iso-ics-codes-scripts
   # processors
