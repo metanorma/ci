@@ -46,6 +46,12 @@ jobs:
         with:
           submodules: 'recursive'
 
+      - if: matrix.os == 'windows-latest'
+        uses: actions/setup-java@v5
+        with:
+          distribution: 'temurin'
+          java-version: '17'
+
       - if: ${{ inputs.before-setup-ruby != '' }}
         run: ${{ inputs.before-setup-ruby }}
 
