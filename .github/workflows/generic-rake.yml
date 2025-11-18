@@ -16,6 +16,11 @@ on:
         type: string
         default: ''
         required: false
+      after-setup-ruby:
+        description: Command to execute after setting up Ruby
+        type: string
+        default: ''
+        required: false
     secrets:
       pat_token:
         required: false
@@ -61,6 +66,9 @@ jobs:
           bundler-cache: true
           rubygems: ${{ matrix.ruby.rubygems }}
           bundler: ${{ matrix.ruby.bundler }}
+
+      - if: ${{ inputs.after-setup-ruby != '' }}
+        run: ${{ inputs.after-setup-ruby }}
 
       - run: bundle exec rake
 
