@@ -1,0 +1,24 @@
+name: Test xml2rfc-setup-action
+
+on:
+  pull_request:
+    paths:
+      - 'xml2rfc-setup-action/**'
+      - '.github/workflows/test-xml2rfc-action.yml'
+
+jobs:
+  test-xml2rfc-setup:
+    name: Test xml2rfc-setup-action on ${{ matrix.os }}
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, windows-latest, macos-latest]
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: ./xml2rfc-setup-action
+
+      - name: Verify xml2rfc is installed
+        run: xml2rfc --version
+        shell: bash
