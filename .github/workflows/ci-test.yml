@@ -1,4 +1,5 @@
 name: test-composite
+# Tests all composite actions including xml2rfc-setup-action
 
 on:
   push:
