@@ -17,7 +17,7 @@ runs:
       home = expanduser("~")
       cache_path = {
         "Linux": f"{home}/.cache/pip",
-        "Darwin": f"{home}Library/Caches/pip",
+        "Darwin": f"{home}/Library/Caches/pip",
         "Windows": f"{home}\\AppData\\Local\\pip\\Cache"
       }[platform.system()]
 
@@ -26,7 +26,7 @@ runs:
   - uses: actions/cache@v4
     with:
       path: ${{ env.PIP_DOWNLOAD_CACHE }}
-      key: ${{ runner.os }}-pip-${{ hashFiles('**/requirements.txt') }}
+      key: ${{ runner.os }}-pip-xml2rfc
       restore-keys: ${{ runner.os }}-pip-
 
   - uses: actions/cache@v4
