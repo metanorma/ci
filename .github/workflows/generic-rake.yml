@@ -60,6 +60,15 @@ jobs:
       - if: ${{ inputs.before-setup-ruby != '' }}
         run: ${{ inputs.before-setup-ruby }}
 
+      - if: matrix.os == 'windows-latest' && startsWith(matrix.ruby.version, '3.4')
+        name: Remove msys64 symlink if exists (Ruby 3.4 on Windows)
+        shell: pwsh
+        run: |
+          $symlink = "C:\hostedtoolcache\windows\Ruby\3.4.7\x64\msys64"
+          if (Test-Path $symlink) {
+            Remove-Item $symlink -Force
+          }
+
       - uses: ruby/setup-ruby@v1
         with:
           ruby-version: ${{ matrix.ruby.version }}
