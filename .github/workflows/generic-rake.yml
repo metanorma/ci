@@ -60,19 +60,6 @@ jobs:
       - if: ${{ inputs.before-setup-ruby != '' }}
         run: ${{ inputs.before-setup-ruby }}
 
-      - if: matrix.os == 'windows-latest'
-        name: Remove msys64 directory with del (cmd shell)
-        shell: cmd
-        run: |
-          set DIR=C:\hostedtoolcache\windows\Ruby\${{ matrix.ruby.version }}\x64\msys64
-          if exist "%DIR%" (
-            echo Found %DIR%, removing...
-            rmdir /S /Q "%DIR%"
-            echo Removal completed.
-          ) else (
-            echo %DIR% does not exist, nothing to remove.
-          )
-
       - uses: ruby/setup-ruby@v1
         with:
           ruby-version: ${{ matrix.ruby.version }}
