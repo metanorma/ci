@@ -2,6 +2,11 @@ name: rake
 
 on:
   workflow_call:
+    inputs:
+      private-fonts:
+        default: 'false'
+        required: false
+        type: string
     secrets:
       pat_token:
         required: false
@@ -45,6 +50,11 @@ jobs:
       - uses: metanorma/ci/inkscape-setup-action@main
 
       - uses: metanorma/ci/ghostscript-setup-action@main
+
+      - if: ${{ inputs.private-fonts == 'true' }}
+        uses: metanorma/ci/fontist-setup@main
+        with:
+          private-fonts-pat: ${{ secrets.pat_token }}
 
       - run: bundle exec rake
 
