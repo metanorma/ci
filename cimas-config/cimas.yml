@@ -1498,7 +1498,6 @@ groups:
   - metanorma-linux-setup
   choco:
   - chocolatey-metanorma
-  - chocolatey-latexml
   - chocolatey-xml2rfc
   homebrew:
   - homebrew-metanorma
@@ -1516,7 +1515,6 @@ groups:
   - mn-templates-iho
   snap:
   - metanorma-snap
-  - latexml-snap
   asciirfc:
   - rfc-divination-cfapi
   - rfc-camelot-holy-grenade
@@ -1624,12 +1622,10 @@ groups:
   - packed-mn
   - winget-metanorma
   - chocolatey-metanorma
-  - chocolatey-latexml
   - chocolatey-xml2rfc
   - homebrew-metanorma
   - homebrew-xml2rfc
   - metanorma-snap
-  - latexml-snap
   - metanorma-docker
   - pngcheck
   # agregation data

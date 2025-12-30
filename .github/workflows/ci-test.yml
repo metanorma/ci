@@ -138,20 +138,6 @@ jobs:
           [ ${BUNDLE_GITHUB__COM} = "x-access-token:dummy_token" ] || exit 1
           [ ${BUNDLE_RUBYGEMS__PKG__GITHUB__COM} = "x-access-token:dummy_token" ] || exit 1
 
-  test-latexml-setup-action:
-    name: Test latexml-setup-action ${{ matrix.os }}
-    runs-on: ${{ matrix.os }}
-    strategy:
-      fail-fast: false
-      matrix:
-        os: [ubuntu-latest, windows-latest, macos-latest]
-    steps:
-      - uses: actions/checkout@v4
-
-      - uses: ./latexml-setup-action
-
-      - run: latexmlmath --VERSION
-
   test-change-tmpdir-action:
     name: Test change-tmpdir-action ${{ matrix.os }}
     runs-on: ${{ matrix.os }}
