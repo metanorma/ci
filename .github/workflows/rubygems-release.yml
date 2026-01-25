@@ -14,7 +14,7 @@ on:
         required: false
         type: string
       release_command:
-        description: 'command to release gem'
+        description: 'command to release gem (only used with rubygems-api-key authentication)'
         required: false
         type: string
         default: bundle exec rake release
@@ -33,16 +33,25 @@ on:
         required: false
         type: boolean
         default: true
+      role_to_assume:
+        description: 'OIDC Role ID from RubyGems.org for Trusted Publishing (optional - auto-discovered if not provided)'
+        required: false
+        type: string
     secrets:
       rubygems-api-key:
-        required: true
+        required: false
       pat_token:
         required: false
 jobs:
   release:
     runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      id-token: write
     env:
       HAVE_PAT_TOKEN: ${{ secrets.pat_token != '' }}
+      HAS_API_KEY: ${{ secrets.rubygems-api-key != '' }}
+      USE_OIDC: ${{ secrets.rubygems-api-key == '' }}
     steps:
       - uses: actions/checkout@v4
         with:
@@ -64,16 +73,27 @@ jobs:
       - if: ${{ inputs.post_install != '' }}
         run: ${{ inputs.post_install }}
 
+      - name: Validate authentication method
+        run: |
+          if [ "${{ env.HAS_API_KEY }}" != "true" ]; then
+            echo "Using OIDC Trusted Publishing (no rubygems-api-key provided)"
+            echo "Ensure Trusted Publishing is configured on RubyGems.org"
+            echo "See: https://guides.rubygems.org/trusted-publishing/"
+          fi
+
+      # ============ Common setup for both paths ============
       - run: |
           git config user.name github-actions
           git config user.email github-actions@github.com
 
       - run: gem install gem-release
 
-      - if: github.event_name == 'workflow_dispatch' && inputs.next_version != 'skip'
+      # ============ API Key Path ============
+      - if: github.event_name == 'workflow_dispatch' && inputs.next_version != 'skip' && env.HAS_API_KEY == 'true'
         run: gem bump --version ${{ inputs.next_version }} --tag --push
 
-      - name: publish to rubygems.org
+      - if: ${{ env.HAS_API_KEY == 'true' }}
+        name: publish to rubygems.org (API Key)
         env:
           RUBYGEMS_API_KEY: ${{ secrets.rubygems-api-key }}
         run: |
@@ -85,6 +105,27 @@ jobs:
           chmod 0600 ~/.gem/credentials
           ${{ inputs.release_command }}
 
+      # ============ OIDC Trusted Publisher Path ============
+      - if: ${{ env.USE_OIDC == 'true' }}
+        name: Configure RubyGems credentials for Trusted Publishing
+        uses: rubygems/configure-rubygems-credentials@v1.0.0
+        with:
+          role-to-assume: ${{ inputs.role_to_assume }}
+
+      - if: ${{ env.USE_OIDC == 'true' && github.event_name == 'workflow_dispatch' && inputs.next_version != 'skip' }}
+        run: gem bump --version ${{ inputs.next_version }} --tag --push
+
+      - if: ${{ env.USE_OIDC == 'true' }}
+        name: Build and push gem (OIDC)
+        run: |
+          gem build *.gemspec
+          gem push *.gem
+
+      - if: ${{ env.USE_OIDC == 'true' }}
+        name: Wait for release to propagate
+        run: gem exec rubygems-await pkg/*.gem
+
+      # ============ Common: Post-release event ============
       # This workflow usually called via repository_dispatch or direct workflow_dispatch
       # in both cases `github.ref` doesn't reflect real version so we calculate it from gemspecfile
       - name: get current gem ref
