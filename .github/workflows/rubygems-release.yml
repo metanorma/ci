@@ -37,6 +37,11 @@ on:
         description: 'OIDC Role ID from RubyGems.org for Trusted Publishing (optional - auto-discovered if not provided)'
         required: false
         type: string
+      environment:
+        description: 'GitHub environment name for protection rules (e.g., "release" for required approvers)'
+        required: false
+        type: string
+        default: ''
     secrets:
       rubygems-api-key:
         required: false
@@ -45,6 +50,7 @@ on:
 jobs:
   release:
     runs-on: ubuntu-latest
+    environment: ${{ inputs.environment }}
     permissions:
       contents: write
       id-token: write
