@@ -35,7 +35,7 @@ jobs:
       default_ruby_version: ${{ steps.config.outputs.default_ruby_version }}
       public: ${{ steps.repo_status.outputs.public }}
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
       - name: retrieve tags
         run: git fetch --depth=1 origin +refs/tags/*:refs/tags/* || true
       - name: set output variables
@@ -68,7 +68,7 @@ jobs:
 
           is_excluded_event = event_name in excluded_events
           push_condition = event_name == 'push' and (head_tag == '' or repository in excluded_repositories)
-          
+
           result = str(not (is_excluded_event or push_condition)).lower()
 
           print(f"The result is: {result}")

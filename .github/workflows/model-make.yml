@@ -24,7 +24,7 @@ jobs:
         os: ${{ fromJson(needs.prepare.outputs.matrix).os }}
 
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
 
       - if: runner.os == 'Windows'
         uses: metanorma/ci/choco-cache-action@main

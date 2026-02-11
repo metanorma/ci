@@ -44,7 +44,7 @@ jobs:
         username: ${{ secrets.docker_username }}
         password: ${{ secrets.docker_token }}
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
         with:
           token: ${{ secrets.pat_token || github.token }}
           submodules: true

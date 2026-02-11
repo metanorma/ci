@@ -39,7 +39,7 @@ jobs:
       matrix: ${{ fromJson(needs.prepare.outputs.matrix) }}
 
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
         with:
           submodules: true
 
@@ -68,7 +68,7 @@ jobs:
       samples-matrix: ${{ steps.build-samples-matrix.outputs.matrix }}
       templates-matrix: ${{ steps.build-templates-matrix.outputs.matrix }}
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
 
       - run: wget https://raw.githubusercontent.com/metanorma/ci/main/.github/workflows/ruby-matrix.json
 
@@ -140,7 +140,7 @@ jobs:
       matrix: ${{ fromJson(needs.build-matrices.outputs.templates-matrix) }}
 
     steps:
-    - uses: actions/checkout@v4
+    - uses: actions/checkout@v6
       with:
         submodules: true
 
@@ -220,11 +220,11 @@ jobs:
       matrix: ${{ fromJson(needs.build-matrices.outputs.samples-matrix) }}
 
     steps:
-    - uses: actions/checkout@v4
+    - uses: actions/checkout@v6
       with:
         submodules: true
 
-    - uses: actions/checkout@v4
+    - uses: actions/checkout@v6
       with:
         submodules: recursive
         repository: metanorma/mn-samples-${{ matrix.flavor.id }}
