@@ -31,9 +31,10 @@ jobs:
       - uses: actions-mn/setup@main
 
       - if: ${{ inputs.private-fonts == 'true' }}
-        uses: metanorma/ci/fontist-setup@main
+        uses: metanorma/ci/fontist-repo-setup@main
         with:
           private-fonts-pat: ${{ secrets.pat_token }}
+          use-bundler: 'true'
 
       - run: rm Gemfile
 
