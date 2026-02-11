@@ -24,7 +24,7 @@ jobs:
       image: metanorma/metanorma:latest
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
 
       - name: Cache Metanorma assets
         uses: actions-mn/cache@v1
