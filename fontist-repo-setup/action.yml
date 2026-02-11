@@ -1,0 +1,32 @@
+name: 'fontist-repo-action'
+description: 'composite action to setup private Fontist repos (Fontist must already be installed)'
+inputs:
+  private-fonts-pat:
+    description: 'Setup private formulas with PAT'
+    required: true
+    default: ''
+  use-bundler:
+    description: 'Use bundler to run fontist'
+    required: false
+    default: 'false'
+  working-directory:
+    description: 'Working directory to run the action in'
+    required: false
+    default: '.'
+
+runs:
+  using: "composite"
+  steps:
+  - if: ${{ inputs.use-bundler == 'false' }}
+    working-directory: ${{ inputs.working-directory }}
+    run: |
+      fontist update
+      fontist repo setup metanorma https://metanorma-ci:${{ inputs.private-fonts-pat }}@github.com/metanorma/fontist-formulas-private
+    shell: bash
+
+  - if: ${{ inputs.use-bundler == 'true' }}
+    working-directory: ${{ inputs.working-directory }}
+    run: |
+      bundle exec fontist update
+      bundle exec fontist repo setup metanorma https://metanorma-ci:${{ inputs.private-fonts-pat }}@github.com/metanorma/fontist-formulas-private
+    shell: bash

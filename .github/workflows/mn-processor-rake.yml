@@ -265,9 +265,10 @@ jobs:
       working-directory: samples
 
     - if: ${{ matrix.flavor.id == 'bsi' }}
-      uses: metanorma/ci/fontist-setup@main
+      uses: metanorma/ci/fontist-repo-setup@main
       with:
         private-fonts-pat: ${{ secrets.pat_token }}
+        use-bundler: 'true'
 
     - uses: metanorma/ci/inkscape-setup-action@main
 

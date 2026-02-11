@@ -77,11 +77,13 @@ jobs:
       - id: matrix
         run: |
           value="$(curl -L https://raw.githubusercontent.com/metanorma/ci/main/.github/workflows/ruby-matrix.json)"
+          echo "Matrix JSON: ${value}"
           echo "value=$(echo ${value} | tr '\n' ' ')" >> $GITHUB_OUTPUT
 
       - id: config
         run: |
           value="$(curl -L https://raw.githubusercontent.com/metanorma/ci/main/.github/workflows/config.json | jq .ruby.version -r)"
+          echo "Default Ruby version: ${value}"
           echo "default_ruby_version=${value}" >> $GITHUB_OUTPUT
 
       - id: repo_status
