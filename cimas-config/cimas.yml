@@ -1313,8 +1313,7 @@ repositories:
   bipm-data-outcomes:
     remote: ssh://git@github.com/metanorma/bipm-data-outcomes
     branch: main
-    files:
-      .github/workflows/keep-alive.yml: gh-actions/master/keep-alive.yml
+    files: {}
 
 groups:
   site:
