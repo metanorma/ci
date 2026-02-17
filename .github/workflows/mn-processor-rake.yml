@@ -257,17 +257,14 @@ jobs:
         bundle remove metanorma-${{ needs.build-matrices.outputs.flavor }} --skip-install || true
         bundle add metanorma-${{ needs.build-matrices.outputs.flavor }} --path .. --skip-install
         bundle add sassc --skip-install
-        bundle add fontist --skip-install
         echo 'eval_gemfile("../Gemfile.devel") rescue nil' >> Gemfile
         cat Gemfile
-        bundle install --verbose
-        bundle lock --print
-        bundle info fontist
+        bundle install
       shell: bash
       working-directory: samples
 
     - if: ${{ matrix.flavor.id == 'bsi' }}
-      uses: metanorma/ci/fontist-repo-setup@main
+      uses: metanorma/ci/fontist-repo-setup@test/fontist-in-bsi
       with:
         private-fonts-pat: ${{ secrets.pat_token }}
         use-bundler: 'true'
