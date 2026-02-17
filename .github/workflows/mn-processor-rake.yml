@@ -260,7 +260,6 @@ jobs:
         echo 'eval_gemfile("../Gemfile.devel") rescue nil' >> Gemfile
         cat Gemfile
         bundle install
-        bundle exec fontist help
       shell: bash
       working-directory: samples
 
@@ -268,6 +267,7 @@ jobs:
       uses: metanorma/ci/fontist-repo-setup@test/fontist-in-bsi
       with:
         private-fonts-pat: ${{ secrets.pat_token }}
+        working-directory: samples
         use-bundler: 'true'
 
     - uses: metanorma/ci/inkscape-setup-action@main

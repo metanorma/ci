@@ -27,8 +27,7 @@ runs:
   - if: ${{ inputs.use-bundler == 'true' }}
     working-directory: ${{ inputs.working-directory }}
     run: |
-      bundle lock --print | grep fontist
-      bundle exec which fontist
+      echo "Working directory: ${{ inputs.working-directory }}"
       bundle exec fontist update
       bundle exec fontist repo setup metanorma https://metanorma-ci:${{ inputs.private-fonts-pat }}@github.com/metanorma/fontist-formulas-private
     shell: bash
