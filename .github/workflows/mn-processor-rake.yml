@@ -269,6 +269,7 @@ jobs:
       with:
         private-fonts-pat: ${{ secrets.pat_token }}
         use-bundler: 'true'
+        working-directory: samples
 
     - uses: metanorma/ci/inkscape-setup-action@main
 
