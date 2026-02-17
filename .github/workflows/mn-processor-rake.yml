@@ -253,6 +253,7 @@ jobs:
         working-directory: samples
 
     - run: |
+        bundle exec fontist help
         rm -f Gemfile.lock
         bundle remove metanorma-${{ needs.build-matrices.outputs.flavor }} --skip-install || true
         bundle add metanorma-${{ needs.build-matrices.outputs.flavor }} --path .. --skip-install
