@@ -204,7 +204,6 @@ jobs:
     name: Test sample ${{ matrix.flavor.id }}-${{ matrix.ruby.version }}-${{ matrix.os }}
     runs-on: ${{ matrix.os }}
     needs:
-    - rake
     - build-matrices
 
     if: ${{ needs.build-matrices.outputs.samples-matrix != '[]' }}
@@ -261,7 +260,9 @@ jobs:
         bundle add fontist --skip-install
         echo 'eval_gemfile("../Gemfile.devel") rescue nil' >> Gemfile
         cat Gemfile
-        bundle install
+        bundle install --verbose
+        bundle lock --print
+        bundle info fontist
       shell: bash
       working-directory: samples
 
