@@ -258,6 +258,7 @@ jobs:
         bundle remove metanorma-${{ needs.build-matrices.outputs.flavor }} --skip-install || true
         bundle add metanorma-${{ needs.build-matrices.outputs.flavor }} --path .. --skip-install
         bundle add sassc --skip-install
+        bundle add fontist --skip-install
         echo 'eval_gemfile("../Gemfile.devel") rescue nil' >> Gemfile
         cat Gemfile
         bundle install
