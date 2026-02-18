@@ -4,8 +4,9 @@ on:
   workflow_call:
     inputs:
       private-fonts:
-        default: 'false'
+        description: 'Set to true to enable private fonts via fontist-repo-setup'
         required: false
+        default: 'false'
         type: string
     secrets:
       pat_token:
