@@ -40,9 +40,11 @@ runs:
 
         platform_name = "Ubuntu" if os_release_dict.get("ID", None) == "ubuntu" else platform.system()
 
+        # Version pinning: macOS and Windows use latest available from package manager
+        # Ubuntu uses PPA version pattern, Linux (generic) uses specific AppImage URL
         version = {
-          "Darwin": "inkscape", # latest is 1.4.+
-          "Windows": "1.4.2",
+          "Darwin": None,  # Homebrew always installs latest
+          "Windows": None, # Chocolatey always installs latest
           "Ubuntu": "1:1.4*",
           "Linux": "https://inkscape.org/gallery/item/53678/Inkscape-e7c3feb-x86_64.AppImage"
         }.get(platform_name, None)
@@ -53,7 +55,7 @@ runs:
             "inkscape --version"
           ],
           "Windows": [
-            "choco install --no-progress -y inkscape --verbose --version {}".format(version),
+            "choco install --no-progress -y inkscape --verbose",
             "echo {}>> {}".format(win_prefix, os.environ["GITHUB_PATH"]),
             "\"{}\\inkscape\" --version".format(win_prefix)
           ],
