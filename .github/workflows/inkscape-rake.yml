@@ -8,6 +8,11 @@ on:
         required: false
         default: 'false'
         type: string
+      private-fonts-username:
+        description: 'Username for private fonts repository'
+        required: false
+        default: 'metanorma-ci'
+        type: string
     secrets:
       pat_token:
         required: false
@@ -56,6 +61,7 @@ jobs:
         uses: metanorma/ci/fontist-repo-setup@main
         with:
           private-fonts-pat: ${{ secrets.pat_token }}
+          private-fonts-username: ${{ inputs.private-fonts-username }}
           use-bundler: 'true'
 
       - run: bundle exec rake
