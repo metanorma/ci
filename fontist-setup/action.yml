@@ -9,6 +9,10 @@ inputs:
     description: 'Setup private formulas with PAT'
     required: false
     default: ''
+  private-fonts-username:
+    description: 'Username for private formulas repository'
+    required: false
+    default: 'metanorma-ci'
 runs:
   using: "composite"
   steps:
@@ -48,6 +52,6 @@ runs:
   - if: ${{ inputs.private-fonts-pat != '' }}
     run: |
       fontist update
-      fontist repo setup metanorma https://metanorma-ci:${{ inputs.private-fonts-pat }}@github.com/metanorma/fontist-formulas-private
+      fontist repo setup metanorma https://${{ inputs.private-fonts-username }}:${{ inputs.private-fonts-pat }}@github.com/metanorma/fontist-formulas-private
       fontist repo update metanorma
     shell: bash

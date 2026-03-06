@@ -5,6 +5,10 @@ inputs:
     description: 'Setup private formulas with PAT'
     required: true
     default: ''
+  private-fonts-username:
+    description: 'Username for private formulas repository'
+    required: false
+    default: 'metanorma-ci'
   use-bundler:
     description: 'Use bundler to run fontist'
     required: false
@@ -21,12 +25,12 @@ runs:
     working-directory: ${{ inputs.working-directory }}
     run: |
       fontist update
-      fontist repo setup metanorma https://metanorma-ci:${{ inputs.private-fonts-pat }}@github.com/metanorma/fontist-formulas-private
+      fontist repo setup metanorma https://${{ inputs.private-fonts-username }}:${{ inputs.private-fonts-pat }}@github.com/metanorma/fontist-formulas-private
     shell: bash
 
   - if: ${{ inputs.use-bundler == 'true' }}
     working-directory: ${{ inputs.working-directory }}
     run: |
       bundle exec fontist update
-      bundle exec fontist repo setup metanorma https://metanorma-ci:${{ inputs.private-fonts-pat }}@github.com/metanorma/fontist-formulas-private
+      bundle exec fontist repo setup metanorma https://${{ inputs.private-fonts-username }}:${{ inputs.private-fonts-pat }}@github.com/metanorma/fontist-formulas-private
     shell: bash
