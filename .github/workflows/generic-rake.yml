@@ -21,6 +21,10 @@ on:
         type: string
         default: ''
         required: false
+      setup-inkscape:
+        description: Whether to set up Inkscape for tests that require it
+        type: boolean
+        default: false
     secrets:
       pat_token:
         required: false
@@ -69,6 +73,9 @@ jobs:
 
       - if: ${{ inputs.after-setup-ruby != '' }}
         run: ${{ inputs.after-setup-ruby }}
+
+      - if: ${{ inputs.setup-inkscape }}
+        uses: metanorma/ci/inkscape-setup-action@main
 
       - run: bundle exec rake
 
