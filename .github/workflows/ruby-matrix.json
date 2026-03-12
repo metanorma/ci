@@ -11,6 +11,12 @@
       "rubygems": "latest",
       "bundler": "default",
       "experimental": false
+    },
+    {
+      "version": "4.0",
+      "rubygems": "latest",
+      "bundler": "default",
+      "experimental": true
     }
   ],
   "os": [
