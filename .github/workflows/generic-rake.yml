@@ -55,6 +55,10 @@ jobs:
       max-parallel: 6
       matrix: ${{ fromJson(needs.prepare.outputs.matrix) }}
 
+    defaults:
+      run:
+        shell: ${{ inputs.shell }}
+
     steps:
       - uses: actions/checkout@v6
         with:
@@ -68,7 +72,6 @@ jobs:
 
       - if: ${{ inputs.before-setup-ruby != '' }}
         run: ${{ inputs.before-setup-ruby }}
-        shell: ${{ inputs.shell }}
 
       - uses: ruby/setup-ruby@v1
         with:
@@ -79,13 +82,11 @@ jobs:
 
       - if: ${{ inputs.after-setup-ruby != '' }}
         run: ${{ inputs.after-setup-ruby }}
-        shell: ${{ inputs.shell }}
 
       - if: ${{ inputs.setup-inkscape }}
         uses: metanorma/ci/inkscape-setup-action@main
 
       - run: bundle exec rake
-        shell: ${{ inputs.shell }}
 
       # - if: needs.prepare.outputs.public == 'true' && matrix.os == 'ubuntu-latest' && matrix.ruby.version == needs.prepare.outputs.default-ruby-version
       #   uses: codecov/codecov-action@v4
