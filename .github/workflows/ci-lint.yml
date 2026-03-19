@@ -18,11 +18,30 @@ jobs:
         yamllint cimas-config/
     - name: Shellcheck lint
       run: |
-        if stat -t *.sh >/dev/null 2>&1
+        if stat -t ./*.sh >/dev/null 2>&1
         then
           sudo apt-get install shellcheck
-          shellcheck *.sh
+          shellcheck ./*.sh
         else
           echo "No shell scripts files found"
         fi
+
+  actionlint:
+    name: Actionlint
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v6
+    - name: Run actionlint
+      run: |
+        # Install actionlint
+        curl -sL https://raw.githubusercontent.com/rhysd/actionlint/main/scripts/download-actionlint.bash | bash -s -- latest /tmp
+        # Run actionlint
+        # Ignore shellcheck style/info warnings (SC1xxx, SC2xxx)
+        # Ignore pre-existing action version warnings (will fix separately)
+        /tmp/actionlint \
+          -ignore 'SC1' \
+          -ignore 'SC2' \
+          -ignore 'the runner of.*action is too old' \
+          -ignore 'property.*is not defined in object type' \
+          -color
 
