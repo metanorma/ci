@@ -30,6 +30,31 @@ on:
         description: Whether to set up Inkscape for tests that require it
         type: boolean
         default: false
+      setup-tools:
+        description: 'Comma-separated list of tools to set up: inkscape, ghostscript, graphviz, libreoffice, xml2rfc'
+        type: string
+        default: ''
+        required: false
+      submodules:
+        description: 'Checkout submodules: true, false, or recursive'
+        type: string
+        default: 'recursive'
+        required: false
+      private-fonts:
+        description: 'Set to true to enable private fonts via fontist-repo-setup'
+        type: string
+        default: 'false'
+        required: false
+      private-fonts-username:
+        description: 'Username for private fonts repository'
+        type: string
+        default: 'metanorma-ci'
+        required: false
+      choco-cache:
+        description: 'Whether to set up Chocolatey cache on Windows'
+        type: boolean
+        default: false
+        required: false
     secrets:
       pat_token:
         required: false
@@ -63,7 +88,7 @@ jobs:
       - uses: actions/checkout@v6
         with:
           token: ${{ secrets.pat_token || github.token }}
-          submodules: 'recursive'
+          submodules: ${{ inputs.submodules }}
 
       - if: matrix.os == 'windows-latest'
         uses: actions/setup-java@v5
@@ -84,8 +109,30 @@ jobs:
       - if: ${{ inputs.after-setup-ruby != '' }}
         run: ${{ inputs.after-setup-ruby }}
 
-      - if: ${{ inputs.setup-inkscape }}
+      - if: ${{ inputs.choco-cache && runner.os == 'Windows' }}
+        uses: metanorma/ci/choco-cache-action@main
+
+      - if: inputs.setup-inkscape || contains(inputs.setup-tools, 'inkscape')
         uses: metanorma/ci/inkscape-setup-action@main
+
+      - if: contains(inputs.setup-tools, 'ghostscript')
+        uses: metanorma/ci/ghostscript-setup-action@main
+
+      - if: contains(inputs.setup-tools, 'graphviz')
+        uses: metanorma/ci/graphviz-setup-action@main
+
+      - if: contains(inputs.setup-tools, 'libreoffice')
+        uses: metanorma/ci/libreoffice-setup-action@main
+
+      - if: contains(inputs.setup-tools, 'xml2rfc')
+        uses: metanorma/ci/xml2rfc-setup-action@main
+
+      - if: inputs.private-fonts == 'true'
+        uses: metanorma/ci/fontist-repo-setup@main
+        with:
+          private-fonts-pat: ${{ secrets.pat_token }}
+          private-fonts-username: ${{ inputs.private-fonts-username }}
+          use-bundler: 'true'
 
       - run: bundle exec rake
 
