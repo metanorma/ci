@@ -29,6 +29,14 @@ repositories:
       .rubocop.yml: gh-actions/master/.rubocop.yml
       .github/workflows/rake.yml: gh-actions/master/rake.yml
       .github/workflows/release.yml: gh-actions/master/release_wo_bundle_install.yml
+  metanorma-core:
+    remote: ssh://git@github.com/metanorma/metanorma-core
+    branch: main
+    files:
+      .rubocop.yml: gh-actions/master/.rubocop.yml
+      .github/workflows/rake.yml: gh-actions/master/rake.yml
+      .github/workflows/release.yml: gh-actions/master/release.yml
+      .github/workflows/automerge.yml: gh-actions/master/automerge.yml
   metanorma-ogc:
     remote: ssh://git@github.com/metanorma/metanorma-ogc
     branch: main
@@ -1386,6 +1394,7 @@ groups:
   metanorma:
   - metanorma
   - metanorma-cli
+  - metanorma-core
   - metanorma-registry
   - metanorma-utils
   model:
