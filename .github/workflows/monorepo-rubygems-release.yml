@@ -77,7 +77,7 @@ jobs:
           ${{ inputs.gem_directory }}/${{ inputs.gem_name }}
 
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
         with:
           submodules: ${{ inputs.submodules }}
           fetch-depth: 0
@@ -93,7 +93,7 @@ jobs:
 
       - uses: ruby/setup-ruby@v1
         with:
-          ruby-version: '3.3'
+          ruby-version: '3.4'
           bundler-cache: true
           working-directory: >-
             ${{ inputs.gem_directory }}/${{ inputs.gem_name }}

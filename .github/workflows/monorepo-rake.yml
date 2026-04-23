@@ -94,7 +94,7 @@ jobs:
         shell: ${{ inputs.shell }}
 
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
         with:
           token: ${{ secrets.pat_token || github.token }}
           submodules: ${{ inputs.submodules }}
