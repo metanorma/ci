@@ -1,0 +1,164 @@
+# Reusable workflow for releasing an individual gem from a monorepo.
+#
+# Mirrors the single-gem rubygems-release.yml but adds monorepo support
+# via gem_name/gem_directory inputs that set the working directory.
+#
+# Usage (consumer repo creates a monorepo-release.yml that calls this):
+#   jobs:
+#     release:
+#       uses: metanorma/ci/.github/workflows/monorepo-rubygems-release.yml@main
+#       with:
+#         gem_name: coradoc-adoc
+#         gem_directory: .
+#         next_version: patch
+#       secrets:
+#         rubygems-api-key: ${{ secrets.METANORMA_CI_RUBYGEMS_API_KEY }}
+#         pat_token: ${{ secrets.METANORMA_CI_PAT_TOKEN }}
+
+name: monorepo-rubygems-release
+
+on:
+  workflow_call:
+    inputs:
+      gem_name:
+        description: >-
+          Directory name of the gem to release (relative to gem_directory).
+          Use "." for the root gem.
+        required: true
+        type: string
+      gem_directory:
+        description: Parent directory containing the gem directories
+        required: false
+        type: string
+        default: '.'
+      next_version:
+        description: >-
+          Next release version. Possible values: x.y.z, major, minor,
+          patch (or pre|rc|etc).  Pass 'skip' to skip 'git tag' and do
+          'gem push' for the current version.
+        required: true
+        type: string
+      release_command:
+        description: Override command to release the gem
+        required: false
+        type: string
+        default: ''
+      submodules:
+        description: Checkout submodules
+        required: false
+        type: boolean
+        default: true
+      environment:
+        description: >-
+          GitHub environment name for protection rules
+          (e.g. "release" for required approvers)
+        required: false
+        type: string
+        default: ''
+    secrets:
+      rubygems-api-key:
+        required: false
+      pat_token:
+        required: false
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    environment: ${{ inputs.environment }}
+    permissions:
+      contents: write
+      id-token: write
+    env:
+      HAVE_PAT_TOKEN: ${{ secrets.pat_token != '' }}
+      HAS_API_KEY: ${{ secrets.rubygems-api-key != '' }}
+    defaults:
+      run:
+        working-directory: >-
+          ${{ inputs.gem_directory }}/${{ inputs.gem_name }}
+
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          submodules: ${{ inputs.submodules }}
+          fetch-depth: 0
+
+      - if: github.event_name == 'workflow_dispatch' || github.event_name == 'repository_dispatch'
+        run: git fetch --tags origin
+        working-directory: .
+
+      - if: ${{ env.HAVE_PAT_TOKEN == 'true' }}
+        uses: metanorma/ci/gh-rubygems-setup-action@main
+        with:
+          token: ${{ secrets.pat_token }}
+
+      - uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: '3.4'
+          bundler-cache: true
+          working-directory: >-
+            ${{ inputs.gem_directory }}/${{ inputs.gem_name }}
+
+      - run: |
+          git config user.name github-actions
+          git config user.email github-actions@github.com
+        working-directory: .
+
+      - run: gem install gem-release
+        working-directory: .
+
+      # Version bump
+      - if: >-
+          github.event_name == 'workflow_dispatch' &&
+          inputs.next_version != 'skip'
+        run: gem bump --version ${{ inputs.next_version }} --tag --push
+
+      # Publish (API key path)
+      - if: ${{ env.HAS_API_KEY == 'true' }}
+        name: Publish to RubyGems (API key)
+        env:
+          RUBYGEMS_API_KEY: ${{ secrets.rubygems-api-key }}
+        run: |
+          mkdir -p ~/.gem
+          cat > ~/.gem/credentials << 'EOF'
+          ---
+          :rubygems_api_key: ${RUBYGEMS_API_KEY}
+          EOF
+          chmod 0600 ~/.gem/credentials
+          if [ -n "${{ inputs.release_command }}" ]; then
+            ${{ inputs.release_command }}
+          else
+            gem build *.gemspec
+            gem push *.gem
+          fi
+
+      # Publish (OIDC path)
+      - if: ${{ env.HAS_API_KEY != 'true' }}
+        name: Configure RubyGems credentials for Trusted Publishing
+        uses: rubygems/configure-rubygems-credentials@v1.0.0
+
+      - if: ${{ env.HAS_API_KEY != 'true' && github.event_name == 'workflow_dispatch' && inputs.next_version != 'skip' }}
+        run: gem bump --version ${{ inputs.next_version }} --tag --push
+
+      - if: ${{ env.HAS_API_KEY != 'true' }}
+        name: Build and push gem (OIDC)
+        run: |
+          gem build *.gemspec
+          gem push *.gem
+
+      # Post-release event
+      - name: Get current gem ref
+        id: gem-tag-ref
+        run: |
+          GEM_VERSION=$(ruby -e "puts Gem::Specification.load(Dir.glob('*.gemspec').first).version.to_s")
+          echo "value=refs/tags/v${GEM_VERSION}" >> $GITHUB_OUTPUT
+
+      - uses: peter-evans/repository-dispatch@v3
+        with:
+          token: ${{ secrets.pat_token || github.token }}
+          repository: ${{ github.repository }}
+          event-type: release-passed
+          client-payload: >-
+            {"ref": "${{ steps.gem-tag-ref.outputs.value }}",
+             "sha": "${{ github.sha }}",
+             "type": "release-passed",
+             "gem-name": "${{ inputs.gem_name }}"}
