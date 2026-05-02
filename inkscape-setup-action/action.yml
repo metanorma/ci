@@ -59,10 +59,27 @@ runs:
             "echo {}>> {}".format(win_prefix, os.environ["GITHUB_PATH"]),
             "\"{}\\inkscape\" --version".format(win_prefix)
           ],
+          # add-apt-repository goes through python-launchpadlib → api.launchpad.net,
+          # which intermittently times out from GitHub-hosted Ubuntu runners. The PPA's
+          # deb endpoint (ppa.launchpadcontent.net) and keyserver.ubuntu.com's HTTPS
+          # lookup are reliably reachable, so add the apt source and signing key directly.
+          # `gpg --dearmor` is used (not --recv-keys) because the runner image has no
+          # dirmngr / no /root/.gnupg, which breaks the OpenPGP keyserver path.
+          # Key fingerprint comes from
+          # https://api.launchpad.net/1.0/~inkscape.dev/+archive/ubuntu/stable.
           "Ubuntu": [
-            "sudo add-apt-repository ppa:inkscape.dev/stable",
+            "sudo install -d -m 0755 /etc/apt/keyrings",
+            "curl -fsSL "
+              "'https://keyserver.ubuntu.com/pks/lookup"
+              "?op=get&search=0x56BDFFD2F1C96B3D1575E3B85C9A0B86CD2FCB38' "
+              "| sudo gpg --dearmor -o /etc/apt/keyrings/inkscape-dev-stable.gpg",
+            ". /etc/os-release && echo "
+              "\"deb [signed-by=/etc/apt/keyrings/inkscape-dev-stable.gpg] "
+              "https://ppa.launchpadcontent.net/inkscape.dev/stable/ubuntu "
+              "$UBUNTU_CODENAME main\" "
+              "| sudo tee /etc/apt/sources.list.d/inkscape-dev-stable.list",
             "sudo apt update",
-            "sudo apt install inkscape={}".format(version),
+            "sudo apt install -y inkscape={}".format(version),
             "which inkscape",
             "inkscape --version"
           ],
