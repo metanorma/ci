@@ -59,10 +59,24 @@ runs:
             "echo {}>> {}".format(win_prefix, os.environ["GITHUB_PATH"]),
             "\"{}\\inkscape\" --version".format(win_prefix)
           ],
+          # add-apt-repository goes through python-launchpadlib → api.launchpad.net,
+          # which intermittently times out from GitHub-hosted Ubuntu runners. The PPA's
+          # deb endpoint (ppa.launchpadcontent.net) and Ubuntu's keyserver are reliably
+          # reachable, so add the apt source and signing key directly. Key fingerprint
+          # comes from https://api.launchpad.net/1.0/~inkscape.dev/+archive/ubuntu/stable.
           "Ubuntu": [
-            "sudo add-apt-repository ppa:inkscape.dev/stable",
+            "sudo install -d -m 0755 /etc/apt/keyrings",
+            "sudo gpg --no-default-keyring "
+              "--keyring /etc/apt/keyrings/inkscape-dev-stable.gpg "
+              "--keyserver hkps://keyserver.ubuntu.com "
+              "--recv-keys 56BDFFD2F1C96B3D1575E3B85C9A0B86CD2FCB38",
+            ". /etc/os-release && echo "
+              "\"deb [signed-by=/etc/apt/keyrings/inkscape-dev-stable.gpg] "
+              "https://ppa.launchpadcontent.net/inkscape.dev/stable/ubuntu "
+              "$UBUNTU_CODENAME main\" "
+              "| sudo tee /etc/apt/sources.list.d/inkscape-dev-stable.list",
             "sudo apt update",
-            "sudo apt install inkscape={}".format(version),
+            "sudo apt install -y inkscape={}".format(version),
             "which inkscape",
             "inkscape --version"
           ],

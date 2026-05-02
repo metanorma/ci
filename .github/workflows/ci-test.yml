@@ -84,12 +84,15 @@ jobs:
           token: ${{ secrets.METANORMA_CI_PAT_TOKEN }}
 
       - run: |
-          echo 'gem "metanorma-cli"' > Gemfile
-          echo 'gem "metanorma", "~>1"' >> Gemfile
+          # metanorma-cli is already locked in the metanorma/metanorma container
+          # image's Gemfile; re-declaring it here breaks bundler with
+          # "Gem already added".
+          echo 'gem "metanorma", "~>1"' > Gemfile
           echo 'gem "metanorma-nist", source: "https://rubygems.pkg.github.com/metanorma"' >> Gemfile
           echo 'gem "metanorma-standoc", git: "https://github.com/metanorma/metanorma-standoc", branch: "main"' >> Gemfile
 
-      - run: apt-get update -y && apt-get install -y gcc g++ ruby-dev
+      # libffi-dev + pkg-config are needed for fiddle's native extension build.
+      - run: apt-get update -y && apt-get install -y gcc g++ ruby-dev libffi-dev pkg-config
 
       - uses: ./docker-gem-install
 
