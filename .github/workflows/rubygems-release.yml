@@ -61,6 +61,11 @@ jobs:
     steps:
       - uses: actions/checkout@v6
         with:
+          # On `repository_dispatch` events (e.g. `do-release` fired by `tests-passed`
+          # for a `v*` tag), GitHub forces the workflow to run on the default branch.
+          # Honor the dispatched ref so we release the tagged commit, not whatever
+          # `main` happens to point at — required for releases off non-default branches.
+          ref: ${{ github.event.client_payload.ref || github.ref }}
           submodules: ${{ inputs.submodules }}
 
       - if: github.event_name == 'workflow_dispatch' || github.event_name == 'repository_dispatch'
