@@ -61,15 +61,18 @@ runs:
           ],
           # add-apt-repository goes through python-launchpadlib → api.launchpad.net,
           # which intermittently times out from GitHub-hosted Ubuntu runners. The PPA's
-          # deb endpoint (ppa.launchpadcontent.net) and Ubuntu's keyserver are reliably
-          # reachable, so add the apt source and signing key directly. Key fingerprint
-          # comes from https://api.launchpad.net/1.0/~inkscape.dev/+archive/ubuntu/stable.
+          # deb endpoint (ppa.launchpadcontent.net) and keyserver.ubuntu.com's HTTPS
+          # lookup are reliably reachable, so add the apt source and signing key directly.
+          # `gpg --dearmor` is used (not --recv-keys) because the runner image has no
+          # dirmngr / no /root/.gnupg, which breaks the OpenPGP keyserver path.
+          # Key fingerprint comes from
+          # https://api.launchpad.net/1.0/~inkscape.dev/+archive/ubuntu/stable.
           "Ubuntu": [
             "sudo install -d -m 0755 /etc/apt/keyrings",
-            "sudo gpg --no-default-keyring "
-              "--keyring /etc/apt/keyrings/inkscape-dev-stable.gpg "
-              "--keyserver hkps://keyserver.ubuntu.com "
-              "--recv-keys 56BDFFD2F1C96B3D1575E3B85C9A0B86CD2FCB38",
+            "curl -fsSL "
+              "'https://keyserver.ubuntu.com/pks/lookup"
+              "?op=get&search=0x56BDFFD2F1C96B3D1575E3B85C9A0B86CD2FCB38' "
+              "| sudo gpg --dearmor -o /etc/apt/keyrings/inkscape-dev-stable.gpg",
             ". /etc/os-release && echo "
               "\"deb [signed-by=/etc/apt/keyrings/inkscape-dev-stable.gpg] "
               "https://ppa.launchpadcontent.net/inkscape.dev/stable/ubuntu "
