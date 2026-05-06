@@ -75,6 +75,7 @@ jobs:
         working-directory: dependent
 
     - name: Replace rubygems's gem with git's one
+      shell: bash
       run: |
         gem_name="${{ github.event.repository.name }}"
         for f in *.gemspec; do
