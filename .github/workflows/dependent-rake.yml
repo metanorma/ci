@@ -34,7 +34,7 @@ on:
         type: boolean
         default: false
       setup-tools:
-        description: 'Comma-separated list of tools to set up: inkscape, ghostscript, graphviz, libreoffice, xml2rfc, exiftool'
+        description: 'Comma-separated list of tools to set up: inkscape, ghostscript, graphviz, libreoffice, xml2rfc, exiftool, ffmpeg, imagemagick'
         type: string
         default: ''
         required: false
@@ -154,6 +154,12 @@ jobs:
     # TODO: Revert to main branch of exiftool-setup-action when merging to main branch
     - if: contains(inputs.setup-tools, 'exiftool')
       uses: metanorma/ci/exiftool-setup-action@setup-tools-in-dependent-rake
+
+    - if: contains(inputs.setup-tools, 'ffmpeg')
+      uses: metanorma/ci/ffmpeg-setup-action@setup-tools-in-dependent-rake
+
+    - if: contains(inputs.setup-tools, 'imagemagick')
+      uses: metanorma/ci/imagemagick-setup-action@setup-tools-in-dependent-rake
 
     - run: ${{ inputs.command }}
       working-directory: dependent
