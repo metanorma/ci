@@ -14,6 +14,30 @@ on:
       matrix_os:
         description: define the operating systems on which to execute jobs
         type: string
+      before-setup-ruby:
+        description: Command to execute before setting up Ruby
+        type: string
+        default: ''
+        required: false
+      after-setup-ruby:
+        description: Command to execute after setting up Ruby
+        type: string
+        default: ''
+        required: false
+      shell:
+        description: Shell to use for running commands
+        type: string
+        default: 'bash'
+        required: false
+      setup-inkscape:
+        description: Whether to set up Inkscape for tests that require it
+        type: boolean
+        default: false
+      setup-tools:
+        description: 'Comma-separated list of tools to set up: inkscape, ghostscript, graphviz, libreoffice, xml2rfc, exiftool, ffmpeg, imagemagick'
+        type: string
+        default: ''
+        required: false
 
 jobs:
   build-matrix:
@@ -49,6 +73,10 @@ jobs:
       fail-fast: false
       matrix: ${{ fromJson(needs.build-matrix.outputs.matrix) }}
 
+    defaults:
+      run:
+        shell: ${{ inputs.shell }}
+
     steps:
     - uses: actions/checkout@v6
       with:
@@ -61,12 +89,20 @@ jobs:
         path: dependent
         fetch-depth: 1
 
+    - if: ${{ inputs.before-setup-ruby != '' }}
+      run: ${{ inputs.before-setup-ruby }}
+      working-directory: dependent
+
     - uses: ruby/setup-ruby@v1
       with:
         ruby-version: ${{ matrix.ruby.version }}
         rubygems: ${{ matrix.ruby.rubygems }}
         bundler-cache: true
         working-directory: dependent
+
+    - if: ${{ inputs.after-setup-ruby != '' }}
+      run: ${{ inputs.after-setup-ruby }}
+      working-directory: dependent
 
     - name: Replace rubygems's gem with git's one
       shell: python
@@ -99,6 +135,31 @@ jobs:
         sys.stdout.flush()
         os.system("bundle add {} --path ..".format(gem_name))
       working-directory: dependent
+
+    - if: inputs.setup-inkscape || contains(inputs.setup-tools, 'inkscape')
+      uses: metanorma/ci/inkscape-setup-action@main
+
+    - if: contains(inputs.setup-tools, 'ghostscript')
+      uses: metanorma/ci/ghostscript-setup-action@main
+
+    - if: contains(inputs.setup-tools, 'graphviz')
+      uses: metanorma/ci/graphviz-setup-action@main
+
+    - if: contains(inputs.setup-tools, 'libreoffice')
+      uses: metanorma/ci/libreoffice-setup-action@main
+
+    - if: contains(inputs.setup-tools, 'xml2rfc')
+      uses: metanorma/ci/xml2rfc-setup-action@main
+
+    # TODO: Revert to main branch of exiftool-setup-action when merging to main branch
+    - if: contains(inputs.setup-tools, 'exiftool')
+      uses: metanorma/ci/exiftool-setup-action@setup-tools-in-dependent-rake
+
+    - if: contains(inputs.setup-tools, 'ffmpeg')
+      uses: metanorma/ci/ffmpeg-setup-action@setup-tools-in-dependent-rake
+
+    - if: contains(inputs.setup-tools, 'imagemagick')
+      uses: metanorma/ci/imagemagick-setup-action@setup-tools-in-dependent-rake
 
     - run: ${{ inputs.command }}
       working-directory: dependent
