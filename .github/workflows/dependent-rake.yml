@@ -34,7 +34,7 @@ on:
         type: boolean
         default: false
       setup-tools:
-        description: 'Comma-separated list of tools to set up: inkscape, ghostscript, graphviz, libreoffice, xml2rfc'
+        description: 'Comma-separated list of tools to set up: inkscape, ghostscript, graphviz, libreoffice, xml2rfc, exiftool'
         type: string
         default: ''
         required: false
@@ -150,6 +150,10 @@ jobs:
 
     - if: contains(inputs.setup-tools, 'xml2rfc')
       uses: metanorma/ci/xml2rfc-setup-action@main
+
+    # TODO: Revert to main branch of exiftool-setup-action when merging to main branch
+    - if: contains(inputs.setup-tools, 'exiftool')
+      uses: metanorma/ci/exiftool-setup-action@setup-tools-in-dependent-rake
 
     - run: ${{ inputs.command }}
       working-directory: dependent
