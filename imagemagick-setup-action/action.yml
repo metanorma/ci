@@ -1,0 +1,55 @@
+name: 'imagemagick-setup-action'
+description: 'composite action which installs imagemagick for all OSes'
+runs:
+  using: "composite"
+  steps:
+    - shell: python
+      run: |
+        import os
+        import sys
+        import platform
+
+        def os_release():
+          try:
+            return platform.freedesktop_os_release()
+          except AttributeError:
+            properties = {}
+            try:
+              with open("/etc/os-release", "r") as file:
+                for line in file:
+                  line = line.strip()
+                  if line and not line.startswith("#"):
+                    key, value = line.split("=", 1)
+                    properties[key] = value.strip('"')
+            except:
+              pass
+            return properties
+          except OSError:
+            return {}
+
+        os_release_dict = os_release()
+
+        print(os_release_dict)
+
+        platform_name = "Ubuntu" if os_release_dict.get("ID", None) == "ubuntu" else platform.system()
+
+        cmds = {
+          "Darwin": [
+            "brew install imagemagick",
+            "magick -version"
+          ],
+          "Windows": [
+            "choco install --no-progress -y imagemagick",
+            "magick -version"
+          ],
+          "Ubuntu": [
+            "sudo apt install -y imagemagick",
+            "which convert",
+            "convert -version"
+          ],
+        }.get(platform_name, [ "echo \"Unsupported platform: {}\"".format(platform_name), "exit 1" ])
+
+        for cmd in cmds:
+          if os.system(cmd) != 0:
+            print("Command {} FAILED!".format(cmd))
+            sys.exit(1)
