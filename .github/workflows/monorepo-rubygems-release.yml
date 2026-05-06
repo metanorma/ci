@@ -8,12 +8,16 @@
 #     release:
 #       uses: metanorma/ci/.github/workflows/monorepo-rubygems-release.yml@main
 #       with:
-#         gem_name: coradoc-adoc
+#         gem_name: coradoc-adoc    # sub-gem directory name, or "." for root gem
 #         gem_directory: .
 #         next_version: patch
 #       secrets:
 #         rubygems-api-key: ${{ secrets.METANORMA_CI_RUBYGEMS_API_KEY }}
 #         pat_token: ${{ secrets.METANORMA_CI_PAT_TOKEN }}
+#
+# To override the build/publish command:
+#   with:
+#     release_command: bundle exec rake release
 
 name: monorepo-rubygems-release
 
@@ -39,10 +43,12 @@ on:
         required: true
         type: string
       release_command:
-        description: Override command to release the gem
+        description: >-
+          Command to build and publish the gem. Defaults to
+          `gem build *.gemspec && gem push *.gem`.
         required: false
         type: string
-        default: ''
+        default: 'gem build *.gemspec && gem push *.gem'
       submodules:
         description: Checkout submodules
         required: false
@@ -119,17 +125,12 @@ jobs:
           RUBYGEMS_API_KEY: ${{ secrets.rubygems-api-key }}
         run: |
           mkdir -p ~/.gem
-          cat > ~/.gem/credentials << 'EOF'
+          envsubst << 'EOF' > ~/.gem/credentials
           ---
           :rubygems_api_key: ${RUBYGEMS_API_KEY}
           EOF
           chmod 0600 ~/.gem/credentials
-          if [ -n "${{ inputs.release_command }}" ]; then
-            ${{ inputs.release_command }}
-          else
-            gem build *.gemspec
-            gem push *.gem
-          fi
+          ${{ inputs.release_command }}
 
       # Publish (OIDC path)
       - if: ${{ env.HAS_API_KEY != 'true' }}
