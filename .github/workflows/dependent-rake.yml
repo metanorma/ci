@@ -15,6 +15,10 @@ on:
         description: define the operating systems on which to execute jobs
         type: string
 
+    secrets:
+      pat_token:
+        required: false
+
 jobs:
   build-matrix:
     runs-on: ubuntu-latest
@@ -53,6 +57,7 @@ jobs:
     - uses: actions/checkout@v6
       with:
         submodules: true
+        token: ${{ secrets.pat_token || github.token }}
 
     - uses: actions/checkout@v6
       with:
@@ -60,6 +65,7 @@ jobs:
         repository: ${{ matrix.repo }}
         path: dependent
         fetch-depth: 1
+        token: ${{ secrets.pat_token || github.token }}
 
     - uses: ruby/setup-ruby@v1
       with:
