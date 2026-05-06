@@ -24,6 +24,11 @@ on:
         type: string
         default: ''
         required: false
+      shell:
+        description: Shell to use for running commands
+        type: string
+        default: 'bash'
+        required: false
       setup-inkscape:
         description: Whether to set up Inkscape for tests that require it
         type: boolean
@@ -67,6 +72,10 @@ jobs:
       max-parallel: 10
       fail-fast: false
       matrix: ${{ fromJson(needs.build-matrix.outputs.matrix) }}
+
+    defaults:
+      run:
+        shell: ${{ inputs.shell }}
 
     steps:
     - uses: actions/checkout@v6
