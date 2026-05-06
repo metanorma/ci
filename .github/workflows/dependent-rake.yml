@@ -75,35 +75,58 @@ jobs:
         working-directory: dependent
 
     - name: Replace rubygems's gem with git's one
-      shell: python
       run: |
-        import fileinput
-        import glob
-        import sys
-        import os
-        gem_name = '${{ github.event.repository.name }}'
-        if glob.glob('*.gemspec'):
-          gemspec = glob.glob('*.gemspec')[0]
-          with fileinput.FileInput(gemspec, inplace=True) as file:
-            for line in file:
-              if gem_name not in line:
-                print(line, end='')
-          print("'{}' removed from {}".format(gem_name, gemspec))
-        if os.path.exists("Gemfile"):
-          with fileinput.FileInput("Gemfile", inplace=True) as file:
-            for line in file:
-              if gem_name not in line:
-                print(line, end='')
-          print("'{}' removed from Gemfile".format(gem_name))
-        if os.path.exists("Gemfile.lock"):
-          os.remove("Gemfile.lock")
-          print("Gemfile.lock dropped")
-        print("> git diff")
-        sys.stdout.flush()
-        os.system("git diff")
-        print("> bundle add {} --path ..".format(gem_name))
-        sys.stdout.flush()
-        os.system("bundle add {} --path ..".format(gem_name))
+        gem_name="${{ github.event.repository.name }}"
+        for f in *.gemspec; do
+          [ -f "$f" ] || continue
+          ruby -e '
+            name = ARGV[0]; file = ARGV[1]
+            lines = File.readlines(file)
+            keep = []
+            skip = false
+            lines.each do |line|
+              if line.include?(name)
+                skip = true
+                keep << line unless line.strip.start_with?("#")
+                next
+              end
+              if skip && line.match?(/^\s*(ref|branch|tag|commit|github|git)\s*:/)
+                next
+              end
+              skip = false
+              keep << line
+            end
+            File.write(file, keep.join)
+            puts "#{name} removed from #{file}"
+          ' "$gem_name" "$f"
+        done
+        if [ -f Gemfile ]; then
+          ruby -e '
+            name = ARGV[0]
+            lines = File.readlines("Gemfile")
+            keep = []
+            skip = false
+            lines.each do |line|
+              if line.include?(name)
+                skip = true
+                next
+              end
+              if skip && line.match?(/^\s*(ref|branch|tag|commit|github|git)\s*:/)
+                next
+              end
+              skip = false
+              keep << line
+            end
+            File.write("Gemfile", keep.join)
+            puts "#{name} removed from Gemfile"
+          ' "$gem_name"
+        fi
+        if [ -f Gemfile.lock ]; then
+          rm Gemfile.lock
+          echo "Gemfile.lock dropped"
+        fi
+        git diff || true
+        bundle add "${gem_name}" --path ..
       working-directory: dependent
 
     - run: ${{ inputs.command }}
