@@ -8,6 +8,9 @@ on:
   schedule:
   - cron: "0 0 * * Mon" # once a week https://crontab.guru/#0_0_*_*
 
+permissions:
+  contents: read
+
 concurrency:
   group: '${{ github.workflow }}-${{ github.head_ref || github.ref_name }}'
   cancel-in-progress: true

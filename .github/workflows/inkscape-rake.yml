@@ -17,6 +17,9 @@ on:
       pat_token:
         required: false
 
+permissions:
+  contents: read
+
 jobs:
   prepare:
     uses: metanorma/ci/.github/workflows/prepare-rake.yml@main
