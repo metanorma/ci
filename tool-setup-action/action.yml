@@ -19,26 +19,26 @@ runs:
   steps:
     - if: >-
         inputs.setup-inkscape == 'true' ||
-        contains(format(',{0},', replace(inputs.setup-tools, ' ', '')), ',inkscape,')
+        contains(format(',{0},', inputs.setup-tools), ',inkscape,')
       uses: ./inkscape-setup-action
 
-    - if: contains(format(',{0},', replace(inputs.setup-tools, ' ', '')), ',ghostscript,')
+    - if: contains(format(',{0},', inputs.setup-tools), ',ghostscript,')
       uses: ./ghostscript-setup-action
 
-    - if: contains(format(',{0},', replace(inputs.setup-tools, ' ', '')), ',graphviz,')
+    - if: contains(format(',{0},', inputs.setup-tools), ',graphviz,')
       uses: ./graphviz-setup-action
 
-    - if: contains(format(',{0},', replace(inputs.setup-tools, ' ', '')), ',libreoffice,')
+    - if: contains(format(',{0},', inputs.setup-tools), ',libreoffice,')
       uses: ./libreoffice-setup-action
 
-    - if: contains(format(',{0},', replace(inputs.setup-tools, ' ', '')), ',xml2rfc,')
+    - if: contains(format(',{0},', inputs.setup-tools), ',xml2rfc,')
       uses: ./xml2rfc-setup-action
 
-    - if: contains(format(',{0},', replace(inputs.setup-tools, ' ', '')), ',exiftool,')
+    - if: contains(format(',{0},', inputs.setup-tools), ',exiftool,')
       uses: ./exiftool-setup-action
 
-    - if: contains(format(',{0},', replace(inputs.setup-tools, ' ', '')), ',ffmpeg,')
+    - if: contains(format(',{0},', inputs.setup-tools), ',ffmpeg,')
       uses: ./ffmpeg-setup-action
 
-    - if: contains(format(',{0},', replace(inputs.setup-tools, ' ', '')), ',imagemagick,')
+    - if: contains(format(',{0},', inputs.setup-tools), ',imagemagick,')
       uses: ./imagemagick-setup-action

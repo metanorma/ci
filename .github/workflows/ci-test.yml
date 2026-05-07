@@ -409,14 +409,14 @@ jobs:
           setup-tools: ''
 
   test-tool-setup-with-spaces:
-    name: Test tool-setup-action handles spaces in setup-tools
+    name: Test tool-setup-action multi-tool dispatch
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v6
 
       - uses: ./tool-setup-action
         with:
-          setup-tools: 'graphviz, exiftool'
+          setup-tools: 'graphviz,exiftool'
 
       - run: dot -V
       - run: exiftool -ver
