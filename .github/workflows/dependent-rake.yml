@@ -45,6 +45,9 @@ on:
       pat_token:
         required: false
 
+permissions:
+  contents: read
+
 jobs:
   build-matrix:
     runs-on: ubuntu-latest

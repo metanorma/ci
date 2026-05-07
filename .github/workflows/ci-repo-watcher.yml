@@ -9,6 +9,10 @@ on:
       token:
         required: true
 
+permissions:
+  contents: read
+  issues: write
+
 jobs:
   watcher:
     runs-on: ubuntu-latest
