@@ -184,7 +184,9 @@ jobs:
       shell: bash
 
     - if: matrix.type == 'ietf'
-      uses: metanorma/ci/xml2rfc-setup-action@main
+      uses: metanorma/ci/tool-setup-action@main
+      with:
+        setup-tools: 'xml2rfc'
 
     - uses: actions-mn/site-gen@v2
       with:
@@ -271,10 +273,14 @@ jobs:
         use-bundler: 'true'
         working-directory: samples
 
-    - uses: metanorma/ci/inkscape-setup-action@main
+    - uses: metanorma/ci/tool-setup-action@main
+      with:
+        setup-tools: 'inkscape'
 
     - if: matrix.flavor.id == 'ietf'
-      uses: metanorma/ci/xml2rfc-setup-action@main
+      uses: metanorma/ci/tool-setup-action@main
+      with:
+        setup-tools: 'xml2rfc'
 
     - uses: actions-mn/site-gen@v2
       with:

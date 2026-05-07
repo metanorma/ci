@@ -1,30 +1,33 @@
 name: 'libreoffice-setup-action'
-description: 'composite action which installs libreoffice for Windows and Linux'
+description: 'Installs libreoffice for Windows and Linux'
 runs:
   using: "composite"
   steps:
     - shell: python
       run: |
-        import os
-        import platform
+        import sys, os
+        sys.path.insert(0, os.path.join(os.environ['GITHUB_ACTION_PATH'], '..', '_shared'))
+        from tool_runner import get_platform_name, run_commands
 
-        win_prefix = "C:\\Program Files\\LibreOffice\\program\\"
-
-        cmds = {
-          "Darwin": [ ],
+        platform_name = get_platform_name()
+        run_commands({
+          "Darwin": [],
           "Windows": [
             "choco install --no-progress -y libreoffice-still",
-            "echo {}>> {}".format(win_prefix, os.environ["GITHUB_PATH"]),
-            "\"{}soffice\" --version".format(win_prefix)
+            "echo C:\\Program Files\\LibreOffice\\program>> %GITHUB_PATH%",
+            "\"C:\\Program Files\\LibreOffice\\program\\soffice\" --version",
+          ],
+          "Ubuntu": [
+            "sudo apt-get update",
+            "sudo apt-get -y --no-install-recommends install libreoffice",
+            "soffice --version",
           ],
           "Linux": [
             "sudo apt-get update",
             "sudo apt-get -y --no-install-recommends install libreoffice",
-            "soffice --version"
-          ]
-        }.get(platform.system(), [ "echo \"Unsupported platform: {}\"".format(platform.system()), "exit 1" ])
-
-        for cmd in cmds:
-          if os.system(cmd) != 0:
-            print("Command {} FAILED!".format(cmd))
-            sys.exit(1)
+            "soffice --version",
+          ],
+        }.get(platform_name, [
+          "echo 'Unsupported platform: {}'".format(platform_name),
+          "exit 1"
+        ]))

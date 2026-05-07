@@ -39,7 +39,9 @@ jobs:
       - if: runner.os == 'Windows'
         uses: metanorma/ci/choco-cache-action@main
 
-      - uses: metanorma/ci/libreoffice-setup-action@main
+      - uses: metanorma/ci/tool-setup-action@main
+        with:
+          setup-tools: 'libreoffice'
 
       - run: bundle exec rake
 

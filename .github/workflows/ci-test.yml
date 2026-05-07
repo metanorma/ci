@@ -320,6 +320,165 @@ jobs:
         with:
           image: docker.io/library/ci-test-image
 
+  test-exiftool-action:
+    name: Test exiftool-setup-action ${{ matrix.os }}
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ ubuntu-latest, windows-latest, macos-latest ]
+    steps:
+      - uses: actions/checkout@v6
+
+      - uses: ./exiftool-setup-action
+
+      - run: exiftool -ver
+
+  test-ffmpeg-action:
+    name: Test ffmpeg-setup-action ${{ matrix.os }}
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ ubuntu-latest, windows-latest, macos-latest ]
+    steps:
+      - uses: actions/checkout@v6
+
+      - uses: ./ffmpeg-setup-action
+
+      - run: ffmpeg -version
+
+  test-imagemagick-action:
+    name: Test imagemagick-setup-action ${{ matrix.os }}
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ ubuntu-latest, windows-latest, macos-latest ]
+    steps:
+      - uses: actions/checkout@v6
+
+      - uses: ./imagemagick-setup-action
+
+      - if: matrix.os != 'ubuntu-latest'
+        run: magick -version
+
+      - if: matrix.os == 'ubuntu-latest'
+        run: convert -version
+
+  test-tool-setup-action:
+    name: Test tool-setup-action dispatcher ${{ matrix.os }}
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ ubuntu-latest ]
+    steps:
+      - uses: actions/checkout@v6
+
+      - uses: ./tool-setup-action
+        with:
+          setup-tools: 'graphviz,exiftool'
+
+      - run: dot -V
+      - run: exiftool -ver
+
+  test-tool-setup-legacy-inkscape:
+    name: Test tool-setup-action legacy setup-inkscape flag
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+
+      - uses: ./tool-setup-action
+        with:
+          setup-inkscape: true
+
+      - run: inkscape --version
+
+  test-tool-setup-empty:
+    name: Test tool-setup-action with empty setup-tools
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+
+      - uses: ./tool-setup-action
+        with:
+          setup-tools: ''
+
+  test-tool-setup-with-spaces:
+    name: Test tool-setup-action handles spaces in setup-tools
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+
+      - uses: ./tool-setup-action
+        with:
+          setup-tools: 'graphviz, exiftool'
+
+      - run: dot -V
+      - run: exiftool -ver
+
+  test-tool-setup-ghostscript-dynamic:
+    name: Test ghostscript dynamic version detection ${{ matrix.os }}
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ ubuntu-latest, windows-latest, macos-latest ]
+    steps:
+      - uses: actions/checkout@v6
+
+      - uses: ./tool-setup-action
+        with:
+          setup-tools: 'ghostscript'
+
+      - if: matrix.os != 'windows-latest'
+        run: gs --version
+
+      - if: matrix.os == 'windows-latest'
+        run: gswin64c.exe --version
+
+  test-shared-module:
+    name: Test _shared/tool_runner.py module
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+
+      - name: Verify module import and platform detection
+        shell: python
+        run: |
+          import sys, os
+          sys.path.insert(0, '_shared')
+          from tool_runner import os_release, get_platform_name, run_commands
+
+          platform_name = get_platform_name()
+          assert platform_name in ('Darwin', 'Windows', 'Ubuntu', 'Linux'), \
+              f"Unexpected platform: {platform_name}"
+          print(f"Platform: {platform_name}")
+
+          release = os_release()
+          assert isinstance(release, dict), f"os_release() must return dict, got {type(release)}"
+          print(f"os_release: {release}")
+
+          run_commands(["echo shared module works"])
+          print("All _shared/tool_runner.py checks passed")
+
+      - name: Verify run_commands fails on bad command
+        shell: python
+        run: |
+          import sys, os
+          sys.path.insert(0, '_shared')
+          from tool_runner import run_commands
+          try:
+            run_commands(["false"])
+            print("ERROR: run_commands should have exited on failure")
+            sys.exit(1)
+          except SystemExit as e:
+            if e.code == 1:
+              print("Correctly aborted on command failure")
+            else:
+              raise
+
   test-choco-cache-action:
     name: Test choco-cache-action
     runs-on: windows-latest

@@ -53,9 +53,9 @@ jobs:
       - if: runner.os == 'Windows'
         uses: metanorma/ci/choco-cache-action@main
 
-      - uses: metanorma/ci/inkscape-setup-action@main
-
-      - uses: metanorma/ci/ghostscript-setup-action@main
+      - uses: metanorma/ci/tool-setup-action@main
+        with:
+          setup-tools: 'inkscape,ghostscript'
 
       - if: ${{ inputs.private-fonts == 'true' }}
         uses: metanorma/ci/fontist-repo-setup@main
