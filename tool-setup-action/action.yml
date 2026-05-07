@@ -12,15 +12,15 @@ inputs:
     type: string
     default: ''
   setup-inkscape:
-    description: 'Legacy flag — use setup-tools instead'
-    type: boolean
-    default: false
+    description: 'Legacy flag — use setup-tools instead. Pass "true" to enable.'
+    type: string
+    default: 'false'
 
 runs:
   using: "composite"
   steps:
     - if: >-
-        inputs.setup-inkscape ||
+        inputs.setup-inkscape == 'true' ||
         contains(format(',{0},', replace(inputs.setup-tools, ' ', '')), ',inkscape,')
       uses: ./inkscape-setup-action
 
