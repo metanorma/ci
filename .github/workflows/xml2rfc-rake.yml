@@ -40,7 +40,9 @@ jobs:
       - if: runner.os == 'Windows'
         uses: metanorma/ci/choco-cache-action@main
 
-      - uses: metanorma/ci/xml2rfc-setup-action@main
+      - uses: metanorma/ci/tool-setup-action@main
+        with:
+          setup-tools: 'xml2rfc'
 
       - run: bundle exec rake
 

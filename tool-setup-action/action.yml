@@ -1,0 +1,46 @@
+name: 'tool-setup-action'
+description: >-
+  Installs CI tools specified by a comma-separated list.
+  Supported tools: inkscape, ghostscript, graphviz, libreoffice,
+  xml2rfc, exiftool, ffmpeg, imagemagick.
+  To add a new tool: create its *-setup-action, then add a step here.
+inputs:
+  setup-tools:
+    description: >-
+      Comma-separated list of tools to install (no spaces):
+      inkscape,ghostscript,graphviz,libreoffice,xml2rfc,exiftool,ffmpeg,imagemagick
+    type: string
+    default: ''
+  setup-inkscape:
+    description: 'Legacy flag — use setup-tools instead'
+    type: boolean
+    default: false
+
+runs:
+  using: "composite"
+  steps:
+    - if: >-
+        inputs.setup-inkscape ||
+        contains(format(',{0},', replace(inputs.setup-tools, ' ', '')), ',inkscape,')
+      uses: ./inkscape-setup-action
+
+    - if: contains(format(',{0},', replace(inputs.setup-tools, ' ', '')), ',ghostscript,')
+      uses: ./ghostscript-setup-action
+
+    - if: contains(format(',{0},', replace(inputs.setup-tools, ' ', '')), ',graphviz,')
+      uses: ./graphviz-setup-action
+
+    - if: contains(format(',{0},', replace(inputs.setup-tools, ' ', '')), ',libreoffice,')
+      uses: ./libreoffice-setup-action
+
+    - if: contains(format(',{0},', replace(inputs.setup-tools, ' ', '')), ',xml2rfc,')
+      uses: ./xml2rfc-setup-action
+
+    - if: contains(format(',{0},', replace(inputs.setup-tools, ' ', '')), ',exiftool,')
+      uses: ./exiftool-setup-action
+
+    - if: contains(format(',{0},', replace(inputs.setup-tools, ' ', '')), ',ffmpeg,')
+      uses: ./ffmpeg-setup-action
+
+    - if: contains(format(',{0},', replace(inputs.setup-tools, ' ', '')), ',imagemagick,')
+      uses: ./imagemagick-setup-action

@@ -1,26 +1,35 @@
 name: 'graphviz-setup-action'
-description: 'composite action which installs graphviz for all OSes'
+description: 'Installs graphviz for all OSes'
 runs:
   using: "composite"
   steps:
     - shell: python
       run: |
-        import os
-        import sys
-        import platform
+        import sys, os
+        sys.path.insert(0, os.path.join(os.environ['GITHUB_ACTION_PATH'], '..', '_shared'))
+        from tool_runner import get_platform_name, run_commands
 
-        cmds = {
-          "Darwin": [ "brew install graphviz" ],
-          "Windows": [ "choco install --no-progress -y graphviz" ],
+        platform_name = get_platform_name()
+        run_commands({
+          "Darwin": [
+            "brew install graphviz",
+            "dot -V"
+          ],
+          "Windows": [
+            "choco install --no-progress -y graphviz",
+            "dot -V"
+          ],
+          "Ubuntu": [
+            "sudo apt update",
+            "sudo apt install -y graphviz",
+            "dot -V"
+          ],
           "Linux": [
             "sudo apt update",
-            "sudo apt install graphviz"
-          ]
-        }.get(platform.system(), [ "echo \"Unsupported platform: {}\"".format(platform.system()), "exit 1" ])
-
-        cmds.append("dot -V")
-
-        for cmd in cmds:
-          if os.system(cmd) != 0:
-            print("Command {} FAILED!".format(cmd))
-            sys.exit(1)
+            "sudo apt install -y graphviz",
+            "dot -V"
+          ],
+        }.get(platform_name, [
+          "echo 'Unsupported platform: {}'".format(platform_name),
+          "exit 1"
+        ]))

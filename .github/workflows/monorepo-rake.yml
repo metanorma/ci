@@ -48,11 +48,15 @@ on:
         required: false
       setup-tools:
         description: >-
-          Comma-separated list of tools to set up:
-          inkscape, ghostscript, graphviz, libreoffice, xml2rfc
+          Comma-separated list of tools to install (no spaces):
+          inkscape,ghostscript,graphviz,libreoffice,xml2rfc,exiftool,ffmpeg,imagemagick
         type: string
         default: ''
         required: false
+      setup-inkscape:
+        description: 'Legacy flag — use setup-tools instead'
+        type: boolean
+        default: false
       submodules:
         description: 'Checkout submodules: true, false, or recursive'
         type: string
@@ -118,20 +122,10 @@ jobs:
       - if: ${{ inputs.after-setup-ruby != '' }}
         run: ${{ inputs.after-setup-ruby }}
 
-      - if: contains(inputs.setup-tools, 'inkscape')
-        uses: metanorma/ci/inkscape-setup-action@main
-
-      - if: contains(inputs.setup-tools, 'ghostscript')
-        uses: metanorma/ci/ghostscript-setup-action@main
-
-      - if: contains(inputs.setup-tools, 'graphviz')
-        uses: metanorma/ci/graphviz-setup-action@main
-
-      - if: contains(inputs.setup-tools, 'libreoffice')
-        uses: metanorma/ci/libreoffice-setup-action@main
-
-      - if: contains(inputs.setup-tools, 'xml2rfc')
-        uses: metanorma/ci/xml2rfc-setup-action@main
+      - uses: metanorma/ci/tool-setup-action@main
+        with:
+          setup-tools: ${{ inputs.setup-tools }}
+          setup-inkscape: ${{ inputs.setup-inkscape }}
 
       - name: Run specs for each gem
         shell: bash

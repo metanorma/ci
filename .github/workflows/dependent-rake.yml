@@ -30,11 +30,13 @@ on:
         default: 'bash'
         required: false
       setup-inkscape:
-        description: Whether to set up Inkscape for tests that require it
+        description: 'Legacy flag — use setup-tools instead'
         type: boolean
         default: false
       setup-tools:
-        description: 'Comma-separated list of tools to set up: inkscape, ghostscript, graphviz, libreoffice, xml2rfc, exiftool, ffmpeg, imagemagick'
+        description: >-
+          Comma-separated list of tools to install (no spaces):
+          inkscape,ghostscript,graphviz,libreoffice,xml2rfc,exiftool,ffmpeg,imagemagick
         type: string
         default: ''
         required: false
@@ -113,83 +115,40 @@ jobs:
     - name: Replace rubygems's gem with git's one
       shell: bash
       run: |
-        gem_name="${{ github.event.repository.name }}"
-        for f in *.gemspec; do
-          [ -f "$f" ] || continue
-          ruby -e '
-            name = ARGV[0]; file = ARGV[1]
-            lines = File.readlines(file)
-            keep = []
-            skip = false
-            lines.each do |line|
-              if line.include?(name)
-                skip = true
-                keep << line unless line.strip.start_with?("#")
-                next
-              end
-              if skip && line.match?(/^\s*(ref|branch|tag|commit|github|git)\s*:/)
-                next
-              end
-              skip = false
-              keep << line
-            end
-            File.write(file, keep.join)
-            puts "#{name} removed from #{file}"
-          ' "$gem_name" "$f"
-        done
-        if [ -f Gemfile ]; then
-          ruby -e '
-            name = ARGV[0]
-            lines = File.readlines("Gemfile")
-            keep = []
-            skip = false
-            lines.each do |line|
-              if line.include?(name)
-                skip = true
-                next
-              end
-              if skip && line.match?(/^\s*(ref|branch|tag|commit|github|git)\s*:/)
-                next
-              end
-              skip = false
-              keep << line
-            end
-            File.write("Gemfile", keep.join)
-            puts "#{name} removed from Gemfile"
-          ' "$gem_name"
-        fi
-        if [ -f Gemfile.lock ]; then
-          rm Gemfile.lock
-          echo "Gemfile.lock dropped"
-        fi
-        git diff || true
-        bundle add "${gem_name}" --path ..
+        import fileinput
+        import glob
+        import subprocess
+        import sys
+        import os
+        gem_name = '${{ github.event.repository.name }}'
+        if glob.glob('*.gemspec'):
+          gemspec = glob.glob('*.gemspec')[0]
+          with fileinput.FileInput(gemspec, inplace=True) as file:
+            for line in file:
+              if gem_name not in line:
+                print(line, end='')
+          print("'{}' removed from {}".format(gem_name, gemspec))
+        if os.path.exists("Gemfile"):
+          with fileinput.FileInput("Gemfile", inplace=True) as file:
+            for line in file:
+              if gem_name not in line:
+                print(line, end='')
+          print("'{}' removed from Gemfile".format(gem_name))
+        if os.path.exists("Gemfile.lock"):
+          os.remove("Gemfile.lock")
+          print("Gemfile.lock dropped")
+        print("> git diff")
+        sys.stdout.flush()
+        subprocess.run(["git", "diff"], check=False)
+        print("> bundle add {} --path ..".format(gem_name))
+        sys.stdout.flush()
+        subprocess.run(["bundle", "add", gem_name, "--path", ".."], check=True)
       working-directory: dependent
 
-    - if: inputs.setup-inkscape || contains(inputs.setup-tools, 'inkscape')
-      uses: metanorma/ci/inkscape-setup-action@main
-
-    - if: contains(inputs.setup-tools, 'ghostscript')
-      uses: metanorma/ci/ghostscript-setup-action@main
-
-    - if: contains(inputs.setup-tools, 'graphviz')
-      uses: metanorma/ci/graphviz-setup-action@main
-
-    - if: contains(inputs.setup-tools, 'libreoffice')
-      uses: metanorma/ci/libreoffice-setup-action@main
-
-    - if: contains(inputs.setup-tools, 'xml2rfc')
-      uses: metanorma/ci/xml2rfc-setup-action@main
-
-    # TODO: Revert to main branch of exiftool-setup-action when merging to main branch
-    - if: contains(inputs.setup-tools, 'exiftool')
-      uses: metanorma/ci/exiftool-setup-action@setup-tools-in-dependent-rake
-
-    - if: contains(inputs.setup-tools, 'ffmpeg')
-      uses: metanorma/ci/ffmpeg-setup-action@setup-tools-in-dependent-rake
-
-    - if: contains(inputs.setup-tools, 'imagemagick')
-      uses: metanorma/ci/imagemagick-setup-action@setup-tools-in-dependent-rake
+    - uses: metanorma/ci/tool-setup-action@main
+      with:
+        setup-tools: ${{ inputs.setup-tools }}
+        setup-inkscape: ${{ inputs.setup-inkscape }}
 
     - run: ${{ inputs.command }}
       working-directory: dependent

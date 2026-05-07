@@ -34,6 +34,8 @@ jobs:
           ruby-version: ${{ needs.prepare.outputs.default-ruby-version }}
           bundler-cache: true
 
-      - uses: metanorma/ci/graphviz-setup-action@main
+      - uses: metanorma/ci/tool-setup-action@main
+        with:
+          setup-tools: 'graphviz'
 
       - run: bundle exec make clean all
