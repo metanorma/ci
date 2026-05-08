@@ -142,10 +142,10 @@ jobs:
           print("Gemfile.lock dropped")
         print("> git diff")
         sys.stdout.flush()
-        subprocess.run(["git", "diff"], check=False, shell=True)
+        subprocess.run("git diff", check=False, shell=True)
         print("> bundle add {} --path ..".format(gem_name))
         sys.stdout.flush()
-        subprocess.run(["bundle", "add", gem_name, "--path", ".."], check=True, shell=True)
+        subprocess.run("bundle add {} --path ..".format(gem_name), check=True, shell=True)
       working-directory: dependent
 
     - uses: metanorma/ci/tool-setup-action@main
