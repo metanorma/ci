@@ -116,7 +116,7 @@ jobs:
       working-directory: dependent
 
     - name: Replace rubygems's gem with git's one
-      shell: bash
+      shell: python
       run: |
         import fileinput
         import glob
