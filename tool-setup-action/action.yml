@@ -20,25 +20,25 @@ runs:
     - if: >-
         inputs.setup-inkscape == 'true' ||
         contains(format(',{0},', inputs.setup-tools), ',inkscape,')
-      uses: ./inkscape-setup-action
+      uses: metanorma/ci/inkscape-setup-action@main
 
     - if: contains(format(',{0},', inputs.setup-tools), ',ghostscript,')
-      uses: ./ghostscript-setup-action
+      uses: metanorma/ci/ghostscript-setup-action@main
 
     - if: contains(format(',{0},', inputs.setup-tools), ',graphviz,')
-      uses: ./graphviz-setup-action
+      uses: metanorma/ci/graphviz-setup-action@main
 
     - if: contains(format(',{0},', inputs.setup-tools), ',libreoffice,')
-      uses: ./libreoffice-setup-action
+      uses: metanorma/ci/libreoffice-setup-action@main
 
     - if: contains(format(',{0},', inputs.setup-tools), ',xml2rfc,')
-      uses: ./xml2rfc-setup-action
+      uses: metanorma/ci/xml2rfc-setup-action@main
 
     - if: contains(format(',{0},', inputs.setup-tools), ',exiftool,')
-      uses: ./exiftool-setup-action
+      uses: metanorma/ci/exiftool-setup-action@main
 
     - if: contains(format(',{0},', inputs.setup-tools), ',ffmpeg,')
-      uses: ./ffmpeg-setup-action
+      uses: metanorma/ci/ffmpeg-setup-action@main
 
     - if: contains(format(',{0},', inputs.setup-tools), ',imagemagick,')
-      uses: ./imagemagick-setup-action
+      uses: metanorma/ci/imagemagick-setup-action@main
