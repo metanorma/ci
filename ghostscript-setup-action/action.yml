@@ -13,7 +13,7 @@ runs:
 
         if platform_name == "Windows":
           run_commands([
-            "choco install --no-progress -y ghostscript || choco install --no-progress -y ghostscript",
+            "choco install --no-progress -y ghostscript --version 10.0.0.20230317",
           ])
           gs_dirs = sorted(glob.glob("C:\\Program Files\\gs\\gs*"))
           if gs_dirs:
