@@ -1,7 +1,7 @@
 {
   "ruby": [
     {
-      "version": "3.2",
+      "version": "3.3",
       "rubygems": "latest",
       "bundler": "default",
       "experimental": false
