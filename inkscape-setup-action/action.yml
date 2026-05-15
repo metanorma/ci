@@ -11,7 +11,11 @@ runs:
       run: |
         import sys, os
         sys.path.insert(0, os.path.join(os.environ['GITHUB_ACTION_PATH'], '..', '_shared'))
-        from tool_runner import get_platform_name, run_commands
+        from tool_runner import (
+            get_platform_name,
+            run_commands,
+            run_commands_with_retry,
+        )
 
         platform_name = get_platform_name()
 
@@ -25,14 +29,18 @@ runs:
         }.get(platform_name, None)
 
         if platform_name == "Windows":
-          run_commands([
+          run_commands_with_retry([
             "choco install --no-progress -y inkscape --verbose",
+          ])
+          run_commands([
             "echo {}>> {}".format(win_prefix, os.environ["GITHUB_PATH"]),
             "\"{}\\inkscape\" --version".format(win_prefix),
           ])
         elif platform_name == "Ubuntu":
           run_commands([
             "sudo install -d -m 0755 /etc/apt/keyrings",
+          ])
+          run_commands_with_retry([
             "curl -fsSL "
               "'https://keyserver.ubuntu.com/pks/lookup"
               "?op=get&search=0x56BDFFD2F1C96B3D1575E3B85C9A0B86CD2FCB38' "
@@ -44,18 +52,26 @@ runs:
               "| sudo tee /etc/apt/sources.list.d/inkscape-dev-stable.list",
             "sudo apt update",
             "sudo apt install -y inkscape={}".format(version),
+          ])
+          run_commands([
             "which inkscape",
             "inkscape --version",
           ])
         elif platform_name == "Linux":
-          run_commands([
+          run_commands_with_retry([
             "wget {} -O /usr/local/bin/inkscape".format(version),
+          ])
+          run_commands([
             "sudo chmod +x /usr/local/bin/inkscape",
             "inkscape --version",
           ])
         elif platform_name == "Darwin":
-          run_commands([
+          os.environ["HOMEBREW_CURL_RETRIES"] = "3"
+          os.environ["HOMEBREW_NO_AUTO_UPDATE"] = "1"
+          run_commands_with_retry([
             "HOMEBREW_CASK_OPTS='--no-quarantine' brew install --cask inkscape",
+          ])
+          run_commands([
             "inkscape --version",
           ])
         else:
