@@ -6,6 +6,7 @@ composite actions in this repository.
 
 import os
 import sys
+import time
 import platform
 import subprocess
 
@@ -58,3 +59,29 @@ def run_commands(cmds):
         if result.returncode != 0:
             print(f"Command FAILED: {cmd}")
             sys.exit(1)
+
+
+def run_commands_with_retry(cmds, retries=3, delay=15):
+    """Run `cmds` as a sequence; retry the whole sequence on any failure.
+
+    Useful for network-bound install steps that hit transient HTTP/2,
+    DNS, or mirror flakes. Up to `retries` total attempts, with `delay`
+    seconds between attempts. Exits 1 if all attempts fail.
+    """
+    for attempt in range(1, retries + 1):
+        ok = True
+        for cmd in cmds:
+            print(f"> {cmd}")
+            sys.stdout.flush()
+            result = subprocess.run(cmd, shell=True)
+            if result.returncode != 0:
+                print(f"Command FAILED (attempt {attempt}/{retries}): {cmd}")
+                ok = False
+                break
+        if ok:
+            return
+        if attempt < retries:
+            print(f"Retrying in {delay}s...")
+            sys.stdout.flush()
+            time.sleep(delay)
+    sys.exit(1)
