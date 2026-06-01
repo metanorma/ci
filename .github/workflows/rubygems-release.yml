@@ -100,8 +100,8 @@ jobs:
 
       - run: gem install gem-release
 
-      - name: Clean gitignored files before bump
-        run: git clean -fdX
+      - name: Remove Gemfile.lock before bump
+        run: rm -f Gemfile.lock
 
       # ============ API Key Path ============
       - if: github.event_name == 'workflow_dispatch' && inputs.next_version != 'skip' && env.HAS_API_KEY == 'true'
