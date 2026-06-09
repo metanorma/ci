@@ -112,6 +112,13 @@ jobs:
         env:
           RUBYGEMS_API_KEY: ${{ secrets.rubygems-api-key }}
         run: |
+          GEM_NAME=$(ruby -e "puts Gem::Specification.load(Dir.glob('*.gemspec').first).name")
+          GEM_VERSION=$(ruby -e "puts Gem::Specification.load(Dir.glob('*.gemspec').first).version.to_s")
+          if gem list -r --exact -v "$GEM_VERSION" "$GEM_NAME" 2>/dev/null \
+               | grep -q "^$GEM_NAME ($GEM_VERSION)"; then
+            echo "Gem $GEM_NAME-$GEM_VERSION already on rubygems.org; skipping push (idempotent)."
+            exit 0
+          fi
           mkdir -p ~/.gem
           envsubst << 'EOF' > ~/.gem/credentials
           ---
@@ -133,6 +140,13 @@ jobs:
       - if: ${{ env.USE_OIDC == 'true' }}
         name: Build and push gem (OIDC)
         run: |
+          GEM_NAME=$(ruby -e "puts Gem::Specification.load(Dir.glob('*.gemspec').first).name")
+          GEM_VERSION=$(ruby -e "puts Gem::Specification.load(Dir.glob('*.gemspec').first).version.to_s")
+          if gem list -r --exact -v "$GEM_VERSION" "$GEM_NAME" 2>/dev/null \
+               | grep -q "^$GEM_NAME ($GEM_VERSION)"; then
+            echo "Gem $GEM_NAME-$GEM_VERSION already on rubygems.org; skipping push (idempotent)."
+            exit 0
+          fi
           gem build *.gemspec
           gem push *.gem
 
