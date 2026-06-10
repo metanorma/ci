@@ -100,8 +100,8 @@ jobs:
 
       - run: gem install gem-release
 
-      - name: Remove Gemfile.lock before bump
-        run: rm -f Gemfile.lock
+      - name: Stash uncommitted changes before bump
+        run: git stash --include-untracked || true
 
       # ============ API Key Path ============
       - if: github.event_name == 'workflow_dispatch' && inputs.next_version != 'skip' && env.HAS_API_KEY == 'true'
