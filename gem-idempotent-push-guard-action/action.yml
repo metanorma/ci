@@ -1,0 +1,21 @@
+name: 'Gem idempotent push guard'
+description: 'Check if a gem version already exists on rubygems.org. Sets skip_push=true env var to skip the subsequent push step.'
+inputs:
+  gem-name:
+    description: 'Gem name (e.g. metanorma)'
+    required: true
+  gem-version:
+    description: 'Gem version (e.g. 1.2.3)'
+    required: true
+runs:
+  using: "composite"
+  steps:
+    - shell: bash
+      run: |
+        if curl -sf "https://rubygems.org/api/v1/versions/${{ inputs.gem-name }}.json" \
+             | grep -q "\"number\":\"${{ inputs.gem-version }}\""; then
+          echo "::notice::Gem ${{ inputs.gem-name }}-${{ inputs.gem-version }} already on rubygems.org; skipping push (idempotent)."
+          echo "skip_push=true" >> "$GITHUB_ENV"
+        else
+          echo "skip_push=false" >> "$GITHUB_ENV"
+        fi
