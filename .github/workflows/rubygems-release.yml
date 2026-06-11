@@ -148,7 +148,7 @@ jobs:
         if: >-
           github.event_name == 'workflow_dispatch' &&
           inputs.gated == true &&
-          secrets.pat_token == ''
+          env.HAVE_PAT_TOKEN == 'false'
         run: |
           echo "::warning::No pat_token configured. Publishing immediately because the relay chain (bump → tag push → tests → do-release → publish) requires a PAT for tag pushes to trigger downstream workflows. To enable test-gated releases, configure a PAT token."
 
