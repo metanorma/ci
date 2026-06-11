@@ -32,7 +32,7 @@ jobs:
 | Input | Required | Default | Description |
 |-------|----------|---------|-------------|
 | `next_version` | yes | — | Version bump type (`patch`, `minor`, `major`, `x.y.z`) or `skip` to release the current gemspec version |
-| `gated` | no | `true` | Defer publish until tests pass via do-release chain. Set `false` to publish immediately. |
+| `gated` | no | `true` | Defer publish until tests pass via do-release chain. Set `false` to publish immediately. When `true` without `pat_token`, degrades to immediate publish (see PAT-free mode below). |
 | `release_command` | no | `bundle exec rake release` | Command to build and publish (API key auth only) |
 | `bundler_cache` | no | `true` | Run `bundle install` |
 | `post_install` | no | `''` | Command to run after `bundle install` |
@@ -45,7 +45,7 @@ jobs:
 | Secret | Required | Description |
 |--------|----------|-------------|
 | `rubygems-api-key` | no | RubyGems API key. If omitted, uses OIDC Trusted Publishing. |
-| `pat_token` | no | GitHub PAT for cross-repo operations and pushing tags. |
+| `pat_token` | no | GitHub PAT for pushing tags that trigger downstream workflows. Optional — see PAT-free mode. |
 
 ## Authentication
 
@@ -62,6 +62,23 @@ Two authentication paths:
 workflow_dispatch → bump + tag + push (no publish)
   → tag push triggers rake.yml → tests → do-release → publish
 ```
+
+Requires `pat_token` — pushes made with the default `GITHUB_TOKEN` cannot
+trigger downstream workflows (GHA design). See PAT-free mode below.
+
+### PAT-free mode (no `pat_token`)
+
+When `gated: true` but no `pat_token` is configured, the workflow degrades
+gracefully: it bumps, tags, pushes, **and publishes immediately** in the same
+job. The idempotent guard handles any eventual duplicate publish from a later
+`do-release` event.
+
+```
+workflow_dispatch → bump + tag + push + publish immediately
+```
+
+No PAT is required. Tests on main should already be green before triggering
+the release. To enable the full test-gated relay, configure a `pat_token`.
 
 ### `gated: false`
 
