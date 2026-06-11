@@ -13,7 +13,9 @@ on:
         description: |
           Defer gem publish until tests pass via the do-release chain.
           - true (default): workflow_dispatch bumps+tags only; publish happens after
-            tests pass via repository_dispatch (do-release).
+            tests pass via repository_dispatch (do-release). Requires a pat_token
+            to trigger downstream workflows. Falls back to immediate publish when
+            no pat_token is configured.
           - false: workflow_dispatch bumps+tags+publishes immediately. The idempotent
             guard handles the inevitable second push from do-release.
         type: boolean
@@ -72,7 +74,8 @@ jobs:
         ${{
           github.event_name == 'repository_dispatch' ||
           github.event_name == 'push' ||
-          (github.event_name == 'workflow_dispatch' && inputs.gated == false)
+          (github.event_name == 'workflow_dispatch' &&
+            (inputs.gated == false || secrets.pat_token == ''))
         }}
     steps:
       - uses: actions/checkout@v6
@@ -136,6 +139,18 @@ jobs:
             git tag "$TAG"
           fi
           git push origin "$TAG"
+
+      # ============ No-PAT fallback notice ============
+      # When gated=true but no PAT is configured, tag pushes made with
+      # GITHUB_TOKEN cannot trigger downstream workflows (GHA design).
+      # Degrade gracefully: publish immediately with idempotent guard.
+      - name: Notice — publishing immediately (no PAT)
+        if: >-
+          github.event_name == 'workflow_dispatch' &&
+          inputs.gated == true &&
+          secrets.pat_token == ''
+        run: |
+          echo "::warning::No pat_token configured. Publishing immediately because the relay chain (bump → tag push → tests → do-release → publish) requires a PAT for tag pushes to trigger downstream workflows. To enable test-gated releases, configure a PAT token."
 
       # ============ Publish: API Key path ============
       - name: Idempotency guard (API key)
