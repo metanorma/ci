@@ -100,17 +100,6 @@ jobs:
       - if: ${{ inputs.post_install != '' }}
         run: ${{ inputs.post_install }}
 
-      # ============ Gem identity ============
-      - name: Resolve gem identity
-        id: gem-identity
-        run: |
-          GEMSPEC=$(ls *.gemspec | head -1)
-          GEM_NAME=$(ruby -e "puts Gem::Specification.load('${GEMSPEC}').name")
-          GEM_VERSION=$(ruby -e "puts Gem::Specification.load('${GEMSPEC}').version.to_s")
-          echo "name=${GEM_NAME}" >> "$GITHUB_OUTPUT"
-          echo "version=${GEM_VERSION}" >> "$GITHUB_OUTPUT"
-          echo "gemspec=${GEMSPEC}" >> "$GITHUB_OUTPUT"
-
       # ============ Common git setup ============
       - run: |
           git config user.name github-actions
@@ -125,6 +114,22 @@ jobs:
       - name: Bump version
         if: github.event_name == 'workflow_dispatch' && inputs.next_version != 'skip'
         run: gem bump --version ${{ inputs.next_version }} --tag --push
+
+      # ============ Gem identity ============
+      # Resolved AFTER the bump so name/version/gemspec reflect the just-bumped
+      # version. If resolved before the bump, the idempotency guard, build, and
+      # tag-ref steps would all see the pre-bump (already-published) version,
+      # making the guard skip publishing the new gem while the new tag still
+      # gets pushed — a silently-unpublished release.
+      - name: Resolve gem identity
+        id: gem-identity
+        run: |
+          GEMSPEC=$(ls *.gemspec | head -1)
+          GEM_NAME=$(ruby -e "puts Gem::Specification.load('${GEMSPEC}').name")
+          GEM_VERSION=$(ruby -e "puts Gem::Specification.load('${GEMSPEC}').version.to_s")
+          echo "name=${GEM_NAME}" >> "$GITHUB_OUTPUT"
+          echo "version=${GEM_VERSION}" >> "$GITHUB_OUTPUT"
+          echo "gemspec=${GEMSPEC}" >> "$GITHUB_OUTPUT"
 
       # ============ Auto-tag for skip mode (gated only) ============
       # When next_version=skip and gated=true, create and push a tag from the
