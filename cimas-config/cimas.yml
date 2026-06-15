@@ -131,6 +131,13 @@ repositories:
       .rubocop.yml: gh-actions/master/.rubocop.yml
       .github/workflows/release.yml: gh-actions/master/release.yml
       .github/workflows/automerge.yml: gh-actions/master/automerge.yml
+  metanorma-taste:
+    remote: ssh://git@github.com/metanorma/metanorma-taste
+    branch: main
+    files:
+      .rubocop.yml: gh-actions/master/.rubocop.yml
+      .github/workflows/release.yml: gh-actions/master/release.yml
+      .github/workflows/automerge.yml: gh-actions/master/automerge.yml
   metanorma-un:
     remote: ssh://git@github.com/metanorma/metanorma-un
     branch: main
