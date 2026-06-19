@@ -107,8 +107,8 @@ jobs:
 
       - run: gem install gem-release
 
-      - name: Remove Gemfile.lock before bump
-        run: rm -f Gemfile.lock
+      - name: Stash uncommitted changes before bump
+        run: git stash --include-untracked || true
 
       # ============ Version bump (workflow_dispatch only) ============
       - name: Bump version
