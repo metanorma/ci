@@ -39,6 +39,15 @@ on:
         required: false
         type: string
         default: 'gem build *.gemspec && gem push *.gem'
+      version_file:
+        description: >-
+          Path (relative to the gem directory) to the version file gem-release
+          should bump. Leave empty for the standard `lib/<gem_name>/version.rb`
+          layout. Set this when the version file lives at a non-standard path
+          (e.g. `lib/foo/bar/version.rb` for a gem named `foo`).
+        required: false
+        type: string
+        default: ''
       bundler_cache:
         description: 'do bundle install'
         required: false
@@ -137,9 +146,16 @@ jobs:
       # Runs in the gem's own subdirectory so gem-release sees exactly one
       # gemspec. Running from the repo root would let gem-release traverse
       # every subdirectory and pick the wrong gem (or multiple) in a monorepo.
+      # When version_file is set, pass --file so gem-release can locate
+      # non-standard version paths (e.g. lib/foo/bar/version.rb for gem "foo").
       - name: Bump version
         if: github.event_name == 'workflow_dispatch' && inputs.next_version != 'skip'
-        run: gem bump --version ${{ inputs.next_version }} --tag --push
+        run: |
+          if [ -n "${{ inputs.version_file }}" ]; then
+            gem bump --version ${{ inputs.next_version }} --tag --push --file '${{ inputs.version_file }}'
+          else
+            gem bump --version ${{ inputs.next_version }} --tag --push
+          fi
 
       # ============ Gem identity ============
       # Resolved AFTER the bump so name/version/gemspec reflect the just-bumped
