@@ -27,8 +27,11 @@ jobs:
 | `gem_directory` | no | `.` | Parent directory containing gem directories |
 | `next_version` | yes | — | Version bump type or `skip` |
 | `gated` | no | `true` | Defer publish until tests pass |
-| `release_command` | no | `gem build *.gemspec && gem push *.gem` | Build and publish command |
+| `release_command` | no | `gem build *.gemspec && gem push *.gem` | Build and publish command (API key path only) |
+| `bundler_cache` | no | `true` | Run `bundle install` |
+| `post_install` | no | `''` | Command to run after `bundle install` |
 | `submodules` | no | `true` | Checkout submodules |
+| `role_to_assume` | no | — | OIDC Role ID for RubyGems Trusted Publishing (auto-discovered if omitted) |
 | `environment` | no | `''` | GitHub environment name |
 
 See [rubygems-release.md](rubygems-release.md) for details on `gated`, authentication, and behavior.
