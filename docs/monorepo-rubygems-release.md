@@ -28,6 +28,7 @@ jobs:
 | `next_version` | yes | — | Version bump type or `skip` |
 | `gated` | no | `true` | Defer publish until tests pass |
 | `release_command` | no | `gem build *.gemspec && gem push *.gem` | Build and publish command (API key path only) |
+| `version_file` | no | — | Path to version file (relative to gem dir) when non-standard; bypass with empty for `lib/<gem>/version.rb` |
 | `bundler_cache` | no | `true` | Run `bundle install` |
 | `post_install` | no | `''` | Command to run after `bundle install` |
 | `submodules` | no | `true` | Checkout submodules |
