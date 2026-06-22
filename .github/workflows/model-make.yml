@@ -3,6 +3,9 @@ name: make
 on:
   workflow_call:
 
+permissions:
+  contents: read
+
 jobs:
   prepare:
     uses: metanorma/ci/.github/workflows/prepare-rake.yml@main
@@ -24,7 +27,7 @@ jobs:
         os: ${{ fromJson(needs.prepare.outputs.matrix).os }}
 
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
 
       - if: runner.os == 'Windows'
         uses: metanorma/ci/choco-cache-action@main
@@ -33,5 +36,9 @@ jobs:
         with:
           ruby-version: ${{ needs.prepare.outputs.default-ruby-version }}
           bundler-cache: true
+
+      - uses: metanorma/ci/tool-setup-action@main
+        with:
+          setup-tools: 'graphviz'
 
       - run: bundle exec make clean all

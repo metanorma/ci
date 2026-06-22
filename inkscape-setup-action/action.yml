@@ -1,5 +1,5 @@
 name: 'inkscape-setup-action'
-description: 'composite action which installs inkscape for all OSes'
+description: 'Installs inkscape for all OSes'
 inputs:
   filepath:
     description: 'Full path to native executable (can be skipped in favor of libname+directory)'
@@ -9,74 +9,77 @@ runs:
   steps:
     - shell: python
       run: |
-        import os
-        import sys
-        import platform
+        import sys, os
+        sys.path.insert(0, os.path.join(os.environ['GITHUB_ACTION_PATH'], '..', '_shared'))
+        from tool_runner import (
+            get_platform_name,
+            run_commands,
+            run_commands_with_retry,
+        )
+
+        platform_name = get_platform_name()
 
         win_prefix = "C:\\Program Files\\Inkscape\\bin"
 
-        def os_release():
-          try:
-            return platform.freedesktop_os_release()
-          except IOError:
-            # https://github.com/metanorma/metanorma-cli/issues/315
-            return {}
-          except AttributeError:
-            properties = {}
-            try:
-              with open("/etc/os-release", "r") as file:
-                for line in file:
-                  line = line.strip()
-                  if line and not line.startswith("#"):
-                    key, value = line.split("=", 1)
-                    properties[key] = value.strip('"')
-            except:
-              pass
-            return properties
-
-        os_release_dict = os_release()
-
-        print(os_release_dict)
-
-        platform_name = "Ubuntu" if os_release_dict.get("ID", None) == "ubuntu" else platform.system()
-
         version = {
-          "Darwin": "inkscape", # latest is 1.4.+
-          "Windows": "1.4.2",
+          "Darwin": None,
+          "Windows": None,
           "Ubuntu": "1:1.4*",
           "Linux": "https://inkscape.org/gallery/item/53678/Inkscape-e7c3feb-x86_64.AppImage"
         }.get(platform_name, None)
 
-        cmds = {
-          "Darwin": [
-            "HOMEBREW_CASK_OPTS='--no-quarantine' brew install --cask inkscape",
-            "inkscape --version"
-          ],
-          "Windows": [
-            "choco install --no-progress -y inkscape --verbose --version {}".format(version),
+        if platform_name == "Windows":
+          run_commands_with_retry([
+            "choco install --no-progress -y inkscape --verbose",
+          ])
+          run_commands([
             "echo {}>> {}".format(win_prefix, os.environ["GITHUB_PATH"]),
-            "\"{}\\inkscape\" --version".format(win_prefix)
-          ],
-          "Ubuntu": [
-            "sudo add-apt-repository ppa:inkscape.dev/stable",
+            "\"{}\\inkscape\" --version".format(win_prefix),
+          ])
+        elif platform_name == "Ubuntu":
+          run_commands([
+            "sudo install -d -m 0755 /etc/apt/keyrings",
+          ])
+          run_commands_with_retry([
+            "curl -fsSL "
+              "'https://keyserver.ubuntu.com/pks/lookup"
+              "?op=get&search=0x56BDFFD2F1C96B3D1575E3B85C9A0B86CD2FCB38' "
+              "| sudo gpg --dearmor -o /etc/apt/keyrings/inkscape-dev-stable.gpg",
+            ". /etc/os-release && echo "
+              "\"deb [signed-by=/etc/apt/keyrings/inkscape-dev-stable.gpg] "
+              "https://ppa.launchpadcontent.net/inkscape.dev/stable/ubuntu "
+              "$UBUNTU_CODENAME main\" "
+              "| sudo tee /etc/apt/sources.list.d/inkscape-dev-stable.list",
             "sudo apt update",
-            "sudo apt install inkscape={}".format(version),
+            "sudo apt install -y inkscape={}".format(version),
+          ])
+          run_commands([
             "which inkscape",
-            "inkscape --version"
-          ],
-          "Linux": [
+            "inkscape --version",
+          ])
+        elif platform_name == "Linux":
+          run_commands_with_retry([
             "wget {} -O /usr/local/bin/inkscape".format(version),
+          ])
+          run_commands([
             "sudo chmod +x /usr/local/bin/inkscape",
-            "inkscape --version"
-          ]
-        }.get(platform_name, [ "echo \"Unsupported platform: {}\"".format(platform_name), "exit 1" ])
+            "inkscape --version",
+          ])
+        elif platform_name == "Darwin":
+          os.environ["HOMEBREW_CURL_RETRIES"] = "3"
+          os.environ["HOMEBREW_NO_AUTO_UPDATE"] = "1"
+          run_commands_with_retry([
+            "HOMEBREW_CASK_OPTS='--no-quarantine' brew install --cask inkscape",
+          ])
+          run_commands([
+            "inkscape --version",
+          ])
+        else:
+          run_commands([
+            "echo 'Unsupported platform: {}'".format(platform_name),
+            "exit 1",
+          ])
 
-        for cmd in cmds:
-          if os.system(cmd) != 0:
-            print("Command {} FAILED!".format(cmd))
-            sys.exit(1)
-
-    # https://github.com/metanorma/metanorma-cli/issues/309
     - name: Update eps_input.inx to allow noninteractive EPS processing
       run: |
         if [ "$RUNNER_OS" == "Linux" ]; then

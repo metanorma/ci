@@ -6,6 +6,9 @@ on:
       pat_token:
         required: false
 
+permissions:
+  contents: read
+
 jobs:
   prepare:
     uses: metanorma/ci/.github/workflows/prepare-rake.yml@main
@@ -24,11 +27,11 @@ jobs:
     continue-on-error: ${{ matrix.ruby.experimental }}
     strategy:
       fail-fast: false
-      max-parallel: 5
+      max-parallel: 6
       matrix: ${{ fromJson(needs.prepare.outputs.matrix) }}
 
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
         with:
           submodules: true
 
@@ -42,7 +45,9 @@ jobs:
       - if: runner.os == 'Windows'
         uses: metanorma/ci/choco-cache-action@main
 
-      - uses: metanorma/ci/graphviz-setup-action@main
+      - uses: metanorma/ci/tool-setup-action@main
+        with:
+          setup-tools: 'graphviz'
 
       - run: bundle exec rake
 

@@ -17,6 +17,9 @@ on:
       pat_token:
         required: true
 
+permissions:
+  contents: read
+
 jobs:
   prepare:
     uses: metanorma/ci/.github/workflows/prepare-rake.yml@main
@@ -39,7 +42,7 @@ jobs:
       matrix: ${{ fromJson(needs.prepare.outputs.matrix) }}
 
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
         with:
           submodules: true
 
@@ -68,7 +71,7 @@ jobs:
       samples-matrix: ${{ steps.build-samples-matrix.outputs.matrix }}
       templates-matrix: ${{ steps.build-templates-matrix.outputs.matrix }}
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
 
       - run: wget https://raw.githubusercontent.com/metanorma/ci/main/.github/workflows/ruby-matrix.json
 
@@ -140,7 +143,7 @@ jobs:
       matrix: ${{ fromJson(needs.build-matrices.outputs.templates-matrix) }}
 
     steps:
-    - uses: actions/checkout@v4
+    - uses: actions/checkout@v6
       with:
         submodules: true
 
@@ -184,7 +187,9 @@ jobs:
       shell: bash
 
     - if: matrix.type == 'ietf'
-      uses: metanorma/ci/xml2rfc-setup-action@main
+      uses: metanorma/ci/tool-setup-action@main
+      with:
+        setup-tools: 'xml2rfc'
 
     - uses: actions-mn/site-gen@v2
       with:
@@ -220,11 +225,11 @@ jobs:
       matrix: ${{ fromJson(needs.build-matrices.outputs.samples-matrix) }}
 
     steps:
-    - uses: actions/checkout@v4
+    - uses: actions/checkout@v6
       with:
         submodules: true
 
-    - uses: actions/checkout@v4
+    - uses: actions/checkout@v6
       with:
         submodules: recursive
         repository: metanorma/mn-samples-${{ matrix.flavor.id }}
@@ -265,14 +270,20 @@ jobs:
       working-directory: samples
 
     - if: ${{ matrix.flavor.id == 'bsi' }}
-      uses: metanorma/ci/fontist-setup@main
+      uses: metanorma/ci/fontist-repo-setup@main
       with:
         private-fonts-pat: ${{ secrets.pat_token }}
+        use-bundler: 'true'
+        working-directory: samples
 
-    - uses: metanorma/ci/inkscape-setup-action@main
+    - uses: metanorma/ci/tool-setup-action@main
+      with:
+        setup-tools: 'inkscape'
 
     - if: matrix.flavor.id == 'ietf'
-      uses: metanorma/ci/xml2rfc-setup-action@main
+      uses: metanorma/ci/tool-setup-action@main
+      with:
+        setup-tools: 'xml2rfc'
 
     - uses: actions-mn/site-gen@v2
       with:

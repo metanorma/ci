@@ -2,9 +2,23 @@ name: rake
 
 on:
   workflow_call:
+    inputs:
+      private-fonts:
+        description: 'Set to true to enable private fonts via fontist-repo-setup'
+        required: false
+        default: 'false'
+        type: string
+      private-fonts-username:
+        description: 'Username for private fonts repository'
+        required: false
+        default: 'metanorma-ci'
+        type: string
     secrets:
       pat_token:
         required: false
+
+permissions:
+  contents: read
 
 jobs:
   prepare:
@@ -24,11 +38,11 @@ jobs:
     continue-on-error: ${{ matrix.ruby.experimental }}
     strategy:
       fail-fast: false
-      max-parallel: 5
+      max-parallel: 6
       matrix: ${{ fromJson(needs.prepare.outputs.matrix) }}
 
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
         with:
           submodules: true
 
@@ -42,9 +56,16 @@ jobs:
       - if: runner.os == 'Windows'
         uses: metanorma/ci/choco-cache-action@main
 
-      - uses: metanorma/ci/inkscape-setup-action@main
+      - uses: metanorma/ci/tool-setup-action@main
+        with:
+          setup-tools: 'inkscape,ghostscript'
 
-      - uses: metanorma/ci/ghostscript-setup-action@main
+      - if: ${{ inputs.private-fonts == 'true' }}
+        uses: metanorma/ci/fontist-repo-setup@main
+        with:
+          private-fonts-pat: ${{ secrets.pat_token }}
+          private-fonts-username: ${{ inputs.private-fonts-username }}
+          use-bundler: 'true'
 
       - run: bundle exec rake
 

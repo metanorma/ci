@@ -1,0 +1,30 @@
+name: 'exiftool-setup-action'
+description: 'Installs exiftool for all OSes'
+runs:
+  using: "composite"
+  steps:
+    - shell: python
+      run: |
+        import sys, os
+        sys.path.insert(0, os.path.join(os.environ['GITHUB_ACTION_PATH'], '..', '_shared'))
+        from tool_runner import get_platform_name, run_commands
+
+        platform_name = get_platform_name()
+        run_commands({
+          "Darwin": [
+            "brew install exiftool",
+            "exiftool -ver"
+          ],
+          "Windows": [
+            "choco install --no-progress -y exiftool",
+            "exiftool -ver"
+          ],
+          "Ubuntu": [
+            "sudo apt install -y libimage-exiftool-perl",
+            "which exiftool",
+            "exiftool -ver"
+          ],
+        }.get(platform_name, [
+          "echo 'Unsupported platform: {}'".format(platform_name),
+          "exit 1"
+        ]))

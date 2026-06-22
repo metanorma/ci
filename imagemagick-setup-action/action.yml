@@ -1,0 +1,30 @@
+name: 'imagemagick-setup-action'
+description: 'Installs imagemagick for all OSes'
+runs:
+  using: "composite"
+  steps:
+    - shell: python
+      run: |
+        import sys, os
+        sys.path.insert(0, os.path.join(os.environ['GITHUB_ACTION_PATH'], '..', '_shared'))
+        from tool_runner import get_platform_name, run_commands
+
+        platform_name = get_platform_name()
+        run_commands({
+          "Darwin": [
+            "brew install imagemagick",
+            "magick -version"
+          ],
+          "Windows": [
+            "choco install --no-progress -y imagemagick",
+            "magick -version"
+          ],
+          "Ubuntu": [
+            "sudo apt install -y imagemagick",
+            "which convert",
+            "convert -version"
+          ],
+        }.get(platform_name, [
+          "echo 'Unsupported platform: {}'".format(platform_name),
+          "exit 1"
+        ]))

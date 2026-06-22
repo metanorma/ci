@@ -8,8 +8,9 @@ on:
         required: false
         type: string
       private-fonts:
-        default: 'false'
+        description: 'Set to true to enable private fonts via fontist-repo-setup'
         required: false
+        default: 'false'
         type: string
       deploy-gh-pages:
         default: 'false'
@@ -44,7 +45,7 @@ jobs:
         username: ${{ secrets.docker_username }}
         password: ${{ secrets.docker_token }}
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
         with:
           token: ${{ secrets.pat_token || github.token }}
           submodules: true

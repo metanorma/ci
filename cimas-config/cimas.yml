@@ -29,6 +29,14 @@ repositories:
       .rubocop.yml: gh-actions/master/.rubocop.yml
       .github/workflows/rake.yml: gh-actions/master/rake.yml
       .github/workflows/release.yml: gh-actions/master/release_wo_bundle_install.yml
+  metanorma-core:
+    remote: ssh://git@github.com/metanorma/metanorma-core
+    branch: main
+    files:
+      .rubocop.yml: gh-actions/master/.rubocop.yml
+      .github/workflows/rake.yml: gh-actions/master/rake.yml
+      .github/workflows/release.yml: gh-actions/master/release.yml
+      .github/workflows/automerge.yml: gh-actions/master/automerge.yml
   metanorma-ogc:
     remote: ssh://git@github.com/metanorma/metanorma-ogc
     branch: main
@@ -118,6 +126,13 @@ repositories:
       .github/workflows/automerge.yml: gh-actions/master/automerge.yml
   metanorma-iso:
     remote: ssh://git@github.com/metanorma/metanorma-iso
+    branch: main
+    files:
+      .rubocop.yml: gh-actions/master/.rubocop.yml
+      .github/workflows/release.yml: gh-actions/master/release.yml
+      .github/workflows/automerge.yml: gh-actions/master/automerge.yml
+  metanorma-taste:
+    remote: ssh://git@github.com/metanorma/metanorma-taste
     branch: main
     files:
       .rubocop.yml: gh-actions/master/.rubocop.yml
@@ -426,7 +441,7 @@ repositories:
       .github/workflows/automerge.yml: gh-actions/master/automerge.yml
   basicdoc-models:
     remote: ssh://git@github.com/metanorma/basicdoc-models
-    branch: master
+    branch: main
     files:
       Gemfile: gh-actions/model/Gemfile
       Makefile: gh-actions/model/Makefile
@@ -486,7 +501,7 @@ repositories:
       .github/workflows/release.yml: gh-actions/master/release.yml
   cimas:
     remote: ssh://git@github.com/metanorma/cimas
-    branch: master
+    branch: main
     files:
       .rubocop.yml: gh-actions/master/.rubocop.yml
       .github/workflows/rake.yml: gh-actions/master/rake.yml
@@ -735,21 +750,21 @@ repositories:
   # docs
   ogc-wfs:
     remote: ssh://git@github.com/metanorma/ogc-wfs
-    branch: master
+    branch: main
     files:
       .github/workflows/docker.yml: gh-actions/samples/public-docker.yml
       .github/workflows/generate.yml: gh-actions/samples/public-generate.yml
       .github/workflows/automerge.yml: gh-actions/master/automerge.yml
   hk-ogcio-infosec-docs:
     remote: ssh://git@github.com/metanorma/hk-ogcio-infosec-docs
-    branch: master
+    branch: main
     files:
       .github/workflows/docker.yml: gh-actions/samples/public-docker.yml
       .github/workflows/generate.yml: gh-actions/samples/public-generate.yml
       .github/workflows/automerge.yml: gh-actions/master/automerge.yml
   csa-caiq:
     remote: ssh://git@github.com/metanorma/csa-caiq
-    branch: master
+    branch: main
     files:
       .github/workflows/docker.yml: gh-actions/samples/public-docker.yml
       .github/workflows/generate.yml: gh-actions/samples/public-generate.yml
@@ -869,7 +884,7 @@ repositories:
       .github/workflows/generate.yml: gh-actions/samples/public-generate.yml
   sample-ogc-discussion-paper:
     remote: ssh://git@github.com/metanorma/sample-ogc-discussion-paper
-    branch: master
+    branch: main
     files:
       .github/workflows/docker.yml: gh-actions/samples/public-docker.yml
       .github/workflows/generate.yml: gh-actions/samples/public-generate.yml
@@ -1072,13 +1087,13 @@ repositories:
       .github/workflows/rake.yml: gh-actions/master/rake.yml
   metanorma-ietf-data:
     remote: ssh://git@github.com/metanorma/metanorma-ietf-data
-    branch: master
+    branch: main
     files:
       .rubocop.yml: gh-actions/master/.rubocop.yml
       .github/workflows/rake.yml: gh-actions/master/rake.yml
   vectory:
     remote: ssh://git@github.com/metanorma/vectory
-    branch: master
+    branch: main
     files:
       .rubocop.yml: gh-actions/master/.rubocop.yml
       .github/workflows/rake.yml: gh-actions/master/rake.yml
@@ -1100,31 +1115,31 @@ repositories:
   # rfc
   rfc-divination-cfapi:
     remote: ssh://git@github.com/metanorma/rfc-divination-cfapi
-    branch: master
+    branch: main
     files:
       .github/workflows/docker.yml: gh-actions/samples/public-docker.yml
       .github/workflows/generate.yml: gh-actions/samples/public-generate.yml
   rfc-camelot-holy-grenade:
     remote: ssh://git@github.com/metanorma/rfc-camelot-holy-grenade
-    branch: master
+    branch: main
     files:
       .github/workflows/docker.yml: gh-actions/samples/public-docker.yml
       .github/workflows/generate.yml: gh-actions/samples/public-generate.yml
   rfc-asciidoc-rfc:
     remote: ssh://git@github.com/metanorma/rfc-asciidoc-rfc
-    branch: master
+    branch: main
     files:
       .github/workflows/docker.yml: gh-actions/samples/public-docker.yml
       .github/workflows/generate.yml: gh-actions/samples/public-generate.yml
   rfc-asciirfc-minimal:
     remote: ssh://git@github.com/metanorma/rfc-asciirfc-minimal
-    branch: master
+    branch: main
     files:
       .github/workflows/docker.yml: gh-actions/samples/public-docker.yml
       .github/workflows/generate.yml: gh-actions/samples/public-generate.yml
   iso-690:
     remote: ssh://git@github.com/metanorma/iso-690
-    branch: master
+    branch: main
     files:
       .github/workflows/docker.yml: gh-actions/samples/public-docker.yml
   iso-8000-51:
@@ -1134,18 +1149,18 @@ repositories:
       .github/workflows/docker.yml: gh-actions/samples/public-docker.yml
   iso-8000-100-ed2:
     remote: ssh://git@github.com/metanorma/iso-8000-100-ed2
-    branch: master
+    branch: main
     files:
       .github/workflows/docker.yml: gh-actions/samples/public-docker.yml
   iso-8601-1:
     remote: ssh://git@github.com/metanorma/iso-8601-1
-    branch: master
+    branch: main
     files:
       .github/workflows/docker.yml: gh-actions/samples/public-docker.yml
       .gitlab-ci.yml: gitlab-ci/samples/docker.yml
   iso-8601-2:
     remote: ssh://git@github.com/metanorma/iso-8601-2
-    branch: master
+    branch: main
     files:
       .github/workflows/docker.yml: gh-actions/samples/public-docker.yml
       .gitlab-ci.yml: gitlab-ci/samples/docker.yml
@@ -1166,12 +1181,12 @@ repositories:
       .github/workflows/docker.yml: gh-actions/samples/public-docker.yml
   iso-19626-1:
     remote: ssh://git@github.com/metanorma/iso-19626-1
-    branch: master
+    branch: main
     files:
       .github/workflows/docker.yml: gh-actions/samples/public-docker.yml
   iso-tc184-sc4:
     remote: ssh://git@github.com/metanorma/iso-tc184-sc4
-    branch: master
+    branch: main
     files:
       .github/workflows/docker.yml: gh-actions/samples/public-docker.yml
   iso-10303-11:
@@ -1197,7 +1212,7 @@ repositories:
       .github/workflows/generate.yml: gh-actions/samples/public-generate.yml
   iso-tc184-sc4-directives:
     remote: ssh://git@github.com/metanorma/iso-tc184-sc4-directives
-    branch: master
+    branch: main
     files:
       .github/workflows/docker.yml: gh-actions/samples/public-docker.yml
       .github/workflows/generate.yml: gh-actions/samples/public-generate.yml
@@ -1298,14 +1313,14 @@ repositories:
     files: {}
   mn-requirements:
     remote: ssh://git@github.com/metanorma/mn-requirements
-    branch: master
+    branch: main
     files:
       .rubocop.yml: gh-actions/master/.rubocop.yml
       .github/workflows/rake.yml: gh-actions/master/rake.yml
       .github/workflows/release.yml: gh-actions/master/release_wo_bundle_install.yml
   ammitto:
     remote: ssh://git@github.com/ammitto/ammitto
-    branch: master
+    branch: main
     files:
       .rubocop.yml: gh-actions/master/.rubocop.yml
       .github/workflows/rake.yml: gh-actions/master/rake.yml
@@ -1385,6 +1400,7 @@ groups:
   metanorma:
   - metanorma
   - metanorma-cli
+  - metanorma-core
   - metanorma-registry
   - metanorma-utils
   model:
@@ -1497,7 +1513,6 @@ groups:
   - metanorma-linux-setup
   choco:
   - chocolatey-metanorma
-  - chocolatey-latexml
   - chocolatey-xml2rfc
   homebrew:
   - homebrew-metanorma
@@ -1515,7 +1530,6 @@ groups:
   - mn-templates-iho
   snap:
   - metanorma-snap
-  - latexml-snap
   asciirfc:
   - rfc-divination-cfapi
   - rfc-camelot-holy-grenade
@@ -1623,12 +1637,10 @@ groups:
   - packed-mn
   - winget-metanorma
   - chocolatey-metanorma
-  - chocolatey-latexml
   - chocolatey-xml2rfc
   - homebrew-metanorma
   - homebrew-xml2rfc
   - metanorma-snap
-  - latexml-snap
   - metanorma-docker
   - pngcheck
   # agregation data

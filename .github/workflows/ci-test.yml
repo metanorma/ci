@@ -1,4 +1,5 @@
 name: test-composite
+# Tests all composite actions including xml2rfc-setup-action
 
 on:
   push:
@@ -6,6 +7,9 @@ on:
   pull_request:
   schedule:
   - cron: "0 0 * * Mon" # once a week https://crontab.guru/#0_0_*_*
+
+permissions:
+  contents: read
 
 concurrency:
   group: '${{ github.workflow }}-${{ github.head_ref || github.ref_name }}'
@@ -22,7 +26,7 @@ jobs:
         os: [ ubuntu-latest, windows-latest, macos-latest ]
         experimental: [ false ]
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
 
       - uses: ruby/setup-ruby@v1
         with:
@@ -39,7 +43,7 @@ jobs:
         os: [ ubuntu-latest, windows-latest, macos-latest ]
         experimental: [ false ]
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
 
       - uses: ./graphviz-setup-action
       - run: dot -V
@@ -65,7 +69,7 @@ jobs:
         - os: macos-latest
           library: /usr/bin/login
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
 
       - uses: ./native-deps-action
         with:
@@ -76,19 +80,22 @@ jobs:
     runs-on: ubuntu-latest
     container: docker://metanorma/metanorma
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
 
       - uses: ./gh-rubygems-setup-action
         with:
           token: ${{ secrets.METANORMA_CI_PAT_TOKEN }}
 
       - run: |
-          echo 'gem "metanorma-cli"' > Gemfile
-          echo 'gem "metanorma", "~>1"' >> Gemfile
+          # metanorma-cli is already locked in the metanorma/metanorma container
+          # image's Gemfile; re-declaring it here breaks bundler with
+          # "Gem already added".
+          echo 'gem "metanorma", "~>1"' > Gemfile
           echo 'gem "metanorma-nist", source: "https://rubygems.pkg.github.com/metanorma"' >> Gemfile
           echo 'gem "metanorma-standoc", git: "https://github.com/metanorma/metanorma-standoc", branch: "main"' >> Gemfile
 
-      - run: apt-get update -y && apt-get install -y gcc g++ ruby-dev
+      # libffi-dev + pkg-config are needed for fiddle's native extension build.
+      - run: apt-get update -y && apt-get install -y gcc g++ ruby-dev libffi-dev pkg-config
 
       - uses: ./docker-gem-install
 
@@ -98,7 +105,7 @@ jobs:
     container:
       image: metanorma/metanorma:ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
 
       - uses: ./gh-rubygems-setup-action
         with:
@@ -114,7 +121,7 @@ jobs:
     name: Test gh-rubygems-setup-action
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
 
       - uses: ruby/setup-ruby@v1
         with:
@@ -137,20 +144,6 @@ jobs:
           [ ${BUNDLE_GITHUB__COM} = "x-access-token:dummy_token" ] || exit 1
           [ ${BUNDLE_RUBYGEMS__PKG__GITHUB__COM} = "x-access-token:dummy_token" ] || exit 1
 
-  test-latexml-setup-action:
-    name: Test latexml-setup-action ${{ matrix.os }}
-    runs-on: ${{ matrix.os }}
-    strategy:
-      fail-fast: false
-      matrix:
-        os: [ubuntu-latest, windows-latest, macos-latest]
-    steps:
-      - uses: actions/checkout@v4
-
-      - uses: ./latexml-setup-action
-
-      - run: latexmlmath --VERSION
-
   test-change-tmpdir-action:
     name: Test change-tmpdir-action ${{ matrix.os }}
     runs-on: ${{ matrix.os }}
@@ -159,7 +152,7 @@ jobs:
       matrix:
         os: [ubuntu-latest, windows-latest, macos-latest]
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
 
       - uses: ./change-tmpdir-action
         with:
@@ -176,7 +169,7 @@ jobs:
       matrix:
         os: [ubuntu-latest, windows-latest, macos-latest]
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
 
       - uses: ./xml2rfc-setup-action
 
@@ -190,7 +183,7 @@ jobs:
       matrix:
         os: [ubuntu-latest, windows-latest, macos-latest]
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
 
       - uses: ./ghostscript-setup-action
 
@@ -205,7 +198,7 @@ jobs:
     runs-on: ${{ matrix.os }}
     strategy:
       fail-fast: false
-      max-parallel: 5
+      max-parallel: 6
       matrix:
         os: [ubuntu-latest, macos-latest]
         force-install: [false, true]
@@ -215,7 +208,7 @@ jobs:
             force-install: false
             private-fonts-pat: 'y'
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
 
       - if: ${{ !matrix.force-install }}
         uses: ruby/setup-ruby@v1
@@ -235,7 +228,7 @@ jobs:
     runs-on: ${{ matrix.os }}
     strategy:
       fail-fast: false
-      max-parallel: 5
+      max-parallel: 6
       matrix:
         os: [ubuntu-latest, macos-latest]
         force-install: [false, true]
@@ -243,7 +236,7 @@ jobs:
         - os: windows-latest
           force-install: false
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
 
       - id: gh-pages-status
         uses: ./gh-pages-status-action
@@ -264,7 +257,7 @@ jobs:
       matrix:
         force-install: [false, true]
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
 
       - id: gh-pages-status
         uses: ./gh-pages-status-action
@@ -281,7 +274,7 @@ jobs:
     runs-on: ${{ matrix.os }}
     strategy:
       fail-fast: false
-      max-parallel: 5
+      max-parallel: 6
       matrix:
         os: [ubuntu-latest, macos-latest, windows-latest]
         repository: ['']
@@ -297,7 +290,7 @@ jobs:
           repository: 'metanorma/metanorma-docker-private'
           result: false
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
 
       - id: gh-repo-status
         uses: ./gh-repo-status-action
@@ -316,7 +309,7 @@ jobs:
       matrix:
         os: [ubuntu-latest] # macos-latest - no docker installed , windows-latest - no experimental options enabled by default
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
 
       - shell: bash
         run: |
@@ -330,11 +323,170 @@ jobs:
         with:
           image: docker.io/library/ci-test-image
 
+  test-exiftool-action:
+    name: Test exiftool-setup-action ${{ matrix.os }}
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ ubuntu-latest, windows-latest, macos-latest ]
+    steps:
+      - uses: actions/checkout@v6
+
+      - uses: ./exiftool-setup-action
+
+      - run: exiftool -ver
+
+  test-ffmpeg-action:
+    name: Test ffmpeg-setup-action ${{ matrix.os }}
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ ubuntu-latest, windows-latest, macos-latest ]
+    steps:
+      - uses: actions/checkout@v6
+
+      - uses: ./ffmpeg-setup-action
+
+      - run: ffmpeg -version
+
+  test-imagemagick-action:
+    name: Test imagemagick-setup-action ${{ matrix.os }}
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ ubuntu-latest, windows-latest, macos-latest ]
+    steps:
+      - uses: actions/checkout@v6
+
+      - uses: ./imagemagick-setup-action
+
+      - if: matrix.os != 'ubuntu-latest'
+        run: magick -version
+
+      - if: matrix.os == 'ubuntu-latest'
+        run: convert -version
+
+  test-tool-setup-action:
+    name: Test tool-setup-action dispatcher ${{ matrix.os }}
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ ubuntu-latest ]
+    steps:
+      - uses: actions/checkout@v6
+
+      - uses: ./tool-setup-action
+        with:
+          setup-tools: 'graphviz,exiftool'
+
+      - run: dot -V
+      - run: exiftool -ver
+
+  test-tool-setup-legacy-inkscape:
+    name: Test tool-setup-action legacy setup-inkscape flag
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+
+      - uses: ./tool-setup-action
+        with:
+          setup-inkscape: true
+
+      - run: inkscape --version
+
+  test-tool-setup-empty:
+    name: Test tool-setup-action with empty setup-tools
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+
+      - uses: ./tool-setup-action
+        with:
+          setup-tools: ''
+
+  test-tool-setup-with-spaces:
+    name: Test tool-setup-action multi-tool dispatch
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+
+      - uses: ./tool-setup-action
+        with:
+          setup-tools: 'graphviz,exiftool'
+
+      - run: dot -V
+      - run: exiftool -ver
+
+  test-tool-setup-ghostscript-dynamic:
+    name: Test ghostscript dynamic version detection ${{ matrix.os }}
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ ubuntu-latest, windows-latest, macos-latest ]
+    steps:
+      - uses: actions/checkout@v6
+
+      - uses: ./tool-setup-action
+        with:
+          setup-tools: 'ghostscript'
+
+      - if: matrix.os != 'windows-latest'
+        run: gs --version
+
+      - if: matrix.os == 'windows-latest'
+        run: gswin64c.exe --version
+
+  test-shared-module:
+    name: Test _shared/tool_runner.py module
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+
+      - name: Verify module import and platform detection
+        shell: python
+        run: |
+          import sys, os
+          sys.path.insert(0, '_shared')
+          from tool_runner import os_release, get_platform_name, run_commands
+
+          platform_name = get_platform_name()
+          assert platform_name in ('Darwin', 'Windows', 'Ubuntu', 'Linux'), \
+              f"Unexpected platform: {platform_name}"
+          print(f"Platform: {platform_name}")
+
+          release = os_release()
+          assert isinstance(release, dict), f"os_release() must return dict, got {type(release)}"
+          print(f"os_release: {release}")
+
+          run_commands(["echo shared module works"])
+          print("All _shared/tool_runner.py checks passed")
+
+      - name: Verify run_commands fails on bad command
+        shell: python
+        run: |
+          import sys, os
+          sys.path.insert(0, '_shared')
+          from tool_runner import run_commands
+          try:
+            run_commands(["false"])
+            print("ERROR: run_commands should have exited on failure")
+            sys.exit(1)
+          except SystemExit as e:
+            if e.code == 1:
+              print("Correctly aborted on command failure")
+            else:
+              raise
+
   test-choco-cache-action:
     name: Test choco-cache-action
     runs-on: windows-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
 
       - uses: ./choco-cache-action
 

@@ -6,15 +6,26 @@ on:
       next_version:
         description: |
           Next release version. Possible values: x.y.z, major, minor, patch (or pre|rc|etc).
-          Also, you can pass 'skip' to skip 'git tag' and do 'gem push' for the current version
+          Pass 'skip' to skip version bump and release the current gemspec version.
         required: true
         type: string
+      gated:
+        description: |
+          Defer gem publish until tests pass via the do-release chain.
+          - true (default): workflow_dispatch bumps+tags only; publish happens after
+            tests pass via repository_dispatch (do-release). Requires a pat_token
+            to trigger downstream workflows. Falls back to immediate publish when
+            no pat_token is configured.
+          - false: workflow_dispatch bumps+tags+publishes immediately. The idempotent
+            guard handles the inevitable second push from do-release.
+        type: boolean
+        default: true
       event_name:
         description: 'deprecated github.event_name used instead'
         required: false
         type: string
       release_command:
-        description: 'command to release gem'
+        description: 'command to release gem (only used with rubygems-api-key authentication)'
         required: false
         type: string
         default: bundle exec rake release
@@ -24,7 +35,7 @@ on:
         type: boolean
         default: true
       post_install:
-        description: 'comamnd to execute after bundle install'
+        description: 'command to execute after bundle install'
         required: false
         type: string
         default: ''
@@ -33,20 +44,45 @@ on:
         required: false
         type: boolean
         default: true
+      role_to_assume:
+        description: 'OIDC Role ID from RubyGems.org for Trusted Publishing (optional - auto-discovered if not provided)'
+        required: false
+        type: string
+      environment:
+        description: 'GitHub environment name for protection rules (e.g., "release" for required approvers)'
+        required: false
+        type: string
+        default: ''
     secrets:
       rubygems-api-key:
-        required: true
+        required: false
       pat_token:
         required: false
+
 jobs:
   release:
     runs-on: ubuntu-latest
+    environment: ${{ inputs.environment }}
+    permissions:
+      contents: write
+      id-token: write
     env:
       HAVE_PAT_TOKEN: ${{ secrets.pat_token != '' }}
+      HAS_API_KEY: ${{ secrets.rubygems-api-key != '' }}
+      USE_OIDC: ${{ secrets.rubygems-api-key == '' }}
+      SHOULD_PUBLISH: >-
+        ${{
+          github.event_name == 'repository_dispatch' ||
+          github.event_name == 'push' ||
+          (github.event_name == 'workflow_dispatch' &&
+            (inputs.gated == false || secrets.pat_token == ''))
+        }}
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
         with:
+          ref: ${{ github.event.client_payload.ref || github.ref }}
           submodules: ${{ inputs.submodules }}
+          token: ${{ secrets.pat_token || github.token }}
 
       - if: github.event_name == 'workflow_dispatch' || github.event_name == 'repository_dispatch'
         run: git fetch --tags origin
@@ -64,16 +100,73 @@ jobs:
       - if: ${{ inputs.post_install != '' }}
         run: ${{ inputs.post_install }}
 
+      # ============ Common git setup ============
       - run: |
           git config user.name github-actions
           git config user.email github-actions@github.com
 
       - run: gem install gem-release
 
-      - if: github.event_name == 'workflow_dispatch' && inputs.next_version != 'skip'
+      - name: Remove Gemfile.lock before bump
+        run: rm -f Gemfile.lock
+
+      # ============ Version bump (workflow_dispatch only) ============
+      - name: Bump version
+        if: github.event_name == 'workflow_dispatch' && inputs.next_version != 'skip'
         run: gem bump --version ${{ inputs.next_version }} --tag --push
 
-      - name: publish to rubygems.org
+      # ============ Gem identity ============
+      # Resolved AFTER the bump so name/version/gemspec reflect the just-bumped
+      # version. If resolved before the bump, the idempotency guard, build, and
+      # tag-ref steps would all see the pre-bump (already-published) version,
+      # making the guard skip publishing the new gem while the new tag still
+      # gets pushed — a silently-unpublished release.
+      - name: Resolve gem identity
+        id: gem-identity
+        run: |
+          GEMSPEC=$(ls *.gemspec | head -1)
+          GEM_NAME=$(ruby -e "puts Gem::Specification.load('${GEMSPEC}').name")
+          GEM_VERSION=$(ruby -e "puts Gem::Specification.load('${GEMSPEC}').version.to_s")
+          echo "name=${GEM_NAME}" >> "$GITHUB_OUTPUT"
+          echo "version=${GEM_VERSION}" >> "$GITHUB_OUTPUT"
+          echo "gemspec=${GEMSPEC}" >> "$GITHUB_OUTPUT"
+
+      # ============ Auto-tag for skip mode (gated only) ============
+      # When next_version=skip and gated=true, create and push a tag from the
+      # current gemspec version so the test chain fires and do-release publishes.
+      - name: Tag current version (skip mode)
+        if: github.event_name == 'workflow_dispatch' && inputs.next_version == 'skip' && inputs.gated == true
+        run: |
+          TAG="v${{ steps.gem-identity.outputs.version }}"
+          if git rev-parse "$TAG" >/dev/null 2>&1; then
+            echo "Tag ${TAG} already exists; pushing to trigger test chain."
+          else
+            git tag "$TAG"
+          fi
+          git push origin "$TAG"
+
+      # ============ No-PAT fallback notice ============
+      # When gated=true but no PAT is configured, tag pushes made with
+      # GITHUB_TOKEN cannot trigger downstream workflows (GHA design).
+      # Degrade gracefully: publish immediately with idempotent guard.
+      - name: Notice — publishing immediately (no PAT)
+        if: >-
+          github.event_name == 'workflow_dispatch' &&
+          inputs.gated == true &&
+          env.HAVE_PAT_TOKEN == 'false'
+        run: |
+          echo "::warning::No pat_token configured. Publishing immediately because the relay chain (bump → tag push → tests → do-release → publish) requires a PAT for tag pushes to trigger downstream workflows. To enable test-gated releases, configure a PAT token."
+
+      # ============ Publish: API Key path ============
+      - name: Idempotency guard (API key)
+        if: env.SHOULD_PUBLISH == 'true' && env.HAS_API_KEY == 'true'
+        uses: metanorma/ci/gem-idempotent-push-guard-action@main
+        with:
+          gem-name: ${{ steps.gem-identity.outputs.name }}
+          gem-version: ${{ steps.gem-identity.outputs.version }}
+
+      - if: env.SHOULD_PUBLISH == 'true' && env.HAS_API_KEY == 'true' && env.skip_push != 'true'
+        name: Publish to rubygems.org (API Key)
         env:
           RUBYGEMS_API_KEY: ${{ secrets.rubygems-api-key }}
         run: |
@@ -85,15 +178,40 @@ jobs:
           chmod 0600 ~/.gem/credentials
           ${{ inputs.release_command }}
 
-      # This workflow usually called via repository_dispatch or direct workflow_dispatch
-      # in both cases `github.ref` doesn't reflect real version so we calculate it from gemspecfile
-      - name: get current gem ref
-        id: gem-tag-ref
-        run: |
-          GEM_VERSION=$(ruby -e "puts Gem::Specification.load(Dir.glob('*.gemspec').first).version.to_s")
-          echo "value=refs/tags/v${GEM_VERSION}" >> $GITHUB_OUTPUT
+      # ============ Publish: OIDC Trusted Publisher path ============
+      - if: env.SHOULD_PUBLISH == 'true' && env.USE_OIDC == 'true'
+        name: Configure RubyGems credentials for Trusted Publishing
+        uses: rubygems/configure-rubygems-credentials@v1.0.0
+        with:
+          role-to-assume: ${{ inputs.role_to_assume }}
 
-      - uses: peter-evans/repository-dispatch@v3
+      - name: Idempotency guard (OIDC)
+        if: env.SHOULD_PUBLISH == 'true' && env.USE_OIDC == 'true'
+        uses: metanorma/ci/gem-idempotent-push-guard-action@main
+        with:
+          gem-name: ${{ steps.gem-identity.outputs.name }}
+          gem-version: ${{ steps.gem-identity.outputs.version }}
+
+      - if: env.SHOULD_PUBLISH == 'true' && env.USE_OIDC == 'true' && env.skip_push != 'true'
+        name: Build and push gem (OIDC)
+        run: |
+          gem build *.gemspec
+          mkdir -p pkg
+          mv *.gem pkg/
+          gem push pkg/*.gem
+
+      - if: env.SHOULD_PUBLISH == 'true' && env.USE_OIDC == 'true' && env.skip_push != 'true'
+        name: Wait for release to propagate
+        run: gem exec rubygems-await pkg/*.gem
+
+      # ============ Post-release event ============
+      - name: Get current gem ref
+        id: gem-tag-ref
+        run: echo "value=refs/tags/v${{ steps.gem-identity.outputs.version }}" >> "$GITHUB_OUTPUT"
+
+      - name: Dispatch release-passed
+        if: env.SHOULD_PUBLISH == 'true'
+        uses: peter-evans/repository-dispatch@v3
         with:
           token: ${{ secrets.pat_token || github.token }}
           repository: ${{ github.repository }}

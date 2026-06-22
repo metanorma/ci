@@ -14,6 +14,39 @@ on:
       matrix_os:
         description: define the operating systems on which to execute jobs
         type: string
+      before-setup-ruby:
+        description: Command to execute before setting up Ruby
+        type: string
+        default: ''
+        required: false
+      after-setup-ruby:
+        description: Command to execute after setting up Ruby
+        type: string
+        default: ''
+        required: false
+      shell:
+        description: Shell to use for running commands
+        type: string
+        default: 'bash'
+        required: false
+      setup-inkscape:
+        description: 'Legacy flag — use setup-tools instead'
+        type: boolean
+        default: false
+      setup-tools:
+        description: >-
+          Comma-separated list of tools to install (no spaces):
+          inkscape,ghostscript,graphviz,libreoffice,xml2rfc,exiftool,ffmpeg,imagemagick
+        type: string
+        default: ''
+        required: false
+
+    secrets:
+      pat_token:
+        required: false
+
+permissions:
+  contents: read
 
 jobs:
   build-matrix:
@@ -21,7 +54,7 @@ jobs:
     outputs:
       matrix: ${{ steps.build-matrix.outputs.matrix }}
     steps:
-    - uses: actions/checkout@v4
+    - uses: actions/checkout@v6
 
     - id: build-matrix
       run: |
@@ -49,17 +82,27 @@ jobs:
       fail-fast: false
       matrix: ${{ fromJson(needs.build-matrix.outputs.matrix) }}
 
+    defaults:
+      run:
+        shell: ${{ inputs.shell }}
+
     steps:
-    - uses: actions/checkout@v4
+    - uses: actions/checkout@v6
       with:
         submodules: true
+        token: ${{ secrets.pat_token || github.token }}
 
-    - uses: actions/checkout@v4
+    - uses: actions/checkout@v6
       with:
         submodules: recursive
         repository: ${{ matrix.repo }}
         path: dependent
         fetch-depth: 1
+        token: ${{ secrets.pat_token || github.token }}
+
+    - if: ${{ inputs.before-setup-ruby != '' }}
+      run: ${{ inputs.before-setup-ruby }}
+      working-directory: dependent
 
     - uses: ruby/setup-ruby@v1
       with:
@@ -68,11 +111,16 @@ jobs:
         bundler-cache: true
         working-directory: dependent
 
+    - if: ${{ inputs.after-setup-ruby != '' }}
+      run: ${{ inputs.after-setup-ruby }}
+      working-directory: dependent
+
     - name: Replace rubygems's gem with git's one
       shell: python
       run: |
         import fileinput
         import glob
+        import subprocess
         import sys
         import os
         gem_name = '${{ github.event.repository.name }}'
@@ -94,11 +142,16 @@ jobs:
           print("Gemfile.lock dropped")
         print("> git diff")
         sys.stdout.flush()
-        os.system("git diff")
+        subprocess.run("git diff", check=False, shell=True)
         print("> bundle add {} --path ..".format(gem_name))
         sys.stdout.flush()
-        os.system("bundle add {} --path ..".format(gem_name))
+        subprocess.run("bundle add {} --path ..".format(gem_name), check=True, shell=True)
       working-directory: dependent
+
+    - uses: metanorma/ci/tool-setup-action@main
+      with:
+        setup-tools: ${{ inputs.setup-tools }}
+        setup-inkscape: ${{ inputs.setup-inkscape }}
 
     - run: ${{ inputs.command }}
       working-directory: dependent

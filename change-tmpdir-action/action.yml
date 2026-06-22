@@ -1,4 +1,4 @@
-name: 'graphviz-setup-action'
+name: 'change-tmpdir-action'
 description: 'composite action which installs graphviz for all OSes'
 inputs:
   tmpdir:

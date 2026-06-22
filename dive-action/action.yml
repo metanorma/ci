@@ -12,7 +12,7 @@ inputs:
     default: ''
   dive-version:
     description: Version of Dive
-    default: v0.12.0
+    default: latest
   dive-output-file:
     description: Path to file where output will be stored temporarelly
     default: ./.dive.output.txt
@@ -31,7 +31,7 @@ runs:
         docker pull wagoodman/dive:${{ inputs.dive-version }}
 
         docker run \
-          -e CI=true -e DOCKER_API_VERSION=1.37 \
+          -e CI=true \
           --rm \
           -v /var/run/docker.sock:/var/run/docker.sock \
           wagoodman/dive:${{ inputs.dive-version }} \
