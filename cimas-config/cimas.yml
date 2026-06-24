@@ -1663,3 +1663,15 @@ groups:
   - barcode4j
   # convert
   - coradoc-oscal
+
+# Regex find/replace patches applied at sync time to files that already
+# exist in target repos (gemspecs, etc.) — the centralised counterpart
+# to the CI-runtime ruby-matrix.json. See metanorma/ci#274 for context
+# and metanorma/cimas#38 for the patches mechanism itself.
+patches:
+  ruby_version:
+    files:
+      - "*.gemspec"
+    find: 'spec\.required_ruby_version\s*=.*'
+    replace: 'spec.required_ruby_version = Gem::Requirement.new(">= 3.3.0")'
+    groups: [processor, pubid, model, tools, metanorma, plugins]
