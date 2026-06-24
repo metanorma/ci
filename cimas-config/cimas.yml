@@ -58,13 +58,6 @@ repositories:
       .rubocop.yml: gh-actions/master/.rubocop.yml
       .github/workflows/release.yml: gh-actions/master/release.yml
       .github/workflows/automerge.yml: gh-actions/master/automerge.yml
-  metanorma-vg:
-    remote: ssh://git@github.com/metanorma/metanorma-vg
-    branch: main
-    files:
-      .rubocop.yml: gh-actions/master/.rubocop.yml
-      .github/workflows/release.yml: gh-actions/master/release.yml
-      .github/workflows/automerge.yml: gh-actions/master/automerge.yml
   metanorma-ribose:
     remote: ssh://git@github.com/metanorma/metanorma-ribose
     branch: main
@@ -873,12 +866,6 @@ repositories:
   iso-tc184-sc4-boilerplate:
     remote: ssh://git@github.com/metanorma/iso-tc184-sc4-boilerplate
     branch: main
-    files:
-      .github/workflows/docker.yml: gh-actions/samples/public-docker.yml
-      .github/workflows/generate.yml: gh-actions/samples/public-generate.yml
-  metanorma-tutorial:
-    remote: ssh://git@github.com/metanorma/metanorma-tutorial
-    branch: master
     files:
       .github/workflows/docker.yml: gh-actions/samples/public-docker.yml
       .github/workflows/generate.yml: gh-actions/samples/public-generate.yml
