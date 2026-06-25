@@ -869,12 +869,6 @@ repositories:
     files:
       .github/workflows/docker.yml: gh-actions/samples/public-docker.yml
       .github/workflows/generate.yml: gh-actions/samples/public-generate.yml
-  sample-ogc-discussion-paper:
-    remote: ssh://git@github.com/metanorma/sample-ogc-discussion-paper
-    branch: main
-    files:
-      .github/workflows/docker.yml: gh-actions/samples/public-docker.yml
-      .github/workflows/generate.yml: gh-actions/samples/public-generate.yml
   ietf-rfc-3339:
     remote: ssh://git@github.com/metanorma/ietf-rfc-3339
     branch: master
