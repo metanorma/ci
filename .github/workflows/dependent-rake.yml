@@ -123,7 +123,23 @@ jobs:
         import subprocess
         import sys
         import os
+        import re
         gem_name = '${{ github.event.repository.name }}'
+        # The GitHub repo name does not always match the gem name declared
+        # in the gemspec (e.g. the unitsdb-ruby repo ships the "unitsdb"
+        # gem; unitsml-ruby ships "unitsml"). Read the gem name from the
+        # upstream gemspec at the workspace root so `bundle add` resolves
+        # to the right gem. Falls back to the repo name when no gemspec
+        # is present.
+        upstream_gemspecs = glob.glob('../*.gemspec')
+        if upstream_gemspecs:
+          with open(upstream_gemspecs[0]) as gemspec_file:
+            for line in gemspec_file:
+              match = re.match(r'\s*spec\.name\s*=\s*["\']([^"\']+)["\']', line)
+              if match:
+                gem_name = match.group(1)
+                break
+          print("Detected gem name from {}: {}".format(upstream_gemspecs[0], gem_name))
         if glob.glob('*.gemspec'):
           gemspec = glob.glob('*.gemspec')[0]
           with fileinput.FileInput(gemspec, inplace=True) as file:
