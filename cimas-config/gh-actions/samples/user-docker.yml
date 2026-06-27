@@ -6,6 +6,9 @@ on:
   pull_request:
   workflow_dispatch:
 
+permissions:
+  contents: read
+
 jobs:
   test-docker:
     uses: metanorma/ci/.github/workflows/user-docker.yml@main
