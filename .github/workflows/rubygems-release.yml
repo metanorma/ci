@@ -115,6 +115,15 @@ jobs:
         if: github.event_name == 'workflow_dispatch' && inputs.next_version != 'skip'
         run: gem bump --version ${{ inputs.next_version }} --tag --push
 
+      # Regenerate Gemfile.lock after the version bump so Bundler has an
+      # up-to-date lockfile and materialized git sources. Without this,
+      # `bundle exec rake release` fails with "git source ... is not yet
+      # checked out" because Bundler cannot re-resolve from a missing lock
+      # in the middle of the publish step.
+      - name: Refresh bundle after bump
+        if: inputs.bundler_cache
+        run: bundle install --quiet
+
       # ============ Gem identity ============
       # Resolved AFTER the bump so name/version/gemspec reflect the just-bumped
       # version. If resolved before the bump, the idempotency guard, build, and
