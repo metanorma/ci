@@ -30,10 +30,18 @@ on:
         type: string
         default: bundle exec rake release
       bundler_cache:
-        description: 'do bundle install'
+        description: |
+          DEPRECATED — IGNORED as of 2026-06-28 (see metanorma/ci#314).
+          The release job now hardcodes bundler-cache: false because this
+          workflow removes Gemfile.lock before bump, which combined with
+          ruby/setup-ruby's restore-key fallback caused stale-cache restores
+          and silent missing-gem failures (e.g. metanorma-cli v1.16.6
+          failed with "Bundler::GemNotFound: metanorma-nist" because the
+          gem was never actually installed despite being in the Gemfile).
+          Cost of fresh install: ~30 sec per release.
         required: false
         type: boolean
-        default: true
+        default: false
       post_install:
         description: 'command to execute after bundle install'
         required: false
@@ -190,7 +198,12 @@ jobs:
       - uses: ruby/setup-ruby@v1
         with:
           ruby-version: '3.3'
-          bundler-cache: ${{ inputs.bundler_cache }}
+          # bundler-cache hardcoded to false (ignoring inputs.bundler_cache)
+          # because this workflow removes Gemfile.lock before bump, which
+          # makes ruby/setup-ruby's restore-key fallback hit stale caches
+          # and silently skip installing newly-added gems. See
+          # metanorma/ci#314 for the root-cause analysis.
+          bundler-cache: false
 
       - if: ${{ inputs.post_install != '' }}
         run: ${{ inputs.post_install }}
