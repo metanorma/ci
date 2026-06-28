@@ -218,6 +218,15 @@ jobs:
       - name: Remove Gemfile.lock before bump
         run: rm -f Gemfile.lock
 
+      # ============ Fresh bundle install ============
+      # ruby/setup-ruby above is invoked with bundler-cache: false (see
+      # metanorma/ci#314), so it does not run `bundle install` itself. We
+      # need an explicit fresh install before `bundle exec rake release`
+      # or it dies with Bundler::GemNotFound for anything in the Gemfile.
+      # Mirrors the preflight job's fresh-resolve step (same flags).
+      - name: Fresh bundle install
+        run: bundle install --jobs 4 --retry 3
+
       # ============ Version bump (workflow_dispatch only) ============
       - name: Bump version
         if: github.event_name == 'workflow_dispatch' && inputs.next_version != 'skip'
