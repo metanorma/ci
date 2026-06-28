@@ -120,11 +120,11 @@ See [`metanorma/ci#309`](https://github.com/metanorma/ci/issues/309) for the mai
 **What it does.** `ruby/setup-ruby@v1` with `bundler-cache: true` resolves the gem's `Gemfile` against all configured sources (public rubygems.org + the scoped GH Packages source for `metanorma-nist` / `metanorma-bsi`). All transitive dependencies installed.
 
 **Failure modes.**
-- *`Bundler::GemNotFound`*: a specifically-scoped gem isn't resolvable. Could be:
+- *`Bundler::GemNotFound: Could not find gem 'X' in locally installed gems`*: **stale bundler-cache hit**. Root cause: `ruby/setup-ruby@v1`'s `bundler-cache: true` uses GitHub Actions cache keyed on `Gemfile.lock` hash. metanorma-org gems don't commit `Gemfile.lock`, so the cache key is unstable, and `ruby/setup-ruby` falls back to **partial-key restore-match** — restoring a cache from a previous release run that had a different Gemfile state. After the stale restore, `bundle install` only installs the diff (often a single recent gem), leaving any newly-added gems silently un-installed. The next `bundle exec rake release` then fails. **Bit the metanorma-cli v1.16.6 release twice** (2026-06-27 and 2026-06-28) on `metanorma-nist`. Fixed at source by [`metanorma/ci#314`](https://github.com/metanorma/ci/issues/314) (hardcode `bundler-cache: false` in the release job). Cost: ~30 sec extra per release for a fresh install.
+- *`Bundler::GemNotFound` (other)*: a specifically-scoped gem isn't resolvable at all (not stale cache). Could be:
   - GH Packages auth not propagated correctly (revisit layer 6)
   - The gem genuinely isn't published to GH Packages at the required version
   - Bundler resolution edge case with the scoped-source syntax
-  - **This is what bit the v1.16.6 release on 2026-06-27** (`Could not find gem 'metanorma-nist' in locally installed gems`). The 2026-06-28 husk fix changed the public-RubyGems side of this picture but doesn't address the GH Packages auth path the release flow takes.
 - *Version-constraint conflict*: one gem pins a version of another gem that contradicts a third. Recovery: relax constraints in the gemspec.
 - *Native extension build failure*: a transitively-pulled-in gem with a C extension fails to compile (e.g., `nokogumbo` on Ruby 4 — see the recent metanorma#568 env-orphan case as a non-release-side instance of the same shape). Recovery: pin to a version with prebuilt binaries or remove the dependency.
 
@@ -213,7 +213,7 @@ A failure at layer N often leaves the system in a state that's partially-release
 
 ## Known-fragile edges as of 2026-06-28
 
-- **Layer 7** (`bundle install`) was the most common failure point that wasted the most time. **Now caught by the preflight job** (see "Preflight" above) — fails in ~90 sec instead of 2h 27m. The v1.16.6 case that motivated this would have surfaced before any bump or tag was pushed.
+- **Layer 7** (`bundle install`) was the most common failure point that wasted the most time. **Two-layer fix now in place**: (1) preflight job catches resolution errors before bump/tag/rake (~90 sec instead of 2h 27m), and (2) [`#314`](https://github.com/metanorma/ci/issues/314) hardcodes `bundler-cache: false` to eliminate the stale-cache class of silent missing-gem failure that bit metanorma-cli v1.16.6 twice. Both fixes apply to every metanorma-org gem release.
 - **Layer 12** (downstream cascade) was silent-broken for 5+ weeks before discovery — fixed structurally by [`metanorma-cli#427`](https://github.com/metanorma/metanorma-cli/pull/427) + [`#430`](https://github.com/metanorma/metanorma-cli/pull/430), but the observability gap that allowed it to hide is still open ([`#302`](https://github.com/metanorma/ci/issues/302)).
 - **Layer 9** OTP: rubygems MFA prompts for OTP. If the API key has MFA enforcement and there's no human at the terminal to paste the OTP, `gem push` fails. Workaround: use OIDC Trusted Publishing where possible; or rotate to an MFA-disabled key for CI use only.
 - **Public husk gems** (`metanorma-nist 1.5.0`, `metanorma-bsi 0.7.0`): shipped 2026-06-28 to close the privatisation-public-husk hole for external `gem install` consumers. Doesn't change anything for the release chain itself, but worth knowing the husks exist when reading bundler resolution logs.
