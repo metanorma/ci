@@ -60,7 +60,102 @@ on:
         required: false
 
 jobs:
+  # Fail-fast preflight: run a fresh `bundle install` BEFORE bump/tag/rake so
+  # any dep-resolution issue (e.g. a GH Packages auth slip, an unsatisfiable
+  # version constraint, a missing private gem) surfaces in ~90 seconds rather
+  # than after the 2h+ rake matrix. Skipped on `repository_dispatch`/`push`
+  # events because those code paths already passed preflight in the preceding
+  # `workflow_dispatch` leg; running it again would just duplicate work.
+  # See release-chain.md and metanorma/ci#309 for the maintainer-experience
+  # rationale (the v1.16.6 case that motivated this: 2h27m wasted to learn
+  # bundle install failed at layer 7).
+  preflight:
+    if: github.event_name == 'workflow_dispatch'
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    env:
+      HAVE_PAT_TOKEN: ${{ secrets.pat_token != '' }}
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          ref: ${{ github.ref }}
+          submodules: ${{ inputs.submodules }}
+          token: ${{ secrets.pat_token || github.token }}
+
+      - if: ${{ env.HAVE_PAT_TOKEN == 'true' }}
+        uses: metanorma/ci/gh-rubygems-setup-action@main
+        with:
+          token: ${{ secrets.pat_token }}
+
+      - uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: '3.3'
+          bundler-cache: false
+
+      - name: Fresh bundle resolve (catches what would otherwise fail at layer 7)
+        run: |
+          rm -f Gemfile.lock
+          bundle install --jobs 4 --retry 3
+
+      - name: Gem build (catches gemspec errors that would fail at layer 9)
+        run: |
+          gemspec=$(ls *.gemspec | head -1)
+          if [ -z "$gemspec" ]; then
+            echo "::error::No .gemspec file found in repo root"
+            exit 1
+          fi
+          echo "Building $gemspec to verify gemspec validity..."
+          gem build "$gemspec"
+          rm -f *.gem  # don't carry the artefact forward
+
+      - name: Verify publish credentials available
+        env:
+          HAS_API_KEY: ${{ secrets.rubygems-api-key != '' }}
+          ROLE_TO_ASSUME: ${{ inputs.role_to_assume }}
+        run: |
+          if [ "$HAS_API_KEY" = "true" ]; then
+            echo "✓ rubygems-api-key configured; publish will use API-key path"
+          elif [ -n "$ROLE_TO_ASSUME" ]; then
+            echo "✓ OIDC role configured (role_to_assume input set); publish will use Trusted Publishing path"
+          else
+            echo "::error::Neither rubygems-api-key secret nor role_to_assume input is configured."
+            echo "::error::The publish step at layer 9 will fail. Configure one of:"
+            echo "::error::  - rubygems-api-key secret on the calling repo, OR"
+            echo "::error::  - role_to_assume input in the caller workflow (for OIDC Trusted Publishing)."
+            exit 1
+          fi
+
+      - name: Version awareness (informational)
+        run: |
+          gemspec=$(ls *.gemspec | head -1)
+          gem_name=$(ruby -e "puts Gem::Specification.load('$gemspec').name")
+          gem_version=$(ruby -e "puts Gem::Specification.load('$gemspec').version.to_s")
+          published=$(gem list --remote --exact --version "$gem_version" "$gem_name" 2>/dev/null | grep "$gem_name ($gem_version)" || true)
+          if [ -n "$published" ]; then
+            if [ "${{ inputs.next_version }}" = "skip" ]; then
+              echo "::warning::$gem_name $gem_version is already on rubygems.org."
+              echo "::warning::With next_version=skip, the idempotent guard at layer 8 will SKIP the push."
+              echo "::warning::If you intended to re-trigger the chain on an existing version (e.g. to retry a failed downstream cascade), this is fine."
+              echo "::warning::If you intended to ship NEW code, cancel this run and fire with next_version=patch (or major/minor) instead."
+            else
+              echo "ℹ️  Current gemspec version $gem_name $gem_version is already published. After bump ($(echo '${{ inputs.next_version }}')), the new version will be higher."
+            fi
+          else
+            echo "ℹ️  $gem_name $gem_version is not on rubygems yet."
+            latest=$(gem list --remote --exact "$gem_name" 2>/dev/null | grep -oE "$gem_name \([0-9.]+\)" | head -1 || echo "(not previously published)")
+            echo "ℹ️  Latest published: $latest"
+          fi
+
   release:
+    # Run after preflight when preflight ran (workflow_dispatch path); run
+    # directly when preflight was skipped (repository_dispatch / push paths).
+    # Do NOT run if preflight ran and failed — that means a real dep issue
+    # the maintainer needs to fix before any further chain layers execute.
+    needs: preflight
+    if: |
+      always() &&
+      (needs.preflight.result == 'success' || needs.preflight.result == 'skipped')
     runs-on: ubuntu-latest
     environment: ${{ inputs.environment }}
     permissions:

@@ -33,6 +33,29 @@ The "gated-direct" release model (adopted 2026-06-18, see [`metanorma/cimas:plan
 
 Total wall-clock for a happy-path release: 30 min – 2.5 h, dominated by the rake matrix.
 
+## Preflight (fail-fast guard, runs before layer 1)
+
+A `preflight` job in `rubygems-release.yml` runs as the very first job on every `workflow_dispatch` invocation (skipped on `repository_dispatch` and `push` paths because those already passed preflight in the originating `workflow_dispatch` leg). It runs the cheap, deterministic checks that would otherwise fail much later in the chain. **Total cost: ~90 sec – 2 min**. If it fails, the chain stops immediately — no bump, no tag, no rake. The `release` job is gated by `needs: preflight` with `if: success() || skipped`.
+
+What preflight verifies:
+
+| Check | Catches | Would otherwise fail at |
+|---|---|---|
+| **Fresh `bundle install` resolve** (with `Gemfile.lock` removed first) | Dep resolution failures: GH Packages auth slip, unsatisfiable version constraint, missing private gem — the v1.16.6 case. | Layer 7, **~2h27m in** |
+| **`gem build <gemspec>`** | Gemspec errors: syntax, missing files declared in `spec.files`, invalid `required_ruby_version`, bad metadata | Layer 9, **~2h+ in** |
+| **Verify publish credentials available** | Neither `rubygems-api-key` secret nor `role_to_assume` input configured → no publish path viable | Layer 9, ~2h+ in |
+| **Version awareness** (informational, not blocking) | Flags when current gemspec version is already published — for `next_version=skip` this means the chain will re-trigger but the publish itself will idempotent-skip. Helps maintainer recognise re-publish-of-existing-version scenarios before committing to the 2h rake wait. | (would just silently no-op at layer 8) |
+
+Preflight is **not** a substitute for the full chain — it's a gate that filters out the cheap-to-detect failure modes early. Things preflight cannot catch (and which still surface later):
+
+- Actual test failures in the rake matrix (layers 2/3 — that's the point of the matrix)
+- MFA / OTP prompts at `gem push` (one-time codes can't be dry-run)
+- OIDC trust-policy mismatches (the token exchange happens at publish time)
+- Downstream cascade failures (layer 12 — a separate workflow on the per-gem side)
+- Failures only reproducible on a specific runner OS (preflight runs on ubuntu-latest)
+
+See [`metanorma/ci#309`](https://github.com/metanorma/ci/issues/309) for the maintainer-experience rationale that motivated preflight (the v1.16.6 case: 2h27m wasted to learn `bundle install` failed at layer 7).
+
 ## Layer-by-layer: what can fail, how to recognise, how to recover
 
 ### Layer 1 — `workflow_dispatch` on per-gem `release.yml`
@@ -109,7 +132,7 @@ Total wall-clock for a happy-path release: 30 min – 2.5 h, dominated by the ra
 
 **Recovery.** Local reproduction: run `bundle install` on a clean checkout of the gem with the same Ruby version (`ruby/setup-ruby@v1` uses Ruby 3.3 in this workflow). If it fails locally too, the issue is the Gemfile or the GH Packages publication; if it passes locally, it's the CI env (token scope, auth setup).
 
-**This is the target of the planned Track A fail-fast preflight job** (issue [#309](https://github.com/metanorma/ci/issues/309) remediation slate): hoist this same `bundle install` to the *head* of the `workflow_dispatch` path, before bump/tag/rake, so it fails in 90 seconds instead of 2h 27m.
+**This is now caught by the preflight job** (see "Preflight" section above) — preflight runs a fresh `bundle install` (with `Gemfile.lock` removed) on every `workflow_dispatch` invocation, BEFORE bump/tag/rake. The v1.16.6-shape failure now surfaces in ~90 sec instead of 2h 27m. If you see the failure at layer 7 anyway (i.e. preflight passed but the live release run still failed here), the cause is likely environment drift between the preflight invocation and the do-release invocation — worth investigating as a real anomaly.
 
 ### Layer 8 — Idempotent `gem-push` guard
 
@@ -190,7 +213,7 @@ A failure at layer N often leaves the system in a state that's partially-release
 
 ## Known-fragile edges as of 2026-06-28
 
-- **Layer 7** (`bundle install`) is the most common failure point that wastes the most time (after layer 2/3 rake completes). Fail-fast preflight job to be added per #309 Track A.
+- **Layer 7** (`bundle install`) was the most common failure point that wasted the most time. **Now caught by the preflight job** (see "Preflight" above) — fails in ~90 sec instead of 2h 27m. The v1.16.6 case that motivated this would have surfaced before any bump or tag was pushed.
 - **Layer 12** (downstream cascade) was silent-broken for 5+ weeks before discovery — fixed structurally by [`metanorma-cli#427`](https://github.com/metanorma/metanorma-cli/pull/427) + [`#430`](https://github.com/metanorma/metanorma-cli/pull/430), but the observability gap that allowed it to hide is still open ([`#302`](https://github.com/metanorma/ci/issues/302)).
 - **Layer 9** OTP: rubygems MFA prompts for OTP. If the API key has MFA enforcement and there's no human at the terminal to paste the OTP, `gem push` fails. Workaround: use OIDC Trusted Publishing where possible; or rotate to an MFA-disabled key for CI use only.
 - **Public husk gems** (`metanorma-nist 1.5.0`, `metanorma-bsi 0.7.0`): shipped 2026-06-28 to close the privatisation-public-husk hole for external `gem install` consumers. Doesn't change anything for the release chain itself, but worth knowing the husks exist when reading bundler resolution logs.
