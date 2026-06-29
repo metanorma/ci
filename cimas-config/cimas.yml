@@ -194,17 +194,44 @@ repositories:
       .rubocop.yml: gh-actions/master/.rubocop.yml
       .github/workflows/rake.yml: gh-actions/master/rake.yml
       .github/workflows/release.yml: gh-actions/master/release.yml
-  # pubid family — DEPRECATED in favour of the metanorma/pubid monorepo
-  # (see metanorma/ci#274 close-out 2026-06-29 and metanorma/ci#300 Gap 3).
-  # Removed on 2026-06-29 to stop cimas-sync from targeting deprecated repos:
-  #   - pubid (the old standalone umbrella entry that mapped master template
-  #     files onto the now-monorepo repo; can return once #300 Gap 2's
-  #     monorepo sub-template family lands)
-  #   - pubid-core, pubid-ieee, pubid-iso, pubid-iec, pubid-bsi, pubid-cen,
-  #     pubid-jis, pubid-itu, pubid-ccsds, pubid-nist, pubid-plateau (all
-  #     standalone repos last released 0.7.x in 2024-08; their gems on
-  #     rubygems are now published from metanorma/pubid:gems/ at 1.15.x)
-  # pubid-etsi remains below pending a separate audit of its deprecation status.
+  # ============================================================================
+  # PENDING-READD: metanorma/pubid (monorepo)  —  gate: metanorma/ci#300 Gap 2
+  # ============================================================================
+  # The monorepo `metanorma/pubid` is IN SCOPE for cimas-sync long-term, but is
+  # CURRENTLY ABSENT from this config because the master rake.yml template
+  # (`uses: metanorma/ci/.github/workflows/generic-rake.yml@main`) does not fit
+  # the monorepo shape (`uses: ./.github/workflows/generic-rake.yml` with
+  # `monorepo: true, gem_directory: gems`). Re-adding the monorepo with the
+  # master template would clobber its monorepo-aware CI on every cimas-sync.
+  #
+  # Re-add when `metanorma/ci#300` Gap 2 lands the `gh-actions/monorepo/*.yml`
+  # sub-template family. The expected re-added entry will use the new
+  # `template: + with:` schema (gated on Gap 1 also) and look roughly like:
+  #
+  #   pubid:
+  #     remote: ssh://git@github.com/metanorma/pubid
+  #     branch: main
+  #     files:
+  #       .rubocop.yml: gh-actions/master/.rubocop.yml
+  #       .github/workflows/rake.yml:
+  #         template: gh-actions/monorepo/rake.yml
+  #         with:
+  #           monorepo: true
+  #           gem_directory: gems
+  #       .github/workflows/release.yml: gh-actions/monorepo/release.yml
+  #
+  # See metanorma/cimas:plans/cimas-revival-and-release-workflow-realignment.md
+  # for the rehabilitation roadmap.
+  # ============================================================================
+  #
+  # DEPRECATED standalone pubid-* repos — removed 2026-06-29 (refs #274, #300 Gap 3):
+  # superseded by `metanorma/pubid` monorepo. Their gems on rubygems are now
+  # published from `metanorma/pubid:gems/` at 1.15.x; the standalone repos are
+  # frozen at 0.7.x from 2024-08. Removed entries:
+  #   pubid-core, pubid-ieee, pubid-iso, pubid-iec, pubid-bsi, pubid-cen,
+  #   pubid-jis, pubid-itu, pubid-ccsds, pubid-nist, pubid-plateau
+  #
+  # pubid-etsi (below) remains pending a separate audit of its deprecation status.
   pubid-etsi:
     remote: ssh://git@github.com/metanorma/pubid-etsi
     branch: main
