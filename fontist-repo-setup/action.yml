@@ -1,5 +1,5 @@
 name: 'fontist-repo-action'
-description: 'composite action to setup private Fontist repos (Fontist must already be installed)'
+description: 'Configure the private metanorma Fontist repo (private-fonts-pat required). Assumes Ruby and Fontist are already installed by the caller. For the "from scratch" variant that also installs Ruby and Fontist, see fontist-setup.'
 inputs:
   private-fonts-pat:
     description: 'Setup private formulas with PAT'
