@@ -431,13 +431,11 @@ repositories:
       .rubocop.yml: gh-actions/master/.rubocop.yml
       .github/workflows/rake.yml: gh-actions/master/rake.yml
       .github/workflows/release.yml: gh-actions/master/release.yml
-  iso690render:
-    remote: ssh://git@github.com/metanorma/iso690render
-    branch: main
-    files:
-      .rubocop.yml: gh-actions/master/.rubocop.yml
-      .github/workflows/rake.yml: gh-actions/master/rake.yml
-      .github/workflows/release.yml: gh-actions/master/release.yml
+  # iso690render — DEPRECATED 2026-06-29: this repo hosts a legacy `relaton-render`
+  # gemspec; the active relaton-render gem is now published from
+  # https://github.com/relaton/relaton-render (different org). The metanorma/iso690render
+  # repo could not be archived from this account (admin perms required); removed
+  # from cimas-config so future cimas-sync waves don't target it.
   csa-ccm-tools:
     remote: ssh://git@github.com/metanorma/csa-ccm-tools
     branch: master
@@ -1286,7 +1284,7 @@ groups:
   - mn2pdf-ruby
   - mn2sts-ruby
   - stepmod2mn
-  - iso690render
+  # iso690render removed 2026-06-29 — legacy of relaton-render (now in relaton/ org)
   - csa-ccm-tools
   - reverse_adoc
   - tex2mn
