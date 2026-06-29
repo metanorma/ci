@@ -44,13 +44,8 @@ repositories:
       .rubocop.yml: gh-actions/master/.rubocop.yml
       .github/workflows/release.yml: gh-actions/master/release.yml
       .github/workflows/automerge.yml: gh-actions/master/automerge.yml
-  metanorma-m3aawg:
-    remote: ssh://git@github.com/metanorma/metanorma-m3aawg
-    branch: main
-    files:
-      .rubocop.yml: gh-actions/master/.rubocop.yml
-      .github/workflows/release.yml: gh-actions/master/release.yml
-      .github/workflows/automerge.yml: gh-actions/master/automerge.yml
+  # metanorma-m3aawg — OBSOLETE 2026-06-29 (last release 2023-03-13, 3+ yrs).
+  # Removed per maintainer triage; not part of the active processor family.
   metanorma-cc:
     remote: ssh://git@github.com/metanorma/metanorma-cc
     branch: main
@@ -131,13 +126,8 @@ repositories:
       .rubocop.yml: gh-actions/master/.rubocop.yml
       .github/workflows/release.yml: gh-actions/master/release.yml
       .github/workflows/automerge.yml: gh-actions/master/automerge.yml
-  metanorma-un:
-    remote: ssh://git@github.com/metanorma/metanorma-un
-    branch: main
-    files:
-      .rubocop.yml: gh-actions/master/.rubocop.yml
-      .github/workflows/release.yml: gh-actions/master/release.yml
-      .github/workflows/automerge.yml: gh-actions/master/automerge.yml
+  # metanorma-un — OBSOLETE 2026-06-29 (last release 2024-09-30, 21 mo).
+  # Removed per maintainer triage; not part of the active processor family.
   metanorma-itu:
     remote: ssh://git@github.com/metanorma/metanorma-itu
     branch: main
@@ -152,13 +142,8 @@ repositories:
       .rubocop.yml: gh-actions/master/.rubocop.yml
       .github/workflows/release.yml: gh-actions/master/release.yml
       .github/workflows/automerge.yml: gh-actions/master/automerge.yml
-  metanorma-csa:
-    remote: ssh://git@github.com/metanorma/metanorma-csa
-    branch: main
-    files:
-      .rubocop.yml: gh-actions/master/.rubocop.yml
-      .github/workflows/release.yml: gh-actions/master/release.yml
-      .github/workflows/automerge.yml: gh-actions/master/automerge.yml
+  # metanorma-csa — OBSOLETE 2026-06-29 (last release 2025-09-01, 10 mo).
+  # Removed per maintainer triage; not part of the active processor family.
   metanorma-bipm:
     remote: ssh://git@github.com/metanorma/metanorma-bipm
     branch: main
@@ -1320,18 +1305,18 @@ groups:
   - bipm-data-importer
   processor:
   - metanorma-cli
-  - metanorma-csa
+  # metanorma-csa removed 2026-06-29 (obsolete)
   - metanorma-cc
   - metanorma-iec
   - metanorma-ietf
   - metanorma-iso
   - metanorma-itu
-  - metanorma-m3aawg
+  # metanorma-m3aawg removed 2026-06-29 (obsolete)
   - metanorma-nist
   - metanorma-ogc
   - metanorma-ribose
   - metanorma-standoc
-  - metanorma-un
+  # metanorma-un removed 2026-06-29 (obsolete)
   - metanorma-generic
   - metanorma-iho
   - metanorma-bipm
