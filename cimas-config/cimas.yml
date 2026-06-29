@@ -532,7 +532,10 @@ repositories:
     branch: main
     files:
       .rubocop.yml: gh-actions/master/.rubocop.yml
-      .github/workflows/rake.yml: gh-actions/master/rake.yml
+      # rake.yml removed: coradoc opted out of the shared rake template in
+      # commit d91d06d ("fix(ci): replace metanorma reusable workflow with
+      # direct rake job"). See metanorma/ci#300 (Gap 3) for the broader
+      # opt-out-detection design question.
       .github/workflows/release.yml: gh-actions/master/release.yml
   atmospheric:
     remote: ssh://git@github.com/metanorma/atmospheric
