@@ -194,93 +194,19 @@ repositories:
       .rubocop.yml: gh-actions/master/.rubocop.yml
       .github/workflows/rake.yml: gh-actions/master/rake.yml
       .github/workflows/release.yml: gh-actions/master/release.yml
-  # pubid
-  pubid:
-    remote: ssh://git@github.com/metanorma/pubid
-    branch: main
-    files:
-      .rubocop.yml: gh-actions/master/.rubocop.yml
-      .github/workflows/rake.yml: gh-actions/master/rake.yml
-      .github/workflows/release.yml: gh-actions/master/release.yml
-  pubid-core:
-    remote: ssh://git@github.com/metanorma/pubid-core
-    branch: main
-    files:
-      .rubocop.yml: gh-actions/master/.rubocop.yml
-      .github/workflows/rake.yml: gh-actions/master/rake.yml
-      .github/workflows/release.yml: gh-actions/master/release.yml
-  pubid-ieee:
-    remote: ssh://git@github.com/metanorma/pubid-ieee
-    branch: main
-    files:
-      .rubocop.yml: gh-actions/master/.rubocop.yml
-      .github/workflows/rake.yml: gh-actions/master/rake.yml
-      .github/workflows/release.yml: gh-actions/master/release.yml
-  pubid-iso:
-    remote: ssh://git@github.com/metanorma/pubid-iso
-    branch: main
-    files:
-      .rubocop.yml: gh-actions/master/.rubocop.yml
-      .github/workflows/rake.yml: gh-actions/master/rake.yml
-      .github/workflows/release.yml: gh-actions/master/release.yml
-  pubid-iec:
-    remote: ssh://git@github.com/metanorma/pubid-iec
-    branch: main
-    files:
-      .rubocop.yml: gh-actions/master/.rubocop.yml
-      .github/workflows/rake.yml: gh-actions/master/rake.yml
-      .github/workflows/release.yml: gh-actions/master/release.yml
-  pubid-bsi:
-    remote: ssh://git@github.com/metanorma/pubid-bsi
-    branch: main
-    files:
-      .rubocop.yml: gh-actions/master/.rubocop.yml
-      .github/workflows/rake.yml: gh-actions/master/rake.yml
-      .github/workflows/release.yml: gh-actions/master/release.yml
-  pubid-cen:
-    remote: ssh://git@github.com/metanorma/pubid-cen
-    branch: main
-    files:
-      .rubocop.yml: gh-actions/master/.rubocop.yml
-      .github/workflows/rake.yml: gh-actions/master/rake.yml
-      .github/workflows/release.yml: gh-actions/master/release.yml
-  pubid-jis:
-    remote: ssh://git@github.com/metanorma/pubid-jis
-    branch: main
-    files:
-      .rubocop.yml: gh-actions/master/.rubocop.yml
-      .github/workflows/rake.yml: gh-actions/master/rake.yml
-      .github/workflows/release.yml: gh-actions/master/release.yml
-  pubid-itu:
-    remote: ssh://git@github.com/metanorma/pubid-itu
-    branch: main
-    files:
-      .rubocop.yml: gh-actions/master/.rubocop.yml
-      .github/workflows/rake.yml: gh-actions/master/rake.yml
-      .github/workflows/release.yml: gh-actions/master/release.yml
-  pubid-ccsds:
-    remote: ssh://git@github.com/metanorma/pubid-ccsds
-    branch: main
-    files:
-      .rubocop.yml: gh-actions/master/.rubocop.yml
-      .github/workflows/rake.yml: gh-actions/master/rake.yml
-      .github/workflows/release.yml: gh-actions/master/release.yml
+  # pubid family — DEPRECATED in favour of the metanorma/pubid monorepo
+  # (see metanorma/ci#274 close-out 2026-06-29 and metanorma/ci#300 Gap 3).
+  # Removed on 2026-06-29 to stop cimas-sync from targeting deprecated repos:
+  #   - pubid (the old standalone umbrella entry that mapped master template
+  #     files onto the now-monorepo repo; can return once #300 Gap 2's
+  #     monorepo sub-template family lands)
+  #   - pubid-core, pubid-ieee, pubid-iso, pubid-iec, pubid-bsi, pubid-cen,
+  #     pubid-jis, pubid-itu, pubid-ccsds, pubid-nist, pubid-plateau (all
+  #     standalone repos last released 0.7.x in 2024-08; their gems on
+  #     rubygems are now published from metanorma/pubid:gems/ at 1.15.x)
+  # pubid-etsi remains below pending a separate audit of its deprecation status.
   pubid-etsi:
     remote: ssh://git@github.com/metanorma/pubid-etsi
-    branch: main
-    files:
-      .rubocop.yml: gh-actions/master/.rubocop.yml
-      .github/workflows/rake.yml: gh-actions/master/rake.yml
-      .github/workflows/release.yml: gh-actions/master/release.yml
-  pubid-nist:
-    remote: ssh://git@github.com/metanorma/pubid-nist
-    branch: main
-    files:
-      .rubocop.yml: gh-actions/master/.rubocop.yml
-      .github/workflows/rake.yml: gh-actions/master/rake.yml
-      .github/workflows/release.yml: gh-actions/master/release.yml
-  pubid-plateau:
-    remote: ssh://git@github.com/metanorma/pubid-plateau
     branch: main
     files:
       .rubocop.yml: gh-actions/master/.rubocop.yml
@@ -1374,19 +1300,9 @@ groups:
   - metanorma-ieee
   - metanorma-jis
   - metanorma-plateau
-  pubid:
-  - pubid
-  - pubid-core
-  - pubid-ieee
-  - pubid-iso
-  - pubid-iec
-  - pubid-bsi
-  - pubid-cen
-  - pubid-jis
-  - pubid-itu
-  - pubid-ccsds
-  - pubid-nist
-  - pubid-plateau
+  # pubid group removed 2026-06-29 — all members (pubid umbrella + 11 standalone)
+  # are deprecated in favour of metanorma/pubid monorepo. See cimas.yml comment
+  # at the pubid-etsi entry above and metanorma/ci#274 close-out / #300 Gap 3.
   metanorma:
   - metanorma
   - metanorma-cli
