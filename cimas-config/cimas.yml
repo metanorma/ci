@@ -108,9 +108,16 @@ repositories:
     branch: main
     files:
       .rubocop.yml: gh-actions/master/.rubocop.yml
-      # metanorma-standoc do immediate release without waiting for unit tests pass
-      # .github/workflows/rake.yml: gh-actions/inkscape/rake.yml
-      # .github/workflows/release.yml: gh-actions/master/release.yml
+      # Restored to gated-release sync. The 2024-08-06 commit 099925c opted
+      # standoc out of the rake/release templates with "do immediate release
+      # without waiting for unit tests pass" — but the per-repo release.yml
+      # has since been moved back to the gated rubygems-release.yml@main path
+      # (June 2026), so the cimas.yml opt-out is stale. Template note: the
+      # original was gh-actions/plantuml/rake.yml; plantuml/ was removed in
+      # 1c8696e — using inkscape/rake.yml as the closest substitute (same as
+      # isodoc). Swap if the wave PR shows substantive divergence vs live.
+      .github/workflows/rake.yml: gh-actions/inkscape/rake.yml
+      .github/workflows/release.yml: gh-actions/master/release.yml
       .github/workflows/automerge.yml: gh-actions/master/automerge.yml
   metanorma-iso:
     remote: ssh://git@github.com/metanorma/metanorma-iso
@@ -392,9 +399,13 @@ repositories:
     branch: main
     files:
       .rubocop.yml: gh-actions/master/.rubocop.yml
-      # isodoc do immediate release without waiting for unit tests pass
-      # .github/workflows/rake.yml: gh-actions/inkscape/rake.yml
-      # .github/workflows/release.yml: gh-actions/master/release.yml
+      # Restored to gated-release sync. The 2024-08-06 commit 099925c opted
+      # isodoc out with "do immediate release without waiting for unit tests
+      # pass" — but the per-repo release.yml has since been moved back to the
+      # gated rubygems-release.yml@main path (June 2026), so the cimas.yml
+      # opt-out is stale.
+      .github/workflows/rake.yml: gh-actions/inkscape/rake.yml
+      .github/workflows/release.yml: gh-actions/master/release.yml
       .github/workflows/integration.yml: gh-actions/inkscape/rake-daily.yml
   html2doc:
     remote: ssh://git@github.com/metanorma/html2doc
