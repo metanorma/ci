@@ -171,11 +171,27 @@ See [`metanorma/ci#309`](https://github.com/metanorma/ci/issues/309) for the mai
 
 **What it does.** `peter-evans/repository-dispatch@v3` fires a `repository_dispatch` with `event_type: release-passed` back to the same gem repo. Downstream workflows in the gem repo (e.g. `notify.yml`, `ruby-artifacts.yml`) trigger off this event.
 
-**Failure modes.**
-- *PAT scope insufficient*: same shape as layer 4.
-- *Receiver doesn't listen on the event type*: the dispatch happens but nothing handles it.
+#### Critical distinction: "dispatch accepted" vs "dispatch acted on"
 
-**Recognise.** Run shows the dispatch fired; downstream workflows either appear in `gh run list` shortly after, or don't.
+The `Dispatch release-passed` step reports success when the GitHub repository-dispatch API returns `2xx` to `peter-evans/repository-dispatch`. That confirms the request was **ACCEPTED** by GitHub's API surface, NOT that any workflow on the receiving end actually **ACTED ON** it. Two distinct things:
+
+| Confirmation | What proves it | Failure modes it does NOT catch |
+|---|---|---|
+| **Dispatch accepted** | The `Dispatch release-passed` step exits 0 | Receiver rejects the payload (HTTP 422 on the receiving workflow's first run — `metanorma-cli#426` shape); receiver doesn't exist (HTTP 404 — `metanorma-cli#427` shape); receiver is disabled |
+| **Dispatch acted on** | A workflow run on the receiver, triggered by `repository_dispatch`, appears in `gh run list` shortly after | (Catches all three above) |
+
+Without the second check, every shape on the right is a **silent fail**: the dispatch step is green, downstream simply doesn't fire, and nobody notices until the next maintainer-initiated release attempt — or, in `metanorma-cli#426`'s actual case, after **6 weeks** of stale Docker Hub.
+
+The `rubygems-release.yml` workflow now includes a `Verify release-passed dispatch acknowledged downstream` step ([`metanorma/ci#326`](https://github.com/metanorma/ci/pull/326)) that polls the same repo's `workflow_runs` API for a `repository_dispatch` run created at or after the dispatch timestamp, with a 90-second timeout. If no such run appears, the release run fails with explicit references to `#302` and `#426`. This closes the silent-fail mode at the cost of ~5-10 seconds per release (typical) or 90 seconds (timeout).
+
+#### Failure modes (post-`#326`)
+
+- *PAT scope insufficient*: same shape as layer 4. The dispatch step itself fails fast; not a silent fail.
+- *Receiver doesn't listen on the event type*: dispatch step reports 2xx, no run is created, the verification step times out at 90s and the release run errors.
+- *Receiver payload mismatch* (HTTP 422 / 404 / disabled): same as above — dispatch step reports 2xx, no run is created, verification times out and errors.
+- *Receiver creates a run but it fails at the first step*: dispatch step reports 2xx, A run was created (so the verification step is satisfied), but that run's own conclusion is `failure`. The verification step doesn't gate on the downstream conclusion — that's the receiver workflow's own monitoring responsibility.
+
+**Recognise.** Run shows the dispatch fired AND the verification step's `✓ Downstream repository_dispatch run found: <id> ...` line. If the verification times out, the release run errors with a pointer to inspect the receiver repo's Actions tab.
 
 ### Layer 12 — `ruby-artifacts.yml` on `release` event → docker / packed-mn dispatch
 
@@ -210,6 +226,15 @@ A failure at layer N often leaves the system in a state that's partially-release
 - **`repository_dispatch do-release`**: fired by `generic-rake.yml` after tests pass, OR manually as a recovery step. Skips bump/tag, starts at layer 5.
 - **`repository_dispatch release-passed`**: fired by `rubygems-release.yml` after publish, OR manually as a recovery step. Triggers downstream cascade.
 - **`push` on `v*` tag**: triggers rake (layer 2). Tag push by `gem bump --tag --push` is what kicks off the test matrix.
+
+## Observability safeguards landed 2026-06-30
+
+Two post-step verification gates were added to `rubygems-release.yml` to surface silent-fail classes at the source rather than weeks later:
+
+1. **`Verify gem published on rubygems.org`** ([`metanorma/ci#325`](https://github.com/metanorma/ci/pull/325)) — runs after both publish paths (API key and OIDC). Polls `https://rubygems.org/api/v1/versions/<gem>.json` every 5 s up to 120 s for the just-pushed version. Catches the `metanorma/ci#314`-class shape (publish appears green but gem isn't actually live).
+2. **`Verify release-passed dispatch acknowledged downstream`** ([`metanorma/ci#326`](https://github.com/metanorma/ci/pull/326)) — runs after `Dispatch release-passed`. Polls the same repo's `workflow_runs` API for a `repository_dispatch` run created at or after the dispatch timestamp, 5 s × 18 attempts = 90 s. Catches the `metanorma-cli#426`-class shape (dispatch accepted but no downstream workflow actually fires).
+
+These gates are the operational implementation of the "dispatch accepted vs dispatch acted on" distinction documented at layer 11 above. Both fail the release run with explicit references to the originating tickets so a maintainer can recognise the failure class from the error message alone.
 
 ## Known-fragile edges as of 2026-06-28
 
