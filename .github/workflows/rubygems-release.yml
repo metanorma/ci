@@ -224,8 +224,19 @@ jobs:
       # need an explicit fresh install before `bundle exec rake release`
       # or it dies with Bundler::GemNotFound for anything in the Gemfile.
       # Mirrors the preflight job's fresh-resolve step (same flags).
-      - name: Fresh bundle install
-        run: bundle install --jobs 4 --retry 3
+      #
+      # The release job does NOT need development or test groups — the
+      # release path is `gem build` + `gem push`, not running tests. Excluding
+      # those groups eliminates a class of release-blocking resolution
+      # failures where a transitively-pulled dev dependency happens to be
+      # unresolvable mid-rollout (metanorma/ci#258 — the metanorma-taste
+      # incident where its dev dep metanorma-cli's transitive graph was in
+      # flux). Skipping development and test groups closes that gap without
+      # changing what's actually published.
+      - name: Fresh bundle install (production groups only)
+        run: |
+          bundle config set --local without 'development test'
+          bundle install --jobs 4 --retry 3
 
       # ============ Version bump (workflow_dispatch only) ============
       - name: Bump version
