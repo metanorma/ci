@@ -321,6 +321,45 @@ jobs:
         name: Wait for release to propagate
         run: gem exec rubygems-await pkg/*.gem
 
+      # ============ Post-publish verification ============
+      # Verify the just-published gem version is actually queryable on
+      # rubygems.org. Without this check, a silent-fail in the publish
+      # step (the gem push reports success but the gem isn't on rubygems
+      # for whatever reason — auth scope, registry routing, partial CDN
+      # propagation timing out the upstream timeout, etc.) leaves the
+      # release reporting green while consumers can't `gem install` the
+      # new version. See metanorma/ci#302 ("green means published"
+      # observability) and metanorma/ci#314 (stale bundler-cache class).
+      #
+      # Polls the rubygems versions JSON every 5s up to 120s total. The
+      # OIDC path already does propagation waiting via `rubygems-await`
+      # above, so this poll typically returns instantly for it. The API
+      # Key path has no such waiter, so this is the first verification.
+      - name: Verify gem published on rubygems.org
+        if: env.SHOULD_PUBLISH == 'true' && env.skip_push != 'true'
+        env:
+          GEM_NAME: ${{ steps.gem-identity.outputs.name }}
+          GEM_VERSION: ${{ steps.gem-identity.outputs.version }}
+        run: |
+          echo "Polling rubygems.org for ${GEM_NAME} version ${GEM_VERSION}..."
+          for i in $(seq 1 24); do
+            status=$(curl -sf -o /dev/null -w "%{http_code}" \
+              "https://rubygems.org/api/v1/versions/${GEM_NAME}.json" || true)
+            if [[ "$status" == "200" ]]; then
+              if curl -s "https://rubygems.org/api/v1/versions/${GEM_NAME}.json" \
+                   | jq -e --arg v "$GEM_VERSION" '.[] | select(.number == $v) | .number' > /dev/null; then
+                echo "✓ ${GEM_NAME} ${GEM_VERSION} confirmed live on rubygems.org"
+                exit 0
+              fi
+            fi
+            echo "  attempt $i/24: not yet visible, sleeping 5s..."
+            sleep 5
+          done
+          echo "::error::${GEM_NAME} ${GEM_VERSION} was not visible on rubygems.org after 120s of polling."
+          echo "::error::Either the publish step failed silently (the class metanorma/ci#302 was filed to surface) or rubygems propagation is unusually slow."
+          echo "::error::Inspect the publish step's logs above for the actual outcome before re-running."
+          exit 1
+
       # ============ Post-release event ============
       - name: Get current gem ref
         id: gem-tag-ref
