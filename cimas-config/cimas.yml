@@ -1604,6 +1604,12 @@ patches:
   ruby_version:
     files:
       - "*.gemspec"
-    find: 'spec\.required_ruby_version\s*=.*'
-    replace: 'spec.required_ruby_version = Gem::Requirement.new(">= 3.3.0")'
-    groups: [processor, pubid, model, tools, metanorma, plugins]
+    # Match both the common `Gem::Specification.new do |spec|` (`spec.` block-var)
+    # and the older `Gem::Specification.new do |s|` (`s.` block-var) conventions.
+    # The (spec|s) capture is preserved in the replacement via \1, so a gemspec
+    # using `s.` stays `s.` after substitution. Without the alternation, `s.`-style
+    # gemspecs (e.g. reverse_adoc.gemspec) silently skip the wave. Cf metanorma/cimas#49.
+    find: '(spec|s)\.required_ruby_version\s*=.*'
+    replace: '\1.required_ruby_version = Gem::Requirement.new(">= 3.3.0")'
+    # `pubid` group removed 2026-06-29 (deprecated standalone family — see line ~197).
+    groups: [processor, model, tools, metanorma, plugins]
