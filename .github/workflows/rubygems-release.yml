@@ -365,6 +365,14 @@ jobs:
         id: gem-tag-ref
         run: echo "value=refs/tags/v${{ steps.gem-identity.outputs.version }}" >> "$GITHUB_OUTPUT"
 
+      # Record an ISO-8601 timestamp BEFORE dispatching. The post-dispatch
+      # verification step below uses this as the lower bound when polling for
+      # the corresponding repository_dispatch workflow run.
+      - name: Record dispatch timestamp
+        if: env.SHOULD_PUBLISH == 'true'
+        id: dispatch-ts
+        run: echo "iso=$(date -u +%Y-%m-%dT%H:%M:%SZ)" >> "$GITHUB_OUTPUT"
+
       - name: Dispatch release-passed
         if: env.SHOULD_PUBLISH == 'true'
         uses: peter-evans/repository-dispatch@v3
@@ -373,3 +381,51 @@ jobs:
           repository: ${{ github.repository }}
           event-type: release-passed
           client-payload: '{"ref": "${{ steps.gem-tag-ref.outputs.value }}", "sha": "${{ github.sha }}", "type": "release-passed"}'
+
+      # ============ Post-dispatch acknowledgement verification ============
+      # Verify the release-passed dispatch was actually received and started
+      # a downstream workflow run. The Dispatch step above reports success
+      # when peter-evans/repository-dispatch returns 2xx from the GitHub
+      # repository-dispatch API — that confirms the request was ACCEPTED by
+      # GitHub, NOT that it was received and acted on by a downstream
+      # workflow. The HTTP 422 silent-fail mode (metanorma/metanorma-cli#426
+      # is the canonical instance: the receiver rejected the dispatch payload
+      # shape because of a missing inputs declaration) would still report
+      # green at the dispatch step, because the rejection happens in a
+      # separate workflow run on the receiving side that nobody monitors.
+      #
+      # This step polls the same repo's workflow runs for one created after
+      # the dispatch timestamp with event=repository_dispatch. Times out at
+      # 90s. See metanorma/ci#302 ("dispatch accepted vs dispatch acted on"
+      # observability gap) and metanorma/metanorma-cli#426 (the original
+      # silent docker-rebuild failure that ran for 6 weeks unnoticed).
+      - name: Verify release-passed dispatch acknowledged downstream
+        if: env.SHOULD_PUBLISH == 'true'
+        env:
+          GH_TOKEN: ${{ secrets.pat_token || github.token }}
+          REPO: ${{ github.repository }}
+          SINCE: ${{ steps.dispatch-ts.outputs.iso }}
+        run: |
+          echo "Polling ${REPO} for a repository_dispatch workflow run created since ${SINCE}..."
+          for i in $(seq 1 18); do
+            # List recent repository_dispatch runs (created descending),
+            # then jq-filter for runs created at-or-after our dispatch
+            # timestamp. Pipe to jq directly so the --arg variable
+            # injection works (gh api's --jq accepts only a single
+            # expression, not jq's --arg flag).
+            found=$(gh api "repos/${REPO}/actions/runs?event=repository_dispatch&per_page=10" \
+              | jq -r --arg since "$SINCE" \
+                  '.workflow_runs[] | select(.created_at >= $since) | "\(.id) \(.name // "?") \(.status)/\(.conclusion // "?") created=\(.created_at)"' \
+              | head -1)
+            if [[ -n "$found" ]]; then
+              echo "✓ Downstream repository_dispatch run found:"
+              echo "  $found"
+              exit 0
+            fi
+            echo "  attempt $i/18: no matching run yet, sleeping 5s..."
+            sleep 5
+          done
+          echo "::error::No repository_dispatch workflow run was created within 90s of the release-passed dispatch."
+          echo "::error::Either no workflow listens for repository_dispatch types: [release-passed] in ${REPO}, or the dispatch was rejected silently (the class metanorma/metanorma-cli#426 was filed to surface)."
+          echo "::error::Inspect https://github.com/${REPO}/actions for repository_dispatch runs near the timestamp ${SINCE}."
+          exit 1
