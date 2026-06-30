@@ -473,13 +473,12 @@ repositories:
       # direct rake job"). See metanorma/ci#300 (Gap 3) for the broader
       # opt-out-detection design question.
       .github/workflows/release.yml: gh-actions/master/release.yml
-  atmospheric:
-    remote: ssh://git@github.com/metanorma/atmospheric
-    branch: main
-    files:
-      .rubocop.yml: gh-actions/master/.rubocop.yml
-      .github/workflows/rake.yml: gh-actions/master/rake.yml
-      .github/workflows/release.yml: gh-actions/master/release.yml
+  # atmospheric: transferred out of metanorma org on 2026-04-23 (same day a new
+  # `atmospheris` org was created to receive it; gem renamed atmospheric →
+  # atmospheris). Now lives at https://github.com/atmospheris/atmospheris and is
+  # outside cimas-managed scope. Pre-transfer entry kept in git history for
+  # reference. The silent push-fail this entry was producing in cimas waves is
+  # the canonical case for #300 Gap 3 (drift-audit) — see the issue thread.
   modspec-ruby:
     remote: ssh://git@github.com/metanorma/modspec-ruby
     branch: main
