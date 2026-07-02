@@ -313,14 +313,12 @@ repositories:
       Makefile: gh-actions/model/Makefile
       .github/workflows/make.yml: gh-actions/model/make.yml
       .github/workflows/automerge.yml: gh-actions/master/automerge.yml
-  metanorma-model-m3d:
-    remote: ssh://git@github.com/metanorma/metanorma-model-m3d
-    branch: main
-    files:
-      Gemfile: gh-actions/model/Gemfile
-      Makefile: gh-actions/model/Makefile
-      .github/workflows/make.yml: gh-actions/model/make.yml
-      .github/workflows/automerge.yml: gh-actions/master/automerge.yml
+  # metanorma-model-m3d: renamed within `metanorma` to `metanorma-model-m3aawg`
+  # (the model tracks the M3AAWG standards body's evolution). Surfaced by
+  # cimas-drift-audit MVP (metanorma/ci#335) on 2026-07-02 as class (c)
+  # internal rename. Stale duplicate — the `metanorma-model-m3aawg:` entry
+  # below already exists with equivalent config; keeping this here would
+  # double-count. Pre-rename entry preserved in git history.
   metanorma-model-ogc:
     remote: ssh://git@github.com/metanorma/metanorma-model-ogc
     branch: main
@@ -329,14 +327,12 @@ repositories:
       Makefile: gh-actions/model/Makefile
       .github/workflows/make.yml: gh-actions/model/make.yml
       .github/workflows/automerge.yml: gh-actions/master/automerge.yml
-  metanorma-model-rsd:
-    remote: ssh://git@github.com/metanorma/metanorma-model-rsd
-    branch: main
-    files:
-      Gemfile: gh-actions/model/Gemfile
-      Makefile: gh-actions/model/Makefile
-      .github/workflows/make.yml: gh-actions/model/make.yml
-      .github/workflows/automerge.yml: gh-actions/master/automerge.yml
+  # metanorma-model-rsd: renamed within `metanorma` to `metanorma-model-ribose`
+  # (the model tracks the Ribose-branded standard). Surfaced by
+  # cimas-drift-audit MVP (metanorma/ci#335) on 2026-07-02 as class (c)
+  # internal rename. Stale duplicate — the `metanorma-model-ribose:` entry
+  # below already exists with equivalent config; keeping this here would
+  # double-count. Pre-rename entry preserved in git history.
   metanorma-model-bipm:
     remote: ssh://git@github.com/metanorma/metanorma-model-bipm
     branch: main
@@ -678,10 +674,13 @@ repositories:
     template:
       binding:
         flavor: plateau
-  mn-samples-mlit:
-    remote: ssh://git@github.com/metanorma/mn-samples-mlit
-    branch: main
-    files: {}
+  # mn-samples-mlit: renamed within `metanorma` to `mn-samples-plateau`
+  # (Japan MLIT samples renamed to align with the plateau standards
+  # naming). Surfaced by cimas-drift-audit MVP (metanorma/ci#335) on
+  # 2026-07-02 as class (c) internal rename. Stale duplicate — the
+  # `mn-samples-plateau:` entry above already exists with actual sync
+  # config (this entry was `files: {}` = no active sync anyway).
+  # Pre-rename entry preserved in git history.
   mn-samples-mbxif:
     remote: ssh://git@github.com/metanorma/mn-samples-mbxif
     branch: main
@@ -1016,12 +1015,12 @@ repositories:
     files:
       .rubocop.yml: gh-actions/master/.rubocop.yml
       .github/workflows/rake.yml: gh-actions/master/rake.yml
-  metanorma-ietf-data:
-    remote: ssh://git@github.com/metanorma/metanorma-ietf-data
-    branch: main
-    files:
-      .rubocop.yml: gh-actions/master/.rubocop.yml
-      .github/workflows/rake.yml: gh-actions/master/rake.yml
+  # metanorma-ietf-data: renamed within `metanorma` to `ietf-data-importer`.
+  # Surfaced by cimas-drift-audit MVP (metanorma/ci#335) on 2026-07-02 as
+  # class (c) internal rename. Stale duplicate — the `ietf-data-importer:`
+  # entry below already exists with equivalent+release.yml sync config;
+  # keeping this here would double-count. Pre-rename entry preserved in
+  # git history.
   # vectory: transferred to `claricle/vectory` (new claricle org created
   # to receive it). Surfaced by cimas-drift-audit MVP (metanorma/ci#335)
   # on 2026-07-02 as class (c) external transfer. Now lives at
@@ -1354,11 +1353,11 @@ groups:
   - metanorma-model-cc
   - metanorma-model-iso
   - metanorma-model-itu
-  - metanorma-model-m3d
+  # - metanorma-model-m3d      (stripped: renamed to metanorma-model-m3aawg)
   - metanorma-model-mpfa
   - metanorma-model-nist
   - metanorma-model-ogc
-  - metanorma-model-rsd
+  # - metanorma-model-rsd      (stripped: renamed to metanorma-model-ribose)
   - metanorma-model-standoc
   - metanorma-model-un
   - metanorma-model-bipm
@@ -1413,7 +1412,7 @@ groups:
   - mn-samples-ribose
   - mn-samples-ieee
   - mn-samples-standoc
-  - mn-samples-mlit
+  # - mn-samples-mlit          (stripped: renamed to mn-samples-plateau)
   - mn-samples-mbxif
   - mn-samples-plateau
   docs:
