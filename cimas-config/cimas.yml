@@ -467,13 +467,11 @@ repositories:
       .rubocop.yml: gh-actions/master/.rubocop.yml
       .github/workflows/rake.yml: gh-actions/master/rake.yml
       .github/workflows/release.yml: gh-actions/master/release.yml
-  edoxen:
-    remote: ssh://git@github.com/metanorma/edoxen
-    branch: main
-    files:
-      .rubocop.yml: gh-actions/master/.rubocop.yml
-      .github/workflows/rake.yml: gh-actions/master/rake.yml
-      .github/workflows/release.yml: gh-actions/master/release.yml
+  # edoxen: transferred to `edoxen/edoxen` (new one-repo org created to
+  # receive it). Surfaced by cimas-drift-audit MVP (metanorma/ci#335) on
+  # 2026-07-02 as class (c) external transfer. Now lives at
+  # https://github.com/edoxen/edoxen and is outside cimas-managed scope.
+  # Pre-transfer entry preserved in git history for reference.
   coradoc:
     remote: ssh://git@github.com/metanorma/coradoc
     branch: main
@@ -766,11 +764,12 @@ repositories:
     branch: main
     files:
       .github/workflows/generate.yml: gh-actions/samples/public-docker.yml
-  pdfa-iso-32000-2:
-    remote: ssh://git@github.com/metanorma/pdfa-iso-32000-2
-    branch: main
-    files:
-      .github/workflows/generate.yml: gh-actions/samples/public-docker.yml
+  # pdfa-iso-32000-2: transferred to `pdf-association/spec-pdf-core`
+  # (PDF Association took ownership as the spec's steward). Surfaced by
+  # cimas-drift-audit MVP (metanorma/ci#335) on 2026-07-02 as class (c)
+  # external transfer. Now lives at
+  # https://github.com/pdf-association/spec-pdf-core and is outside
+  # cimas-managed scope. Pre-transfer entry preserved in git history.
   annotated-express:
     remote: ssh://git@github.com/metanorma/annotated-express
     branch: main
@@ -995,20 +994,16 @@ repositories:
       default/.github/workflows/docker.yml: gh-actions/samples/docker.yml
       default/.github/workflows/generate.yml: gh-actions/samples/generate.yml
   # other
-  iev:
-    remote: ssh://git@github.com/metanorma/iev
-    branch: main
-    files:
-      .rubocop.yml: gh-actions/master/.rubocop.yml
-      .github/workflows/rake.yml: gh-actions/master/rake.yml
-      .github/workflows/release.yml: gh-actions/master/release.yml
-  reeper:
-    remote: ssh://git@github.com/metanorma/reeper
-    branch: master
-    files:
-      .rubocop.yml: gh-actions/master/.rubocop.yml
-      .github/workflows/rake.yml: gh-actions/master/rake.yml
-      .github/workflows/release.yml: gh-actions/master/release.yml
+  # iev: transferred to `glossarist/iev` (moved to the glossarist org
+  # alongside the other IEV tooling). Surfaced by cimas-drift-audit MVP
+  # (metanorma/ci#335) on 2026-07-02 as class (c) external transfer.
+  # Now lives at https://github.com/glossarist/iev and is outside
+  # cimas-managed scope. Pre-transfer entry preserved in git history.
+  # reeper: transferred to `lutaml/reeper` (moved to the lutaml org).
+  # Surfaced by cimas-drift-audit MVP (metanorma/ci#335) on 2026-07-02
+  # as class (c) external transfer. Now lives at
+  # https://github.com/lutaml/reeper and is outside cimas-managed scope.
+  # Pre-transfer entry preserved in git history.
   metanorma-registry:
     remote: ssh://git@github.com/metanorma/metanorma-registry
     branch: master
@@ -1027,13 +1022,11 @@ repositories:
     files:
       .rubocop.yml: gh-actions/master/.rubocop.yml
       .github/workflows/rake.yml: gh-actions/master/rake.yml
-  vectory:
-    remote: ssh://git@github.com/metanorma/vectory
-    branch: main
-    files:
-      .rubocop.yml: gh-actions/master/.rubocop.yml
-      .github/workflows/rake.yml: gh-actions/master/rake.yml
-      .github/workflows/release.yml: gh-actions/master/release.yml
+  # vectory: transferred to `claricle/vectory` (new claricle org created
+  # to receive it). Surfaced by cimas-drift-audit MVP (metanorma/ci#335)
+  # on 2026-07-02 as class (c) external transfer. Now lives at
+  # https://github.com/claricle/vectory and is outside cimas-managed scope.
+  # Pre-transfer entry preserved in git history.
   suma:
     remote: ssh://git@github.com/metanorma/suma
     branch: main
@@ -1041,13 +1034,11 @@ repositories:
       .rubocop.yml: gh-actions/master/.rubocop.yml
       .github/workflows/rake.yml: gh-actions/master/rake.yml
       .github/workflows/release.yml: gh-actions/master/release.yml
-  xml-c14n:
-    remote: ssh://git@github.com/metanorma/xml-c14n
-    branch: main
-    files:
-      .rubocop.yml: gh-actions/master/.rubocop.yml
-      .github/workflows/rake.yml: gh-actions/master/rake.yml
-      .github/workflows/release.yml: gh-actions/master/release.yml
+  # xml-c14n: transferred to `lutaml/canon` (moved to the lutaml org and
+  # renamed to `canon`). Surfaced by cimas-drift-audit MVP
+  # (metanorma/ci#335) on 2026-07-02 as class (c) external transfer.
+  # Now lives at https://github.com/lutaml/canon and is outside
+  # cimas-managed scope. Pre-transfer entry preserved in git history.
   # rfc
   rfc-divination-cfapi:
     remote: ssh://git@github.com/metanorma/rfc-divination-cfapi
@@ -1176,13 +1167,11 @@ repositories:
     branch: main
     files:
       .rubocop.yml: gh-actions/master/.rubocop.yml
-  oscal-ruby:
-    remote: ssh://git@github.com/metanorma/oscal-ruby
-    branch: main
-    files:
-      .rubocop.yml: gh-actions/master/.rubocop.yml
-      .github/workflows/rake.yml: gh-actions/master/rake.yml
-      .github/workflows/release.yml: gh-actions/master/release.yml
+  # oscal-ruby: transferred to `lutaml/oscal` (moved to the lutaml org
+  # and renamed). Surfaced by cimas-drift-audit MVP (metanorma/ci#335)
+  # on 2026-07-02 as class (c) external transfer. Now lives at
+  # https://github.com/lutaml/oscal and is outside cimas-managed scope.
+  # Pre-transfer entry preserved in git history.
   sts-ruby:
     remote: ssh://git@github.com/metanorma/sts-ruby
     branch: main
@@ -1194,10 +1183,13 @@ repositories:
     remote: ssh://git@github.com/metanorma/pngcheck-ruby
     branch: main
     files: []
-  emf2svg-ruby:
-    remote: ssh://git@github.com/metanorma/emf2svg-ruby
-    branch: main
-    files: []
+  # emf2svg-ruby: transferred to `claricle/emf2svg-ruby` (moved to
+  # claricle org, same as vectory). Surfaced by cimas-drift-audit MVP
+  # (metanorma/ci#335) on 2026-07-02 as class (c) external transfer.
+  # Now lives at https://github.com/claricle/emf2svg-ruby and is outside
+  # cimas-managed scope. Pre-transfer entry preserved in git history.
+  # (Prior entry already had `files: []` — no active sync, but the
+  # tracking claim was stale.)
   metanorma-plugin-lutaml:
     remote: ssh://git@github.com/metanorma/metanorma-plugin-lutaml
     branch: main
