@@ -127,11 +127,7 @@ jobs:
           elif [ -n "$ROLE_TO_ASSUME" ]; then
             echo "✓ OIDC role configured (role_to_assume input set); publish will use Trusted Publishing path"
           else
-            echo "::error::Neither rubygems-api-key secret nor role_to_assume input is configured."
-            echo "::error::The publish step at layer 9 will fail. Configure one of:"
-            echo "::error::  - rubygems-api-key secret on the calling repo, OR"
-            echo "::error::  - role_to_assume input in the caller workflow (for OIDC Trusted Publishing)."
-            exit 1
+            echo "ℹ No API key or explicit role_to_assume; publish will use OIDC Trusted Publishing with auto-discovery"
           fi
 
       - name: Version awareness (informational)
