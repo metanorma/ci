@@ -83,12 +83,18 @@ REPO_KEY_RE       = /^  ([a-zA-Z][a-zA-Z0-9_.-]*):\s*$/
 COMMENTED_FILE_RE = %r{^      \#\s*([\w./-]+):\s*(\S.*?)\s*$}
 COMMENT_LINE_RE   = /^      \#/
 INDENTED_LINE_RE  = /^\s+\S/
+# Coradoc-shape: narrative comment mentions a file (e.g. "rake.yml removed")
+# without a following commented-out mapping. Extract the first file-shape
+# token to use as the anchor local_path.
+NARRATIVE_FILE_RE = %r{([\w./-]*[\w-]+\.(?:yml|rb|md|erb|rubocop\.yml)|Gemfile|Makefile|Rakefile)}
 
 # Extract per-repo opt-outs (commented-out file mappings + rationale) via
-# a raw-line scan. Only detects the glossarist-shape opt-out (a commented
-# file mapping preceded by a rationale block). The coradoc-shape opt-out
-# (narrative-only comment with NO commented file mapping) is a known gap
-# handled later at classification time via a fallback heuristic.
+# a raw-line scan. Detects two shapes:
+#
+#   - glossarist-shape: rationale block + a commented-out file-mapping line
+#     "      # <path>: <template>"
+#   - coradoc-shape: rationale block WITHOUT a following commented mapping,
+#     where the rationale text mentions a file name (e.g. "rake.yml removed")
 def scan_opt_outs(path, repos_data)
   opt_outs_by_repo = {}
   current_repo = nil
@@ -98,6 +104,8 @@ def scan_opt_outs(path, repos_data)
     line = raw_line.chomp
     boundary = detect_repo_boundary(line, repos_data)
     if boundary != :no_change
+      # Flush any pending narrative-shape opt-out before leaving the current repo.
+      flush_narrative_opt_out(current_repo, opt_outs_by_repo, pending_comments)
       current_repo = boundary == :leave ? nil : boundary
       opt_outs_by_repo[current_repo] ||= [] if current_repo
       pending_comments = []
@@ -110,8 +118,24 @@ def scan_opt_outs(path, repos_data)
       line, current_repo, opt_outs_by_repo, pending_comments
     )
   end
+  flush_narrative_opt_out(current_repo, opt_outs_by_repo, pending_comments)
 
   opt_outs_by_repo
+end
+
+# If the pending comments describe a narrative-shape opt-out (mention a
+# filename), emit an OptOut with template_path=nil. Called at repo boundaries.
+def flush_narrative_opt_out(current_repo, opt_outs_by_repo, pending_comments)
+  return unless current_repo && !pending_comments.empty?
+
+  joined = pending_comments.join(" ")
+  return unless (m = NARRATIVE_FILE_RE.match(joined))
+
+  opt_outs_by_repo[current_repo] << OptOut.new(
+    local_path: m[1],
+    template_path: nil,
+    rationale_lines: pending_comments.dup,
+  )
 end
 
 # Returns :leave (dropped out of a repo), :no_change (nothing to do), or
@@ -142,7 +166,9 @@ def scan_opt_out_line(line, current_repo, opt_outs_by_repo, pending_comments)
     # Buffer rationale — flushed if the next commented line is a file mapping.
     pending_comments + [line]
   elsif INDENTED_LINE_RE.match?(line)
-    # A substantive non-comment line resets the buffer.
+    # A substantive non-comment line resets the buffer. If pending_comments
+    # was a narrative-shape opt-out (mentioned a file), flush it before reset.
+    flush_narrative_opt_out(current_repo, opt_outs_by_repo, pending_comments)
     []
   else
     # Blank line: preserve pending_comments across it.
@@ -161,6 +187,9 @@ def parse_cimas_yml(path)
     org = extract_org(remote)
 
     files_hash = data["files"] || {}
+    opt_outs = filter_false_positive_opt_outs(
+      opt_outs_by_repo[name] || [], files_hash
+    )
 
     CimasEntry.new(
       name: name,
@@ -168,8 +197,23 @@ def parse_cimas_yml(path)
       branch: data["branch"] || "main",
       remote_url: remote,
       files_synced: files_hash,
-      opt_outs: opt_outs_by_repo[name] || [],
+      opt_outs: opt_outs,
     )
+  end
+end
+
+# Filter out false-positive narrative opt-outs where the mentioned file is
+# already actively synced. Restoration comments (e.g. "was opted-out but
+# restored to gated") that mention the same filename would otherwise trip
+# the narrative-shape detector; they're documentation of the RESTORATION,
+# not an opt-out. Glossarist-shape opt-outs are always kept (template_path
+# non-nil is an authoritative signal).
+def filter_false_positive_opt_outs(opt_outs, files_synced)
+  synced_paths = files_synced.respond_to?(:keys) ? files_synced.keys.map(&:to_s) : []
+  opt_outs.reject do |opt_out|
+    next false unless opt_out.template_path.nil? # only filter narrative-shape
+
+    synced_paths.any? { |sp| sp.include?(opt_out.local_path) }
   end
 end
 
@@ -377,26 +421,74 @@ def normalize_for_compare(content)
   without_banner.gsub(/[ \t]+$/, "").strip
 end
 
-# For (e.3): emit a flag for each documented opt-out (glossarist-shape).
-# MVP does NOT do rationale-text analysis to detect (e.1) stale rationale
-# — that's heuristic and needs manual review. All documented opt-outs
-# surface as (e.3) flags for maintainer affirmation.
+# For each documented opt-out, decide between (e.1) stale-rationale
+# (the rationale claims opt-out but the live file matches the referenced
+# template — so the opt-out is contradicted by live state) and (e.3)
+# documented opt-out (live file differs from template — the opt-out is
+# real, flagged for maintainer affirmation).
+#
+# Narrative-shape opt-outs (template_path == nil) always surface as (e.3)
+# because we have no template to compare against — no way to falsify
+# their rationale from live state alone.
 def classify_opt_outs(entry)
   entry.opt_outs.map do |opt_out|
-    rationale = opt_out.rationale_lines.map { |l| l.strip.sub(/\A#\s?/, "") }
-                       .reject(&:empty?)
-                       .join(" ")
-    Finding.new(
-      severity: :flag, klass: :e3, repo_name: entry.name,
-      file: opt_out.local_path,
-      detail: "Documented opt-out from cimas sync of `#{opt_out.local_path}` " \
-              "(would template from `#{opt_out.template_path}`). " \
-              "Rationale: #{rationale.empty? ? '(none inline)' : rationale}",
-      recommendation: "Affirm this cycle if still valid; " \
-                      "otherwise resolve by restoring sync or expanding " \
-                      "the rationale."
-    )
+    rationale = format_rationale(opt_out.rationale_lines)
+    stale = stale_opt_out?(entry, opt_out)
+
+    if stale
+      finding_e1(entry, opt_out, rationale)
+    else
+      finding_e3(entry, opt_out, rationale)
+    end
   end
+end
+
+def format_rationale(rationale_lines)
+  rationale_lines.map { |l| l.strip.sub(/\A#\s?/, "") }
+                 .reject(&:empty?)
+                 .join(" ")
+end
+
+# Returns true when the opt-out's rationale is contradicted by live state
+# — i.e. the live file at local_path matches the referenced template.
+# Only fires for glossarist-shape (template_path present); narrative-shape
+# opt-outs are treated as unverifiable → not stale.
+def stale_opt_out?(entry, opt_out)
+  return false if opt_out.template_path.nil?
+
+  live_content = probe_file(entry, opt_out.local_path)
+  template_content = read_template(opt_out.template_path)
+  return false if live_content.nil? || template_content.nil?
+
+  normalize_for_compare(live_content) == normalize_for_compare(template_content)
+end
+
+def finding_e1(entry, opt_out, rationale)
+  Finding.new(
+    severity: :error, klass: :e1, repo_name: entry.name,
+    file: opt_out.local_path,
+    detail: "Stale opt-out: `#{opt_out.local_path}` claims opt-out from " \
+            "`#{opt_out.template_path}` but the live file on " \
+            "`#{entry.org}/#{entry.name}` currently MATCHES the template. " \
+            "Rationale is contradicted by live state. " \
+            "Rationale: #{rationale.empty? ? '(none inline)' : rationale}",
+    recommendation: "Restore the sync line (remove the # from the file " \
+                    "mapping in cimas.yml) and delete the rationale block."
+  )
+end
+
+def finding_e3(entry, opt_out, rationale)
+  template_hint = opt_out.template_path ? "would template from `#{opt_out.template_path}`" : "narrative-shape (no template reference)"
+  Finding.new(
+    severity: :flag, klass: :e3, repo_name: entry.name,
+    file: opt_out.local_path,
+    detail: "Documented opt-out from cimas sync of `#{opt_out.local_path}` " \
+            "(#{template_hint}). " \
+            "Rationale: #{rationale.empty? ? '(none inline)' : rationale}",
+    recommendation: "Affirm this cycle if still valid; " \
+                    "otherwise resolve by restoring sync or expanding " \
+                    "the rationale."
+  )
 end
 
 # ---------- Phase 3 harness ----------
