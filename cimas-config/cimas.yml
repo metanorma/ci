@@ -1208,6 +1208,20 @@ repositories:
     remote: ssh://git@github.com/metanorma/metanorma-plugin-glossarist
     branch: main
     files:
+      # .rubocop.yml opt-out: repo's live .rubocop.yml carries grandfathered
+      # config the master template can't express — specifically:
+      #   - inherits from BOTH oss-guides AND a local .rubocop_todo.yml
+      #     (grandfathered violations kept in a separate file, mirrors the
+      #     metanorma-taste pattern from the 2026-06-19 wave)
+      #   - inherit_mode: merge: - Exclude (repo-specific Exclude patterns
+      #     must merge with, not replace, the oss-guides ones)
+      #   - plugins: rubocop-rspec, rubocop-performance, rubocop-rake
+      #   - TargetRubyVersion: 3.0 (repo hasn't been bumped past 3.0 yet)
+      # Verified 2026-07-02: live .rubocop.yml on origin/main confirmed to
+      # carry the above; master/.rubocop.yml template can't produce this shape.
+      # Legitimate documented opt-out per #300 Gap 3 criterion class (documented).
+      # Revisit if cimas patches mode (cimas#38) grows an insertion mechanism
+      # capable of expressing the local overrides parametrically.
       # .rubocop.yml: gh-actions/master/.rubocop.yml
       .github/workflows/rake.yml: gh-actions/master/rake.yml
       .github/workflows/release.yml: gh-actions/master/release.yml
