@@ -61,6 +61,16 @@ on:
         required: false
         type: string
         default: ''
+      acknowledge_breaking_in_patch:
+        description: |
+          Override the patch-release breaking-change heuristic guard for this run.
+          Set to true ONLY when the guard's trip is a known false-positive
+          (e.g. removing an accidentally-shipped fixture file, or a rename that
+          preserves API). The override is recorded in the run inputs and visible
+          in the audit trail. See metanorma/ci#278.
+        required: false
+        type: boolean
+        default: false
     secrets:
       rubygems-api-key:
         required: false
@@ -186,6 +196,11 @@ jobs:
           ref: ${{ github.event.client_payload.ref || github.ref }}
           submodules: ${{ inputs.submodules }}
           token: ${{ secrets.pat_token || github.token }}
+          # fetch-depth: 0 needed for the release-breaking-check.rb guard
+          # (metanorma/ci#278) to compare prev tag vs HEAD across history.
+          # Cheap on typical gem repos (<100 MB); if payload cost ever
+          # matters, the guard could switch to a shallow-fetch strategy.
+          fetch-depth: 0
 
       - if: github.event_name == 'workflow_dispatch' || github.event_name == 'repository_dispatch'
         run: git fetch --tags origin
@@ -214,6 +229,36 @@ jobs:
           git config user.email github-actions@github.com
 
       - run: gem install gem-release
+
+      # ============ Breaking-change heuristic guard (patch, workflow_dispatch) ============
+      # Halts a manual `patch` release when the diff between the prev tag and
+      # HEAD shows deleted shipping-path files or removed top-level constants/
+      # methods. Only fires on workflow_dispatch + next_version=patch. See
+      # metanorma/ci#278 for the design rationale (v0.9.42 lutaml incident).
+      # The gem-compare install is required only for the advisory heuristic (e).
+      - name: Install gem-compare (for the breaking-change guard's advisory diff)
+        if: >-
+          github.event_name == 'workflow_dispatch' &&
+          inputs.next_version == 'patch' &&
+          inputs.acknowledge_breaking_in_patch != true
+        run: gem install gem-compare
+
+      - name: Fetch release-breaking-check.rb from metanorma/ci
+        if: >-
+          github.event_name == 'workflow_dispatch' &&
+          inputs.next_version == 'patch' &&
+          inputs.acknowledge_breaking_in_patch != true
+        run: |
+          curl -fsSL -o /tmp/release-breaking-check.rb \
+            https://raw.githubusercontent.com/metanorma/ci/main/.github/scripts/release-breaking-check.rb
+          test -s /tmp/release-breaking-check.rb
+
+      - name: Breaking-change heuristic guard
+        if: >-
+          github.event_name == 'workflow_dispatch' &&
+          inputs.next_version == 'patch' &&
+          inputs.acknowledge_breaking_in_patch != true
+        run: ruby /tmp/release-breaking-check.rb
 
       - name: Remove Gemfile.lock before bump
         run: rm -f Gemfile.lock
