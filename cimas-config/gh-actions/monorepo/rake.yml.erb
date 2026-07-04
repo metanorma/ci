@@ -1,0 +1,40 @@
+name: rake
+
+on:
+  push:
+    branches: [ main, master ]
+    tags: [ v* ]
+  pull_request:
+    branches: [ main, master ]
+  workflow_dispatch:
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.head_ref || github.ref_name }}
+  cancel-in-progress: true
+
+jobs:
+  rake:
+    uses: metanorma/ci/.github/workflows/monorepo-per-gem-rake.yml@main
+    with:
+      monorepo: <%= with_values.fetch('monorepo', true) %>
+      gem_directory: <%= with_values.fetch('gem_directory', 'gems') %>
+<%- if with_values.key?('gem_name') -%>
+      gem_name: <%= with_values['gem_name'] %>
+<%- end -%>
+<%- if with_values.key?('setup-tools') -%>
+      setup-tools: <%= with_values['setup-tools'] %>
+<%- end -%>
+<%- if with_values.key?('before-setup-ruby') -%>
+      before-setup-ruby: <%= with_values['before-setup-ruby'] %>
+<%- end -%>
+<%- if with_values.key?('after-setup-ruby') -%>
+      after-setup-ruby: <%= with_values['after-setup-ruby'] %>
+<%- end -%>
+<%- if with_values.key?('tests-passed-event') -%>
+      tests-passed-event: <%= with_values['tests-passed-event'] %>
+<%- end -%>
+<%- if with_values.key?('release-event') -%>
+      release-event: <%= with_values['release-event'] %>
+<%- end -%>
+    secrets:
+      pat_token: ${{ secrets.METANORMA_CI_PAT_TOKEN }}

@@ -194,35 +194,24 @@ repositories:
       .rubocop.yml: gh-actions/master/.rubocop.yml
       .github/workflows/rake.yml: gh-actions/master/rake.yml
       .github/workflows/release.yml: gh-actions/master/release.yml
-  # ============================================================================
-  # PENDING-READD: metanorma/pubid (monorepo)  —  gate: metanorma/ci#300 Gap 2
-  # ============================================================================
-  # The monorepo `metanorma/pubid` is IN SCOPE for cimas-sync long-term, but is
-  # CURRENTLY ABSENT from this config because the master rake.yml template
-  # (`uses: metanorma/ci/.github/workflows/generic-rake.yml@main`) does not fit
-  # the monorepo shape (`uses: ./.github/workflows/generic-rake.yml` with
-  # `monorepo: true, gem_directory: gems`). Re-adding the monorepo with the
-  # master template would clobber its monorepo-aware CI on every cimas-sync.
-  #
-  # Re-add when `metanorma/ci#300` Gap 2 lands the `gh-actions/monorepo/*.yml`
-  # sub-template family. The expected re-added entry will use the new
-  # `template: + with:` schema (gated on Gap 1 also) and look roughly like:
-  #
-  #   pubid:
-  #     remote: ssh://git@github.com/metanorma/pubid
-  #     branch: main
-  #     files:
-  #       .rubocop.yml: gh-actions/master/.rubocop.yml
-  #       .github/workflows/rake.yml:
-  #         template: gh-actions/monorepo/rake.yml
-  #         with:
-  #           monorepo: true
-  #           gem_directory: gems
-  #       .github/workflows/release.yml: gh-actions/monorepo/release.yml
-  #
-  # See metanorma/cimas:plans/cimas-revival-and-release-workflow-realignment.md
-  # for the rehabilitation roadmap.
-  # ============================================================================
+  # metanorma/pubid re-added 2026-07-05 after metanorma/ci#300 Gap 2 landed
+  # the `gh-actions/monorepo/*` template family. The rake.yml sync maps to
+  # `gh-actions/monorepo/rake.yml.erb`, which calls the new shared reusable
+  # `metanorma/ci/.github/workflows/monorepo-per-gem-rake.yml` (promoted from
+  # pubid's local `./.github/workflows/generic-rake.yml` fork). On the next
+  # cimas sync pubid's rake.yml `uses:` line switches from the local fork to
+  # the shared reusable; the local `.github/workflows/generic-rake.yml` fork
+  # becomes orphaned (cleanup follow-up — cimas doesn't manage that file).
+  # Per-repo `with:` follows the metanorma/cimas#55 shape.
+  pubid:
+    remote: ssh://git@github.com/metanorma/pubid
+    branch: main
+    files:
+      .rubocop.yml: gh-actions/master/.rubocop.yml
+      .github/workflows/rake.yml: gh-actions/monorepo/rake.yml.erb
+    with:
+      monorepo: true
+      gem_directory: gems
   #
   # DEPRECATED standalone pubid-* repos — removed 2026-06-29 (refs #274, #300 Gap 3):
   # superseded by `metanorma/pubid` monorepo. Their gems on rubygems are now
