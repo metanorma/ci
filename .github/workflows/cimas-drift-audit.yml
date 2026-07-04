@@ -1,0 +1,199 @@
+name: cimas-drift-audit
+
+# Runs the drift-audit script (.github/scripts/cimas-drift-audit.rb) on a
+# schedule, posts the report to a tracking issue on this repo.
+#
+# Cadence: weekly, Wednesdays 09:00 UTC (Wed evening Melbourne AEDT).
+# Wednesdays are clear of the fortnightly Monday release cadence so the
+# report doesn't distract maintainers during release windows.
+#
+# The tracking issue is identified by the `drift-audit-tracking` label
+# and title prefix; first run creates it, subsequent runs update the
+# body and post a timestamped comment with the latest report.
+#
+# See metanorma/ci#340 for design + acceptance criteria.
+
+on:
+  schedule:
+    - cron: "0 9 * * Wed"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  issues: write
+
+env:
+  TRACKING_LABEL: drift-audit-tracking
+  TRACKING_TITLE: "cimas-drift-audit: rolling report"
+
+jobs:
+  audit:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+
+      - uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: "3.3"
+
+      - name: Run drift audit
+        id: audit
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          # PHASE_4_FULL_REPORT emits the Markdown report to stdout; capture
+          # to a file so the summary + tracking-issue step can consume it.
+          if PHASE_4_FULL_REPORT=1 ruby .github/scripts/cimas-drift-audit.rb \
+              > /tmp/drift-report.md 2> /tmp/drift-report.err; then
+            audit_status=ok
+          else
+            audit_status=error
+          fi
+          echo "audit_status=$audit_status" >> "$GITHUB_OUTPUT"
+
+          # Feed a preview into the workflow summary so a maintainer clicking
+          # into the run sees the top of the report immediately.
+          {
+            echo "## cimas-drift-audit — $(date -u +'%Y-%m-%d %H:%M UTC')"
+            echo ""
+            if [ "$audit_status" = "error" ]; then
+              echo "**Audit script exited with an error.** See stderr below."
+              echo ""
+              echo '```'
+              cat /tmp/drift-report.err
+              echo '```'
+            else
+              head -80 /tmp/drift-report.md
+              echo ""
+              echo "_(preview — full report in the tracking issue comment)_"
+            fi
+          } >> "$GITHUB_STEP_SUMMARY"
+
+      - name: Ensure tracking issue exists (find or create)
+        id: tracking
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+
+          # Look up any existing open issue with the tracking label.
+          issue_number=$(gh issue list \
+            --repo ${{ github.repository }} \
+            --label "$TRACKING_LABEL" \
+            --state open \
+            --json number \
+            --jq '.[0].number // empty')
+
+          if [ -z "$issue_number" ]; then
+            # First-ever run — create the tracking issue.
+            # Ensure the label exists first (create idempotently).
+            gh label create "$TRACKING_LABEL" \
+              --repo ${{ github.repository }} \
+              --description "Rolling cimas-drift-audit report tracking issue" \
+              --color "0e8a16" \
+              2>/dev/null || true
+
+            # Write the initial issue body to a file rather than embedding
+            # a heredoc inside the command substitution — YAML block-scalar
+            # indent + heredoc terminator alignment is fragile enough that
+            # the file-based route is significantly less error-prone.
+            cat > /tmp/tracking-body.md <<'INITIAL_BODY'
+          This issue is the rolling tracking issue for the scheduled
+          [cimas-drift-audit](https://github.com/metanorma/ci/blob/main/.github/workflows/cimas-drift-audit.yml)
+          workflow (see [`#340`](https://github.com/metanorma/ci/issues/340)
+          for design).
+
+          The body below carries the **latest report**; each run also posts
+          a timestamped comment with the same content so the run history is
+          reconstructible from the comment log.
+
+          **Do not close this issue** — the workflow finds and updates it
+          by label. If it needs replacing, remove the `drift-audit-tracking`
+          label from this issue and the next run will create a fresh one.
+
+          _(Initial content — the first scheduled run will replace this
+          text with the actual report.)_
+          INITIAL_BODY
+
+            issue_number=$(gh issue create \
+              --repo ${{ github.repository }} \
+              --title "$TRACKING_TITLE" \
+              --label "$TRACKING_LABEL" \
+              --body-file /tmp/tracking-body.md \
+              --json number \
+              --jq '.number')
+          fi
+
+          echo "issue_number=$issue_number" >> "$GITHUB_OUTPUT"
+
+      - name: Post latest report + update tracking issue body
+        env:
+          GH_TOKEN: ${{ github.token }}
+          ISSUE: ${{ steps.tracking.outputs.issue_number }}
+          STATUS: ${{ steps.audit.outputs.audit_status }}
+        run: |
+          set -euo pipefail
+
+          run_ts=$(date -u +'%Y-%m-%d %H:%M UTC')
+          run_url="${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}"
+
+          # Assemble the comment body — either the report or an error notice.
+          {
+            echo "## Run — $run_ts"
+            echo ""
+            echo "Workflow run: [${{ github.run_id }}]($run_url)"
+            echo ""
+            if [ "$STATUS" = "error" ]; then
+              echo "❌ **Audit script exited with an error this run.** stderr:"
+              echo ""
+              echo '```'
+              cat /tmp/drift-report.err
+              echo '```'
+            else
+              cat /tmp/drift-report.md
+            fi
+          } > /tmp/comment.md
+
+          # Post as a comment on the tracking issue.
+          gh issue comment "$ISSUE" \
+            --repo ${{ github.repository }} \
+            --body-file /tmp/comment.md
+
+          # Also update the issue body so a glance at the issue shows the
+          # latest state without scrolling the comment log.
+          {
+            echo "**Latest scheduled run:** $run_ts ([run]($run_url))"
+            echo ""
+            echo "---"
+            echo ""
+            if [ "$STATUS" = "error" ]; then
+              echo "❌ **Audit script exited with an error this run.** stderr:"
+              echo ""
+              echo '```'
+              cat /tmp/drift-report.err
+              echo '```'
+            else
+              cat /tmp/drift-report.md
+            fi
+            echo ""
+            echo "---"
+            echo ""
+            echo "See the comment log below for the run history. The"
+            echo "workflow at [\`.github/workflows/cimas-drift-audit.yml\`]"
+            echo "(https://github.com/${{ github.repository }}/blob/main/.github/workflows/cimas-drift-audit.yml)"
+            echo "runs weekly on Wednesdays 09:00 UTC + on manual dispatch."
+            echo ""
+            echo "_(This body is auto-updated by the workflow — do not edit;"
+            echo "your changes will be overwritten on the next run.)_"
+          } > /tmp/body.md
+
+          gh issue edit "$ISSUE" \
+            --repo ${{ github.repository }} \
+            --body-file /tmp/body.md
+
+      - name: Fail the workflow if the audit script errored
+        if: steps.audit.outputs.audit_status == 'error'
+        run: |
+          echo "::error::cimas-drift-audit.rb exited with an error this run."
+          exit 1
