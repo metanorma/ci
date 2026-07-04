@@ -116,13 +116,15 @@ jobs:
           text with the actual report.)_
           INITIAL_BODY
 
-            issue_number=$(gh issue create \
+            # `gh issue create` prints the new issue's URL to stdout;
+            # extract the trailing path segment as the issue number
+            # (--json / --jq are not supported by `gh issue create`).
+            issue_url=$(gh issue create \
               --repo ${{ github.repository }} \
               --title "$TRACKING_TITLE" \
               --label "$TRACKING_LABEL" \
-              --body-file /tmp/tracking-body.md \
-              --json number \
-              --jq '.number')
+              --body-file /tmp/tracking-body.md)
+            issue_number=$(printf '%s' "$issue_url" | sed 's|.*/||')
           fi
 
           echo "issue_number=$issue_number" >> "$GITHUB_OUTPUT"
