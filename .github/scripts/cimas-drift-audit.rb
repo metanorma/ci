@@ -37,12 +37,14 @@ CIMAS_CONFIG_DIR = "cimas-config"
 
 # One `repositories:` entry parsed from cimas.yml.
 CimasEntry = Struct.new(
-  :name,          # e.g. "metanorma-cli"
-  :org,           # e.g. "metanorma"
-  :branch,        # e.g. "main"
-  :remote_url,    # e.g. "ssh://git@github.com/metanorma/metanorma-cli"
-  :files_synced,  # { local_path => template_path } (uncommented file lines)
-  :opt_outs,      # [OptOut]
+  :name,             # e.g. "metanorma-cli"
+  :org,              # e.g. "metanorma"
+  :branch,           # e.g. "main"
+  :remote_url,       # e.g. "ssh://git@github.com/metanorma/metanorma-cli"
+  :files_synced,     # { local_path => template_path } (uncommented file lines)
+  :opt_outs,         # [OptOut]
+  :template_binding, # legacy per-repo ERB binding: `template: binding:` hash
+  :with_values,      # Gap 1 (cimas#55) per-repo `with:` hash
   keyword_init: true,
 )
 
@@ -198,6 +200,8 @@ def parse_cimas_yml(path)
       remote_url: remote,
       files_synced: files_hash,
       opt_outs: opt_outs,
+      template_binding: data.dig("template", "binding") || {},
+      with_values: data["with"] || {},
     )
   end
 end
@@ -386,15 +390,40 @@ rescue StandardError
   nil
 end
 
+# For .erb templates: mirrors what `Cli::Command#sync` does when the source
+# path ends in .erb — build a binding whose OpenStruct exposes the repo's
+# `template: binding:` values and a `with_values` hash (added in
+# metanorma/cimas#55 for Gap 1), then render. Static templates are
+# returned unchanged.
+def render_template(template_content, template_path, entry)
+  return template_content unless template_path.end_with?(".erb")
+
+  require "erb"
+  require "ostruct"
+  erb_context = entry.template_binding.merge(
+    "with_values" => entry.with_values,
+  )
+  params = OpenStruct.new(erb_context).instance_eval { binding }
+  ERB.new(template_content, trim_mode: "-").result(params)
+rescue StandardError => e
+  # Rendering error is itself a form of drift — the caller distinguishes.
+  warn "render_template failed for #{template_path} on #{entry.name}: " \
+       "#{e.class}: #{e.message}"
+  nil
+end
+
 # For (e.2): compare live file content vs template. Returns a Finding if
 # they differ meaningfully. Auto-generated Cimas banner comments are
 # normalized before comparison since the cimas sync process may or may
-# not preserve them across cycles.
+# not preserve them across cycles. `.erb` templates are rendered before
+# comparison using the same binding shape as `Cli::Command#sync`.
 def classify_file_drift(entry, local_path, template_path)
   live_content = probe_file(entry, local_path)
-  template_content = read_template(template_path)
+  raw_template = read_template(template_path)
+  return [] if live_content.nil? || raw_template.nil?
 
-  return [] if live_content.nil? || template_content.nil?
+  template_content = render_template(raw_template, template_path, entry)
+  return [] if template_content.nil? # rendering error already warned
 
   return [] if normalize_for_compare(live_content) ==
                normalize_for_compare(template_content)
