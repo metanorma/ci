@@ -39,7 +39,15 @@ jobs:
       - name: Run drift audit
         id: audit
         env:
-          GH_TOKEN: ${{ github.token }}
+          # The audit calls `gh api repos/<org>/<name>` on ~158 metanorma-org
+          # repos. Default GITHUB_TOKEN can't see the org's private repos
+          # (e.g. metanorma-nist, metanorma-bsi), which then surface as
+          # false-positive class (a) 404s. METANORMA_CI_PAT_TOKEN is the
+          # org's standard cross-repo PAT used elsewhere (monorepo-rake.yml,
+          # ci-test.yml); scoped to see the private repos. Falls back to
+          # github.token if the secret is absent, but findings will then
+          # include the private-repo 404 noise.
+          GH_TOKEN: ${{ secrets.METANORMA_CI_PAT_TOKEN || github.token }}
         run: |
           set -euo pipefail
           # PHASE_4_FULL_REPORT emits the Markdown report to stdout; capture
