@@ -844,12 +844,10 @@ repositories:
     files:
       .github/workflows/docker.yml: gh-actions/samples/public-docker.yml
       .github/workflows/generate.yml: gh-actions/samples/public-generate.yml
-  DGGS2ISO-19170:
-    remote: ssh://git@github.com/metanorma/DGGS2ISO-19170
-    branch: master
-    files:
-      .github/workflows/docker.yml: gh-actions/samples/public-docker.yml
-      .github/workflows/generate.yml: gh-actions/samples/public-generate.yml
+  # DGGS2ISO-19170: repo deleted from `metanorma` org (returns 404).
+  # Surfaced by the first scheduled cimas-drift-audit run on 2026-07-04
+  # (metanorma/ci#341) as class (a) — see the tracking issue at
+  # metanorma/ci#342. Pre-delete entry preserved in git history.
   C-17-Publication:
     remote: ssh://git@github.com/metanorma/C-17-Publication
     branch: main
@@ -1491,7 +1489,7 @@ groups:
   - iso-19115-3
   - iso-19626-1
   - iso-tc184-sc4
-  - DGGS2ISO-19170
+  # - DGGS2ISO-19170  (stripped: repo deleted from metanorma org; see ci#342)
   - ogc-dggs-xmi
   apps:
   - packed-mn
