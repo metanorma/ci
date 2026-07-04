@@ -20,8 +20,15 @@ repositories:
     branch: main
     files:
       .rubocop.yml: gh-actions/master/.rubocop.yml
-      .github/workflows/rake.yml: gh-actions/inkscape/rake.yml
+      .github/workflows/rake.yml: gh-actions/master/rake.yml.erb
       .github/workflows/release.yml: gh-actions/master/release_wo_bundle_install.yml
+    with:
+      # First real consumer of the metanorma/ci#300 Gap 1 `with:` mechanism.
+      # metanorma's live rake.yml has `private-fonts: true` (added in
+      # 2fadd6b3, re-added in 6b113fea per Gap 1's motivating example);
+      # cimas can now render this from cimas.yml rather than requiring
+      # manual re-addition after each sync.
+      private-fonts: true
   metanorma-utils:
     remote: ssh://git@github.com/metanorma/metanorma-utils
     branch: main
@@ -114,9 +121,10 @@ repositories:
       # has since been moved back to the gated rubygems-release.yml@main path
       # (June 2026), so the cimas.yml opt-out is stale. Template note: the
       # original was gh-actions/plantuml/rake.yml; plantuml/ was removed in
-      # 1c8696e — using inkscape/rake.yml as the closest substitute (same as
-      # isodoc). Swap if the wave PR shows substantive divergence vs live.
-      .github/workflows/rake.yml: gh-actions/inkscape/rake.yml
+      # 1c8696e; used inkscape/rake.yml as substitute (matches isodoc); now
+      # migrated to the parametric master/rake.yml.erb (metanorma/ci#300 Gap 1),
+      # which produces byte-identical output when `with:` is empty.
+      .github/workflows/rake.yml: gh-actions/master/rake.yml.erb
       .github/workflows/release.yml: gh-actions/master/release.yml
       .github/workflows/automerge.yml: gh-actions/master/automerge.yml
   metanorma-iso:
@@ -399,8 +407,9 @@ repositories:
       # isodoc out with "do immediate release without waiting for unit tests
       # pass" — but the per-repo release.yml has since been moved back to the
       # gated rubygems-release.yml@main path (June 2026), so the cimas.yml
-      # opt-out is stale.
-      .github/workflows/rake.yml: gh-actions/inkscape/rake.yml
+      # opt-out is stale. Migrated to the parametric master/rake.yml.erb
+      # (metanorma/ci#300 Gap 1); byte-identical output with `with:` empty.
+      .github/workflows/rake.yml: gh-actions/master/rake.yml.erb
       .github/workflows/release.yml: gh-actions/master/release.yml
       .github/workflows/integration.yml: gh-actions/inkscape/rake-daily.yml
   html2doc:
