@@ -1,0 +1,44 @@
+name: rake
+
+on:
+  push:
+    branches: [ master, main ]
+    tags: [ v* ]
+  pull_request:
+
+permissions:
+  contents: write
+
+jobs:
+  rake:
+    uses: metanorma/ci/.github/workflows/generic-rake.yml@main
+    with:
+      setup-tools: <%= with_values.fetch('setup-tools', 'inkscape,ghostscript') %>
+      submodules: <%= with_values.fetch('submodules', true) %>
+      choco-cache: <%= with_values.fetch('choco-cache', true) %>
+<%- if with_values.key?('private-fonts') -%>
+      private-fonts: <%= with_values['private-fonts'] %>
+<%- end -%>
+<%- if with_values.key?('private-fonts-username') -%>
+      private-fonts-username: <%= with_values['private-fonts-username'] %>
+<%- end -%>
+<%- if with_values.key?('setup-inkscape') -%>
+      setup-inkscape: <%= with_values['setup-inkscape'] %>
+<%- end -%>
+<%- if with_values.key?('shell') -%>
+      shell: <%= with_values['shell'] %>
+<%- end -%>
+<%- if with_values.key?('before-setup-ruby') -%>
+      before-setup-ruby: <%= with_values['before-setup-ruby'] %>
+<%- end -%>
+<%- if with_values.key?('after-setup-ruby') -%>
+      after-setup-ruby: <%= with_values['after-setup-ruby'] %>
+<%- end -%>
+<%- if with_values.key?('tests-passed-event') -%>
+      tests-passed-event: <%= with_values['tests-passed-event'] %>
+<%- end -%>
+<%- if with_values.key?('release-event') -%>
+      release-event: <%= with_values['release-event'] %>
+<%- end -%>
+    secrets:
+      pat_token: ${{ secrets.METANORMA_CI_PAT_TOKEN }}

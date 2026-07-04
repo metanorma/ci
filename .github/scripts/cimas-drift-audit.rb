@@ -31,7 +31,7 @@ require "json"
 require "open3"
 
 CIMAS_YML_PATH = "cimas-config/cimas.yml"
-GH_ACTIONS_DIR = "cimas-config/gh-actions"
+CIMAS_CONFIG_DIR = "cimas-config"
 
 # ---------- Data model ----------
 
@@ -378,7 +378,7 @@ end
 # Reads a template file from the local ci checkout's cimas-config directory.
 # Returns the raw content string, or nil if the template doesn't exist.
 def read_template(template_path)
-  full = File.join(GH_ACTIONS_DIR, template_path)
+  full = File.join(CIMAS_CONFIG_DIR, template_path)
   return nil unless File.exist?(full)
 
   File.read(full, encoding: "UTF-8")
