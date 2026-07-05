@@ -982,12 +982,11 @@ repositories:
     files:
       .rubocop.yml: gh-actions/master/.rubocop.yml
       .github/workflows/rake.yml: gh-actions/master/rake.yml
-  lapidist:
-    remote: ssh://git@github.com/metanorma/lapidist
-    branch: master
-    files:
-      .rubocop.yml: gh-actions/master/.rubocop.yml
-      .github/workflows/rake.yml: gh-actions/master/rake.yml
+  # lapidist removed 2026-07-05 — treat as defunct (per opoudjis).
+  # Last human commit 2021-05-29 (Ruby 3.0 fileutils require); every
+  # commit since 2022-09 has been cimas/mn-requirements automation
+  # (CAMOBAP). No releases. Same treatment as metanorma-gb — remove
+  # the entry so cimas stops sweeping it.
   # metanorma-ietf-data: renamed within `metanorma` to `ietf-data-importer`.
   # Surfaced by cimas-drift-audit MVP (metanorma/ci#335) on 2026-07-02 as
   # class (c) internal rename. Stale duplicate — the `ietf-data-importer:`
@@ -1338,7 +1337,6 @@ groups:
   - metanorma-registry
   - ci
   - cimas
-  - lapidist
   - oss-guides
   style:
   - csd-style
