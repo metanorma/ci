@@ -81,13 +81,10 @@ repositories:
       .rubocop.yml: gh-actions/master/.rubocop.yml
       .github/workflows/release.yml: gh-actions/master/release.yml
       .github/workflows/automerge.yml: gh-actions/master/automerge.yml
-  metanorma-gb:
-    remote: ssh://git@github.com/metanorma/metanorma-gb
-    branch: main
-    files:
-      .rubocop.yml: gh-actions/master/.rubocop.yml
-      .github/workflows/release.yml: gh-actions/master/release.yml
-      .github/workflows/automerge.yml: gh-actions/master/automerge.yml
+  # metanorma-gb removed 2026-07-05 — treat as archived (per opoudjis).
+  # Was still being swept despite being in `ignore: obsolete` group because
+  # the ignore-group tag is documentation-only; only the absence of a
+  # `repositories:` entry actually excludes a repo from cimas sync waves.
   metanorma-nist:
     remote: ssh://git@github.com/metanorma/metanorma-nist
     branch: main
