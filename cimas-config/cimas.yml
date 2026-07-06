@@ -11,7 +11,6 @@ repositories:
     branch: main
     files:
       .rubocop.yml: gh-actions/master/.rubocop.yml
-      .github/workflows/notify.yml: gh-actions/master/notify.yml
       .github/workflows/release.yml: gh-actions/master/release.yml
       templates/base/.github/workflows/docker.yml: gh-actions/samples/docker.yml
       templates/base/.github/workflows/generate.yml: gh-actions/samples/generate.yml
@@ -22,7 +21,6 @@ repositories:
     files:
       .rubocop.yml: gh-actions/master/.rubocop.yml
       .github/workflows/rake.yml: gh-actions/master/rake.yml.erb
-      .github/workflows/notify.yml: gh-actions/master/notify.yml
       .github/workflows/release.yml: gh-actions/master/release_wo_bundle_install.yml
     with:
       # First real consumer of the metanorma/ci#300 Gap 1 `with:` mechanism.
@@ -37,7 +35,6 @@ repositories:
     files:
       .rubocop.yml: gh-actions/master/.rubocop.yml
       .github/workflows/rake.yml: gh-actions/master/rake.yml
-      .github/workflows/notify.yml: gh-actions/master/notify.yml
       .github/workflows/release.yml: gh-actions/master/release_wo_bundle_install.yml
   metanorma-core:
     remote: ssh://git@github.com/metanorma/metanorma-core
@@ -45,7 +42,6 @@ repositories:
     files:
       .rubocop.yml: gh-actions/master/.rubocop.yml
       .github/workflows/rake.yml: gh-actions/master/rake.yml
-      .github/workflows/notify.yml: gh-actions/master/notify.yml
       .github/workflows/release.yml: gh-actions/master/release.yml
       .github/workflows/automerge.yml: gh-actions/master/automerge.yml
   metanorma-ogc:
@@ -53,7 +49,6 @@ repositories:
     branch: main
     files:
       .rubocop.yml: gh-actions/master/.rubocop.yml
-      .github/workflows/notify.yml: gh-actions/master/notify.yml
       .github/workflows/release.yml: gh-actions/master/release.yml
       .github/workflows/automerge.yml: gh-actions/master/automerge.yml
   # metanorma-m3aawg — OBSOLETE 2026-06-29 (last release 2023-03-13, 3+ yrs).
@@ -63,7 +58,6 @@ repositories:
     branch: main
     files:
       .rubocop.yml: gh-actions/master/.rubocop.yml
-      .github/workflows/notify.yml: gh-actions/master/notify.yml
       .github/workflows/release.yml: gh-actions/master/release.yml
       .github/workflows/automerge.yml: gh-actions/master/automerge.yml
   metanorma-ribose:
@@ -71,7 +65,6 @@ repositories:
     branch: main
     files:
       .rubocop.yml: gh-actions/master/.rubocop.yml
-      .github/workflows/notify.yml: gh-actions/master/notify.yml
       .github/workflows/release.yml: gh-actions/master/release.yml
       .github/workflows/automerge.yml: gh-actions/master/automerge.yml
   metanorma-iho:
@@ -79,7 +72,6 @@ repositories:
     branch: main
     files:
       .rubocop.yml: gh-actions/master/.rubocop.yml
-      .github/workflows/notify.yml: gh-actions/master/notify.yml
       .github/workflows/release.yml: gh-actions/master/release.yml
       .github/workflows/automerge.yml: gh-actions/master/automerge.yml
   metanorma-ieee:
@@ -87,7 +79,6 @@ repositories:
     branch: main
     files:
       .rubocop.yml: gh-actions/master/.rubocop.yml
-      .github/workflows/notify.yml: gh-actions/master/notify.yml
       .github/workflows/release.yml: gh-actions/master/release.yml
       .github/workflows/automerge.yml: gh-actions/master/automerge.yml
   # metanorma-gb removed 2026-07-05 — treat as archived (per opoudjis).
@@ -106,7 +97,6 @@ repositories:
     branch: main
     files:
       .rubocop.yml: gh-actions/master/.rubocop.yml
-      .github/workflows/notify.yml: gh-actions/master/notify.yml
       .github/workflows/release.yml: gh-actions/master/release.yml
       .github/workflows/automerge.yml: gh-actions/master/automerge.yml
   metanorma-ietf:
@@ -115,7 +105,6 @@ repositories:
     files:
       .rubocop.yml: gh-actions/master/.rubocop.yml
       .github/workflows/rake.yml: gh-actions/xml2rfc/rake.yml
-      .github/workflows/notify.yml: gh-actions/master/notify.yml
       .github/workflows/release.yml: gh-actions/master/release.yml
       .github/workflows/automerge.yml: gh-actions/master/automerge.yml
   metanorma-standoc:
@@ -133,7 +122,6 @@ repositories:
       # migrated to the parametric master/rake.yml.erb (metanorma/ci#300 Gap 1),
       # which produces byte-identical output when `with:` is empty.
       .github/workflows/rake.yml: gh-actions/master/rake.yml.erb
-      .github/workflows/notify.yml: gh-actions/master/notify.yml
       .github/workflows/release.yml: gh-actions/master/release.yml
       .github/workflows/automerge.yml: gh-actions/master/automerge.yml
   metanorma-iso:
@@ -141,7 +129,6 @@ repositories:
     branch: main
     files:
       .rubocop.yml: gh-actions/master/.rubocop.yml
-      .github/workflows/notify.yml: gh-actions/master/notify.yml
       .github/workflows/release.yml: gh-actions/master/release.yml
       .github/workflows/automerge.yml: gh-actions/master/automerge.yml
   metanorma-taste:
@@ -149,7 +136,6 @@ repositories:
     branch: main
     files:
       .rubocop.yml: gh-actions/master/.rubocop.yml
-      .github/workflows/notify.yml: gh-actions/master/notify.yml
       .github/workflows/release.yml: gh-actions/master/release.yml
       .github/workflows/automerge.yml: gh-actions/master/automerge.yml
   # metanorma-un — OBSOLETE 2026-06-29 (last release 2024-09-30, 21 mo).
@@ -159,7 +145,6 @@ repositories:
     branch: main
     files:
       .rubocop.yml: gh-actions/master/.rubocop.yml
-      .github/workflows/notify.yml: gh-actions/master/notify.yml
       .github/workflows/release.yml: gh-actions/master/release.yml
       .github/workflows/automerge.yml: gh-actions/master/automerge.yml
   metanorma-generic:
@@ -167,7 +152,6 @@ repositories:
     branch: main
     files:
       .rubocop.yml: gh-actions/master/.rubocop.yml
-      .github/workflows/notify.yml: gh-actions/master/notify.yml
       .github/workflows/release.yml: gh-actions/master/release.yml
       .github/workflows/automerge.yml: gh-actions/master/automerge.yml
   # metanorma-csa — OBSOLETE 2026-06-29 (last release 2025-09-01, 10 mo).
@@ -177,7 +161,6 @@ repositories:
     branch: main
     files:
       .rubocop.yml: gh-actions/master/.rubocop.yml
-      .github/workflows/notify.yml: gh-actions/master/notify.yml
       .github/workflows/release.yml: gh-actions/master/release.yml
       .github/workflows/automerge.yml: gh-actions/master/automerge.yml
   metanorma-bsi:
@@ -192,7 +175,6 @@ repositories:
     branch: main
     files:
       .rubocop.yml: gh-actions/master/.rubocop.yml
-      .github/workflows/notify.yml: gh-actions/master/notify.yml
       .github/workflows/release.yml: gh-actions/master/release.yml
       .github/workflows/automerge.yml: gh-actions/master/automerge.yml
   metanorma-plateau:
@@ -200,7 +182,6 @@ repositories:
     branch: main
     files:
       .rubocop.yml: gh-actions/master/.rubocop.yml
-      .github/workflows/notify.yml: gh-actions/master/notify.yml
       .github/workflows/release.yml: gh-actions/master/release.yml
       .github/workflows/automerge.yml: gh-actions/master/automerge.yml
   metanorma-document:
@@ -209,7 +190,6 @@ repositories:
     files:
       .rubocop.yml: gh-actions/master/.rubocop.yml
       .github/workflows/rake.yml: gh-actions/master/rake.yml
-      .github/workflows/notify.yml: gh-actions/master/notify.yml
       .github/workflows/release.yml: gh-actions/master/release.yml
   # metanorma/pubid re-added 2026-07-05 after metanorma/ci#300 Gap 2 landed
   # the `gh-actions/monorepo/*` template family. The rake.yml sync maps to
@@ -244,7 +224,6 @@ repositories:
     files:
       .rubocop.yml: gh-actions/master/.rubocop.yml
       .github/workflows/rake.yml: gh-actions/master/rake.yml
-      .github/workflows/notify.yml: gh-actions/master/notify.yml
       .github/workflows/release.yml: gh-actions/master/release.yml
 
   # models
@@ -417,7 +396,6 @@ repositories:
       # opt-out is stale. Migrated to the parametric master/rake.yml.erb
       # (metanorma/ci#300 Gap 1); byte-identical output with `with:` empty.
       .github/workflows/rake.yml: gh-actions/master/rake.yml.erb
-      .github/workflows/notify.yml: gh-actions/master/notify.yml
       .github/workflows/release.yml: gh-actions/master/release.yml
       .github/workflows/integration.yml: gh-actions/inkscape/rake-daily.yml
   html2doc:
@@ -426,14 +404,12 @@ repositories:
     files:
       .rubocop.yml: gh-actions/master/.rubocop.yml
       .github/workflows/rake.yml: gh-actions/master/rake.yml
-      .github/workflows/notify.yml: gh-actions/master/notify.yml
       .github/workflows/release.yml: gh-actions/master/release.yml
   cnccs:
     remote: ssh://git@github.com/metanorma/cnccs
     branch: master
     files:
       .rubocop.yml: gh-actions/master/.rubocop.yml
-      .github/workflows/notify.yml: gh-actions/master/notify.yml
       .github/workflows/release.yml: gh-actions/master/release.yml
   isoics:
     remote: ssh://git@github.com/metanorma/isoics
@@ -441,7 +417,6 @@ repositories:
     files:
       .rubocop.yml: gh-actions/master/.rubocop.yml
       .github/workflows/rake.yml: gh-actions/master/rake.yml
-      .github/workflows/notify.yml: gh-actions/master/notify.yml
       .github/workflows/release.yml: gh-actions/master/release.yml
   # iso690render — DEPRECATED 2026-06-29: this repo hosts a legacy `relaton-render`
   # gemspec; the active relaton-render gem is now published from
@@ -454,7 +429,6 @@ repositories:
     files:
       .rubocop.yml: gh-actions/master/.rubocop.yml
       .github/workflows/rake.yml: gh-actions/master/rake.yml
-      .github/workflows/notify.yml: gh-actions/master/notify.yml
       .github/workflows/release.yml: gh-actions/master/release.yml
   cimas:
     remote: ssh://git@github.com/metanorma/cimas
@@ -462,7 +436,6 @@ repositories:
     files:
       .rubocop.yml: gh-actions/master/.rubocop.yml
       .github/workflows/rake.yml: gh-actions/master/rake.yml
-      .github/workflows/notify.yml: gh-actions/master/notify.yml
       .github/workflows/release.yml: gh-actions/master/release.yml
   reverse_adoc:
     remote: ssh://git@github.com/metanorma/reverse_adoc
@@ -470,7 +443,6 @@ repositories:
     files:
       .rubocop.yml: gh-actions/master/.rubocop.yml
       .github/workflows/rake.yml: gh-actions/libreoffice/rake.yml
-      .github/workflows/notify.yml: gh-actions/master/notify.yml
       .github/workflows/release.yml: gh-actions/master/release.yml
   gb-agencies:
     remote: ssh://git@github.com/metanorma/gb-agencies
@@ -478,7 +450,6 @@ repositories:
     files:
       .rubocop.yml: gh-actions/master/.rubocop.yml
       .github/workflows/rake.yml: gh-actions/master/rake.yml
-      .github/workflows/notify.yml: gh-actions/master/notify.yml
       .github/workflows/release.yml: gh-actions/master/release.yml
   isodoc-i18n:
     remote: ssh://git@github.com/metanorma/isodoc-i18n
@@ -486,7 +457,6 @@ repositories:
     files:
       .rubocop.yml: gh-actions/master/.rubocop.yml
       .github/workflows/rake.yml: gh-actions/master/rake.yml
-      .github/workflows/notify.yml: gh-actions/master/notify.yml
       .github/workflows/release.yml: gh-actions/master/release.yml
   # edoxen: transferred to `edoxen/edoxen` (new one-repo org created to
   # receive it). Surfaced by cimas-drift-audit MVP (metanorma/ci#335) on
@@ -502,7 +472,6 @@ repositories:
       # commit d91d06d ("fix(ci): replace metanorma reusable workflow with
       # direct rake job"). See metanorma/ci#300 (Gap 3) for the broader
       # opt-out-detection design question.
-      .github/workflows/notify.yml: gh-actions/master/notify.yml
       .github/workflows/release.yml: gh-actions/master/release.yml
   # atmospheric: transferred out of metanorma org on 2026-04-23 (same day a new
   # `atmospheris` org was created to receive it; gem renamed atmospheric →
@@ -516,7 +485,6 @@ repositories:
     files:
       .rubocop.yml: gh-actions/master/.rubocop.yml
       .github/workflows/rake.yml: gh-actions/master/rake.yml
-      .github/workflows/notify.yml: gh-actions/master/notify.yml
       .github/workflows/release.yml: gh-actions/master/release.yml
   obp-access:
     remote: ssh://git@github.com/metanorma/obp-access
@@ -524,7 +492,6 @@ repositories:
     files:
       .rubocop.yml: gh-actions/master/.rubocop.yml
       .github/workflows/rake.yml: gh-actions/master/rake.yml
-      .github/workflows/notify.yml: gh-actions/master/notify.yml
       .github/workflows/release.yml: gh-actions/master/release.yml
   rfcxml:
     remote: ssh://git@github.com/metanorma/rfcxml
@@ -532,7 +499,6 @@ repositories:
     files:
       .rubocop.yml: gh-actions/master/.rubocop.yml
       .github/workflows/rake.yml: gh-actions/master/rake.yml
-      .github/workflows/notify.yml: gh-actions/master/notify.yml
       .github/workflows/release.yml: gh-actions/master/release.yml
   niso-jats:
     remote: ssh://git@github.com/metanorma/niso-jats
@@ -540,7 +506,6 @@ repositories:
     files:
       .rubocop.yml: gh-actions/master/.rubocop.yml
       .github/workflows/rake.yml: gh-actions/master/rake.yml
-      .github/workflows/notify.yml: gh-actions/master/notify.yml
       .github/workflows/release.yml: gh-actions/master/release.yml
 
   # samples
@@ -1039,7 +1004,6 @@ repositories:
     files:
       .rubocop.yml: gh-actions/master/.rubocop.yml
       .github/workflows/rake.yml: gh-actions/master/rake.yml
-      .github/workflows/notify.yml: gh-actions/master/notify.yml
       .github/workflows/release.yml: gh-actions/master/release.yml
   # xml-c14n: transferred to `lutaml/canon` (moved to the lutaml org and
   # renamed to `canon`). Surfaced by cimas-drift-audit MVP
@@ -1174,7 +1138,6 @@ repositories:
     files:
       .rubocop.yml: gh-actions/master/.rubocop.yml
       .github/workflows/rake.yml: gh-actions/master/rake.yml
-      .github/workflows/notify.yml: gh-actions/master/notify.yml
       .github/workflows/release.yml: gh-actions/master/release.yml
   pngcheck-ruby:
     remote: ssh://git@github.com/metanorma/pngcheck-ruby
@@ -1192,7 +1155,6 @@ repositories:
     branch: main
     files:
       .rubocop.yml: gh-actions/master/.rubocop.yml
-      .github/workflows/notify.yml: gh-actions/master/notify.yml
       .github/workflows/release.yml: gh-actions/master/release.yml
   metanorma-plugin-glossarist:
     remote: ssh://git@github.com/metanorma/metanorma-plugin-glossarist
@@ -1214,7 +1176,6 @@ repositories:
       # capable of expressing the local overrides parametrically.
       # .rubocop.yml: gh-actions/master/.rubocop.yml
       .github/workflows/rake.yml: gh-actions/master/rake.yml
-      .github/workflows/notify.yml: gh-actions/master/notify.yml
       .github/workflows/release.yml: gh-actions/master/release.yml
   metanorma-plugin-datastruct:
     remote: ssh://git@github.com/metanorma/metanorma-plugin-datastruct
@@ -1222,7 +1183,6 @@ repositories:
     files:
       .rubocop.yml: gh-actions/master/.rubocop.yml
       .github/workflows/rake.yml: gh-actions/master/rake.yml
-      .github/workflows/notify.yml: gh-actions/master/notify.yml
       .github/workflows/release.yml: gh-actions/master/release.yml
   metanorma-plugin-plantuml:
     remote: ssh://git@github.com/metanorma/metanorma-plugin-plantuml
@@ -1230,7 +1190,6 @@ repositories:
     files:
       .rubocop.yml: gh-actions/master/.rubocop.yml
       .github/workflows/rake.yml: gh-actions/master/rake.yml
-      .github/workflows/notify.yml: gh-actions/master/notify.yml
       .github/workflows/release.yml: gh-actions/master/release.yml
   stepmod-utils:
     remote: ssh://git@github.com/metanorma/stepmod-utils
@@ -1238,7 +1197,6 @@ repositories:
     files:
       .rubocop.yml: gh-actions/master/.rubocop.yml
       .github/workflows/rake.yml: gh-actions/master/rake.yml
-      .github/workflows/notify.yml: gh-actions/master/notify.yml
       .github/workflows/release.yml: gh-actions/master/release.yml
   bipm-data-importer:
     remote: ssh://git@github.com/metanorma/bipm-data-importer
@@ -1246,7 +1204,6 @@ repositories:
     files:
       .rubocop.yml: gh-actions/master/.rubocop.yml
       .github/workflows/rake.yml: gh-actions/master/rake.yml
-      .github/workflows/notify.yml: gh-actions/master/notify.yml
       .github/workflows/release.yml: gh-actions/master/release.yml
   revix:
     remote: ssh://git@github.com/metanorma/revix
@@ -1254,7 +1211,6 @@ repositories:
     files:
       .rubocop.yml: gh-actions/master/.rubocop.yml
       .github/workflows/rake.yml: gh-actions/master/rake.yml
-      .github/workflows/notify.yml: gh-actions/master/notify.yml
       .github/workflows/release.yml: gh-actions/master/release.yml
   ietf-data-importer:
     remote: ssh://git@github.com/metanorma/ietf-data-importer
@@ -1262,7 +1218,6 @@ repositories:
     files:
       .rubocop.yml: gh-actions/master/.rubocop.yml
       .github/workflows/rake.yml: gh-actions/master/rake.yml
-      .github/workflows/notify.yml: gh-actions/master/notify.yml
       .github/workflows/release.yml: gh-actions/master/release.yml
   tex2mn:
     remote: ssh://git@github.com/metanorma/tex2mn
@@ -1278,7 +1233,6 @@ repositories:
     files:
       .rubocop.yml: gh-actions/master/.rubocop.yml
       .github/workflows/rake.yml: gh-actions/master/rake.yml
-      .github/workflows/notify.yml: gh-actions/master/notify.yml
       .github/workflows/release.yml: gh-actions/master/release_wo_bundle_install.yml
   ammitto:
     remote: ssh://git@github.com/ammitto/ammitto
@@ -1286,7 +1240,6 @@ repositories:
     files:
       .rubocop.yml: gh-actions/master/.rubocop.yml
       .github/workflows/rake.yml: gh-actions/master/rake.yml
-      .github/workflows/notify.yml: gh-actions/master/notify.yml
       .github/workflows/release.yml: gh-actions/master/release.yml
   bipm-data-outcomes:
     remote: ssh://git@github.com/metanorma/bipm-data-outcomes
