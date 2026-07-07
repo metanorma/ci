@@ -7,8 +7,8 @@
 #
 # Walks cimas-config/cimas.yml, probes each repo's live state on GitHub,
 # and produces a structured drift report grouped by severity. Detects
-# seven failure-mode classes (per the sharpened acceptance criteria
-# in metanorma/ci#300):
+# eight failure-mode classes (per the sharpened acceptance criteria in
+# metanorma/ci#300 plus the class (f) extension queued on 2026-07-07):
 #
 #   (a) error   — repo deleted (404)
 #   (b) warning — repo archived
@@ -17,6 +17,12 @@
 #   (e.1) error   — stale commented-out entry (rationale contradicted by live file)
 #   (e.2) warning — silent drift from cimas-managed template (no opt-out marker)
 #   (e.3) flag    — documented opt-out (valid-looking rationale)
+#   (f)   error   — Ruby version pinned below the org-wide floor (RUBY_FLOOR)
+#                   in `.github/workflows/*.yml` steps/matrices or `Dockerfile`
+#                   `FROM ruby:X.Y.Z` tags. Guards against the class of miss
+#                   that surfaced on 2026-07-07 with metanorma-docker's
+#                   release-tag workflow silently pinned to 3.2 after
+#                   metanorma/ci#274 pushed the floor to 3.3.
 #
 # Usage (from a cimas-config/-carrying repo root, typically metanorma/ci):
 #
@@ -32,6 +38,19 @@ require "open3"
 
 CIMAS_YML_PATH = "cimas-config/cimas.yml"
 CIMAS_CONFIG_DIR = "cimas-config"
+
+# Class (f): org-wide Ruby floor. When metanorma/ci#274 pushed the floor
+# from 3.2 to 3.3, gemspec Ruby requirements got updated via the cimas
+# patches machinery, but a workflow-runner Ruby pin in metanorma-docker's
+# release-tag.yml silently stayed on 3.2 and only surfaced at v1.16.8
+# release time — 2026-07-07. Bump this constant one-line at the next
+# floor movement (e.g. to "3.4"). See also ci#342 (rolling tracking
+# issue) for findings.
+RUBY_FLOOR = "3.3"
+
+# Captures the leading `major.minor` from a version string like
+# "3.3.7-slim-bookworm", "3.2", or "3.3.0". Trailing patch/tag ignored.
+RUBY_FLOOR_MAJOR_MINOR_RE = /\A(\d+)\.(\d+)/
 
 # ---------- Data model ----------
 
@@ -520,6 +539,171 @@ def finding_e3(entry, opt_out, rationale)
   )
 end
 
+# ---------- Phase 3.5: (f) Ruby-floor drift ----------
+
+# One tree call per repo lists every file at the tracked branch; filter
+# locally to workflow YAMLs + Dockerfiles. Cheaper and more reliable
+# than one directory-listing call per candidate location.
+def fetch_repo_tree(entry)
+  cmd = ["gh", "api",
+         "repos/#{entry.org}/#{entry.name}/git/trees/" \
+         "#{entry.branch}?recursive=1",
+         "--jq", ".tree // []"]
+  out, _err, status = Open3.capture3(*cmd)
+  return [] unless status.success?
+
+  parsed = JSON.parse(out.force_encoding("UTF-8"))
+  parsed.is_a?(Array) ? parsed : []
+rescue StandardError
+  []
+end
+
+WORKFLOW_PATH_RE = %r{\A\.github/workflows/[^/]+\.ya?ml\z}
+DOCKERFILE_PATH_RE = %r{\A(?:.+/)?Dockerfile(?:\.[\w.-]+)?\z}
+
+def ruby_floor_scan_paths(tree)
+  blob_paths = tree.select { |t| t.is_a?(Hash) && t["type"] == "blob" }
+                   .map { |t| t["path"].to_s }
+  blob_paths.select do |p|
+    p.match?(WORKFLOW_PATH_RE) || p.match?(DOCKERFILE_PATH_RE)
+  end
+end
+
+# For (f): walks workflow YAMLs + Dockerfiles for Ruby versions below
+# the org-wide floor. `tree` is the pre-fetched repo tree (one gh api
+# call at the audit_entry level), so this stage adds N file-content
+# fetches per repo where N is (workflows-with-ruby + dockerfiles), not
+# per-directory listing calls.
+def classify_ruby_floor_drift(entry, tree)
+  ruby_floor_scan_paths(tree).flat_map do |path|
+    scan_ruby_floor_in_file(entry, path)
+  end
+end
+
+def scan_ruby_floor_in_file(entry, path)
+  content = probe_file(entry, path)
+  return [] if content.nil?
+
+  if path.match?(WORKFLOW_PATH_RE)
+    scan_workflow_ruby_pins(entry, path, content)
+  else
+    scan_dockerfile_ruby_pins(entry, path, content)
+  end
+end
+
+# YAML.safe_load for workflow files. Actions workflows are plain data
+# (strings, ints, arrays, hashes) — no Ruby-specific classes needed.
+def safe_yaml_load(content)
+  YAML.safe_load(content, aliases: true, permitted_classes: [Date, Time])
+rescue Psych::SyntaxError, Psych::DisallowedClass, StandardError
+  nil
+end
+
+def scan_workflow_ruby_pins(entry, path, content)
+  parsed = safe_yaml_load(content)
+  return [] unless parsed.is_a?(Hash)
+
+  jobs = parsed["jobs"]
+  return [] unless jobs.is_a?(Hash)
+
+  findings = []
+  jobs.each do |job_name, job|
+    next unless job.is_a?(Hash)
+
+    findings.concat(scan_matrix_ruby(entry, path, job_name, job))
+    findings.concat(scan_step_ruby(entry, path, job_name, job))
+  end
+  findings
+end
+
+# Matrix shape variations we handle:
+#   matrix.ruby: [ "3.2", "3.3" ]
+#   matrix.ruby-version: [ "3.2", "3.3" ]
+#   matrix.ruby.version (nested hash) — skipped: typical when the whole
+#     matrix is `${{ fromJson(needs.prepare.outputs.matrix) }}` and the
+#     actual versions live in the callee's prepare job. Unverifiable
+#     statically without following the chain.
+#   matrix.include: [ { ruby: "3.2", ... }, ... ]
+def scan_matrix_ruby(entry, path, job_name, job)
+  matrix = job.dig("strategy", "matrix")
+  return [] unless matrix.is_a?(Hash)
+
+  versions = Array(matrix["ruby"]) + Array(matrix["ruby-version"])
+  Array(matrix["include"]).each do |row|
+    next unless row.is_a?(Hash)
+
+    versions << row["ruby"] if row["ruby"]
+    versions << row["ruby-version"] if row["ruby-version"]
+  end
+
+  versions.compact.filter_map do |raw|
+    check_pin_below_floor(entry, path,
+                          "job `#{job_name}` strategy.matrix",
+                          raw.to_s)
+  end
+end
+
+def scan_step_ruby(entry, path, job_name, job)
+  steps = job["steps"]
+  return [] unless steps.is_a?(Array)
+
+  steps.each_with_index.filter_map do |step, idx|
+    next unless step.is_a?(Hash)
+    next unless step["uses"].to_s.start_with?("ruby/setup-ruby@")
+
+    rv = step.dig("with", "ruby-version")
+    next unless rv
+
+    check_pin_below_floor(entry, path,
+                          "job `#{job_name}` step #{idx} " \
+                          "(ruby/setup-ruby)",
+                          rv.to_s)
+  end
+end
+
+DOCKERFILE_FROM_RUBY_RE = /^\s*FROM\s+ruby:(\S+)/i
+
+def scan_dockerfile_ruby_pins(entry, path, content)
+  content.each_line.with_index(1).filter_map do |line, lineno|
+    m = DOCKERFILE_FROM_RUBY_RE.match(line)
+    next unless m
+
+    tag = m[1]
+    check_pin_below_floor(entry, path,
+                          "line #{lineno} (`FROM ruby:#{tag}`)",
+                          tag)
+  end
+end
+
+# Returns a Finding if the raw version parses to a major.minor below
+# RUBY_FLOOR, nil otherwise. Skips dynamic references (`${{ ... }}`)
+# and non-numeric refs (`head`, `latest`, `jruby-*`, `truffleruby-*`).
+def check_pin_below_floor(entry, path, location, raw_version)
+  return nil if raw_version.empty?
+  return nil if raw_version.include?("${{")
+  return nil if raw_version.match?(/\A(?:head|latest|jruby|truffleruby)/i)
+
+  m = RUBY_FLOOR_MAJOR_MINOR_RE.match(raw_version)
+  return nil unless m
+
+  major = m[1].to_i
+  minor = m[2].to_i
+  floor_major, floor_minor = RUBY_FLOOR.split(".").map(&:to_i)
+  return nil if major > floor_major
+  return nil if major == floor_major && minor >= floor_minor
+
+  Finding.new(
+    severity: :error, klass: :f, repo_name: entry.name,
+    file: path,
+    detail: "Ruby version `#{raw_version}` at #{location} is below " \
+            "the org-wide floor `#{RUBY_FLOOR}` (per metanorma/ci#274).",
+    recommendation: "Bump the Ruby pin to `#{RUBY_FLOOR}` or higher. " \
+                    "If this pin is deliberately below the floor " \
+                    "(compat test, etc.), document the rationale and " \
+                    "consider raising an opt-out mechanism for class (f).",
+  )
+end
+
 # ---------- Phase 3 harness ----------
 
 if ENV["PHASE_3_OPTOUT_ONLY"] == "1"
@@ -550,6 +734,7 @@ CLASS_HEADINGS = {
   e1: "(e.1) Stale commented-out opt-out (deferred to phase 4+)",
   e2: "(e.2) Silent drift from cimas-managed template",
   e3: "(e.3) Documented opt-out (flag for maintainer affirmation)",
+  f: "(f) Ruby version below org-wide floor (#{RUBY_FLOOR}, per ci#274)",
 }.freeze
 
 def audit_entry(entry)
@@ -563,6 +748,12 @@ def audit_entry(entry)
     findings.concat(classify_file_drift(entry, local_path, template_path))
   end
   findings.concat(classify_opt_outs(entry))
+
+  # Class (f) — Ruby-floor drift. One tree call, then per-relevant-file
+  # content fetches. Skipped for repos with unreachable probes above.
+  tree = fetch_repo_tree(entry)
+  findings.concat(classify_ruby_floor_drift(entry, tree))
+
   findings
 end
 
@@ -639,6 +830,28 @@ if ENV["PHASE_2_URL_DRIFT_ONLY"] == "1"
   target.each do |entry|
     probe = probe_repo(entry)
     findings = classify_url_drift(entry, probe)
+    print_findings_short(entry.name, findings)
+  end
+  exit 0
+end
+
+# Phase 5 harness — class (f) ruby-floor drift in isolation. Useful for
+# testing the workflow/Dockerfile scan on a subset before wiring the
+# full audit. `LIMIT` narrows to first N entries; `ONLY_REPO` filters
+# to a comma-separated allowlist of names for targeted spot-checks.
+if ENV["PHASE_5_RUBY_FLOOR_ONLY"] == "1"
+  entries = parse_cimas_yml(CIMAS_YML_PATH)
+  if (only = ENV["ONLY_REPO"])
+    allow = only.split(",").map(&:strip)
+    entries = entries.select { |e| allow.include?(e.name) }
+  end
+  limit = (ENV["LIMIT"] || entries.size).to_i
+  target = entries.first(limit)
+  puts "scanning #{target.size} of #{entries.size} entries for " \
+       "Ruby versions below the org-wide floor `#{RUBY_FLOOR}`..."
+  target.each do |entry|
+    tree = fetch_repo_tree(entry)
+    findings = classify_ruby_floor_drift(entry, tree)
     print_findings_short(entry.name, findings)
   end
   exit 0
