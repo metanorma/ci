@@ -210,21 +210,20 @@ repositories:
       monorepo: true
       gem_directory: gems
   #
-  # DEPRECATED standalone pubid-* repos — removed 2026-06-29 (refs #274, #300 Gap 3):
-  # superseded by `metanorma/pubid` monorepo. Their gems on rubygems are now
-  # published from `metanorma/pubid:gems/` at 1.15.x; the standalone repos are
-  # frozen at 0.7.x from 2024-08. Removed entries:
+  # DEPRECATED standalone pubid-* repos — removed 2026-06-29 (refs #274, #300 Gap 3)
+  # and 2026-07-12 (pubid-etsi deprecation-status audit close): superseded by
+  # `metanorma/pubid` monorepo. Their gems on rubygems are now published from
+  # `metanorma/pubid:archived-gems/<name>/` at 1.15.x; the standalone repos are
+  # frozen (0.7.x from 2024-08, or pubid-etsi 0.1.0 from 2024-02).
+  # Removed entries:
   #   pubid-core, pubid-ieee, pubid-iso, pubid-iec, pubid-bsi, pubid-cen,
-  #   pubid-jis, pubid-itu, pubid-ccsds, pubid-nist, pubid-plateau
+  #   pubid-jis, pubid-itu, pubid-ccsds, pubid-nist, pubid-plateau,
+  #   pubid-etsi (added 2026-07-12 — same class; standalone repo last commit
+  #               2024-02-25 "Bump to 0.1.0", rubygems 1.15.20 published from
+  #               metanorma/pubid:archived-gems/pubid-etsi/).
   #
-  # pubid-etsi (below) remains pending a separate audit of its deprecation status.
-  pubid-etsi:
-    remote: ssh://git@github.com/metanorma/pubid-etsi
-    branch: main
-    files:
-      .rubocop.yml: gh-actions/master/.rubocop.yml
-      .github/workflows/rake.yml: gh-actions/master/rake.yml
-      .github/workflows/release.yml: gh-actions/master/release.yml
+  # pubid-ansi is in the monorepo's archived-gems/ but was never in cimas.yml,
+  # so no entry to remove.
 
   # models
   metanorma-model-gb:
