@@ -12,6 +12,14 @@ on:
   repository_dispatch:
     types: [ do-release ]
 
+# Least-privilege ceiling for the called ghpkg-release.yml. contents:write covers
+# the `gem bump --tag --push` step (git tag pushed with GITHUB_TOKEN). packages:write
+# is the idiomatic grant for a GitHub Packages release; the actual `gem push` to
+# rubygems.pkg.github.com authenticates with pat_token, not GITHUB_TOKEN.
+permissions:
+  contents: write
+  packages: write
+
 jobs:
   release:
     uses: metanorma/ci/.github/workflows/ghpkg-release.yml@main

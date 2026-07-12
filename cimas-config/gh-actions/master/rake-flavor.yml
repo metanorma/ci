@@ -6,6 +6,11 @@ on:
     tags: [ v* ]
   pull_request:
 
+# Least-privilege: the called mn-processor-rake.yml already tops out at
+# contents:read (its tests-passed dispatch uses pat_token); match that ceiling.
+permissions:
+  contents: read
+
 jobs:
   notify:
     uses: metanorma/ci/.github/workflows/mn-processor-rake.yml@main

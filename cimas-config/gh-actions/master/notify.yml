@@ -4,6 +4,10 @@ on:
   repository_dispatch:
     types: [ tests-passed, release-passed ]
 
+# Least-privilege: mn-processor-notify.yml only checks out and dispatches to
+# other repos via pat_token; GITHUB_TOKEN needs no write scopes.
+permissions:
+  contents: read
 
 jobs:
   notify:
