@@ -22,7 +22,14 @@
 #                   `FROM ruby:X.Y.Z` tags. Guards against the class of miss
 #                   that surfaced on 2026-07-07 with metanorma-docker's
 #                   release-tag workflow silently pinned to 3.2 after
-#                   metanorma/ci#274 pushed the floor to 3.3.
+#                   metanorma/ci#274 pushed the floor to 3.3. Scope covers
+#                   cimas.yml-tracked repos plus a supplementary allowlist
+#                   of release-adjacent non-cimas repos
+#                   (SUPPLEMENTARY_RUBY_FLOOR_REPOS below), so the metanorma-
+#                   docker class of miss can no longer slip through. Classes
+#                   (a)-(e3) still run cimas-only; supplementary entries are
+#                   scoped to class (f) alone since they carry no
+#                   file-mapping template rules.
 #
 # Usage (from a cimas-config/-carrying repo root, typically metanorma/ci):
 #
@@ -51,6 +58,38 @@ RUBY_FLOOR = "3.3"
 # Captures the leading `major.minor` from a version string like
 # "3.3.7-slim-bookworm", "3.2", or "3.3.0". Trailing patch/tag ignored.
 RUBY_FLOOR_MAJOR_MINOR_RE = /\A(\d+)\.(\d+)/
+
+# Class (f) supplementary scope: release-adjacent repos that carry
+# release-critical Ruby-version pins but are not managed by cimas.yml.
+# These get class (f) drift-scanning only; classes (a)-(e3) do not
+# apply since they carry no cimas file mappings.
+#
+# The list is intentionally short and additive — each entry needs to be
+# a release-adjacent workflow surface with the same drift risk pattern
+# that motivated class (f) (metanorma-docker's 2026-07-07
+# `release-tag.yml` `ruby-version: '3.2'` pin missed by ci#274). Extend
+# when a new release-critical non-cimas repo appears.
+SUPPLEMENTARY_RUBY_FLOOR_REPOS = [
+  { org: "metanorma", name: "metanorma-docker", branch: "main" },
+  { org: "metanorma", name: "suma-docker",      branch: "main" },
+  { org: "metanorma", name: "ci",               branch: "main" },
+  { org: "metanorma", name: "packed-mn",        branch: "main" },
+].freeze
+
+def supplementary_entries
+  SUPPLEMENTARY_RUBY_FLOOR_REPOS.map do |r|
+    CimasEntry.new(
+      name: r[:name],
+      org: r[:org],
+      branch: r[:branch],
+      remote_url: "ssh://git@github.com/#{r[:org]}/#{r[:name]}",
+      files_synced: {},
+      opt_outs: [],
+      template_binding: {},
+      with_values: {},
+    )
+  end
+end
 
 # ---------- Data model ----------
 
@@ -829,7 +868,11 @@ def emit_finding_lines(finding)
 end
 
 if ENV["PHASE_4_FULL_REPORT"] == "1"
-  entries = parse_cimas_yml(CIMAS_YML_PATH)
+  # Class (f) supplementary entries are appended after cimas.yml so
+  # LIMIT-based sampling hits cimas repos first; a full run includes
+  # supplementary too. audit_entry naturally no-ops on classes (e2/e3)
+  # for supplementary entries (empty files_synced + empty opt_outs).
+  entries = parse_cimas_yml(CIMAS_YML_PATH) + supplementary_entries
   limit = (ENV["LIMIT"] || entries.size).to_i
   target = entries.first(limit)
   $stderr.puts "auditing #{target.size} of #{entries.size} entries..."
@@ -866,8 +909,10 @@ end
 # testing the workflow/Dockerfile scan on a subset before wiring the
 # full audit. `LIMIT` narrows to first N entries; `ONLY_REPO` filters
 # to a comma-separated allowlist of names for targeted spot-checks.
+# Supplementary entries (SUPPLEMENTARY_RUBY_FLOOR_REPOS) are included
+# so the class (f) sweep covers release-adjacent non-cimas repos too.
 if ENV["PHASE_5_RUBY_FLOOR_ONLY"] == "1"
-  entries = parse_cimas_yml(CIMAS_YML_PATH)
+  entries = parse_cimas_yml(CIMAS_YML_PATH) + supplementary_entries
   if (only = ENV["ONLY_REPO"])
     allow = only.split(",").map(&:strip)
     entries = entries.select { |e| allow.include?(e.name) }
