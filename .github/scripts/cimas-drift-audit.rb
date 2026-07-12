@@ -431,14 +431,41 @@ rescue StandardError => e
   nil
 end
 
+# For metanorma/ci#347 Option B: cimas.yml supports visibility-conditional
+# `files:` values of the shape `{ 'if_public' => path1, 'if_private' => path2 }`.
+# Drift audit resolves the hash to the concrete template at check time via
+# a GitHub visibility lookup (same shape as `Cli::Command#resolve_source`).
+# Cached per audit run to bound API calls.
+def resolve_template_path(entry, template_path)
+  return template_path unless template_path.is_a?(Hash)
+  return nil unless template_path.key?("if_public") && template_path.key?("if_private")
+
+  is_private = repo_visibility_private?(entry)
+  is_private ? template_path["if_private"] : template_path["if_public"]
+end
+
+def repo_visibility_private?(entry)
+  @visibility_cache ||= {}
+  slug = "#{entry.org}/#{entry.name}"
+  return @visibility_cache[slug] if @visibility_cache.key?(slug)
+
+  cmd = ["gh", "api", "repos/#{slug}", "--jq", ".private"]
+  out, _err, status = Open3.capture3(*cmd)
+  private_flag = status.success? && out.strip == "true"
+  @visibility_cache[slug] = private_flag
+end
+
 # For (e.2): compare live file content vs template. Returns a Finding if
 # they differ meaningfully. Auto-generated Cimas banner comments are
 # normalized before comparison since the cimas sync process may or may
 # not preserve them across cycles. `.erb` templates are rendered before
 # comparison using the same binding shape as `Cli::Command#sync`.
 def classify_file_drift(entry, local_path, template_path)
+  resolved_path = resolve_template_path(entry, template_path)
+  return [] if resolved_path.nil? # malformed hash — skip
+
   live_content = probe_file(entry, local_path)
-  raw_template = read_template(template_path)
+  raw_template = read_template(resolved_path)
   return [] if live_content.nil? || raw_template.nil?
 
   template_content = render_template(raw_template, template_path, entry)
@@ -451,7 +478,7 @@ def classify_file_drift(entry, local_path, template_path)
     severity: :warning, klass: :e2, repo_name: entry.name,
     file: local_path,
     detail: "`#{local_path}` on `#{entry.org}/#{entry.name}` differs " \
-            "from cimas-config template `#{template_path}` — " \
+            "from cimas-config template `#{resolved_path}` — " \
             "silent drift from the syncable template.",
     recommendation: "Rerun `cimas sync` to restore the template, " \
                     "or document the divergence as an opt-out in cimas.yml."

@@ -513,7 +513,9 @@ repositories:
     remote: ssh://git@github.com/metanorma/mn-samples-ogc
     branch: main
     files:
-      .github/workflows/docker.yml: gh-actions/samples/public-docker.yml
+      .github/workflows/docker.yml:
+        if_public: gh-actions/samples/public-docker.yml
+        if_private: gh-actions/samples/private-docker.yml.erb
       .github/workflows/generate.yml: gh-actions/samples/public-generate.yml
       .github/workflows/test.yml: gh-actions/samples/test.yml
       .github/workflows/automerge.yml: gh-actions/master/automerge.yml
@@ -521,7 +523,9 @@ repositories:
     remote: ssh://git@github.com/metanorma/mn-samples-itu
     branch: main
     files:
-      .github/workflows/docker.yml: gh-actions/samples/public-docker.yml
+      .github/workflows/docker.yml:
+        if_public: gh-actions/samples/public-docker.yml
+        if_private: gh-actions/samples/private-docker.yml.erb
       .github/workflows/generate.yml: gh-actions/samples/public-generate.yml
       .github/workflows/test.yml: gh-actions/samples/test.yml
       .github/workflows/automerge.yml: gh-actions/master/automerge.yml
@@ -529,7 +533,9 @@ repositories:
     remote: ssh://git@github.com/metanorma/mn-samples-iec
     branch: main
     files:
-      .github/workflows/docker.yml: gh-actions/samples/public-docker.yml
+      .github/workflows/docker.yml:
+        if_public: gh-actions/samples/public-docker.yml
+        if_private: gh-actions/samples/private-docker.yml.erb
       .github/workflows/generate.yml: gh-actions/samples/public-generate.yml
       .github/workflows/test.yml: gh-actions/samples/test.yml
       .github/workflows/automerge.yml: gh-actions/master/automerge.yml
@@ -545,7 +551,9 @@ repositories:
     remote: ssh://git@github.com/metanorma/mn-samples-un
     branch: main
     files:
-      .github/workflows/docker.yml: gh-actions/samples/public-docker.yml
+      .github/workflows/docker.yml:
+        if_public: gh-actions/samples/public-docker.yml
+        if_private: gh-actions/samples/private-docker.yml.erb
       .github/workflows/generate.yml: gh-actions/samples/public-generate.yml
       .github/workflows/test.yml: gh-actions/samples/test.yml
       .github/workflows/automerge.yml: gh-actions/master/automerge.yml
@@ -553,7 +561,9 @@ repositories:
     remote: ssh://git@github.com/metanorma/mn-samples-mpfa
     branch: main
     files:
-      .github/workflows/docker.yml: gh-actions/samples/public-docker.yml
+      .github/workflows/docker.yml:
+        if_public: gh-actions/samples/public-docker.yml
+        if_private: gh-actions/samples/private-docker.yml.erb
       .github/workflows/generate.yml: gh-actions/samples/public-generate.yml
       .github/workflows/test.yml: gh-actions/samples/test.yml
       .github/workflows/automerge.yml: gh-actions/master/automerge.yml
@@ -561,7 +571,9 @@ repositories:
     remote: ssh://git@github.com/metanorma/mn-samples-iso
     branch: main
     files:
-      .github/workflows/docker.yml: gh-actions/samples/public-docker.yml
+      .github/workflows/docker.yml:
+        if_public: gh-actions/samples/public-docker.yml
+        if_private: gh-actions/samples/private-docker.yml.erb
       .github/workflows/generate.yml: gh-actions/samples/public-generate.yml
       .github/workflows/test.yml: gh-actions/samples/test.yml
       .github/workflows/automerge.yml: gh-actions/master/automerge.yml
@@ -569,7 +581,9 @@ repositories:
     remote: ssh://git@github.com/metanorma/mn-samples-cc
     branch: main
     files:
-      .github/workflows/docker.yml: gh-actions/samples/public-docker.yml
+      .github/workflows/docker.yml:
+        if_public: gh-actions/samples/public-docker.yml
+        if_private: gh-actions/samples/private-docker.yml.erb
       .github/workflows/generate.yml: gh-actions/samples/public-generate.yml
       .github/workflows/test.yml: gh-actions/samples/test.yml
       .github/workflows/automerge.yml: gh-actions/master/automerge.yml
@@ -577,7 +591,9 @@ repositories:
     remote: ssh://git@github.com/metanorma/mn-samples-iho
     branch: main
     files:
-      .github/workflows/docker.yml: gh-actions/samples/public-docker.yml
+      .github/workflows/docker.yml:
+        if_public: gh-actions/samples/public-docker.yml
+        if_private: gh-actions/samples/private-docker.yml.erb
       .github/workflows/generate.yml: gh-actions/samples/public-generate.yml
       .github/workflows/test.yml: gh-actions/samples/test.yml
       .github/workflows/automerge.yml: gh-actions/master/automerge.yml
@@ -585,7 +601,9 @@ repositories:
     remote: ssh://git@github.com/metanorma/mn-samples-nist
     branch: main
     files:
-      .github/workflows/docker.yml: gh-actions/samples/private-docker.yml.erb
+      .github/workflows/docker.yml:
+        if_public: gh-actions/samples/public-docker.yml
+        if_private: gh-actions/samples/private-docker.yml.erb
       .github/workflows/test.yml: gh-actions/samples/test.yml
       .github/workflows/automerge.yml: gh-actions/master/automerge.yml
     template:
@@ -595,7 +613,9 @@ repositories:
     remote: ssh://git@github.com/metanorma/mn-samples-csa
     branch: main
     files:
-      .github/workflows/docker.yml: gh-actions/samples/public-docker.yml
+      .github/workflows/docker.yml:
+        if_public: gh-actions/samples/public-docker.yml
+        if_private: gh-actions/samples/private-docker.yml.erb
       .github/workflows/generate.yml: gh-actions/samples/public-generate.yml
       .github/workflows/test.yml: gh-actions/samples/test.yml
       .github/workflows/automerge.yml: gh-actions/master/automerge.yml
@@ -603,7 +623,9 @@ repositories:
     remote: ssh://git@github.com/metanorma/mn-samples-bipm
     branch: main
     files:
-      .github/workflows/docker.yml: gh-actions/samples/public-docker.yml
+      .github/workflows/docker.yml:
+        if_public: gh-actions/samples/public-docker.yml
+        if_private: gh-actions/samples/private-docker.yml.erb
       .github/workflows/generate.yml: gh-actions/samples/public-generate.yml
       .github/workflows/test.yml: gh-actions/samples/test.yml
       .github/workflows/automerge.yml: gh-actions/master/automerge.yml
@@ -611,7 +633,9 @@ repositories:
     remote: ssh://git@github.com/metanorma/mn-samples-jcgm
     branch: main
     files:
-      .github/workflows/docker.yml: gh-actions/samples/public-docker.yml
+      .github/workflows/docker.yml:
+        if_public: gh-actions/samples/public-docker.yml
+        if_private: gh-actions/samples/private-docker.yml.erb
       .github/workflows/generate.yml: gh-actions/samples/public-generate.yml
       .github/workflows/test.yml: gh-actions/samples/test.yml
       .github/workflows/automerge.yml: gh-actions/master/automerge.yml
@@ -619,7 +643,9 @@ repositories:
     remote: ssh://git@github.com/metanorma/mn-samples-ribose
     branch: main
     files:
-      .github/workflows/docker.yml: gh-actions/samples/private-docker.yml.erb
+      .github/workflows/docker.yml:
+        if_public: gh-actions/samples/public-docker.yml
+        if_private: gh-actions/samples/private-docker.yml.erb
       .github/workflows/test.yml: gh-actions/samples/test.yml
       .github/workflows/automerge.yml: gh-actions/master/automerge.yml
     template:
@@ -629,7 +655,9 @@ repositories:
     remote: ssh://git@github.com/metanorma/mn-samples-bsi
     branch: main
     files:
-      .github/workflows/docker.yml: gh-actions/samples/private-docker.yml.erb
+      .github/workflows/docker.yml:
+        if_public: gh-actions/samples/public-docker.yml
+        if_private: gh-actions/samples/private-docker.yml.erb
       .github/workflows/test.yml: gh-actions/samples/test.yml
       .github/workflows/automerge.yml: gh-actions/master/automerge.yml
     template:
@@ -639,7 +667,9 @@ repositories:
     remote: ssh://git@github.com/metanorma/mn-samples-ieee
     branch: main
     files:
-      .github/workflows/docker.yml: gh-actions/samples/public-docker.yml
+      .github/workflows/docker.yml:
+        if_public: gh-actions/samples/public-docker.yml
+        if_private: gh-actions/samples/private-docker.yml.erb
       .github/workflows/generate.yml: gh-actions/samples/public-generate.yml
       .github/workflows/test.yml: gh-actions/samples/test.yml
       .github/workflows/automerge.yml: gh-actions/master/automerge.yml
@@ -647,7 +677,9 @@ repositories:
     remote: ssh://git@github.com/metanorma/mn-samples-standoc
     branch: main
     files:
-      .github/workflows/docker.yml: gh-actions/samples/public-docker.yml
+      .github/workflows/docker.yml:
+        if_public: gh-actions/samples/public-docker.yml
+        if_private: gh-actions/samples/private-docker.yml.erb
       .github/workflows/generate.yml: gh-actions/samples/public-generate.yml
       .github/workflows/test.yml: gh-actions/samples/test.yml
       .github/workflows/automerge.yml: gh-actions/master/automerge.yml
@@ -664,7 +696,9 @@ repositories:
     remote: ssh://git@github.com/metanorma/mn-samples-plateau
     branch: main
     files:
-      .github/workflows/docker.yml: gh-actions/samples/private-docker.yml.erb
+      .github/workflows/docker.yml:
+        if_public: gh-actions/samples/public-docker.yml
+        if_private: gh-actions/samples/private-docker.yml.erb
       .github/workflows/test.yml: gh-actions/samples/test.yml
     template:
       binding:
@@ -686,61 +720,81 @@ repositories:
     remote: ssh://git@github.com/metanorma/ogc-wfs
     branch: main
     files:
-      .github/workflows/docker.yml: gh-actions/samples/public-docker.yml
+      .github/workflows/docker.yml:
+        if_public: gh-actions/samples/public-docker.yml
+        if_private: gh-actions/samples/private-docker.yml.erb
       .github/workflows/automerge.yml: gh-actions/master/automerge.yml
   hk-ogcio-infosec-docs:
     remote: ssh://git@github.com/metanorma/hk-ogcio-infosec-docs
     branch: main
     files:
-      .github/workflows/docker.yml: gh-actions/samples/public-docker.yml
+      .github/workflows/docker.yml:
+        if_public: gh-actions/samples/public-docker.yml
+        if_private: gh-actions/samples/private-docker.yml.erb
       .github/workflows/automerge.yml: gh-actions/master/automerge.yml
   csa-caiq:
     remote: ssh://git@github.com/metanorma/csa-caiq
     branch: main
     files:
-      .github/workflows/docker.yml: gh-actions/samples/public-docker.yml
+      .github/workflows/docker.yml:
+        if_public: gh-actions/samples/public-docker.yml
+        if_private: gh-actions/samples/private-docker.yml.erb
       .github/workflows/automerge.yml: gh-actions/master/automerge.yml
   ogc-tcpnp:
     remote: ssh://git@github.com/metanorma/ogc-tcpnp
     branch: main
     files:
-      .github/workflows/docker.yml: gh-actions/samples/public-docker.yml
+      .github/workflows/docker.yml:
+        if_public: gh-actions/samples/public-docker.yml
+        if_private: gh-actions/samples/private-docker.yml.erb
       .github/workflows/automerge.yml: gh-actions/master/automerge.yml
   ogc-dggs-xmi:
     remote: ssh://git@github.com/metanorma/ogc-dggs-xmi
     branch: main
     files:
-      .github/workflows/docker.yml: gh-actions/samples/public-docker.yml
+      .github/workflows/docker.yml:
+        if_public: gh-actions/samples/public-docker.yml
+        if_private: gh-actions/samples/private-docker.yml.erb
       .github/workflows/automerge.yml: gh-actions/master/automerge.yml
   ogc-citygml-xmi:
     remote: ssh://git@github.com/metanorma/ogc-citygml-xmi
     branch: main
     files:
-      .github/workflows/docker.yml: gh-actions/samples/public-docker.yml
+      .github/workflows/docker.yml:
+        if_public: gh-actions/samples/public-docker.yml
+        if_private: gh-actions/samples/private-docker.yml.erb
       .github/workflows/automerge.yml: gh-actions/master/automerge.yml
   ogc-citygml2:
     remote: ssh://git@github.com/metanorma/ogc-citygml2
     branch: main
     files:
-      .github/workflows/docker.yml: gh-actions/samples/public-docker.yml
+      .github/workflows/docker.yml:
+        if_public: gh-actions/samples/public-docker.yml
+        if_private: gh-actions/samples/private-docker.yml.erb
       .github/workflows/automerge.yml: gh-actions/master/automerge.yml
   bipm-si-brochure:
     remote: ssh://git@github.com/metanorma/bipm-si-brochure
     branch: main
     files:
-      .github/workflows/docker.yml: gh-actions/samples/public-docker.yml
+      .github/workflows/docker.yml:
+        if_public: gh-actions/samples/public-docker.yml
+        if_private: gh-actions/samples/private-docker.yml.erb
       .github/workflows/automerge.yml: gh-actions/master/automerge.yml
   eccma-iso-scor-vocab:
     remote: ssh://git@github.com/metanorma/eccma-iso-scor-vocab
     branch: main
     files:
-      .github/workflows/docker.yml: gh-actions/samples/public-docker.yml
+      .github/workflows/docker.yml:
+        if_public: gh-actions/samples/public-docker.yml
+        if_private: gh-actions/samples/private-docker.yml.erb
       .github/workflows/automerge.yml: gh-actions/master/automerge.yml
   bs-202000:
     remote: ssh://git@github.com/metanorma/bs-202000
     branch: main
     files:
-      .github/workflows/docker.yml: gh-actions/samples/private-docker.yml.erb
+      .github/workflows/docker.yml:
+        if_public: gh-actions/samples/public-docker.yml
+        if_private: gh-actions/samples/private-docker.yml.erb
     template:
       binding:
         flavor: bsi
@@ -748,7 +802,9 @@ repositories:
     remote: ssh://git@github.com/metanorma/S-102-Product-Specification
     branch: main
     files:
-      .github/workflows/docker.yml: gh-actions/samples/public-docker.yml
+      .github/workflows/docker.yml:
+        if_public: gh-actions/samples/public-docker.yml
+        if_private: gh-actions/samples/private-docker.yml.erb
   # pdfa-iso-32000-2: transferred to `pdf-association/spec-pdf-core`
   # (PDF Association took ownership as the spec's steward). Surfaced by
   # cimas-drift-audit MVP (metanorma/ci#335) on 2026-07-02 as class (c)
@@ -759,57 +815,79 @@ repositories:
     remote: ssh://git@github.com/metanorma/annotated-express
     branch: main
     files:
-      .github/workflows/docker.yml: gh-actions/samples/public-docker.yml
+      .github/workflows/docker.yml:
+        if_public: gh-actions/samples/public-docker.yml
+        if_private: gh-actions/samples/private-docker.yml.erb
   ogc-development-workshop:
     remote: ssh://git@github.com/metanorma/ogc-development-workshop
     branch: main
     files:
-      .github/workflows/docker.yml: gh-actions/samples/public-docker.yml
+      .github/workflows/docker.yml:
+        if_public: gh-actions/samples/public-docker.yml
+        if_private: gh-actions/samples/private-docker.yml.erb
   bipm-editor-guides:
     remote: ssh://git@github.com/metanorma/bipm-editor-guides
     branch: main
     files:
-      .github/workflows/docker.yml: gh-actions/samples/public-docker.yml
+      .github/workflows/docker.yml:
+        if_public: gh-actions/samples/public-docker.yml
+        if_private: gh-actions/samples/private-docker.yml.erb
   iho-standards-manual:
     remote: ssh://git@github.com/metanorma/iho-standards-manual
     branch: main
     files:
-      .github/workflows/docker.yml: gh-actions/samples/public-docker.yml
+      .github/workflows/docker.yml:
+        if_public: gh-actions/samples/public-docker.yml
+        if_private: gh-actions/samples/private-docker.yml.erb
   ogc-muddi-mds:
     remote: ssh://git@github.com/metanorma/ogc-muddi-mds
     branch: main
     files:
-      .github/workflows/docker.yml: gh-actions/samples/public-docker.yml
+      .github/workflows/docker.yml:
+        if_public: gh-actions/samples/public-docker.yml
+        if_private: gh-actions/samples/private-docker.yml.erb
   scc-ab-docs:
     remote: ssh://git@github.com/metanorma/scc-ab-docs
     branch: main
     files:
-      .github/workflows/docker.yml: gh-actions/samples/public-docker.yml
+      .github/workflows/docker.yml:
+        if_public: gh-actions/samples/public-docker.yml
+        if_private: gh-actions/samples/private-docker.yml.erb
   OGCNANameTypeSpecificationForDefinitions:
     remote: ssh://git@github.com/metanorma/OGCNANameTypeSpecificationForDefinitions
     branch: main
     files:
-      .github/workflows/docker.yml: gh-actions/samples/public-docker.yml
+      .github/workflows/docker.yml:
+        if_public: gh-actions/samples/public-docker.yml
+        if_private: gh-actions/samples/private-docker.yml.erb
   iso-tc184-sc4-boilerplate:
     remote: ssh://git@github.com/metanorma/iso-tc184-sc4-boilerplate
     branch: main
     files:
-      .github/workflows/docker.yml: gh-actions/samples/public-docker.yml
+      .github/workflows/docker.yml:
+        if_public: gh-actions/samples/public-docker.yml
+        if_private: gh-actions/samples/private-docker.yml.erb
   sample-ogc-discussion-paper:
     remote: ssh://git@github.com/metanorma/sample-ogc-discussion-paper
     branch: main
     files:
-      .github/workflows/docker.yml: gh-actions/samples/public-docker.yml
+      .github/workflows/docker.yml:
+        if_public: gh-actions/samples/public-docker.yml
+        if_private: gh-actions/samples/private-docker.yml.erb
   ietf-rfc-3339:
     remote: ssh://git@github.com/metanorma/ietf-rfc-3339
     branch: master
     files:
-      .github/workflows/docker.yml: gh-actions/samples/public-docker.yml
+      .github/workflows/docker.yml:
+        if_public: gh-actions/samples/public-docker.yml
+        if_private: gh-actions/samples/private-docker.yml.erb
   ogc-modspec:
     remote: ssh://git@github.com/metanorma/ogc-modspec
     branch: main
     files:
-      .github/workflows/docker.yml: gh-actions/samples/public-docker.yml
+      .github/workflows/docker.yml:
+        if_public: gh-actions/samples/public-docker.yml
+        if_private: gh-actions/samples/private-docker.yml.erb
   enisa-eucs:
     remote: ssh://git@github.com/metanorma/enisa-eucs
     branch: main
@@ -818,7 +896,9 @@ repositories:
     remote: ssh://git@github.com/metanorma/X.icd-schemas
     branch: main
     files:
-      .github/workflows/docker.yml: gh-actions/samples/public-docker.yml
+      .github/workflows/docker.yml:
+        if_public: gh-actions/samples/public-docker.yml
+        if_private: gh-actions/samples/private-docker.yml.erb
   # DGGS2ISO-19170: repo deleted from `metanorma` org (returns 404).
   # Surfaced by the first scheduled cimas-drift-audit run on 2026-07-04
   # (metanorma/ci#341) as class (a) — see the tracking issue at
@@ -827,12 +907,16 @@ repositories:
     remote: ssh://git@github.com/metanorma/C-17-Publication
     branch: main
     files:
-      .github/workflows/docker.yml: gh-actions/samples/public-docker.yml
+      .github/workflows/docker.yml:
+        if_public: gh-actions/samples/public-docker.yml
+        if_private: gh-actions/samples/private-docker.yml.erb
   iec-iso-jseg-15:
     remote: ssh://git@github.com/metanorma/iec-iso-jseg-15
     branch: main
     files:
-      .github/workflows/docker.yml: gh-actions/samples/public-docker.yml
+      .github/workflows/docker.yml:
+        if_public: gh-actions/samples/public-docker.yml
+        if_private: gh-actions/samples/private-docker.yml.erb
   iso-iec-smart-terms:
     remote: ssh://git@github.com/metanorma/iso-iec-smart-terms
     branch: main
@@ -842,17 +926,23 @@ repositories:
     remote: ssh://git@github.com/metanorma/laozi
     branch: main
     files:
-      .github/workflows/docker.yml: gh-actions/samples/public-docker.yml
+      .github/workflows/docker.yml:
+        if_public: gh-actions/samples/public-docker.yml
+        if_private: gh-actions/samples/private-docker.yml.erb
   itu-X.arch-design:
     remote: ssh://git@github.com/metanorma/itu-X.arch-design
     branch: main
     files:
-      .github/workflows/docker.yml: gh-actions/samples/public-docker.yml
+      .github/workflows/docker.yml:
+        if_public: gh-actions/samples/public-docker.yml
+        if_private: gh-actions/samples/private-docker.yml.erb
   itu-contribution-samples:
     remote: ssh://git@github.com/metanorma/itu-contribution-samples
     branch: main
     files:
-      .github/workflows/docker.yml: gh-actions/samples/public-docker.yml
+      .github/workflows/docker.yml:
+        if_public: gh-actions/samples/public-docker.yml
+        if_private: gh-actions/samples/private-docker.yml.erb
 
   # templates
   mn-templates-cc:
@@ -1015,94 +1105,130 @@ repositories:
     remote: ssh://git@github.com/metanorma/rfc-divination-cfapi
     branch: main
     files:
-      .github/workflows/docker.yml: gh-actions/samples/public-docker.yml
+      .github/workflows/docker.yml:
+        if_public: gh-actions/samples/public-docker.yml
+        if_private: gh-actions/samples/private-docker.yml.erb
   rfc-camelot-holy-grenade:
     remote: ssh://git@github.com/metanorma/rfc-camelot-holy-grenade
     branch: main
     files:
-      .github/workflows/docker.yml: gh-actions/samples/public-docker.yml
+      .github/workflows/docker.yml:
+        if_public: gh-actions/samples/public-docker.yml
+        if_private: gh-actions/samples/private-docker.yml.erb
   rfc-asciidoc-rfc:
     remote: ssh://git@github.com/metanorma/rfc-asciidoc-rfc
     branch: main
     files:
-      .github/workflows/docker.yml: gh-actions/samples/public-docker.yml
+      .github/workflows/docker.yml:
+        if_public: gh-actions/samples/public-docker.yml
+        if_private: gh-actions/samples/private-docker.yml.erb
   rfc-asciirfc-minimal:
     remote: ssh://git@github.com/metanorma/rfc-asciirfc-minimal
     branch: main
     files:
-      .github/workflows/docker.yml: gh-actions/samples/public-docker.yml
+      .github/workflows/docker.yml:
+        if_public: gh-actions/samples/public-docker.yml
+        if_private: gh-actions/samples/private-docker.yml.erb
   iso-690:
     remote: ssh://git@github.com/metanorma/iso-690
     branch: main
     files:
-      .github/workflows/docker.yml: gh-actions/samples/public-docker.yml
+      .github/workflows/docker.yml:
+        if_public: gh-actions/samples/public-docker.yml
+        if_private: gh-actions/samples/private-docker.yml.erb
   iso-8000-51:
     remote: ssh://git@github.com/metanorma/iso-8000-51
     branch: main
     files:
-      .github/workflows/docker.yml: gh-actions/samples/public-docker.yml
+      .github/workflows/docker.yml:
+        if_public: gh-actions/samples/public-docker.yml
+        if_private: gh-actions/samples/private-docker.yml.erb
   iso-8000-100-ed2:
     remote: ssh://git@github.com/metanorma/iso-8000-100-ed2
     branch: main
     files:
-      .github/workflows/docker.yml: gh-actions/samples/public-docker.yml
+      .github/workflows/docker.yml:
+        if_public: gh-actions/samples/public-docker.yml
+        if_private: gh-actions/samples/private-docker.yml.erb
   iso-8601-1:
     remote: ssh://git@github.com/metanorma/iso-8601-1
     branch: main
     files:
-      .github/workflows/docker.yml: gh-actions/samples/public-docker.yml
+      .github/workflows/docker.yml:
+        if_public: gh-actions/samples/public-docker.yml
+        if_private: gh-actions/samples/private-docker.yml.erb
       .gitlab-ci.yml: gitlab-ci/samples/docker.yml
   iso-8601-2:
     remote: ssh://git@github.com/metanorma/iso-8601-2
     branch: main
     files:
-      .github/workflows/docker.yml: gh-actions/samples/public-docker.yml
+      .github/workflows/docker.yml:
+        if_public: gh-actions/samples/public-docker.yml
+        if_private: gh-actions/samples/private-docker.yml.erb
       .gitlab-ci.yml: gitlab-ci/samples/docker.yml
   iso-10303-2:
     remote: ssh://git@github.com/metanorma/iso-10303-2
     branch: main
     files:
-      .github/workflows/docker.yml: gh-actions/samples/public-docker.yml
+      .github/workflows/docker.yml:
+        if_public: gh-actions/samples/public-docker.yml
+        if_private: gh-actions/samples/private-docker.yml.erb
   iso-19115-3:
     remote: ssh://git@github.com/metanorma/iso-19115-3
     branch: main
     files:
-      .github/workflows/docker.yml: gh-actions/samples/public-docker.yml
+      .github/workflows/docker.yml:
+        if_public: gh-actions/samples/public-docker.yml
+        if_private: gh-actions/samples/private-docker.yml.erb
   iso-19626-1:
     remote: ssh://git@github.com/metanorma/iso-19626-1
     branch: main
     files:
-      .github/workflows/docker.yml: gh-actions/samples/public-docker.yml
+      .github/workflows/docker.yml:
+        if_public: gh-actions/samples/public-docker.yml
+        if_private: gh-actions/samples/private-docker.yml.erb
   iso-tc184-sc4:
     remote: ssh://git@github.com/metanorma/iso-tc184-sc4
     branch: main
     files:
-      .github/workflows/docker.yml: gh-actions/samples/public-docker.yml
+      .github/workflows/docker.yml:
+        if_public: gh-actions/samples/public-docker.yml
+        if_private: gh-actions/samples/private-docker.yml.erb
   iso-10303-11:
     remote: ssh://git@github.com/metanorma/iso-10303-11
     branch: main
     files:
-      .github/workflows/docker.yml: gh-actions/samples/public-docker.yml
+      .github/workflows/docker.yml:
+        if_public: gh-actions/samples/public-docker.yml
+        if_private: gh-actions/samples/private-docker.yml.erb
   iso-19135:
     remote: ssh://git@github.com/metanorma/iso-19135
     branch: main
     files:
-      .github/workflows/docker.yml: gh-actions/samples/public-docker.yml
+      .github/workflows/docker.yml:
+        if_public: gh-actions/samples/public-docker.yml
+        if_private: gh-actions/samples/private-docker.yml.erb
   iso-15926-6:
     remote: ssh://git@github.com/metanorma/iso-15926-6
     branch: main
     files:
-      .github/workflows/docker.yml: gh-actions/samples/public-docker.yml
+      .github/workflows/docker.yml:
+        if_public: gh-actions/samples/public-docker.yml
+        if_private: gh-actions/samples/private-docker.yml.erb
   iso-19156:
     remote: ssh://git@github.com/metanorma/iso-19156
     branch: main
     files:
-      .github/workflows/docker.yml: gh-actions/samples/public-docker.yml
+      .github/workflows/docker.yml:
+        if_public: gh-actions/samples/public-docker.yml
+        if_private: gh-actions/samples/private-docker.yml.erb
   iso-tc184-sc4-directives:
     remote: ssh://git@github.com/metanorma/iso-tc184-sc4-directives
     branch: main
     files:
-      .github/workflows/docker.yml: gh-actions/samples/public-docker.yml
+      .github/workflows/docker.yml:
+        if_public: gh-actions/samples/public-docker.yml
+        if_private: gh-actions/samples/private-docker.yml.erb
 
   mn2pdf-ruby:
     remote: ssh://git@github.com/metanorma/mn2pdf-ruby
@@ -1406,12 +1532,6 @@ groups:
   - docs
   - itu-X.arch-design
   - itu-contribution-samples
-  private-docs:
-  - mn-samples-ribose
-  - mn-samples-nist
-  - mn-samples-bsi
-  - mn-samples-jis
-  - bs-202000
   setup:
   - metanorma-macos-setup
   - metanorma-windows-setup
