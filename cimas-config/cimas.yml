@@ -238,7 +238,14 @@ repositories:
     remote: ssh://git@github.com/metanorma/metanorma-model-iso
     branch: main
     files:
-      Gemfile: gh-actions/model/Gemfile
+      # model-iso alone among the model repos carries a `.github/workflows/deploy.yml`
+      # (the "Build and Deploy Grammars" workflow) that shells out to
+      # `bundle exec lutaml-xsd build ...`. The `lutaml-xsd` executable dropped
+      # out of the `lutaml` gem's runtime dep chain in the early-July 2026 lutaml
+      # restructuring, so its Gemfile needs `gem "lutaml-xsd"` explicitly.
+      # `Gemfile.grammar-build` is a scoped variant of `gh-actions/model/Gemfile`
+      # for exactly that use case; other model repos keep the plain template.
+      Gemfile: gh-actions/model/Gemfile.grammar-build
       Makefile: gh-actions/model/Makefile
       .github/workflows/make.yml: gh-actions/model/make.yml
       .github/workflows/automerge.yml: gh-actions/master/automerge.yml
