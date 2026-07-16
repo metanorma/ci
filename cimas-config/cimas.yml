@@ -191,38 +191,32 @@ repositories:
       .rubocop.yml: gh-actions/master/.rubocop.yml
       .github/workflows/rake.yml: gh-actions/master/rake.yml
       .github/workflows/release.yml: gh-actions/master/release.yml
-  # metanorma/pubid re-added 2026-07-05 after metanorma/ci#300 Gap 2 landed
-  # the `gh-actions/monorepo/*` template family. The rake.yml sync maps to
-  # `gh-actions/monorepo/rake.yml.erb`, which calls the new shared reusable
-  # `metanorma/ci/.github/workflows/monorepo-per-gem-rake.yml` (promoted from
-  # pubid's local `./.github/workflows/generic-rake.yml` fork). On the next
-  # cimas sync pubid's rake.yml `uses:` line switches from the local fork to
-  # the shared reusable; the local `.github/workflows/generic-rake.yml` fork
-  # becomes orphaned (cleanup follow-up — cimas doesn't manage that file).
-  # Per-repo `with:` follows the metanorma/cimas#55 shape.
-  pubid:
-    remote: ssh://git@github.com/metanorma/pubid
-    branch: main
-    files:
-      .rubocop.yml: gh-actions/master/.rubocop.yml
-      .github/workflows/rake.yml: gh-actions/monorepo/rake.yml.erb
-    with:
-      monorepo: true
-      gem_directory: gems
-  #
-  # DEPRECATED standalone pubid-* repos — removed 2026-06-29 (refs #274, #300 Gap 3)
-  # and 2026-07-12 (pubid-etsi deprecation-status audit close): superseded by
-  # `metanorma/pubid` monorepo. Their gems on rubygems are now published from
-  # `metanorma/pubid:archived-gems/<name>/` at 1.15.x; the standalone repos are
+  # DEPRECATED pubid-family entries — all removed. Timeline:
+  # - 2026-06-29 (refs #274, #300 Gap 3): 11 standalone `pubid-*` repos removed
+  #   as superseded by the `pubid` monorepo.
+  # - 2026-07-12: `pubid-etsi` removed as the same class (deprecation-status
+  #   audit close).
+  # - 2026-07-17: `pubid` (the monorepo) removed after the Wed 2026-07-15
+  #   drift-audit run surfaced that the repo was transferred out of the
+  #   metanorma org to a new `pubid/pubid` org. opoudjis's decision: no
+  #   cross-org cimas maintenance; pubid is Andrej's territory and is fine
+  #   to run independently (same posture as the relaton-* family).
+  # Gems on rubygems for the removed pubid-* set are published from
+  # `pubid/pubid:archived-gems/<name>/` at 1.15.x; the standalone repos are
   # frozen (0.7.x from 2024-08, or pubid-etsi 0.1.0 from 2024-02).
-  # Removed entries:
-  #   pubid-core, pubid-ieee, pubid-iso, pubid-iec, pubid-bsi, pubid-cen,
-  #   pubid-jis, pubid-itu, pubid-ccsds, pubid-nist, pubid-plateau,
-  #   pubid-etsi (added 2026-07-12 — same class; standalone repo last commit
-  #               2024-02-25 "Bump to 0.1.0", rubygems 1.15.20 published from
-  #               metanorma/pubid:archived-gems/pubid-etsi/).
   #
-  # pubid-ansi is in the monorepo's archived-gems/ but was never in cimas.yml,
+  # Full removed set:
+  #   pubid-core, pubid-ieee, pubid-iso, pubid-iec, pubid-bsi, pubid-cen,
+  #   pubid-jis, pubid-itu, pubid-ccsds, pubid-nist, pubid-plateau
+  #     (11 entries removed 2026-06-29)
+  #   pubid-etsi (removed 2026-07-12 — same class; standalone repo last commit
+  #               2024-02-25 "Bump to 0.1.0", rubygems 1.15.20 published from
+  #               `pubid/pubid:archived-gems/pubid-etsi/`)
+  #   pubid (removed 2026-07-17 — monorepo transferred to `pubid/pubid` org,
+  #          surfaced by the Wed 2026-07-15 drift-audit run; opoudjis directive
+  #          to stop cross-org cimas maintenance)
+  #
+  # pubid-ansi is in the monorepo's `archived-gems/` but was never in cimas.yml,
   # so no entry to remove.
 
   # models
