@@ -21,7 +21,7 @@ repositories:
     files:
       .rubocop.yml: gh-actions/master/.rubocop.yml
       .github/workflows/rake.yml: gh-actions/master/rake.yml.erb
-      .github/workflows/release.yml: gh-actions/master/release_wo_bundle_install.yml
+      .github/workflows/release.yml: gh-actions/master/release_wo_bundle_install_manual_notes.yml
     with:
       # First real consumer of the metanorma/ci#300 Gap 1 `with:` mechanism.
       # metanorma's live rake.yml has `private-fonts: true` (added in
@@ -419,21 +419,21 @@ repositories:
     files:
       .rubocop.yml: gh-actions/master/.rubocop.yml
       .github/workflows/rake.yml: gh-actions/master/rake.yml
-      .github/workflows/release.yml: gh-actions/master/release.yml
+      .github/workflows/release.yml: gh-actions/master/release_manual_notes.yml
   cnccs:
     remote: ssh://git@github.com/metanorma/cnccs
     branch: master
     files:
       .rubocop.yml: gh-actions/master/.rubocop.yml
       .github/workflows/rake.yml: gh-actions/master/rake.yml
-      .github/workflows/release.yml: gh-actions/master/release.yml
+      .github/workflows/release.yml: gh-actions/master/release_manual_notes.yml
   isoics:
     remote: ssh://git@github.com/metanorma/isoics
     branch: main
     files:
       .rubocop.yml: gh-actions/master/.rubocop.yml
       .github/workflows/rake.yml: gh-actions/master/rake.yml
-      .github/workflows/release.yml: gh-actions/master/release.yml
+      .github/workflows/release.yml: gh-actions/master/release_manual_notes.yml
   # iso690render — DEPRECATED 2026-06-29: this repo hosts a legacy `relaton-render`
   # gemspec; the active relaton-render gem is now published from
   # https://github.com/relaton/relaton-render (different org). The metanorma/iso690render
@@ -466,7 +466,7 @@ repositories:
     files:
       .rubocop.yml: gh-actions/master/.rubocop.yml
       .github/workflows/rake.yml: gh-actions/master/rake.yml
-      .github/workflows/release.yml: gh-actions/master/release.yml
+      .github/workflows/release.yml: gh-actions/master/release_manual_notes.yml
   isodoc-i18n:
     remote: ssh://git@github.com/metanorma/isodoc-i18n
     branch: main
@@ -1369,7 +1369,7 @@ repositories:
     files:
       .rubocop.yml: gh-actions/master/.rubocop.yml
       .github/workflows/rake.yml: gh-actions/master/rake.yml
-      .github/workflows/release.yml: gh-actions/master/release_wo_bundle_install.yml
+      .github/workflows/release.yml: gh-actions/master/release_wo_bundle_install_manual_notes.yml
   ammitto:
     remote: ssh://git@github.com/ammitto/ammitto
     branch: main
