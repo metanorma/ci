@@ -7,8 +7,9 @@
 #
 # Walks cimas-config/cimas.yml, probes each repo's live state on GitHub,
 # and produces a structured drift report grouped by severity. Detects
-# eight failure-mode classes (per the sharpened acceptance criteria in
-# metanorma/ci#300 plus the class (f) extension queued on 2026-07-07):
+# nine failure-mode classes (per the sharpened acceptance criteria in
+# metanorma/ci#300 plus later extensions — class (f) queued 2026-07-07,
+# class (g) queued 2026-07-20 via metanorma/ci#356):
 #
 #   (a) error   — repo deleted (404)
 #   (b) warning — repo archived
@@ -30,6 +31,16 @@
 #                   (a)-(e3) still run cimas-only; supplementary entries are
 #                   scoped to class (f) alone since they carry no
 #                   file-mapping template rules.
+#   (g)   warning — variant template drift from parent. Variant templates
+#                   in cimas-config/gh-actions/ (e.g. Gemfile.grammar-build,
+#                   release_manual_notes.yml) are near-copies of a parent
+#                   template plus a small documented delta. If the parent
+#                   is updated in a later PR without a matching variant
+#                   update, silent drift accumulates. Class (g) pins each
+#                   variant's expected diff-line count against its parent
+#                   at variant-creation time (VARIANT_REGISTRY below) and
+#                   flags any divergence. Repo-independent — runs once per
+#                   audit, no gh api calls.
 #
 # Usage (from a cimas-config/-carrying repo root, typically metanorma/ci):
 #
@@ -91,6 +102,36 @@ def supplementary_entries
   end
 end
 
+# Class (g) scope: variant templates in cimas-config/gh-actions/ and
+# their parents. Each entry pins the current diff-line count between
+# variant and parent. Class (g) fires a warning if the actual diff
+# diverges from `expected_delta_lines` — signalling either a parent-side
+# update that was not mirrored into the variant, or a legitimate
+# variant-side delta growth that needs the registry updated.
+#
+# `expected_delta_lines` is the count of non-header lines (excluding
+# ---/+++/@@ markers) in `diff -u -b variant parent`. Compute with:
+#
+#   diff -u -b <parent> <variant> | grep -c '^[+-][^+-]'
+#
+# Rationale for the class-(g) scope + heuristic lives in
+# metanorma/ci#356. Add a new row whenever a new variant template is
+# introduced (documented in the variant's header comment block).
+VARIANT_REGISTRY = [
+  {
+    variant: "cimas-config/gh-actions/model/Gemfile.grammar-build",
+    parent: "cimas-config/gh-actions/model/Gemfile",
+    expected_delta_lines: 8,
+    note: "Header comment block + one gem line — introduced in ci#353.",
+  },
+  # Additions expected once ci#355 (release-notes floor) lands:
+  #   - release_manual_notes.yml vs release.yml
+  #   - release_wo_bundle_install_manual_notes.yml vs
+  #     release_wo_bundle_install.yml
+  # Both introduced in ci#354 for the auto-generated GitHub Release
+  # notes opt-out path.
+].freeze
+
 # ---------- Data model ----------
 
 # One `repositories:` entry parsed from cimas.yml.
@@ -119,8 +160,8 @@ OptOut = Struct.new(
 # One drift finding.
 Finding = Struct.new(
   :severity,      # :error | :warning | :flag
-  :klass,         # :a | :b | :c | :d | :e1 | :e2 | :e3
-  :repo_name,     # e.g. "metanorma-cli"
+  :klass,         # :a | :b | :c | :d | :e1 | :e2 | :e3 | :f | :g
+  :repo_name,     # e.g. "metanorma-cli" (or "cimas-config" for class (g))
   :file,          # e.g. ".rubocop.yml" (nil for repo-level classes a-d)
   :detail,        # Free-form finding text
   :recommendation, # Free-form recommended action
@@ -770,6 +811,85 @@ def check_pin_below_floor(entry, path, location, raw_version)
   )
 end
 
+# ---------- Class (g): variant template drift ----------
+
+# Count changed lines between two files using `diff -u -b`. Excludes
+# unified-diff headers (---, +++, @@) so only actual +/- lines count.
+# `-b` ignores changes in whitespace amount, but layout / semantic diffs
+# still surface. Raises on diff error (exit >= 2); exit 0 (identical)
+# and 1 (differ) are normal.
+def count_variant_delta_lines(parent_path, variant_path)
+  out, _err, status = Open3.capture3(
+    "diff", "-u", "-b", parent_path, variant_path
+  )
+  if status.exitstatus > 1
+    raise "diff failed on `#{parent_path}` vs `#{variant_path}` " \
+          "(exit #{status.exitstatus})"
+  end
+
+  out.each_line
+    .reject { |l| l.match?(/\A(?:---|\+\+\+|@@)/) }
+    .count { |l| l.start_with?("+", "-") }
+end
+
+# Class (g): walk VARIANT_REGISTRY, verify each variant's diff against
+# its parent matches the pinned expected_delta_lines count. Repo-
+# independent — runs once per audit. Uses "cimas-config" as the
+# repo_name anchor so class-(g) findings group distinctly in the report.
+def classify_variant_drift
+  findings = []
+
+  VARIANT_REGISTRY.each do |entry|
+    variant_path = entry[:variant]
+    parent_path  = entry[:parent]
+    expected     = entry[:expected_delta_lines]
+
+    unless File.exist?(parent_path)
+      findings << Finding.new(
+        severity: :error, klass: :g, repo_name: "cimas-config",
+        file: variant_path,
+        detail: "Registered variant `#{variant_path}` references parent " \
+                "`#{parent_path}`, but the parent file is missing on disk.",
+        recommendation: "Restore the parent template or remove/relocate " \
+                        "the variant's VARIANT_REGISTRY entry.",
+      )
+      next
+    end
+
+    unless File.exist?(variant_path)
+      findings << Finding.new(
+        severity: :error, klass: :g, repo_name: "cimas-config",
+        file: variant_path,
+        detail: "Registered variant `#{variant_path}` is missing on disk.",
+        recommendation: "Restore the variant template or remove its " \
+                        "VARIANT_REGISTRY entry.",
+      )
+      next
+    end
+
+    actual = count_variant_delta_lines(parent_path, variant_path)
+    next if actual == expected
+
+    findings << Finding.new(
+      severity: :warning, klass: :g, repo_name: "cimas-config",
+      file: variant_path,
+      detail: "Variant `#{variant_path}` differs from parent " \
+              "`#{parent_path}` by #{actual} changed lines (registry " \
+              "pins `expected_delta_lines: #{expected}`). Likely a " \
+              "parent-side update was not mirrored in the variant, or " \
+              "the variant's delta legitimately grew and " \
+              "VARIANT_REGISTRY needs updating.",
+      recommendation: "`diff -u -b #{parent_path} #{variant_path}`; if " \
+                      "the parent moved and the variant should follow, " \
+                      "sync the variant. If the variant's delta " \
+                      "legitimately grew, update `expected_delta_lines` " \
+                      "in VARIANT_REGISTRY.",
+    )
+  end
+
+  findings
+end
+
 # ---------- Phase 3 harness ----------
 
 if ENV["PHASE_3_OPTOUT_ONLY"] == "1"
@@ -801,6 +921,7 @@ CLASS_HEADINGS = {
   e2: "(e.2) Silent drift from cimas-managed template",
   e3: "(e.3) Documented opt-out (flag for maintainer affirmation)",
   f: "(f) Ruby version below org-wide floor (#{RUBY_FLOOR}, per ci#274)",
+  g: "(g) Variant template drift from parent (per ci#356)",
 }.freeze
 
 def audit_entry(entry)
@@ -881,8 +1002,31 @@ if ENV["PHASE_4_FULL_REPORT"] == "1"
     $stderr.print "\r  [#{idx + 1}/#{target.size}] #{entry.name.ljust(40)}"
     all_findings.concat(audit_entry(entry))
   end
+  # Class (g) — variant template drift, repo-independent. Runs once
+  # per audit; skipped on LIMIT-sampled runs so partial invocations
+  # don't emit misleading half-audits.
+  if limit >= entries.size
+    $stderr.puts "\n  class (g) variant-drift check..."
+    all_findings.concat(classify_variant_drift)
+  end
   $stderr.puts "\ndone. #{all_findings.size} findings across #{target.size} entries."
   puts emit_markdown_report(all_findings)
+  exit 0
+end
+
+# ---------- Phase 5 harness: variant-drift only ----------
+# Isolated harness for iterating on class (g) without running the
+# per-repo classes (which need gh-api access + are slow). See ci#356.
+
+if ENV["PHASE_5_VARIANT_DRIFT_ONLY"] == "1"
+  puts "phase-5 class-(g) variant-drift audit " \
+       "(#{VARIANT_REGISTRY.size} registry entries)..."
+  findings = classify_variant_drift
+  if findings.empty?
+    puts "  ✓ all variants in sync with parents."
+  else
+    puts emit_markdown_report(findings)
+  end
   exit 0
 end
 
