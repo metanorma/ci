@@ -101,6 +101,92 @@ jobs:
           submodules: ${{ inputs.submodules }}
           token: ${{ secrets.pat_token || github.token }}
 
+      # Ci#358 ask #3: guarantee a tag-listener workflow exists in the caller
+      # repo when the gated-direct relay is expected to publish. Without a
+      # workflow responding to `push:` with `tags: [ v* ]` (typically
+      # `rake.yml` dispatching `do-release` via `repository_dispatch`), the
+      # workflow_dispatch leg tags but never publishes — silent dead-end. The
+      # metanorma-plugin-lutaml v0.7.47–v0.7.50 incident (ci#358) and the
+      # 2026-07-07 flavor-gem rake.yml deletion (restored 2026-07-20, see
+      # metanorma/cimas plans/cimas-revival-and-release-workflow-realignment.md)
+      # were both this class. Runs only when the relay is actually expected:
+      # gated=true + PAT present + workflow_dispatch. If gated=false or no PAT,
+      # publish fires immediately from this same run and no listener is needed.
+      - name: Preflight — verify tag-listener workflow exists
+        if: >-
+          inputs.gated == true &&
+          env.HAVE_PAT_TOKEN == 'true'
+        run: |
+          python3 - <<'PYEOF'
+          import glob
+          import sys
+
+          try:
+              import yaml
+          except ImportError:
+              import subprocess
+              subprocess.check_call([sys.executable, "-m", "pip", "install", "--quiet", "pyyaml"])
+              import yaml
+
+
+          def listens_for_version_tags(path):
+              try:
+                  with open(path) as fh:
+                      data = yaml.safe_load(fh)
+              except (yaml.YAMLError, OSError):
+                  return False
+              if not isinstance(data, dict):
+                  return False
+              # PyYAML 1.1 parses bare `on:` as the boolean True. Handle both.
+              on = data.get(True)
+              if on is None:
+                  on = data.get("on")
+              if not isinstance(on, dict):
+                  return False
+              push = on.get("push")
+              if not isinstance(push, dict):
+                  return False
+              tags = push.get("tags") or []
+              if not isinstance(tags, list):
+                  return False
+              for t in tags:
+                  s = str(t).strip().strip("'").strip('"')
+                  if s.startswith("v"):
+                      return True
+              return False
+
+
+          candidates = sorted(
+              glob.glob(".github/workflows/*.yml") +
+              glob.glob(".github/workflows/*.yaml")
+          )
+          for f in candidates:
+              if listens_for_version_tags(f):
+                  print(f"::notice::tag-listener workflow found: {f}")
+                  sys.exit(0)
+
+          scanned = ", ".join(candidates) if candidates else "(none — no .github/workflows/)"
+          print("::error::No tag-listener workflow found in .github/workflows/.")
+          print("::error::gated=true + PAT + workflow_dispatch defers publish to a")
+          print("::error::downstream `repository_dispatch: do-release` event, which is")
+          print("::error::fired by a workflow responding to `push:` with `tags: [ v* ]`.")
+          print("::error::Without such a workflow this run would tag the repo but never")
+          print("::error::publish — a silent dead-end (see metanorma/ci#358 and the")
+          print("::error::2026-07-07 flavor-gem rake.yml deletion incident).")
+          print("::error::")
+          print(f"::error::Scanned: {scanned}")
+          print("::error::")
+          print("::error::Fix options (pick one):")
+          print("::error::  1. Add `.github/workflows/rake.yml` (or equivalent) that")
+          print("::error::     listens on `push: tags: [ v* ]` and dispatches do-release")
+          print("::error::     — see cimas-managed template gh-actions/master/rake.yml.")
+          print("::error::  2. Set `gated: false` on the caller workflow — publish fires")
+          print("::error::     immediately from this run, no relay needed.")
+          print("::error::  3. Fire release via `repository_dispatch: do-release` from")
+          print("::error::     an external dispatcher (e.g. a cascade from another repo).")
+          sys.exit(1)
+          PYEOF
+
       - if: ${{ env.HAVE_PAT_TOKEN == 'true' }}
         uses: metanorma/ci/gh-rubygems-setup-action@main
         with:
