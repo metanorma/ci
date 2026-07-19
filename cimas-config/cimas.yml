@@ -410,6 +410,7 @@ repositories:
     branch: master
     files:
       .rubocop.yml: gh-actions/master/.rubocop.yml
+      .github/workflows/rake.yml: gh-actions/master/rake.yml
       .github/workflows/release.yml: gh-actions/master/release.yml
   isoics:
     remote: ssh://git@github.com/metanorma/isoics
@@ -1281,6 +1282,7 @@ repositories:
     branch: main
     files:
       .rubocop.yml: gh-actions/master/.rubocop.yml
+      .github/workflows/rake.yml: gh-actions/master/rake.yml
       .github/workflows/release.yml: gh-actions/master/release.yml
   metanorma-plugin-glossarist:
     remote: ssh://git@github.com/metanorma/metanorma-plugin-glossarist
