@@ -71,6 +71,25 @@ on:
         required: false
         type: boolean
         default: false
+      release_notes:
+        description: |
+          Controls whether the workflow ensures a GitHub Release exists for the
+          just-pushed tag with at least auto-generated notes.
+          - 'auto' (default): if no Release exists for the tag, create one with
+            auto-generated notes (PR titles since the previous tag). Never
+            overwrites an existing Release body — if the maintainer has already
+            created the Release with hand-written notes by the time this step
+            runs, it's left alone.
+          - 'manual': skip the ensure-release step entirely. Use when the
+            maintainer writes release notes by hand at release time.
+          Guards against the class where gems accumulate tags with no Releases
+          (metanorma-plugin-lutaml v0.7.35-v0.7.50 hit this before backfill).
+          Auto-generated notes are a floor, not the standard; parent-ticket-
+          linking notes remain the ideal.
+          See metanorma/ci#354.
+        required: false
+        type: string
+        default: 'auto'
     secrets:
       rubygems-api-key:
         required: false
@@ -563,6 +582,41 @@ jobs:
           echo "::error::Either the publish step failed silently (the class metanorma/ci#302 was filed to surface) or rubygems propagation is unusually slow."
           echo "::error::Inspect the publish step's logs above for the actual outcome before re-running."
           exit 1
+
+      # ============ GitHub Release notes floor ============
+      # Guarantee that every tag this workflow publishes carries a GitHub
+      # Release with at least auto-generated notes (PR titles since the
+      # previous tag) unless the caller has opted out via
+      # `release_notes: manual`. Closes the class where a gem accumulates
+      # tags with no releases (metanorma-plugin-lutaml v0.7.35-v0.7.50 hit
+      # this before backfill). Auto-generated notes are a floor, not the
+      # standard — maintainers who write hand-written notes at release
+      # time should opt out and create the Release themselves.
+      #
+      # Never overwrites an existing Release body — if the maintainer has
+      # already created the Release (with hand-written notes) by the time
+      # this step runs, we detect it and leave it alone.
+      #
+      # See metanorma/ci#354.
+      - name: Ensure GitHub Release for tag exists
+        if: >-
+          env.SHOULD_PUBLISH == 'true' &&
+          env.skip_push != 'true' &&
+          inputs.release_notes != 'manual'
+        env:
+          GH_TOKEN: ${{ github.token }}
+          TAG: v${{ steps.gem-identity.outputs.version }}
+        run: |
+          if gh release view "$TAG" --repo "${{ github.repository }}" > /dev/null 2>&1; then
+            echo "✓ Release for $TAG already exists — leaving alone (never overwrite)."
+          else
+            echo "Creating GitHub Release for $TAG with auto-generated notes..."
+            gh release create "$TAG" \
+              --repo "${{ github.repository }}" \
+              --title "$TAG" \
+              --generate-notes
+            echo "✓ Release created."
+          fi
 
       # ============ Post-release event ============
       - name: Get current gem ref
