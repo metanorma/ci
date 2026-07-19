@@ -1,0 +1,146 @@
+name: sample-convert
+
+# Reusable workflow that centralises the STS-XML → Metanorma adoc
+# conversion flow currently duplicated across mn-samples-* repos'
+# Makefiles. Callers pass repo-specific inputs (XML glob, output folder,
+# mnconvert ref) and this workflow handles: clone + build mnconvert,
+# batch-convert every matching XML under reference-docs/ into a
+# document.adoc under the output folder, upload the artifact, and
+# (optionally) commit the result back to the caller repo.
+#
+# Landed for metanorma/ci#186. First canary caller is mn-samples-bsi.
+# mn-samples-iec-private follows once the canary settles.
+
+on:
+  workflow_call:
+    inputs:
+      xml-source-glob:
+        description: >-
+          Glob pattern (relative filename) for source XML files under
+          reference-docs/. mn-samples-bsi uses '*.xml' (all XML);
+          mn-samples-iec-private uses '*en.xml' (language filter).
+        type: string
+        default: '*.xml'
+      output-folder:
+        description: >-
+          Directory under the repo root where the converted adoc
+          documents are written. The current mn-samples-* Makefiles all
+          use 'sources.mnconvert'.
+        type: string
+        default: 'sources.mnconvert'
+      mnconvert-ref:
+        description: >-
+          Branch or tag of metanorma/mnconvert to build for the
+          conversion. Defaults to main.
+        type: string
+        default: 'main'
+      commit-back:
+        description: >-
+          Whether to commit the generated output-folder back to the
+          caller repo on main or repository_dispatch runs. Set to false
+          for PR-only builds.
+        type: boolean
+        default: true
+    secrets:
+      pat_token:
+        description: >-
+          PAT used for the initial checkout (needed when submodules
+          require private-repo access) and for the trailing commit +
+          push in the push-to-repo job.
+        required: true
+
+jobs:
+  convert:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    env:
+      XML_GLOB: ${{ inputs.xml-source-glob }}
+      OUTPUT_FOLDER: ${{ inputs.output-folder }}
+      MNCONVERT_REF: ${{ inputs.mnconvert-ref }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          submodules: true
+          token: ${{ secrets.pat_token }}
+
+      - name: Clone + build mnconvert
+        run: |
+          git clone --branch "$MNCONVERT_REF" https://github.com/metanorma/mnconvert
+          cd mnconvert
+          mvn --settings settings.xml -DskipTests clean package shade:shade
+          # Normalize the built jar to a stable name for the convert step.
+          cp target/mnconvert-*.jar target/mnconvert.jar
+
+      - name: Convert XML → adoc
+        run: |
+          mkdir -p "$OUTPUT_FOLDER"
+          # For each XML matching the glob under reference-docs/, write
+          # <output-folder>/<subdir>/document.adoc. The Makefile-era
+          # rules used SECONDEXPANSION to derive the output path; the
+          # bash loop below is the direct equivalent.
+          find reference-docs -type f -name "$XML_GLOB" -print0 | \
+            while IFS= read -r -d '' xml; do
+              subdir=$(dirname "$xml" | sed 's|^reference-docs/||')
+              out="$OUTPUT_FOLDER/$subdir/document.adoc"
+              mkdir -p "$(dirname "$out")"
+              echo "→ $xml → $out"
+              java -jar mnconvert/target/mnconvert.jar --output "$out" "$xml"
+            done
+
+      - name: Upload artifact
+        uses: actions/upload-artifact@v4
+        if: >-
+          github.ref == 'refs/heads/main' ||
+          (github.event_name == 'repository_dispatch' &&
+           startsWith(github.event.client_payload.ref, 'refs/heads/main'))
+        with:
+          name: sources.mnconvert
+          path: ${{ inputs.output-folder }}
+
+  push-to-repo:
+    needs: convert
+    if: >-
+      inputs.commit-back &&
+      (github.ref == 'refs/heads/main' ||
+       (github.event_name == 'repository_dispatch' &&
+        startsWith(github.event.client_payload.ref, 'refs/heads/main')))
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    env:
+      OUTPUT_FOLDER: ${{ inputs.output-folder }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Remove existing output folder
+        run: rm -rf "$OUTPUT_FOLDER"
+
+      - uses: actions/download-artifact@v4
+        with:
+          name: sources.mnconvert
+          path: ${{ inputs.output-folder }}
+
+      - name: Detect changes
+        id: git_status
+        run: |
+          echo "STATUS=$(git status --porcelain | tr -d '[:space:]')" >> "$GITHUB_OUTPUT"
+
+      - name: Commit + push
+        if: steps.git_status.outputs.STATUS != ''
+        run: |
+          git config --global init.defaultBranch main
+          git config --global user.name github-actions
+          git config --global user.email github-actions@github.com
+          git add "$OUTPUT_FOLDER"
+          git commit -m "adoc auto-updated [skip actions]"
+          # Retry-on-conflict loop: the batch flow can produce concurrent
+          # push races with sibling repository_dispatch runs. 60s matches
+          # the original mn-samples-* convert.yml behaviour before this
+          # extraction.
+          timeout 60s bash -c 'until git pull --rebase && git push; do sleep 3; done'
+
+      - uses: kolpav/purge-artifacts-action@v1
+        with:
+          token: ${{ github.token }}
+          expire-in: 0
