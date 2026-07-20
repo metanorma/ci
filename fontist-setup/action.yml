@@ -1,5 +1,5 @@
 name: 'fontist-setup-action'
-description: 'composite action which setup metanorma private GitHub packages for rubygems'
+description: 'Install Ruby (if missing) + install Fontist (if missing) + configure the private metanorma Fontist repo if a PAT is provided. All-in-one shape for callers that do not already have Ruby/Fontist set up. See fontist-repo-setup for the "Fontist already installed" minimal variant.'
 inputs:
   force-install:
     description: 'Force install if already installed'
