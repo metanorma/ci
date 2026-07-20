@@ -92,8 +92,13 @@ jobs:
     runs-on: ubuntu-latest
     permissions:
       contents: read
+      # id-token: write is needed for the OIDC Trusted-Publisher preflight
+      # exchange step below (which runs only when neither API-key nor
+      # explicit role_to_assume is configured).
+      id-token: write
     env:
       HAVE_PAT_TOKEN: ${{ secrets.pat_token != '' }}
+      HAS_API_KEY: ${{ secrets.rubygems-api-key != '' }}
     steps:
       - uses: actions/checkout@v6
         with:
@@ -215,7 +220,6 @@ jobs:
 
       - name: Verify publish credentials available
         env:
-          HAS_API_KEY: ${{ secrets.rubygems-api-key != '' }}
           ROLE_TO_ASSUME: ${{ inputs.role_to_assume }}
         run: |
           if [ "$HAS_API_KEY" = "true" ]; then
@@ -223,8 +227,24 @@ jobs:
           elif [ -n "$ROLE_TO_ASSUME" ]; then
             echo "✓ OIDC role configured (role_to_assume input set); publish will use Trusted Publishing path"
           else
-            echo "ℹ No API key or explicit role_to_assume; publish will use OIDC Trusted Publishing with auto-discovery"
+            echo "ℹ No API key or explicit role_to_assume; verifying OIDC Trusted Publisher config via preflight exchange (below)..."
           fi
+
+      # Preserve preflight's fail-fast safety net for the OIDC auto-discovery
+      # path. If neither an API key nor an explicit role_to_assume is
+      # configured, the ONLY viable publish path is OIDC Trusted Publishing
+      # with auto-discovery via rubygems/configure-rubygems-credentials.
+      # Attempt that exchange NOW in preflight. If the caller repo does not
+      # have a Trusted Publisher trust config on rubygems.org matching this
+      # workflow, the action fails here in ~30 seconds rather than at
+      # layer 9 after the 2h+ rake matrix — preserving the preflight's whole
+      # point per metanorma/ci#309 (catch layer-9 failures before wasting the
+      # rake cycle). Credentials written to ~/.gem/credentials here are
+      # ephemeral to this job; the release job re-runs the exchange with a
+      # fresh id-token.
+      - name: OIDC preflight — verify Trusted Publisher auto-discovery
+        if: env.HAS_API_KEY == 'false' && inputs.role_to_assume == ''
+        uses: rubygems/configure-rubygems-credentials@v1.0.0
 
       - name: Version awareness (informational)
         run: |
