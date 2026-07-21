@@ -883,13 +883,6 @@ repositories:
       .github/workflows/docker.yml:
         if_public: gh-actions/samples/public-docker.yml
         if_private: gh-actions/samples/private-docker.yml.erb
-  sample-ogc-discussion-paper:
-    remote: ssh://git@github.com/metanorma/sample-ogc-discussion-paper
-    branch: main
-    files:
-      .github/workflows/docker.yml:
-        if_public: gh-actions/samples/public-docker.yml
-        if_private: gh-actions/samples/private-docker.yml.erb
   ietf-rfc-3339:
     remote: ssh://git@github.com/metanorma/ietf-rfc-3339
     branch: master
