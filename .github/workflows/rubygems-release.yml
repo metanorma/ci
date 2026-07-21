@@ -378,6 +378,28 @@ jobs:
           bundle config set --local without 'test'
           bundle install --jobs 4 --retry 3
 
+      # Ci#358 ask #3(c): verify `bundle exec rake` resolves before the
+      # release_command (which defaults to `bundle exec rake release`) runs.
+      # metanorma-core proved a repo can silently violate this: rake was
+      # declared only as gemspec dev dep, not the top-level Gemfile — and
+      # bundle install without the development group excluded it. Fixed both
+      # ways (metanorma/ci#363 re-included development, metanorma-core@9e2d9da
+      # added top-level `gem "rake"`). This guard catches the class going
+      # forward with a pointed error instead of the generic
+      # "can't find executable rake for gem rake" from layer 9.
+      #
+      # Runs only when the release_command will actually fire (API-key path,
+      # SHOULD_PUBLISH true, idempotency guard not skipping).
+      - name: Preflight — verify bundle exec rake resolves
+        if: env.SHOULD_PUBLISH == 'true' && env.HAS_API_KEY == 'true'
+        run: |
+          if ! bundle exec rake --version > /dev/null 2>&1; then
+            echo "::error title=Rake not resolvable::bundle exec rake --version failed. release_command 'bundle exec rake release' will die at gem push."
+            echo "::error::Fix: add \`gem \"rake\"\` to this repo's Gemfile top-level (see metanorma-core@9e2d9da for the reference fix). If rake is only in gemspec dev deps, verify the Fresh bundle install step above included the development group (per metanorma/ci#363)."
+            exit 1
+          fi
+          echo "✓ bundle exec rake resolves ($(bundle exec rake --version | head -1))"
+
       # ============ Version bump (workflow_dispatch only) ============
       - name: Bump version
         if: github.event_name == 'workflow_dispatch' && inputs.next_version != 'skip'
@@ -524,3 +546,45 @@ jobs:
           repository: ${{ github.repository }}
           event-type: release-passed
           client-payload: '{"ref": "${{ steps.gem-tag-ref.outputs.value }}", "sha": "${{ github.sha }}", "type": "release-passed"}'
+
+      # Ci#358 ask #3(b): the gated dispatch leg (workflow_dispatch with
+      # gated=true + PAT) bumps version + pushes tag but does NOT publish
+      # — publication is deferred to the do-release repository_dispatch
+      # fired by the tag-listener workflow (typically rake.yml) after tests
+      # pass. Without an explicit summary/notice, this run reads green as
+      # if it shipped a gem. Two recent incidents where a green dispatch
+      # leg was misread as a completed release: metanorma-plugin-lutaml
+      # v0.7.47-v0.7.50 (ci#358 origin) and metanorma-core v0.2.2
+      # (2026-07-20). This step's summary + notice make the disambiguation
+      # unambiguous in the run's UI.
+      - name: Dispatch leg summary — publication DEFERRED (this run did NOT publish)
+        if: >-
+          always() &&
+          github.event_name == 'workflow_dispatch' &&
+          env.SHOULD_PUBLISH != 'true'
+        env:
+          GEM_VERSION: ${{ steps.gem-identity.outputs.version || 'unknown' }}
+          GEM_NAME: ${{ steps.gem-identity.outputs.name || 'unknown' }}
+        run: |
+          {
+            echo "# ⚠️ Publication DEFERRED — this run did NOT publish"
+            echo ""
+            echo "This was the **gated dispatch leg** of the release chain (workflow_dispatch with \`gated=true\` + PAT):"
+            echo ""
+            echo "- Version bump ✓"
+            echo "- Tag \`v${GEM_VERSION}\` pushed ✓"
+            echo "- \`gem push\` **NOT run** (\`SHOULD_PUBLISH=false\` by design)"
+            echo ""
+            echo "Publication happens in the \`do-release\` \`repository_dispatch\` run triggered by the tag-listener workflow (typically \`rake.yml\`) after tests pass."
+            echo ""
+            echo "## To confirm the gem is actually published"
+            echo ""
+            echo "1. Watch the \`rake\` workflow run on tag \`v${GEM_VERSION}\`."
+            echo "2. Watch the subsequent \`release\` workflow triggered by \`repository_dispatch: do-release\`."
+            echo "3. Verify with \`gem list -r ${GEM_NAME} -a\` that the new version is on rubygems.org."
+            echo ""
+            echo "## Why this matters"
+            echo ""
+            echo "Two recent incidents where a green dispatch leg was misread as a completed release: metanorma-plugin-lutaml v0.7.47-v0.7.50 (metanorma/ci#358 origin) and metanorma-core v0.2.2 (2026-07-20). Ci#358 ask #3(b) mandates this explicit disambiguation."
+          } >> "$GITHUB_STEP_SUMMARY"
+          echo "::notice title=Publication DEFERRED::This gated dispatch leg did NOT publish ${GEM_NAME} ${GEM_VERSION}. Publication happens in the do-release repository_dispatch run. See this run's job summary for confirmation steps."
