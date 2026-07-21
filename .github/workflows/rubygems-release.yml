@@ -347,6 +347,13 @@ jobs:
           gem-name: ${{ steps.gem-identity.outputs.name }}
           gem-version: ${{ steps.gem-identity.outputs.version }}
 
+      # Belt-and-suspenders with the pre-check guard above: the pre-check
+      # queries the rubygems API up-front, but a TOCTOU race is possible —
+      # e.g. a manual `gem push` between pre-check and this publish step,
+      # or the do-release relay double-firing where both runs pass their
+      # own pre-check because propagation is slower than the run gap.
+      # Treat "already been pushed" as success; propagate everything else.
+      # Same shape as ghpkg-release.yml's publish guard.
       - if: env.SHOULD_PUBLISH == 'true' && env.HAS_API_KEY == 'true' && env.skip_push != 'true'
         name: Publish to rubygems.org (API Key)
         env:
@@ -358,7 +365,17 @@ jobs:
           :rubygems_api_key: ${RUBYGEMS_API_KEY}
           EOF
           chmod 0600 ~/.gem/credentials
-          ${{ inputs.release_command }}
+          set +e
+          ${{ inputs.release_command }} 2>&1 | tee /tmp/release-out.log
+          rc=${PIPESTATUS[0]}
+          set -e
+          if [ "$rc" -ne 0 ]; then
+            if grep -qiE 'already been pushed|Repushing of gem versions is not allowed' /tmp/release-out.log; then
+              echo "::notice title=Idempotent publish::Version already on rubygems.org; treating as success."
+              exit 0
+            fi
+            exit "$rc"
+          fi
 
       # ============ Publish: OIDC Trusted Publisher path ============
       - if: env.SHOULD_PUBLISH == 'true' && env.USE_OIDC == 'true'
@@ -374,13 +391,27 @@ jobs:
           gem-name: ${{ steps.gem-identity.outputs.name }}
           gem-version: ${{ steps.gem-identity.outputs.version }}
 
+      # Same idempotent guard as the API-key path above — pre-check
+      # gate + post-check treat-as-success on "already been pushed"
+      # covers the TOCTOU race and the relay double-fire.
       - if: env.SHOULD_PUBLISH == 'true' && env.USE_OIDC == 'true' && env.skip_push != 'true'
         name: Build and push gem (OIDC)
         run: |
           gem build *.gemspec
           mkdir -p pkg
           mv *.gem pkg/
-          gem push pkg/*.gem
+          set +e
+          push_out=$(gem push pkg/*.gem 2>&1)
+          rc=$?
+          set -e
+          echo "$push_out"
+          if [ "$rc" -ne 0 ]; then
+            if printf '%s' "$push_out" | grep -qiE 'already been pushed|Repushing of gem versions is not allowed'; then
+              echo "::notice title=Idempotent publish::Version already on rubygems.org; treating as success."
+              exit 0
+            fi
+            exit "$rc"
+          fi
 
       - if: env.SHOULD_PUBLISH == 'true' && env.USE_OIDC == 'true' && env.skip_push != 'true'
         name: Wait for release to propagate

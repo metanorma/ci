@@ -57,6 +57,17 @@ jobs:
       - if: github.event_name == 'workflow_dispatch' && inputs.next_version != 'skip'
         run: gem bump --version ${{ inputs.next_version }} --tag --push
 
+      # Idempotent publish: `gem push` fails when the target version is
+      # already present on the registry. Two ways that happens legitimately:
+      # (1) a manual pre-publish (working around a local credential /
+      # network issue), and (2) the do-release relay double-firing (per
+      # the README's own note that the reusable should tolerate the
+      # second push). Without a guard, either produces a red run despite
+      # the gem being published — a green-means-published inversion.
+      # Treat "already been pushed" as success; propagate everything else.
+      # See metanorma-nist run 29750989944 (2026-07-21) for the failure
+      # that motivated this. Same guard also applies in
+      # rubygems-release.yml.
       - name: publish to GitHub Packages
         env:
           GITHUB_PACKAGES_TOKEN: ${{ secrets.pat_token }}
@@ -70,4 +81,14 @@ jobs:
           bundle exec rake build
           # gem release - don't allow to execute rake tasks
           # rake release - finished with ERROR: too many connection resets
-          gem push --key github --host https://rubygems.pkg.github.com/metanorma pkg/*.gem
+          rc=0
+          push_out=$(gem push --key github \
+            --host https://rubygems.pkg.github.com/metanorma pkg/*.gem 2>&1) || rc=$?
+          echo "$push_out"
+          if [ "$rc" -ne 0 ]; then
+            if printf '%s' "$push_out" | grep -qiE 'already been pushed'; then
+              echo "::notice title=Idempotent publish::Version already on GitHub Packages; treating as success."
+              exit 0
+            fi
+            exit "$rc"
+          fi
