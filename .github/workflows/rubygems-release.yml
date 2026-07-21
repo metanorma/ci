@@ -244,7 +244,7 @@ jobs:
       # fresh id-token.
       - name: OIDC preflight — verify Trusted Publisher auto-discovery
         if: env.HAS_API_KEY == 'false' && inputs.role_to_assume == ''
-        uses: rubygems/configure-rubygems-credentials@v1.0.0
+        uses: rubygems/configure-rubygems-credentials@v2.1.0
 
       - name: Version awareness (informational)
         run: |
@@ -504,7 +504,7 @@ jobs:
       # ============ Publish: OIDC Trusted Publisher path ============
       - if: env.SHOULD_PUBLISH == 'true' && env.USE_OIDC == 'true'
         name: Configure RubyGems credentials for Trusted Publishing
-        uses: rubygems/configure-rubygems-credentials@v1.0.0
+        uses: rubygems/configure-rubygems-credentials@v2.1.0
         with:
           role-to-assume: ${{ inputs.role_to_assume }}
 
