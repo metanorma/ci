@@ -453,13 +453,7 @@ repositories:
       .rubocop.yml: gh-actions/master/.rubocop.yml
       .github/workflows/rake.yml: gh-actions/master/rake.yml
       .github/workflows/release.yml: gh-actions/master/release.yml
-  reverse_adoc:
-    remote: ssh://git@github.com/metanorma/reverse_adoc
-    branch: main
-    files:
-      .rubocop.yml: gh-actions/master/.rubocop.yml
-      .github/workflows/rake.yml: gh-actions/libreoffice/rake.yml
-      .github/workflows/release.yml: gh-actions/master/release.yml
+  # reverse_adoc removed 2026-07-22 — repo is archived on GitHub (drift-audit class (b)).
   gb-agencies:
     remote: ssh://git@github.com/metanorma/gb-agencies
     branch: master
