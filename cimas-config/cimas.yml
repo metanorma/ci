@@ -1390,8 +1390,8 @@ groups:
   - mn2sts-ruby
   - stepmod2mn
   # iso690render removed 2026-06-29 — legacy of relaton-render (now in relaton/ org)
+  # reverse_adoc removed 2026-07-22 — repo archived (drift-audit class (b)).
   - csa-ccm-tools
-  - reverse_adoc
   - tex2mn
   - isodoc
   - mnconvert-ruby
