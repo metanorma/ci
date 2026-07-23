@@ -59,7 +59,8 @@ repositories:
     branch: main
     files:
       .rubocop.yml: gh-actions/master/.rubocop.yml
-      .github/workflows/rake.yml: gh-actions/master/rake.yml
+      # rake.yml unmapped 2026-07-24: consumer-owned as reusable-workflow ref
+      # to metanorma/ci@v1 per cimas#68 canary #1 (metanorma-cc PR #509).
       .github/workflows/release.yml: gh-actions/master/release.yml
       .github/workflows/automerge.yml: gh-actions/master/automerge.yml
   metanorma-ribose:
