@@ -11,7 +11,7 @@ repositories:
     branch: main
     files:
       .rubocop.yml: gh-actions/master/.rubocop.yml
-      .github/workflows/release.yml: gh-actions/master/release.yml
+      .github/workflows/release.yml: gh-actions/master/release_manual_notes.yml
       templates/base/.github/workflows/docker.yml: gh-actions/samples/docker.yml
       templates/base/.github/workflows/generate.yml: gh-actions/samples/generate.yml
       templates/base/.gitlab-ci.yml: gitlab-ci/samples/docker.yml
@@ -21,7 +21,7 @@ repositories:
     files:
       .rubocop.yml: gh-actions/master/.rubocop.yml
       .github/workflows/rake.yml: gh-actions/master/rake.yml.erb
-      .github/workflows/release.yml: gh-actions/master/release_wo_bundle_install.yml
+      .github/workflows/release.yml: gh-actions/master/release_wo_bundle_install_manual_notes.yml
     with:
       # First real consumer of the metanorma/ci#300 Gap 1 `with:` mechanism.
       # metanorma's live rake.yml has `private-fonts: true` (added in
@@ -35,14 +35,14 @@ repositories:
     files:
       .rubocop.yml: gh-actions/master/.rubocop.yml
       .github/workflows/rake.yml: gh-actions/master/rake.yml
-      .github/workflows/release.yml: gh-actions/master/release_wo_bundle_install.yml
+      .github/workflows/release.yml: gh-actions/master/release_wo_bundle_install_manual_notes.yml
   metanorma-core:
     remote: ssh://git@github.com/metanorma/metanorma-core
     branch: main
     files:
       .rubocop.yml: gh-actions/master/.rubocop.yml
       .github/workflows/rake.yml: gh-actions/master/rake.yml
-      .github/workflows/release.yml: gh-actions/master/release.yml
+      .github/workflows/release.yml: gh-actions/master/release_manual_notes.yml
       .github/workflows/automerge.yml: gh-actions/master/automerge.yml
   metanorma-ogc:
     remote: ssh://git@github.com/metanorma/metanorma-ogc
@@ -50,7 +50,7 @@ repositories:
     files:
       .rubocop.yml: gh-actions/master/.rubocop.yml
       .github/workflows/rake.yml: gh-actions/master/rake.yml
-      .github/workflows/release.yml: gh-actions/master/release.yml
+      .github/workflows/release.yml: gh-actions/master/release_manual_notes.yml
       .github/workflows/automerge.yml: gh-actions/master/automerge.yml
   # metanorma-m3aawg — OBSOLETE 2026-06-29 (last release 2023-03-13, 3+ yrs).
   # Removed per maintainer triage; not part of the active processor family.
@@ -60,7 +60,7 @@ repositories:
     files:
       .rubocop.yml: gh-actions/master/.rubocop.yml
       .github/workflows/rake.yml: gh-actions/master/rake.yml
-      .github/workflows/release.yml: gh-actions/master/release.yml
+      .github/workflows/release.yml: gh-actions/master/release_manual_notes.yml
       .github/workflows/automerge.yml: gh-actions/master/automerge.yml
   metanorma-ribose:
     remote: ssh://git@github.com/metanorma/metanorma-ribose
@@ -68,7 +68,7 @@ repositories:
     files:
       .rubocop.yml: gh-actions/master/.rubocop.yml
       .github/workflows/rake.yml: gh-actions/master/rake.yml
-      .github/workflows/release.yml: gh-actions/master/release.yml
+      .github/workflows/release.yml: gh-actions/master/release_manual_notes.yml
       .github/workflows/automerge.yml: gh-actions/master/automerge.yml
   metanorma-iho:
     remote: ssh://git@github.com/metanorma/metanorma-iho
@@ -76,7 +76,7 @@ repositories:
     files:
       .rubocop.yml: gh-actions/master/.rubocop.yml
       .github/workflows/rake.yml: gh-actions/master/rake.yml
-      .github/workflows/release.yml: gh-actions/master/release.yml
+      .github/workflows/release.yml: gh-actions/master/release_manual_notes.yml
       .github/workflows/automerge.yml: gh-actions/master/automerge.yml
   metanorma-ieee:
     remote: ssh://git@github.com/metanorma/metanorma-ieee
@@ -84,7 +84,7 @@ repositories:
     files:
       .rubocop.yml: gh-actions/master/.rubocop.yml
       .github/workflows/rake.yml: gh-actions/master/rake.yml
-      .github/workflows/release.yml: gh-actions/master/release.yml
+      .github/workflows/release.yml: gh-actions/master/release_manual_notes.yml
       .github/workflows/automerge.yml: gh-actions/master/automerge.yml
   # metanorma-gb removed 2026-07-05 — treat as archived (per opoudjis).
   # Was still being swept despite being in `ignore: obsolete` group because
@@ -104,7 +104,7 @@ repositories:
     files:
       .rubocop.yml: gh-actions/master/.rubocop.yml
       .github/workflows/rake.yml: gh-actions/master/rake.yml
-      .github/workflows/release.yml: gh-actions/master/release.yml
+      .github/workflows/release.yml: gh-actions/master/release_manual_notes.yml
       .github/workflows/automerge.yml: gh-actions/master/automerge.yml
   metanorma-ietf:
     remote: ssh://git@github.com/metanorma/metanorma-ietf
@@ -112,7 +112,7 @@ repositories:
     files:
       .rubocop.yml: gh-actions/master/.rubocop.yml
       .github/workflows/rake.yml: gh-actions/xml2rfc/rake.yml
-      .github/workflows/release.yml: gh-actions/master/release.yml
+      .github/workflows/release.yml: gh-actions/master/release_manual_notes.yml
       .github/workflows/automerge.yml: gh-actions/master/automerge.yml
   metanorma-standoc:
     remote: ssh://git@github.com/metanorma/metanorma-standoc
@@ -129,7 +129,7 @@ repositories:
       # migrated to the parametric master/rake.yml.erb (metanorma/ci#300 Gap 1),
       # which produces byte-identical output when `with:` is empty.
       .github/workflows/rake.yml: gh-actions/master/rake.yml.erb
-      .github/workflows/release.yml: gh-actions/master/release.yml
+      .github/workflows/release.yml: gh-actions/master/release_manual_notes.yml
       .github/workflows/automerge.yml: gh-actions/master/automerge.yml
   metanorma-iso:
     remote: ssh://git@github.com/metanorma/metanorma-iso
@@ -137,7 +137,7 @@ repositories:
     files:
       .rubocop.yml: gh-actions/master/.rubocop.yml
       .github/workflows/rake.yml: gh-actions/master/rake.yml
-      .github/workflows/release.yml: gh-actions/master/release.yml
+      .github/workflows/release.yml: gh-actions/master/release_manual_notes.yml
       .github/workflows/automerge.yml: gh-actions/master/automerge.yml
   metanorma-taste:
     remote: ssh://git@github.com/metanorma/metanorma-taste
@@ -145,7 +145,7 @@ repositories:
     files:
       .rubocop.yml: gh-actions/master/.rubocop.yml
       .github/workflows/rake.yml: gh-actions/master/rake.yml
-      .github/workflows/release.yml: gh-actions/master/release.yml
+      .github/workflows/release.yml: gh-actions/master/release_manual_notes.yml
       .github/workflows/automerge.yml: gh-actions/master/automerge.yml
   # metanorma-un — OBSOLETE 2026-06-29 (last release 2024-09-30, 21 mo).
   # Removed per maintainer triage; not part of the active processor family.
@@ -155,7 +155,7 @@ repositories:
     files:
       .rubocop.yml: gh-actions/master/.rubocop.yml
       .github/workflows/rake.yml: gh-actions/master/rake.yml
-      .github/workflows/release.yml: gh-actions/master/release.yml
+      .github/workflows/release.yml: gh-actions/master/release_manual_notes.yml
       .github/workflows/automerge.yml: gh-actions/master/automerge.yml
   metanorma-generic:
     remote: ssh://git@github.com/metanorma/metanorma-generic
@@ -163,7 +163,7 @@ repositories:
     files:
       .rubocop.yml: gh-actions/master/.rubocop.yml
       .github/workflows/rake.yml: gh-actions/master/rake.yml
-      .github/workflows/release.yml: gh-actions/master/release.yml
+      .github/workflows/release.yml: gh-actions/master/release_manual_notes.yml
       .github/workflows/automerge.yml: gh-actions/master/automerge.yml
   # metanorma-csa — OBSOLETE 2026-06-29 (last release 2025-09-01, 10 mo).
   # Removed per maintainer triage; not part of the active processor family.
@@ -173,7 +173,7 @@ repositories:
     files:
       .rubocop.yml: gh-actions/master/.rubocop.yml
       .github/workflows/rake.yml: gh-actions/master/rake.yml
-      .github/workflows/release.yml: gh-actions/master/release.yml
+      .github/workflows/release.yml: gh-actions/master/release_manual_notes.yml
       .github/workflows/automerge.yml: gh-actions/master/automerge.yml
   metanorma-bsi:
     remote: ssh://git@github.com/metanorma/metanorma-bsi
@@ -189,7 +189,7 @@ repositories:
     files:
       .rubocop.yml: gh-actions/master/.rubocop.yml
       .github/workflows/rake.yml: gh-actions/master/rake.yml
-      .github/workflows/release.yml: gh-actions/master/release.yml
+      .github/workflows/release.yml: gh-actions/master/release_manual_notes.yml
       .github/workflows/automerge.yml: gh-actions/master/automerge.yml
   metanorma-plateau:
     remote: ssh://git@github.com/metanorma/metanorma-plateau
@@ -197,7 +197,7 @@ repositories:
     files:
       .rubocop.yml: gh-actions/master/.rubocop.yml
       .github/workflows/rake.yml: gh-actions/master/rake.yml
-      .github/workflows/release.yml: gh-actions/master/release.yml
+      .github/workflows/release.yml: gh-actions/master/release_manual_notes.yml
       .github/workflows/automerge.yml: gh-actions/master/automerge.yml
   metanorma-document:
     remote: ssh://git@github.com/metanorma/metanorma-document
@@ -205,7 +205,7 @@ repositories:
     files:
       .rubocop.yml: gh-actions/master/.rubocop.yml
       .github/workflows/rake.yml: gh-actions/master/rake.yml
-      .github/workflows/release.yml: gh-actions/master/release.yml
+      .github/workflows/release.yml: gh-actions/master/release_manual_notes.yml
   # DEPRECATED pubid-family entries — all removed. Timeline:
   # - 2026-06-29 (refs #274, #300 Gap 3): 11 standalone `pubid-*` repos removed
   #   as superseded by the `pubid` monorepo.
@@ -411,7 +411,7 @@ repositories:
       # opt-out is stale. Migrated to the parametric master/rake.yml.erb
       # (metanorma/ci#300 Gap 1); byte-identical output with `with:` empty.
       .github/workflows/rake.yml: gh-actions/master/rake.yml.erb
-      .github/workflows/release.yml: gh-actions/master/release.yml
+      .github/workflows/release.yml: gh-actions/master/release_manual_notes.yml
       .github/workflows/integration.yml: gh-actions/inkscape/rake-daily.yml
   html2doc:
     remote: ssh://git@github.com/metanorma/html2doc
@@ -419,21 +419,21 @@ repositories:
     files:
       .rubocop.yml: gh-actions/master/.rubocop.yml
       .github/workflows/rake.yml: gh-actions/master/rake.yml
-      .github/workflows/release.yml: gh-actions/master/release.yml
+      .github/workflows/release.yml: gh-actions/master/release_manual_notes.yml
   cnccs:
     remote: ssh://git@github.com/metanorma/cnccs
     branch: master
     files:
       .rubocop.yml: gh-actions/master/.rubocop.yml
       .github/workflows/rake.yml: gh-actions/master/rake.yml
-      .github/workflows/release.yml: gh-actions/master/release.yml
+      .github/workflows/release.yml: gh-actions/master/release_manual_notes.yml
   isoics:
     remote: ssh://git@github.com/metanorma/isoics
     branch: main
     files:
       .rubocop.yml: gh-actions/master/.rubocop.yml
       .github/workflows/rake.yml: gh-actions/master/rake.yml
-      .github/workflows/release.yml: gh-actions/master/release.yml
+      .github/workflows/release.yml: gh-actions/master/release_manual_notes.yml
   # iso690render — DEPRECATED 2026-06-29: this repo hosts a legacy `relaton-render`
   # gemspec; the active relaton-render gem is now published from
   # https://github.com/relaton/relaton-render (different org). The metanorma/iso690render
@@ -460,14 +460,14 @@ repositories:
     files:
       .rubocop.yml: gh-actions/master/.rubocop.yml
       .github/workflows/rake.yml: gh-actions/master/rake.yml
-      .github/workflows/release.yml: gh-actions/master/release.yml
+      .github/workflows/release.yml: gh-actions/master/release_manual_notes.yml
   isodoc-i18n:
     remote: ssh://git@github.com/metanorma/isodoc-i18n
     branch: main
     files:
       .rubocop.yml: gh-actions/master/.rubocop.yml
       .github/workflows/rake.yml: gh-actions/master/rake.yml
-      .github/workflows/release.yml: gh-actions/master/release.yml
+      .github/workflows/release.yml: gh-actions/master/release_manual_notes.yml
   # edoxen: transferred to `edoxen/edoxen` (new one-repo org created to
   # receive it). Surfaced by cimas-drift-audit MVP (metanorma/ci#335) on
   # 2026-07-02 as class (c) external transfer. Now lives at
@@ -1363,7 +1363,7 @@ repositories:
     files:
       .rubocop.yml: gh-actions/master/.rubocop.yml
       .github/workflows/rake.yml: gh-actions/master/rake.yml
-      .github/workflows/release.yml: gh-actions/master/release_wo_bundle_install.yml
+      .github/workflows/release.yml: gh-actions/master/release_wo_bundle_install_manual_notes.yml
   ammitto:
     remote: ssh://git@github.com/ammitto/ammitto
     branch: main
