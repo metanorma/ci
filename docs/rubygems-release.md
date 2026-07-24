@@ -123,7 +123,6 @@ jobs:
 | `submodules` | no | `true` | Checkout submodules |
 | `role_to_assume` | no | — | OIDC Role ID (`rg_oidc_akr_…`) for RubyGems Trusted Publishing. If omitted with no API key, the workflow uses Trusted Publisher auto-discovery via `GITHUB_REPOSITORY`. |
 | `environment` | no | `''` | GitHub environment name (e.g. `release` for required approvers) |
-| `acknowledge_breaking_in_patch` | no | `false` | Override the patch-release breaking-change guard. Set to `true` only when the guard trips on a known false-positive (e.g. removing an accidentally-shipped fixture, or a rename that preserves the API). The override is recorded in the run's inputs so it's visible in the audit trail. See [ci#278](https://github.com/metanorma/ci/issues/278). |
 | `event_name` | no | — | Deprecated alias for `github.event_name`. |
 
 ## Secrets
@@ -160,26 +159,6 @@ Motivated by [ci#309](https://github.com/metanorma/ci/issues/309): the `metanorm
 | **Version awareness** (informational, non-blocking) | Current gemspec version already on rubygems.org. For `next_version=skip` this means the publish will idempotent-skip. | (would silently no-op at the idempotency guard) |
 
 Preflight cannot catch everything. It runs on `ubuntu-latest` only, doesn't run the actual test matrix, can't dry-run MFA/OTP prompts, and doesn't verify downstream-cascade receivers. See [`../release-chain.md`](../release-chain.md) for the full failure-mode taxonomy.
-
-## Pre-release checks: `next_version=patch` vs `minor`/`major`/`skip`
-
-**Only `patch` is gated by the breaking-change heuristic guard.** `minor`, `major`, `x.y.z`, and `skip` are not.
-
-The guard ([`.github/scripts/release-breaking-check.rb`](../.github/scripts/release-breaking-check.rb), [ci#278](https://github.com/metanorma/ci/issues/278)) compares the previous release tag against HEAD and stops at the first problem it finds:
-
-| Heuristic | What it flags | Why |
-|---|---|---|
-| **(a) Deleted shipping files** | A file under `lib/`, `exe/`, `bin/`, `sig/`, or top-level `.rb`/`README`/`LICENSE` present at the previous tag but absent at HEAD | Patch releases should be additive; a deleted shipping-path file is a SemVer violation waiting to bite downstream consumers |
-| **(b) Removed top-level constants** | A constant defined at the previous tag's `lib/<gem>.rb` top level but not at HEAD | Removes a public API surface |
-| **(c) Removed public methods** | A method on the gem's main module at the previous tag but not at HEAD | Removes a public API surface |
-
-Motivated by the `lutaml` v0.9.42 incident where a patch release silently deleted shipping files.
-
-**Override:** `acknowledge_breaking_in_patch: true` skips the guard for that run. The override is visible in the run's dispatch inputs (audit trail). Use ONLY when the guard trips on a known false-positive (e.g. removing an accidentally-shipped fixture, or a rename that preserves the API).
-
-**Minor and major bumps bypass the guard by design** — breaking changes are expected and SemVer-permitted at those bump levels.
-
-**`skip` bypasses the guard** because no version bump is happening; the guard compares prev tag vs HEAD for a *new* release.
 
 ## Rake testing and the gated relay
 
@@ -244,6 +223,5 @@ A `Verify release-passed dispatch acknowledged downstream` step polls the caller
 - [`./generic-rake.md`](./generic-rake.md) — the rake test matrix reusable workflow
 - [`./prepare-rake.md`](./prepare-rake.md) — rake setup helper
 - [ci#309](https://github.com/metanorma/ci/issues/309) — release-workflow maintainer experience (origin of preflight + this doc)
-- [ci#278](https://github.com/metanorma/ci/issues/278) — patch-release breaking-change guard
 - [ci#314](https://github.com/metanorma/ci/issues/314) — `bundler-cache: false` (stale-cache missing-gem class)
 - [ci#358](https://github.com/metanorma/ci/issues/358) — tag-listener preflight + dispatch-leg disambiguation
