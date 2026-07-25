@@ -2,85 +2,22 @@
 
 Reusable workflow for building and publishing a single Ruby gem to RubyGems.org.
 
-For the per-layer maintainer reference (failure modes, recovery playbooks, half-released states), see [`../release-chain.md`](../release-chain.md). This doc is the per-input/per-behavior reference for a caller wiring up `release.yml` in a gem repo.
+A release is atomic: a maintainer dispatches the workflow with a version bump, and the workflow bumps, tags, and publishes in one job. There is no relay, no deferred publication, no second phase gated on tests. If the publish step does not run, the workflow fails — it does not report green.
+
+## Who is this for
+
+Any gem that wants to publish to RubyGems.org via GitHub Actions. The workflow is consumed two ways:
+
+1. **Standalone** — any repo writes a `release.yml` that calls this workflow. No cimas installation, no `cimas.yml`, no special secret naming convention. Any GitHub secret works.
+2. **Cimas-managed** — repos managed by [cimas](https://github.com/metanorma/cimas) have their `release.yml` auto-synced from a template in `cimas-config/gh-actions/master/release.yml`. Cimas is just one consumer of this workflow; it is not required.
+
+Defaults and behavior are identical for both populations. Authentication works with any GitHub secret; the `METANORMA_CI_*` naming convention used by cimas is just one specialization.
 
 ## When does the gem actually get published?
 
-**Publication is conditional.** A green workflow run does NOT always mean the gem is on rubygems.org. Whether `gem push` fires in a given run is decided by the `SHOULD_PUBLISH` env var, which is computed from the event, the `gated` input, and whether `pat_token` is configured:
+**Always, on every `workflow_dispatch` run.** A green run means the gem is on rubygems.org. There is no deferred state.
 
-| Event | `gated` | `pat_token` | `SHOULD_PUBLISH` | What this run does |
-|---|---|---|---|---|
-| `workflow_dispatch` | `false` | any | **true** | bump + tag + push + **publish immediately** |
-| `workflow_dispatch` | `true` | set | **false** | bump + tag + push only — **publication deferred** to the `do-release` relay |
-| `workflow_dispatch` | `true` | empty | **true** | bump + tag + push + **publish immediately** (PAT-free fallback) |
-| `repository_dispatch: do-release` | any | any | **true** | no bump — **publishes** (this is the relay's publish leg) |
-| `push: v*` tag | any | any | **true** | no bump — **publishes** (direct tag-triggered callers) |
-
-**The default is `gated: true`** with `pat_token` set, which means **a `workflow_dispatch` run defers publication to the relay**. The run reports green the moment the tag is pushed; the gem is NOT yet on rubygems.org. Publication happens in a separate `release.yml` run triggered by `repository_dispatch: do-release`, fired by the tag-listener workflow (typically `rake.yml`) after the rake matrix passes — typically 30 min to 2 h+ later.
-
-This is the single most common caller confusion: seeing a green `workflow_dispatch` run and assuming the gem shipped. The workflow surfaces this with a `Dispatch leg summary — publication DEFERRED` step (job summary + `::notice`), but the run itself is still green. See [Caller confusion: green but not published](#caller-confusion-green-but-not-published) below.
-
-## Workflow diagram
-
-The diagram shows the full flow from caller trigger to publish. The two terminal states (both green) are at the bottom — note especially the `gem NOT yet published` path, which is the default `gated: true` outcome.
-
-```mermaid
-flowchart TD
-    WD["workflow_dispatch<br/>(next_version=patch|minor|major|skip)"]
-    RD["repository_dispatch: do-release"]
-    PUSH["push: v* tag<br/>(direct tag-triggered callers)"]
-
-    WD --> PF["<b>Preflight job</b><br/>~90s, fail-fast"]
-    RD --> REL
-    PUSH --> REL
-
-    PF --> PF1["Fresh bundle install<br/>(catches layer-7 dep failures)"]
-    PF1 --> PF2["gem build<br/>(catches gemspec errors)"]
-    PF2 --> PF3["Verify publish credentials<br/>(API key OR role OR OIDC)"]
-    PF3 --> PF4{"No API key<br/>AND no role?"}
-    PF4 -->|Yes| PF5["OIDC Trusted Publisher<br/>preflight exchange<br/>(catches trust-config errors)"]
-    PF4 -->|No| PF6["Skip OIDC preflight"]
-    PF5 --> PF7["Tag-listener exists?<br/>(only if gated=true + PAT)"]
-    PF6 --> PF7
-    PF7 --> REL
-
-    subgraph REL["Release job"]
-        R1["Checkout + setup"]
-        R2{"workflow_dispatch<br/>AND next_version=patch<br/>AND not acknowledged?"}
-        R3["<b>Breaking-change guard</b><br/>(patch only — see below)"]
-        R4["Skip guard"]
-        R5{"workflow_dispatch<br/>AND next_version != skip?"}
-        R6["Bump version + push tag v*"]
-        R7["Resolve gem identity"]
-        R8{"SHOULD_PUBLISH?"}
-
-        R1 --> R2
-        R2 -->|Yes| R3 --> R5
-        R2 -->|No| R4 --> R5
-        R5 -->|Yes| R6 --> R7
-        R5 -->|skip| R7
-        R7 --> R8
-    end
-
-    R8 -->|"Yes (API key path)"| PA["Idempotent guard"]
-    PA --> PB["bundle exec rake release<br/><b>PUBLISH HAPPENS HERE</b>"]
-    R8 -->|"Yes (OIDC path)"| PO["Configure OIDC creds<br/>via rubygems/configure-rubygems-credentials@v2.1.0"]
-    PO --> PI["Idempotent guard"]
-    PI --> PBO["gem build + gem push<br/><b>PUBLISH HAPPENS HERE</b>"]
-    R8 -->|"No (deferred)"| DEF["Publication DEFERRED<br/>tag push will trigger rake.yml →<br/>do-release → re-enter this workflow<br/>on the repository_dispatch leg"]
-
-    PB --> VERIF["Verify on rubygems.org<br/>(5s poll × 24 = 120s)"]
-    PBO --> VERIF
-    VERIF --> DISP["Dispatch release-passed<br/>→ downstream cascade"]
-    DISP --> DONE_PUB([Run green<br/>gem IS published])
-
-    DEF --> DONE_DEF([Run green<br/>gem NOT yet published])
-```
-
-Two terminal states, both green:
-
-- **`gem IS published`** — `SHOULD_PUBLISH=true` leg, publish step ran and was verified against `rubygems.org/api/v1/versions/<gem>.json`.
-- **`gem NOT yet published`** — `SHOULD_PUBLISH=false` leg (gated dispatch leg). The tag is in git; publication is waiting on the rake matrix + `do-release` relay.
+The workflow also re-publishes idempotently if it's re-triggered by a stale `repository_dispatch: do-release` event from a consumer's rake.yml — the idempotent push guard sees the version is already published and treats that as success.
 
 ## Usage
 
@@ -111,14 +48,16 @@ jobs:
       pat_token: ${{ secrets.METANORMA_CI_PAT_TOKEN }}
 ```
 
+The `repository_dispatch: do-release` listener is kept for backward compatibility with consumer rake.yml files that still dispatch it. In the new model the gem is already published by the time do-release fires; the idempotent guard handles the duplicate push.
+
 ## Inputs
 
 | Input | Required | Default | Description |
 |-------|----------|---------|-------------|
 | `next_version` | yes | — | `patch`, `minor`, `major`, `x.y.z`, or `skip` (release the current gemspec version, no bump) |
-| `gated` | no | `true` | Defer publish until tests pass via the do-release relay. See [When does the gem actually get published?](#when-does-the-gem-actually-get-published). |
 | `release_command` | no | `bundle exec rake release` | Command to build and publish (API-key path only) |
-| `bundler_cache` | no | `false` | **DEPRECATED — ignored.** The release job always runs with caching off. Earlier versions enabled it, but combined with `Gemfile.lock` removal that happens before the bump, `ruby/setup-ruby`'s cache restore sometimes restored a stale cache and silently skipped newly-added gems. See [ci#314](https://github.com/metanorma/ci/issues/314). |
+| `bundler_cache` | no | `false` | **DEPRECATED — ignored.** The release job always runs with caching off. See [ci#314](https://github.com/metanorma/ci/issues/314). |
+| `gated` | no | `false` | **DEPRECATED — ignored.** Kept as a no-op for backward compat with consumer repos that still pass it. The workflow always publishes immediately; the idempotent guard handles any duplicate push. See [ci#370](https://github.com/metanorma/ci/issues/370). |
 | `post_install` | no | `''` | Command to run after `bundle install` |
 | `submodules` | no | `true` | Checkout submodules |
 | `role_to_assume` | no | — | OIDC Role ID (`rg_oidc_akr_…`) for RubyGems Trusted Publishing. If omitted with no API key, the workflow uses Trusted Publisher auto-discovery via `GITHUB_REPOSITORY`. |
@@ -130,7 +69,7 @@ jobs:
 | Secret | Required | Description |
 |--------|----------|-------------|
 | `rubygems-api-key` | no | RubyGems API key. If omitted, the workflow uses OIDC Trusted Publishing (with `role_to_assume` if set, otherwise auto-discovery). |
-| `pat_token` | no | GitHub PAT for tag pushes that trigger downstream workflows. Required for the test-gated relay (see below). When omitted with `gated: true`, the workflow degrades to immediate publish. |
+| `pat_token` | no | GitHub PAT for `repository_dispatch` calls (the `release-passed` event). When omitted, the workflow uses `github.token`. |
 
 ## Authentication
 
@@ -144,84 +83,60 @@ All three paths require `id-token: write` on the calling workflow **only for pat
 
 ## Preflight checks (`workflow_dispatch` only)
 
-The `preflight` job runs first on every `workflow_dispatch` invocation. Skipped on `repository_dispatch` and `push` paths (those already passed preflight in the originating dispatch leg). Total cost: ~90s–2min. If any check fails, the chain stops — no bump, no tag, no rake.
+The `preflight` job runs first on every `workflow_dispatch` invocation. Skipped on `repository_dispatch` and `push` paths (those already passed preflight in the originating dispatch leg). Total cost: ~90s–2min. If any check fails, the workflow stops before bump, tag, or publish.
 
-Motivated by [ci#309](https://github.com/metanorma/ci/issues/309): the `metanorma-cli` v1.16.6 release wasted 2h27m to learn `bundle install` failed at layer 7. Preflight is the fail-fast answer.
+Motivated by [ci#309](https://github.com/metanorma/ci/issues/309): the `metanorma-cli` v1.16.6 release wasted 2h27m to learn `bundle install` failed at the publish step. Preflight is the fail-fast answer.
 
-| Check | What it catches | Would otherwise fail at |
-|---|---|---|
-| **Fresh `bundle install`** (with `Gemfile.lock` removed) | Dep-resolution failures: GH Packages auth slip, unsatisfiable constraint, missing private gem | Layer 7, **~2h+ in** |
-| **`gem build <gemspec>`** | Gemspec errors: syntax, missing files in `spec.files`, invalid metadata | Layer 9, **~2h+ in** |
-| **Verify publish credentials** | No `rubygems-api-key` AND no `role_to_assume` AND no Trusted Publisher config | Layer 9, ~2h+ in |
-| **OIDC Trusted Publisher exchange** (only when no API key and no role) | Trust-policy mismatch on rubygems.org — runs the same `configure-rubygems-credentials@v2.1.0` action the publish step uses, just upfront | Layer 9, ~2h+ in |
-| **Tag-listener workflow exists** (only when `gated=true` + PAT) | Caller's `.github/workflows/` has no workflow listening on `push: tags: [v*]` — bump+tag would be a silent dead-end. See [ci#358](https://github.com/metanorma/ci/issues/358). | Silent: tag pushed, no downstream cascade ever fires |
-| **`bundle exec rake` resolves** (release job, API-key path only) | `rake` not installed because the Gemfile excludes development group. See [ci#363](https://github.com/metanorma/ci/issues/363). | Layer 9 — generic "can't find executable rake" error |
-| **Version awareness** (informational, non-blocking) | Current gemspec version already on rubygems.org. For `next_version=skip` this means the publish will idempotent-skip. | (would silently no-op at the idempotency guard) |
+| Check | What it catches |
+|---|---|
+| **Fresh `bundle install`** (with `Gemfile.lock` removed) | Dep-resolution failures: GH Packages auth slip, unsatisfiable constraint, missing private gem |
+| **`gem build <gemspec>`** | Gemspec errors: syntax, missing files in `spec.files`, invalid metadata |
+| **Verify publish credentials** | No `rubygems-api-key` AND no `role_to_assume` AND no Trusted Publisher config |
+| **OIDC Trusted Publisher exchange** (only when no API key and no role) | Trust-policy mismatch on rubygems.org — runs the same `configure-rubygems-credentials@v2.1.0` action the publish step uses, just upfront |
+| **`bundle exec rake` resolves** (release job, API-key path only) | `rake` not installed because the Gemfile excludes the development group. See [ci#363](https://github.com/metanorma/ci/issues/363). |
+| **Version awareness** (informational, non-blocking) | Current gemspec version already on rubygems.org. For `next_version=skip` this means the publish will idempotent-skip. |
 
-Preflight cannot catch everything. It runs on `ubuntu-latest` only, doesn't run the actual test matrix, can't dry-run MFA/OTP prompts, and doesn't verify downstream-cascade receivers. See [`../release-chain.md`](../release-chain.md) for the full failure-mode taxonomy.
+Preflight cannot catch everything. It runs on `ubuntu-latest` only, doesn't run the actual test matrix, can't dry-run MFA/OTP prompts, and doesn't verify downstream-cascade receivers.
 
-## Rake testing and the gated relay
+## Idempotent publish
 
-`gated: true` (the default) does NOT run rake tests inside this workflow. Rake runs in a **separate workflow on the per-gem repo** (`rake.yml` → `metanorma/ci/.github/workflows/generic-rake.yml@main`), triggered by the tag push.
+The workflow calls [`gem-idempotent-push-guard-action`](./gem-idempotent-push-guard.md) before `gem push`. The guard queries `rubygems.org/api/v1/versions/<gem>.json` for the gem name + version. If the version is already on rubygems, it sets `skip_push=true` and the publish step is skipped. The post-publish verification step still runs (and confirms the version is live).
 
-The full relay:
+This handles:
 
-```
-workflow_dispatch (gated=true + PAT)
-    ↓ bump + tag + push
-    ↓ (this workflow exits green; gem NOT yet published)
-tag push triggers rake.yml
-    ↓ rake matrix (30 min – 2h+)
-    ↓ on success:
-rake.yml fires repository_dispatch: do-release
-    ↓
-release.yml re-runs on repository_dispatch: do-release
-    ↓ (this workflow re-enters on the do-release leg)
-    ↓ SHOULD_PUBLISH=true → publishes
-    ↓ dispatches release-passed
-```
+- A maintainer manually re-running `workflow_dispatch` after a partially-failed release.
+- A consumer repo's rake.yml still dispatching `do-release` after the publish already happened (the legacy relay, now a no-op but tolerated).
+- A `next_version: skip` run on a version that's already published.
 
-The relay requires:
+The publish step itself also tolerates "already been pushed" errors from `gem push` (treats them as success with a `::notice::` in the audit trail). Belt and suspenders.
 
-- A tag-listener workflow in the caller repo (typically `rake.yml`) with `on: push: tags: [v*]`. Preflight verifies this exists when `gated=true` + PAT.
-- A `pat_token` with permission to push tags that trigger downstream workflows. The default `GITHUB_TOKEN` cannot trigger workflows on push — this is a GitHub Actions design constraint.
-- The caller's `rake.yml` must dispatch `repository_dispatch: do-release` after the matrix passes (the `generic-rake.yml` reusable workflow does this automatically).
+## Post-publish verification
 
-**PAT-free mode:** when `gated=true` but no `pat_token` is configured, the workflow degrades gracefully — bumps, tags, pushes, and **publishes immediately** in the same job. The idempotent guard handles any eventual duplicate publish from a later `do-release` event. Tests on `main` should already be green before triggering.
+After `gem push`, the workflow polls `rubygems.org/api/v1/versions/<gem>.json` every 5s for 120s. If the version is not visible after 120s, the workflow fails.
 
-**`gated: false`** publishes immediately from the `workflow_dispatch` run. Use for core deps where release speed matters more than re-running the test matrix on the exact tag commit.
-
-## Caller confusion: green but not published
-
-The most common caller confusion: **a green `workflow_dispatch` run with `gated=true` + PAT did NOT publish the gem.** The run reports green the moment the tag is pushed; publication is deferred to the `do-release` relay.
-
-This affected `metanorma-plugin-lutaml` v0.7.47–v0.7.50 ([ci#358](https://github.com/metanorma/ci/issues/358)) and `metanorma-core` v0.2.2 (2026-07-20). Both were read as completed releases when in fact publication had silently dead-ended — in the lutaml case, the caller repo had no tag-listener workflow; in the metanorma-core case, the relay's dispatch leg was misread as a completed publish.
-
-The workflow now mitigates this with:
-
-1. **`Dispatch leg summary — publication DEFERRED`** step — writes a prominent `# Publication DEFERRED` heading to `$GITHUB_STEP_SUMMARY` and fires a `::notice` titled `Publication DEFERRED`. Visible on the run's summary page.
-2. **Tag-listener preflight check** — fails the run at ~90s in if no `.github/workflows/*.yml` listens on `push: tags: [v*]` when `gated=true` + PAT. Catches the lutaml-shape dead-end before the bump.
-3. **`Verify gem published on rubygems.org`** post-publish step — polls `rubygems.org/api/v1/versions/<gem>.json` every 5s × 24 = 120s after the publish step runs. Catches silent-fail shapes where `gem push` returned green but the gem isn't actually live ([ci#302](https://github.com/metanorma/ci/issues/302), [ci#314](https://github.com/metanorma/ci/issues/314)).
-
-**To confirm a gated release actually shipped:**
-
-1. Watch the `rake` workflow run on tag `v<version>` in the caller repo.
-2. Watch the subsequent `release` workflow run triggered by `repository_dispatch: do-release`.
-3. Verify with `gem list -r <gem_name> -a` that the new version is on rubygems.org.
+This catches silent-fail shapes where `gem push` returned green but the gem isn't actually live. See [ci#302](https://github.com/metanorma/ci/issues/302).
 
 ## Events dispatched
 
-- **`release-passed`**: Dispatched after successful publish (via `peter-evans/repository-dispatch@v3`), carrying the tag ref + sha in the client payload. Downstream workflows in the caller repo (e.g. `ruby-artifacts.yml` for docker image rebuilds) trigger off this event.
+- **`release-passed`**: Dispatched after successful publish (via `peter-evans/repository-dispatch@v3`), carrying the tag ref + sha in the client payload. Downstream workflows in the caller repo (e.g. `notify.yml`, `ruby-artifacts.yml` for docker image rebuilds) trigger off this event.
 
-A `Verify release-passed dispatch acknowledged downstream` step polls the caller repo's `workflow_runs` API for 90s after the dispatch to confirm a receiver actually picked it up. Catches the `metanorma-cli#426` silent-fail shape (dispatch accepted but no run created). See [ci#326](https://github.com/metanorma/ci/pull/326).
+## What happened to the gated relay
+
+Previous versions of this workflow had a `gated` mode that deferred publication to a multi-hop relay: workflow_dispatch → tag push → rake tests → `repository_dispatch: do-release` → re-run workflow → publish. That architecture was reverted in [ci#370](https://github.com/metanorma/ci/issues/370) / [#371](https://github.com/metanorma/ci/pull/371) because:
+
+- A green run could mean "tagged but not published," inverting the meaning of a green check.
+- The relay required per-consumer wiring (a tag-listener workflow that dispatched `do-release`) that wasn't enforced. fractor's release failed silently because its rake.yml didn't dispatch do-release.
+- The wrapper-workflow pattern (omnizip and similar non-cimas consumers) couldn't reach override inputs on the inner shared workflow.
+- The original motivation (a double-publish race) was already handled by the idempotent push guard.
+
+The `gated` input remains as a deprecated no-op for backward compatibility. Consumer repos that still pass `gated: true` will see no behavior change beyond the publish now happening immediately.
 
 ## Related
 
-- [`../release-chain.md`](../release-chain.md) — per-layer maintainer reference (failure modes, recovery, half-released states)
 - [`./monorepo-rubygems-release.md`](./monorepo-rubygems-release.md) — monorepo variant
 - [`./gem-idempotent-push-guard.md`](./gem-idempotent-push-guard.md) — the idempotency guard action
 - [`./generic-rake.md`](./generic-rake.md) — the rake test matrix reusable workflow
 - [`./prepare-rake.md`](./prepare-rake.md) — rake setup helper
-- [ci#309](https://github.com/metanorma/ci/issues/309) — release-workflow maintainer experience (origin of preflight + this doc)
+- [ci#370](https://github.com/metanorma/ci/issues/370) — revert of the gated relay architecture
+- [ci#309](https://github.com/metanorma/ci/issues/309) — release-workflow maintainer experience (origin of preflight)
 - [ci#314](https://github.com/metanorma/ci/issues/314) — `bundler-cache: false` (stale-cache missing-gem class)
-- [ci#358](https://github.com/metanorma/ci/issues/358) — tag-listener preflight + dispatch-leg disambiguation
