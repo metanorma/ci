@@ -1,0 +1,144 @@
+# Test-only variant of generic-rake.yml
+#
+# Sibling to generic-rake.yml. Runs the same rake test matrix but drops
+# the downstream `tests-passed` job entirely, so:
+#   - callers do NOT need `contents: write`; `contents: read` is sufficient;
+#   - no `tests-passed` or `do-release` repository_dispatch events are fired.
+#
+# Use this variant for repositories that:
+#   - run `bundle exec rake` for CI, but
+#   - do NOT publish a gem on tag push (no do-release consumer), and
+#   - do NOT participate in the tests-passed downstream cascade
+#     (docker rebuilds, notify.yml, etc.).
+#
+# Typical consumers: mn-samples-*, metanorma-model-* (sample/doc repos
+# that CI but do not release), and any gem whose release is triggered by
+# an external mechanism rather than the do-release repository_dispatch.
+#
+# Repositories that DO participate in the release cascade must continue
+# to consume `generic-rake.yml` and configure `contents: write` at the
+# caller (see cimas-config/gh-actions/master/rake.yml).
+
+name: rake (test-only)
+
+on:
+  workflow_call:
+    inputs:
+      before-setup-ruby:
+        description: Command to execute before setting up Ruby
+        type: string
+        default: ''
+        required: false
+      after-setup-ruby:
+        description: Command to execute after setting up Ruby
+        type: string
+        default: ''
+        required: false
+      shell:
+        description: Shell to use for running commands
+        type: string
+        default: 'bash'
+        required: false
+      setup-inkscape:
+        description: 'Legacy flag — use setup-tools instead'
+        type: boolean
+        default: false
+      setup-tools:
+        description: >-
+          Comma-separated list of tools to install (no spaces):
+          inkscape,ghostscript,graphviz,libreoffice,xml2rfc,exiftool,ffmpeg,imagemagick
+        type: string
+        default: ''
+        required: false
+      submodules:
+        description: 'Checkout submodules: true, false, or recursive'
+        type: string
+        default: 'recursive'
+        required: false
+      private-fonts:
+        description: 'Set to true to enable private fonts via fontist-repo-setup'
+        type: string
+        default: 'false'
+        required: false
+      private-fonts-username:
+        description: 'Username for private fonts repository'
+        type: string
+        default: 'metanorma-ci'
+        required: false
+      choco-cache:
+        description: 'Whether to set up Chocolatey cache on Windows'
+        type: boolean
+        default: false
+        required: false
+    secrets:
+      pat_token:
+        required: false
+
+permissions:
+  contents: read
+
+jobs:
+  prepare:
+    uses: metanorma/ci/.github/workflows/prepare-rake.yml@main
+
+  rake:
+    name: Test on Ruby ${{ matrix.ruby.version }} ${{ matrix.os }}
+    runs-on: ${{ matrix.os }}
+
+    needs: prepare
+
+    concurrency:
+      group: '${{ github.workflow }}-${{ matrix.os }}-${{ matrix.ruby.version }}-${{ github.head_ref || github.ref_name }}'
+      cancel-in-progress: true
+
+    continue-on-error: ${{ matrix.ruby.experimental }}
+    strategy:
+      fail-fast: false
+      max-parallel: 6
+      matrix: ${{ fromJson(needs.prepare.outputs.matrix) }}
+
+    defaults:
+      run:
+        shell: ${{ inputs.shell }}
+
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          token: ${{ secrets.pat_token || github.token }}
+          submodules: ${{ inputs.submodules }}
+
+      - if: matrix.os == 'windows-latest'
+        uses: actions/setup-java@v5
+        with:
+          distribution: 'temurin'
+          java-version: '17'
+
+      - if: ${{ inputs.before-setup-ruby != '' }}
+        run: ${{ inputs.before-setup-ruby }}
+
+      - uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: ${{ matrix.ruby.version }}
+          bundler-cache: true
+          rubygems: ${{ matrix.ruby.rubygems }}
+          bundler: ${{ matrix.ruby.bundler }}
+
+      - if: ${{ inputs.after-setup-ruby != '' }}
+        run: ${{ inputs.after-setup-ruby }}
+
+      - if: ${{ inputs.choco-cache && runner.os == 'Windows' }}
+        uses: metanorma/ci/choco-cache-action@main
+
+      - uses: metanorma/ci/tool-setup-action@main
+        with:
+          setup-tools: ${{ inputs.setup-tools }}
+          setup-inkscape: ${{ inputs.setup-inkscape }}
+
+      - if: inputs.private-fonts == 'true'
+        uses: metanorma/ci/fontist-repo-setup@main
+        with:
+          private-fonts-pat: ${{ secrets.pat_token }}
+          private-fonts-username: ${{ inputs.private-fonts-username }}
+          use-bundler: 'true'
+
+      - run: bundle exec rake

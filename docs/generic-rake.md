@@ -52,3 +52,32 @@ jobs:
 4. If the ref is a tag (`refs/tags/v*`), also dispatches `do-release` event (triggers the release pipeline).
 
 The test matrix is defined in [ruby-matrix.json](../.github/workflows/ruby-matrix.json).
+
+## Test-only variant (opt-in, least-privilege)
+
+For repositories that run `bundle exec rake` for CI but do **not** publish a gem on tag push and do **not** participate in the `tests-passed` downstream cascade, an opt-in variant is available:
+
+- Reusable: [`generic-rake-test-only.yml`](../.github/workflows/generic-rake-test-only.yml)
+- Cimas template: [`cimas-config/gh-actions/master/rake_test_only.yml`](../cimas-config/gh-actions/master/rake_test_only.yml)
+
+### What the variant drops
+
+The `tests-passed` job (both `tests-passed` and `do-release` `repository_dispatch` events) is removed entirely. The `tests-passed-event` and `release-event` inputs are also removed since they are no longer consumed.
+
+### What the variant gains
+
+The caller can declare `permissions: contents: read` at the workflow level — the least-privilege ceiling that GitHub Actions permits for a reusable-workflow-caller pair. `generic-rake.yml`'s `tests-passed` job requires `contents: write` (to fire the `peter-evans/repository-dispatch` action), which forces its callers to declare `contents: write` at the workflow level; the test-only variant has no such requirement.
+
+### When to use it
+
+- **Sample repositories** (`mn-samples-*`) that run `bundle exec rake` for CI but are not gem-releasing.
+- **Model repositories** (`metanorma-model-*`) that run `bundle exec rake` for grammar / schema validation but are not gem-releasing.
+- Any gem whose release is triggered by an external mechanism (external dispatcher, manual `rake release`, etc.) rather than the `do-release` `repository_dispatch` event.
+
+### When NOT to use it
+
+Any gem that participates in the release cascade — i.e. any gem mapped in cimas.yml to `master/release.yml`, `master/release_manual_notes.yml`, `master/release_wo_bundle_install_manual_notes.yml`, `master/release_github_packages.yml`, or `master/release_wo_bundle_install.yml`. Those templates consume the `do-release` event that only `generic-rake.yml` fires; switching a release-participating repo to the test-only variant will silently break its release chain (the `do-release` dispatch will no longer fire from CI).
+
+### How to switch
+
+In the target repo's `cimas.yml` entry, replace the `master/rake.yml` mapping with `master/rake_test_only.yml`, then run the cimas sync wave to propagate the change. To switch back, replace in the other direction and re-sync.
