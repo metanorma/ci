@@ -183,7 +183,8 @@ repositories:
     files:
       .rubocop.yml: gh-actions/master/.rubocop.yml
       .github/workflows/rake.yml: gh-actions/master/rake.yml
-      .github/workflows/release_github_packages.yml: gh-actions/master/release_github_packages.yml
+      # release_github_packages.yml unmapped 2026-07-27: consumer-owned as reusable-workflow
+      # ref to metanorma/ci@v1 per cimas#68 canary #3 (metanorma-bsi PR #631, merged 3ae043d).
       .github/workflows/automerge.yml: gh-actions/master/automerge.yml
   metanorma-jis:
     remote: ssh://git@github.com/metanorma/metanorma-jis
