@@ -63,6 +63,7 @@ The `repository_dispatch: do-release` listener is kept for backward compatibilit
 | `role_to_assume` | no | — | OIDC Role ID (`rg_oidc_akr_…`) for RubyGems Trusted Publishing. If omitted with no API key, the workflow uses Trusted Publisher auto-discovery via `GITHUB_REPOSITORY`. |
 | `environment` | no | `''` | GitHub environment name (e.g. `release` for required approvers) |
 | `event_name` | no | — | Deprecated alias for `github.event_name`. |
+| `version_advisory` | no | `false` | When `true`, run an advisory-only change detector in preflight and emit a suggested bump. Never blocks the release (exit 0 always). See [Version advisory](#version-advisory-opt-in) below and [ci#369](https://github.com/metanorma/ci/issues/369). |
 
 ## Secrets
 
@@ -97,6 +98,32 @@ Motivated by [ci#309](https://github.com/metanorma/ci/issues/309): the `metanorm
 | **Version awareness** (informational, non-blocking) | Current gemspec version already on rubygems.org. For `next_version=skip` this means the publish will idempotent-skip. |
 
 Preflight cannot catch everything. It runs on `ubuntu-latest` only, doesn't run the actual test matrix, can't dry-run MFA/OTP prompts, and doesn't verify downstream-cascade receivers.
+
+## Version advisory (opt-in)
+
+Set `version_advisory: true` to run a change detector in preflight that suggests a bump magnitude based on a Prism AST diff of `lib/` against the previous git tag. Advisory only — never blocks the release, always exits 0. Design brief: [ci#369](https://github.com/metanorma/ci/issues/369).
+
+Output: a markdown table appended to `$GITHUB_STEP_SUMMARY` with per-change classification (public / internal / unknown), evidence citation for each classification signal, and a suggested per-change bump; plus a `::notice::` line summarising the overall suggested bump vs the `next_version` the maintainer selected.
+
+Classification signals, ordered first-match-wins per symbol:
+
+1. `# @api public` / `# @api private` / `# :nodoc:` / Yard `# @!method` annotation on the symbol declaration.
+2. `public_api.txt` allowlist file at repo root (use-only-if-present; not required).
+3. Namespace convention: symbols under `Internal::` / `Private::` or with leading-underscore names → internal.
+4. Directory convention: files under `lib/*/internal/` or `lib/*/private/` → internal.
+5. Default: **UNKNOWN**, with a per-row suggestion to add `# @api` annotation.
+
+Bump classification (pre-1.0 `major` demotes to `minor` per SemVer §4):
+
+| Change | Suggested |
+|---|---|
+| Public API removed / signature-broken | major |
+| Public API added (backward-compat) | minor |
+| Internal API removed / renamed | patch |
+| Public API body changed (undetectable from AST) | UNKNOWN |
+| No functional change | none |
+
+Limitations (Phase 2 candidates): `class << self` blocks, `attr_accessor`/`attr_reader`/`attr_writer` accessors, inheritance/include changes, and `define_method` metaprogramming are not currently classified. Only fires on `workflow_dispatch`; skipped on `push: tags` and `repository_dispatch: do-release` paths.
 
 ## Idempotent publish
 

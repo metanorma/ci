@@ -59,6 +59,16 @@ on:
         required: false
         type: string
         default: ''
+      version_advisory:
+        description: |
+          When true, run the release-version-advisory heuristic in preflight.
+          Emits a markdown table to $GITHUB_STEP_SUMMARY and a ::notice:: with
+          a suggested bump magnitude based on Prism AST diff of lib/. Advisory
+          only — never blocks the release. Default false (opt-in).
+          Design brief: https://github.com/metanorma/ci/issues/369
+        required: false
+        type: boolean
+        default: false
     secrets:
       rubygems-api-key:
         required: false
@@ -149,6 +159,31 @@ jobs:
             latest=$(gem list --remote --exact "$gem_name" 2>/dev/null | grep -oE "$gem_name \([0-9.]+\)" | head -1 || echo "(not previously published)")
             echo "ℹ️  Latest published: $latest"
           fi
+
+      # ============ Version advisory (opt-in, per ci#369) ============
+      # Advisory-only change detector. Runs Prism AST diff of lib/ against the
+      # previous tag and emits a markdown table + ::notice:: with a suggested
+      # bump. Never blocks (exit 0 always by design). Only fires when caller
+      # sets version_advisory=true. Design brief: metanorma/ci#369.
+      - name: Fetch git history for advisory
+        if: inputs.version_advisory == true
+        run: |
+          # Advisory needs tag history for `git describe --tags --abbrev=0`.
+          git fetch --tags origin || true
+          git fetch --unshallow 2>/dev/null || true
+
+      - name: Fetch release-version-advisory.rb from metanorma/ci
+        if: inputs.version_advisory == true
+        run: |
+          curl -fsSL -o /tmp/release-version-advisory.rb \
+            https://raw.githubusercontent.com/metanorma/ci/main/.github/scripts/release-version-advisory.rb
+          test -s /tmp/release-version-advisory.rb
+
+      - name: Version advisory
+        if: inputs.version_advisory == true
+        env:
+          ADVISORY_REQUESTED_BUMP: ${{ inputs.next_version }}
+        run: ruby /tmp/release-version-advisory.rb
 
   release:
     # Runs after preflight when preflight ran (workflow_dispatch path); runs
