@@ -44,4 +44,4 @@ runs:
       uses: metanorma/ci/imagemagick-setup-action@main
 
     - if: contains(format(',{0},', inputs.setup-tools), ',yq,')
-      uses: metanorma/ci/yq-setup-action@main
+      uses: metanorma/ci/yq-setup-action@feature/yq-setup-action
