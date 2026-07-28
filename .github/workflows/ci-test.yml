@@ -369,6 +369,49 @@ jobs:
       - if: matrix.os == 'ubuntu-latest'
         run: convert -version
 
+  test-yq-action:
+    name: Test yq-setup-action ${{ matrix.os }}
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ ubuntu-latest, windows-latest, macos-latest ]
+    steps:
+      - uses: actions/checkout@v6
+
+      # The Ubuntu image preinstalls yq, so the action would skip its install
+      # path there. Drop it first so each OS covers a different branch:
+      # ubuntu the release-binary download, macos the already-present skip,
+      # windows the chocolatey install.
+      - if: matrix.os == 'ubuntu-latest'
+        run: |
+          yq_path="$(command -v yq || true)"
+          if [ -n "$yq_path" ]; then
+            echo "Removing preinstalled $yq_path"
+            sudo rm -f "$yq_path"
+          fi
+          if command -v yq; then
+            echo "yq still on PATH, the install path would not be exercised"
+            exit 1
+          fi
+
+      - uses: ./yq-setup-action
+
+      # Ubuntu's apt "yq" is an unrelated jq wrapper that reports "yq 3.4.3"
+      # or "yq 0.0.0", so assert we got mikefarah/yq and not the impostor.
+      - shell: python
+        run: |
+          import re, shutil, subprocess, sys
+          yq = shutil.which("yq")
+          if not yq:
+            sys.exit("yq is not on PATH")
+          out = subprocess.run(
+            [yq, "--version"], capture_output=True, text=True
+          ).stdout.strip()
+          print(out)
+          if not re.search(r"version v\d", out):
+            sys.exit("Not mikefarah/yq: {}".format(out))
+
   test-tool-setup-action:
     name: Test tool-setup-action dispatcher ${{ matrix.os }}
     runs-on: ${{ matrix.os }}
