@@ -50,6 +50,23 @@ jobs:
 
 The `repository_dispatch: do-release` listener is kept for backward compatibility with consumer rake.yml files that still dispatch it. In the new model the gem is already published by the time do-release fires; the idempotent guard handles the duplicate push.
 
+## Consumer versioning discipline
+
+The example above pins to `@main` for brevity. Production consumers should pin explicitly to one of two shapes:
+
+- **`@v1` (moving tag)** — advances as this workflow evolves. Consumers get improvements automatically at the cost of silent behaviour shifts when the tag moves. Suitable for early-adopter repos willing to react to unannounced changes.
+
+- **`@v1.x` (immutable tags)** — pinned to a specific release cut. Consumers explicitly version-bump when they want new behaviour. Aligned with the maintainer-authority principle: consumers know exactly which reusable version is in their release path, and are the ones who decide when to move to a new one.
+
+Immutable tags never move once cut; the moving `v1` tag tracks the latest immutable `v1.x`. Check `git tag -l` on this repo for the current available immutable tags.
+
+**Current baselines:**
+
+- `v1.0.0` (`7ebab76`, 2026-07-23) — cimas-config cleanup baseline; predates the `#333`/`#370`/`#371` reverts.
+- `v1.1.0` (*proposed on this PR's merge SHA*) — post-`#333`/`#370`/`#371` baseline: atomic publish, no breaking-change heuristic guard. Recommended pin for new consumers and for consumers wanting the current-blessed shape.
+
+Version-bump semantics for this reusable follow SemVer at the reusable-interface level: consumer-facing input additions, deprecations, or behavioural changes trigger minor bumps; bug fixes without input-surface change trigger patch bumps.
+
 ## Inputs
 
 | Input | Required | Default | Description |
