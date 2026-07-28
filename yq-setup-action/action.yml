@@ -5,16 +5,23 @@ runs:
   steps:
     - shell: python
       run: |
-        import sys, os, platform, shutil
+        import sys, os, platform, re, shutil, subprocess
         sys.path.insert(0, os.path.join(os.environ['GITHUB_ACTION_PATH'], '..', '_shared'))
         from tool_runner import get_platform_name, run_commands
 
-        # GitHub-hosted Ubuntu and macOS runners already ship yq, so skip the
-        # install and avoid re-downloading it (and avoid brew relinking a yq
-        # the runner image installed by other means).
-        if shutil.which("yq"):
-          run_commands(["yq --version"])
-          sys.exit(0)
+        # GitHub-hosted Ubuntu and macOS runners already ship mikefarah/yq, so
+        # skip the install there. Match on the version rather than the name:
+        # Ubuntu's apt "yq" is an unrelated jq wrapper reporting "yq 3.4.3",
+        # and that one has to be replaced rather than kept.
+        existing = shutil.which("yq")
+        if existing:
+          version = subprocess.run(
+            [existing, "--version"], capture_output=True, text=True
+          ).stdout.strip()
+          print("{}: {}".format(existing, version))
+          if re.search(r"version v\d", version):
+            sys.exit(0)
+          print("Not mikefarah/yq, installing over it")
 
         platform_name = get_platform_name()
 

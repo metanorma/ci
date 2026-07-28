@@ -32,7 +32,7 @@ jobs:
 | `after-setup-ruby` | no | `''` | Command to run after Ruby setup |
 | `shell` | no | `bash` | Shell for running commands |
 | `setup-inkscape` | no | `false` | Legacy — use `setup-tools` instead |
-| `setup-tools` | no | `''` | Comma-separated tools: `inkscape,ghostscript,graphviz,libreoffice,xml2rfc,exiftool,ffmpeg,imagemagick` |
+| `setup-tools` | no | `''` | Comma-separated tools: `inkscape,ghostscript,graphviz,libreoffice,xml2rfc,exiftool,ffmpeg,imagemagick,yq` |
 | `submodules` | no | `recursive` | Checkout submodules: `true`, `false`, or `recursive` |
 | `private-fonts` | no | `false` | Enable private fonts via fontist-repo-setup |
 | `private-fonts-username` | no | `metanorma-ci` | Username for private fonts repository |

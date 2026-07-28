@@ -54,6 +54,7 @@ Shared GitHub Actions workflows and composite actions for building, testing, and
 | [`ffmpeg-setup-action`](ffmpeg-setup-action/) | Install FFmpeg |
 | [`exiftool-setup-action`](exiftool-setup-action/) | Install ExifTool |
 | [`xml2rfc-setup-action`](xml2rfc-setup-action/) | Install xml2rfc |
+| [`yq-setup-action`](yq-setup-action/) | Install yq |
 | [`native-deps-action`](native-deps-action/) | List native library dependencies |
 | [`change-tmpdir-action`](change-tmpdir-action/) | Change temp directory |
 
