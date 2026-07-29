@@ -164,7 +164,7 @@ jobs:
         subprocess.run("bundle add {} --path ..".format(gem_name), check=True, shell=True)
       working-directory: dependent
 
-    - uses: metanorma/ci/tool-setup-action@feature/yq-setup-action
+    - uses: metanorma/ci/tool-setup-action@main
       with:
         setup-tools: ${{ inputs.setup-tools }}
         setup-inkscape: ${{ inputs.setup-inkscape }}
