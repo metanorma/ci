@@ -427,8 +427,8 @@ repositories:
     remote: ssh://git@github.com/metanorma/cnccs
     branch: master
     files:
-      .rubocop.yml: gh-actions/master/.rubocop.yml
-      .github/workflows/rake.yml: gh-actions/master/rake.yml
+      # .rubocop.yml: unmapped 2026-08-02 — repo dormant (last release 2020-05-24; last code change 2022-10-26; cimas syncs actively rejected 2026 PRs #23/#24/#25); archive-candidate (opoudjis-maintained)
+      # .github/workflows/rake.yml: unmapped 2026-08-02 — rake.yml already removed from repo 2026-07-05 (commit cff277a); repo dormant per above
       .github/workflows/release.yml: gh-actions/master/release.yml
   isoics:
     remote: ssh://git@github.com/metanorma/isoics
@@ -1252,8 +1252,8 @@ repositories:
     remote: ssh://git@github.com/metanorma/sts2mn-ruby
     branch: master
     files:
-      .rubocop.yml: gh-actions/master/.rubocop.yml
-      .github/workflows/rake.yml: gh-actions/master/rake.yml
+      # .rubocop.yml: unmapped 2026-08-02 — repo dormant (last functional change 2021-06-02; last commit 2023-03-10 housekeeping only; cimas syncs actively rejected 2026 PRs #5/#6/#7); archive-candidate (@intelligent2013-maintained)
+      # .github/workflows/rake.yml: unmapped 2026-08-02 — repo dormant per above; non-standard rake.yml (Ruby 2.5-3.0 matrix) is a 2021 relic not worth converting to reusable-workflow ref
   mnconvert-ruby:
     remote: ssh://git@github.com/metanorma/mnconvert-ruby
     branch: main
