@@ -1247,7 +1247,7 @@ repositories:
     branch: master
     files:
       .rubocop.yml: gh-actions/master/.rubocop.yml
-      .github/workflows/rake.yml: gh-actions/master/rake.yml
+      # .github/workflows/rake.yml: unmapped 2026-08-02 per metanorma/cimas#68: consumer-owned as reusable-workflow ref @v1
   sts2mn-ruby:
     remote: ssh://git@github.com/metanorma/sts2mn-ruby
     branch: master
@@ -1329,7 +1329,7 @@ repositories:
     branch: main
     files:
       .rubocop.yml: gh-actions/master/.rubocop.yml
-      .github/workflows/rake.yml: gh-actions/master/rake.yml
+      # .github/workflows/rake.yml: unmapped 2026-08-02 per metanorma/cimas#68: consumer-owned as reusable-workflow ref @v1
       .github/workflows/release.yml: gh-actions/master/release.yml
   bipm-data-importer:
     remote: ssh://git@github.com/metanorma/bipm-data-importer
