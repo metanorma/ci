@@ -11,15 +11,13 @@ on:
         type: string
       gated:
         description: |
-          Defer gem publish until tests pass via the do-release chain.
-          - true (default): workflow_dispatch bumps+tags only; publish happens after
-            tests pass via repository_dispatch (do-release). Requires a pat_token
-            to trigger downstream workflows. Falls back to immediate publish when
-            no pat_token is configured.
-          - false: workflow_dispatch bumps+tags+publishes immediately. The idempotent
-            guard handles the inevitable second push from do-release.
+          DEPRECATED — IGNORED. Kept as a no-op input for backward compatibility
+          with consumer repos that still pass it. The release workflow always
+          publishes immediately; the idempotent push guard handles any duplicate
+          push from a downstream do-release listener. See metanorma/ci#370.
+        required: false
         type: boolean
-        default: true
+        default: false
       event_name:
         description: 'deprecated github.event_name used instead'
         required: false
@@ -61,6 +59,7 @@ on:
         required: false
         type: string
         default: ''
+<<<<<<< HEAD
       acknowledge_breaking_in_patch:
         description: |
           Override the patch-release breaking-change heuristic guard for this run.
@@ -90,6 +89,8 @@ on:
         required: false
         type: string
         default: 'auto'
+=======
+>>>>>>> origin/main
     secrets:
       rubygems-api-key:
         required: false
@@ -97,114 +98,26 @@ on:
         required: false
 
 jobs:
-  # Fail-fast preflight: run a fresh `bundle install` BEFORE bump/tag/rake so
-  # any dep-resolution issue (e.g. a GH Packages auth slip, an unsatisfiable
-  # version constraint, a missing private gem) surfaces in ~90 seconds rather
-  # than after the 2h+ rake matrix. Skipped on `repository_dispatch`/`push`
-  # events because those code paths already passed preflight in the preceding
-  # `workflow_dispatch` leg; running it again would just duplicate work.
-  # See release-chain.md and metanorma/ci#309 for the maintainer-experience
-  # rationale (the v1.16.6 case that motivated this: 2h27m wasted to learn
-  # bundle install failed at layer 7).
+  # Fail-fast preflight: run a fresh `bundle install` BEFORE bump/tag/publish so
+  # any dep-resolution issue surfaces in ~90 seconds rather than after a long
+  # gem build/push cycle. Skipped on `repository_dispatch`/`push` events because
+  # those code paths already passed preflight in the originating
+  # `workflow_dispatch` leg. See docs/rubygems-release.md and metanorma/ci#309.
   preflight:
     if: github.event_name == 'workflow_dispatch'
     runs-on: ubuntu-latest
     permissions:
       contents: read
+      id-token: write
     env:
       HAVE_PAT_TOKEN: ${{ secrets.pat_token != '' }}
+      HAS_API_KEY: ${{ secrets.rubygems-api-key != '' }}
     steps:
       - uses: actions/checkout@v6
         with:
           ref: ${{ github.ref }}
           submodules: ${{ inputs.submodules }}
           token: ${{ secrets.pat_token || github.token }}
-
-      # Ci#358 ask #3: guarantee a tag-listener workflow exists in the caller
-      # repo when the gated-direct relay is expected to publish. Without a
-      # workflow responding to `push:` with `tags: [ v* ]` (typically
-      # `rake.yml` dispatching `do-release` via `repository_dispatch`), the
-      # workflow_dispatch leg tags but never publishes — silent dead-end. The
-      # metanorma-plugin-lutaml v0.7.47–v0.7.50 incident (ci#358) and the
-      # 2026-07-07 flavor-gem rake.yml deletion (restored 2026-07-20, see
-      # metanorma/cimas plans/cimas-revival-and-release-workflow-realignment.md)
-      # were both this class. Runs only when the relay is actually expected:
-      # gated=true + PAT present + workflow_dispatch. If gated=false or no PAT,
-      # publish fires immediately from this same run and no listener is needed.
-      - name: Preflight — verify tag-listener workflow exists
-        if: >-
-          inputs.gated == true &&
-          env.HAVE_PAT_TOKEN == 'true'
-        run: |
-          python3 - <<'PYEOF'
-          import glob
-          import sys
-
-          try:
-              import yaml
-          except ImportError:
-              import subprocess
-              subprocess.check_call([sys.executable, "-m", "pip", "install", "--quiet", "pyyaml"])
-              import yaml
-
-
-          def listens_for_version_tags(path):
-              try:
-                  with open(path) as fh:
-                      data = yaml.safe_load(fh)
-              except (yaml.YAMLError, OSError):
-                  return False
-              if not isinstance(data, dict):
-                  return False
-              # PyYAML 1.1 parses bare `on:` as the boolean True. Handle both.
-              on = data.get(True)
-              if on is None:
-                  on = data.get("on")
-              if not isinstance(on, dict):
-                  return False
-              push = on.get("push")
-              if not isinstance(push, dict):
-                  return False
-              tags = push.get("tags") or []
-              if not isinstance(tags, list):
-                  return False
-              for t in tags:
-                  s = str(t).strip().strip("'").strip('"')
-                  if s.startswith("v"):
-                      return True
-              return False
-
-
-          candidates = sorted(
-              glob.glob(".github/workflows/*.yml") +
-              glob.glob(".github/workflows/*.yaml")
-          )
-          for f in candidates:
-              if listens_for_version_tags(f):
-                  print(f"::notice::tag-listener workflow found: {f}")
-                  sys.exit(0)
-
-          scanned = ", ".join(candidates) if candidates else "(none — no .github/workflows/)"
-          print("::error::No tag-listener workflow found in .github/workflows/.")
-          print("::error::gated=true + PAT + workflow_dispatch defers publish to a")
-          print("::error::downstream `repository_dispatch: do-release` event, which is")
-          print("::error::fired by a workflow responding to `push:` with `tags: [ v* ]`.")
-          print("::error::Without such a workflow this run would tag the repo but never")
-          print("::error::publish — a silent dead-end (see metanorma/ci#358 and the")
-          print("::error::2026-07-07 flavor-gem rake.yml deletion incident).")
-          print("::error::")
-          print(f"::error::Scanned: {scanned}")
-          print("::error::")
-          print("::error::Fix options (pick one):")
-          print("::error::  1. Add `.github/workflows/rake.yml` (or equivalent) that")
-          print("::error::     listens on `push: tags: [ v* ]` and dispatches do-release")
-          print("::error::     — see cimas-managed template gh-actions/master/rake.yml.")
-          print("::error::  2. Set `gated: false` on the caller workflow — publish fires")
-          print("::error::     immediately from this run, no relay needed.")
-          print("::error::  3. Fire release via `repository_dispatch: do-release` from")
-          print("::error::     an external dispatcher (e.g. a cascade from another repo).")
-          sys.exit(1)
-          PYEOF
 
       - if: ${{ env.HAVE_PAT_TOKEN == 'true' }}
         uses: metanorma/ci/gh-rubygems-setup-action@main
@@ -230,11 +143,10 @@ jobs:
           fi
           echo "Building $gemspec to verify gemspec validity..."
           gem build "$gemspec"
-          rm -f *.gem  # don't carry the artefact forward
+          rm -f *.gem
 
       - name: Verify publish credentials available
         env:
-          HAS_API_KEY: ${{ secrets.rubygems-api-key != '' }}
           ROLE_TO_ASSUME: ${{ inputs.role_to_assume }}
         run: |
           if [ "$HAS_API_KEY" = "true" ]; then
@@ -242,12 +154,12 @@ jobs:
           elif [ -n "$ROLE_TO_ASSUME" ]; then
             echo "✓ OIDC role configured (role_to_assume input set); publish will use Trusted Publishing path"
           else
-            echo "::error::Neither rubygems-api-key secret nor role_to_assume input is configured."
-            echo "::error::The publish step at layer 9 will fail. Configure one of:"
-            echo "::error::  - rubygems-api-key secret on the calling repo, OR"
-            echo "::error::  - role_to_assume input in the caller workflow (for OIDC Trusted Publishing)."
-            exit 1
+            echo "ℹ No API key or explicit role_to_assume; verifying OIDC Trusted Publisher config via preflight exchange (below)..."
           fi
+
+      - name: OIDC preflight — verify Trusted Publisher auto-discovery
+        if: env.HAS_API_KEY == 'false' && inputs.role_to_assume == ''
+        uses: rubygems/configure-rubygems-credentials@v2.1.0
 
       - name: Version awareness (informational)
         run: |
@@ -258,8 +170,8 @@ jobs:
           if [ -n "$published" ]; then
             if [ "${{ inputs.next_version }}" = "skip" ]; then
               echo "::warning::$gem_name $gem_version is already on rubygems.org."
-              echo "::warning::With next_version=skip, the idempotent guard at layer 8 will SKIP the push."
-              echo "::warning::If you intended to re-trigger the chain on an existing version (e.g. to retry a failed downstream cascade), this is fine."
+              echo "::warning::With next_version=skip, the idempotent guard will SKIP the push."
+              echo "::warning::If you intended to re-trigger on an existing version (e.g. to retry a failed downstream cascade), this is fine."
               echo "::warning::If you intended to ship NEW code, cancel this run and fire with next_version=patch (or major/minor) instead."
             else
               echo "ℹ️  Current gemspec version $gem_name $gem_version is already published. After bump ($(echo '${{ inputs.next_version }}')), the new version will be higher."
@@ -271,10 +183,9 @@ jobs:
           fi
 
   release:
-    # Run after preflight when preflight ran (workflow_dispatch path); run
+    # Runs after preflight when preflight ran (workflow_dispatch path); runs
     # directly when preflight was skipped (repository_dispatch / push paths).
-    # Do NOT run if preflight ran and failed — that means a real dep issue
-    # the maintainer needs to fix before any further chain layers execute.
+    # Do NOT run if preflight ran and failed.
     needs: preflight
     if: |
       always() &&
@@ -288,24 +199,12 @@ jobs:
       HAVE_PAT_TOKEN: ${{ secrets.pat_token != '' }}
       HAS_API_KEY: ${{ secrets.rubygems-api-key != '' }}
       USE_OIDC: ${{ secrets.rubygems-api-key == '' }}
-      SHOULD_PUBLISH: >-
-        ${{
-          github.event_name == 'repository_dispatch' ||
-          github.event_name == 'push' ||
-          (github.event_name == 'workflow_dispatch' &&
-            (inputs.gated == false || secrets.pat_token == ''))
-        }}
     steps:
       - uses: actions/checkout@v6
         with:
           ref: ${{ github.event.client_payload.ref || github.ref }}
           submodules: ${{ inputs.submodules }}
           token: ${{ secrets.pat_token || github.token }}
-          # fetch-depth: 0 needed for the release-breaking-check.rb guard
-          # (metanorma/ci#278) to compare prev tag vs HEAD across history.
-          # Cheap on typical gem repos (<100 MB); if payload cost ever
-          # matters, the guard could switch to a shallow-fetch strategy.
-          fetch-depth: 0
 
       - if: github.event_name == 'workflow_dispatch' || github.event_name == 'repository_dispatch'
         run: git fetch --tags origin
@@ -318,118 +217,39 @@ jobs:
       - uses: ruby/setup-ruby@v1
         with:
           ruby-version: '3.3'
-          # bundler-cache hardcoded to false (ignoring inputs.bundler_cache)
-          # because this workflow removes Gemfile.lock before bump, which
-          # makes ruby/setup-ruby's restore-key fallback hit stale caches
-          # and silently skip installing newly-added gems. See
-          # metanorma/ci#314 for the root-cause analysis.
           bundler-cache: false
 
       - if: ${{ inputs.post_install != '' }}
         run: ${{ inputs.post_install }}
 
-      # ============ Common git setup ============
       - run: |
           git config user.name github-actions
           git config user.email github-actions@github.com
 
       - run: gem install gem-release
 
-      # ============ Breaking-change heuristic guard (patch, workflow_dispatch) ============
-      # Halts a manual `patch` release when the diff between the prev tag and
-      # HEAD shows deleted shipping-path files or removed top-level constants/
-      # methods. Only fires on workflow_dispatch + next_version=patch. See
-      # metanorma/ci#278 for the design rationale (v0.9.42 lutaml incident).
-      # The gem-compare install is required only for the advisory heuristic (e).
-      - name: Install gem-compare (for the breaking-change guard's advisory diff)
-        if: >-
-          github.event_name == 'workflow_dispatch' &&
-          inputs.next_version == 'patch' &&
-          inputs.acknowledge_breaking_in_patch != true
-        run: gem install gem-compare
-
-      - name: Fetch release-breaking-check.rb from metanorma/ci
-        if: >-
-          github.event_name == 'workflow_dispatch' &&
-          inputs.next_version == 'patch' &&
-          inputs.acknowledge_breaking_in_patch != true
-        run: |
-          curl -fsSL -o /tmp/release-breaking-check.rb \
-            https://raw.githubusercontent.com/metanorma/ci/main/.github/scripts/release-breaking-check.rb
-          test -s /tmp/release-breaking-check.rb
-
-      - name: Breaking-change heuristic guard
-        if: >-
-          github.event_name == 'workflow_dispatch' &&
-          inputs.next_version == 'patch' &&
-          inputs.acknowledge_breaking_in_patch != true
-        run: ruby /tmp/release-breaking-check.rb
-
       - name: Remove Gemfile.lock before bump
         run: rm -f Gemfile.lock
 
-      # ============ Fresh bundle install ============
-      # ruby/setup-ruby above is invoked with bundler-cache: false (see
-      # metanorma/ci#314), so it does not run `bundle install` itself. We
-      # need an explicit fresh install before `bundle exec rake release`
-      # or it dies with Bundler::GemNotFound for anything in the Gemfile.
-      # Mirrors the preflight job's fresh-resolve step (same flags).
-      #
-      # The release path is `bundle exec rake release`, which invokes tasks
-      # provided by `bundler/gem_tasks` (`gem build` + `git push --tags` +
-      # `gem push`). That invocation needs `rake` itself — which in almost
-      # every gem is declared `add_development_dependency "rake"`. Excluding
-      # the development group therefore breaks `bundle exec rake release`
-      # with `can't find executable rake for gem rake`. See
-      # metanorma-core run 29732731200 (2026-07-20) for the concrete failure.
-      #
-      # ci#258 (metanorma-taste, dev dep metanorma-cli's transitive graph in
-      # flux) previously motivated excluding development too. That protection
-      # was over-broad — it blocked rake as a side-effect. If a stack-wide
-      # dev-graph flux recurs, handle it at the gem level (pin the offending
-      # dev dep) rather than fleet-wide excluding all dev deps.
-      #
-      # Test group stays excluded — release does not run test suites, and
-      # test frameworks (rspec matchers, capybara drivers, etc.) can be heavy
-      # and are pure overhead here.
       - name: Fresh bundle install (excluding test group)
         run: |
           bundle config set --local without 'test'
           bundle install --jobs 4 --retry 3
 
-      # Ci#358 ask #3(c): verify `bundle exec rake` resolves before the
-      # release_command (which defaults to `bundle exec rake release`) runs.
-      # metanorma-core proved a repo can silently violate this: rake was
-      # declared only as gemspec dev dep, not the top-level Gemfile — and
-      # bundle install without the development group excluded it. Fixed both
-      # ways (metanorma/ci#363 re-included development, metanorma-core@9e2d9da
-      # added top-level `gem "rake"`). This guard catches the class going
-      # forward with a pointed error instead of the generic
-      # "can't find executable rake for gem rake" from layer 9.
-      #
-      # Runs only when the release_command will actually fire (API-key path,
-      # SHOULD_PUBLISH true, idempotency guard not skipping).
       - name: Preflight — verify bundle exec rake resolves
-        if: env.SHOULD_PUBLISH == 'true' && env.HAS_API_KEY == 'true'
+        if: env.HAS_API_KEY == 'true'
         run: |
           if ! bundle exec rake --version > /dev/null 2>&1; then
             echo "::error title=Rake not resolvable::bundle exec rake --version failed. release_command 'bundle exec rake release' will die at gem push."
-            echo "::error::Fix: add \`gem \"rake\"\` to this repo's Gemfile top-level (see metanorma-core@9e2d9da for the reference fix). If rake is only in gemspec dev deps, verify the Fresh bundle install step above included the development group (per metanorma/ci#363)."
+            echo "::error::Fix: add \`gem \"rake\"\` to this repo's Gemfile top-level."
             exit 1
           fi
           echo "✓ bundle exec rake resolves ($(bundle exec rake --version | head -1))"
 
-      # ============ Version bump (workflow_dispatch only) ============
       - name: Bump version
         if: github.event_name == 'workflow_dispatch' && inputs.next_version != 'skip'
         run: gem bump --version ${{ inputs.next_version }} --tag --push
 
-      # ============ Gem identity ============
-      # Resolved AFTER the bump so name/version/gemspec reflect the just-bumped
-      # version. If resolved before the bump, the idempotency guard, build, and
-      # tag-ref steps would all see the pre-bump (already-published) version,
-      # making the guard skip publishing the new gem while the new tag still
-      # gets pushed — a silently-unpublished release.
       - name: Resolve gem identity
         id: gem-identity
         run: |
@@ -440,48 +260,15 @@ jobs:
           echo "version=${GEM_VERSION}" >> "$GITHUB_OUTPUT"
           echo "gemspec=${GEMSPEC}" >> "$GITHUB_OUTPUT"
 
-      # ============ Auto-tag for skip mode (gated only) ============
-      # When next_version=skip and gated=true, create and push a tag from the
-      # current gemspec version so the test chain fires and do-release publishes.
-      - name: Tag current version (skip mode)
-        if: github.event_name == 'workflow_dispatch' && inputs.next_version == 'skip' && inputs.gated == true
-        run: |
-          TAG="v${{ steps.gem-identity.outputs.version }}"
-          if git rev-parse "$TAG" >/dev/null 2>&1; then
-            echo "Tag ${TAG} already exists; pushing to trigger test chain."
-          else
-            git tag "$TAG"
-          fi
-          git push origin "$TAG"
-
-      # ============ No-PAT fallback notice ============
-      # When gated=true but no PAT is configured, tag pushes made with
-      # GITHUB_TOKEN cannot trigger downstream workflows (GHA design).
-      # Degrade gracefully: publish immediately with idempotent guard.
-      - name: Notice — publishing immediately (no PAT)
-        if: >-
-          github.event_name == 'workflow_dispatch' &&
-          inputs.gated == true &&
-          env.HAVE_PAT_TOKEN == 'false'
-        run: |
-          echo "::warning::No pat_token configured. Publishing immediately because the relay chain (bump → tag push → tests → do-release → publish) requires a PAT for tag pushes to trigger downstream workflows. To enable test-gated releases, configure a PAT token."
-
       # ============ Publish: API Key path ============
       - name: Idempotency guard (API key)
-        if: env.SHOULD_PUBLISH == 'true' && env.HAS_API_KEY == 'true'
+        if: env.HAS_API_KEY == 'true'
         uses: metanorma/ci/gem-idempotent-push-guard-action@main
         with:
           gem-name: ${{ steps.gem-identity.outputs.name }}
           gem-version: ${{ steps.gem-identity.outputs.version }}
 
-      # Belt-and-suspenders with the pre-check guard above: the pre-check
-      # queries the rubygems API up-front, but a TOCTOU race is possible —
-      # e.g. a manual `gem push` between pre-check and this publish step,
-      # or the do-release relay double-firing where both runs pass their
-      # own pre-check because propagation is slower than the run gap.
-      # Treat "already been pushed" as success; propagate everything else.
-      # Same shape as ghpkg-release.yml's publish guard.
-      - if: env.SHOULD_PUBLISH == 'true' && env.HAS_API_KEY == 'true' && env.skip_push != 'true'
+      - if: env.HAS_API_KEY == 'true' && env.skip_push != 'true'
         name: Publish to rubygems.org (API Key)
         env:
           RUBYGEMS_API_KEY: ${{ secrets.rubygems-api-key }}
@@ -505,23 +292,20 @@ jobs:
           fi
 
       # ============ Publish: OIDC Trusted Publisher path ============
-      - if: env.SHOULD_PUBLISH == 'true' && env.USE_OIDC == 'true'
+      - if: env.USE_OIDC == 'true'
         name: Configure RubyGems credentials for Trusted Publishing
-        uses: rubygems/configure-rubygems-credentials@v1.0.0
+        uses: rubygems/configure-rubygems-credentials@v2.1.0
         with:
           role-to-assume: ${{ inputs.role_to_assume }}
 
       - name: Idempotency guard (OIDC)
-        if: env.SHOULD_PUBLISH == 'true' && env.USE_OIDC == 'true'
+        if: env.USE_OIDC == 'true'
         uses: metanorma/ci/gem-idempotent-push-guard-action@main
         with:
           gem-name: ${{ steps.gem-identity.outputs.name }}
           gem-version: ${{ steps.gem-identity.outputs.version }}
 
-      # Same idempotent guard as the API-key path above — pre-check
-      # gate + post-check treat-as-success on "already been pushed"
-      # covers the TOCTOU race and the relay double-fire.
-      - if: env.SHOULD_PUBLISH == 'true' && env.USE_OIDC == 'true' && env.skip_push != 'true'
+      - if: env.USE_OIDC == 'true' && env.skip_push != 'true'
         name: Build and push gem (OIDC)
         run: |
           gem build *.gemspec
@@ -540,26 +324,13 @@ jobs:
             exit "$rc"
           fi
 
-      - if: env.SHOULD_PUBLISH == 'true' && env.USE_OIDC == 'true' && env.skip_push != 'true'
+      - if: env.USE_OIDC == 'true' && env.skip_push != 'true'
         name: Wait for release to propagate
         run: gem exec rubygems-await pkg/*.gem
 
       # ============ Post-publish verification ============
-      # Verify the just-published gem version is actually queryable on
-      # rubygems.org. Without this check, a silent-fail in the publish
-      # step (the gem push reports success but the gem isn't on rubygems
-      # for whatever reason — auth scope, registry routing, partial CDN
-      # propagation timing out the upstream timeout, etc.) leaves the
-      # release reporting green while consumers can't `gem install` the
-      # new version. See metanorma/ci#302 ("green means published"
-      # observability) and metanorma/ci#314 (stale bundler-cache class).
-      #
-      # Polls the rubygems versions JSON every 5s up to 120s total. The
-      # OIDC path already does propagation waiting via `rubygems-await`
-      # above, so this poll typically returns instantly for it. The API
-      # Key path has no such waiter, so this is the first verification.
       - name: Verify gem published on rubygems.org
-        if: env.SHOULD_PUBLISH == 'true' && env.skip_push != 'true'
+        if: env.skip_push != 'true'
         env:
           GEM_NAME: ${{ steps.gem-identity.outputs.name }}
           GEM_VERSION: ${{ steps.gem-identity.outputs.version }}
@@ -579,8 +350,7 @@ jobs:
             sleep 5
           done
           echo "::error::${GEM_NAME} ${GEM_VERSION} was not visible on rubygems.org after 120s of polling."
-          echo "::error::Either the publish step failed silently (the class metanorma/ci#302 was filed to surface) or rubygems propagation is unusually slow."
-          echo "::error::Inspect the publish step's logs above for the actual outcome before re-running."
+          echo "::error::Either the publish step failed silently or rubygems propagation is unusually slow."
           exit 1
 
       # ============ GitHub Release notes floor ============
@@ -624,52 +394,10 @@ jobs:
         run: echo "value=refs/tags/v${{ steps.gem-identity.outputs.version }}" >> "$GITHUB_OUTPUT"
 
       - name: Dispatch release-passed
-        if: env.SHOULD_PUBLISH == 'true'
+        if: github.event_name == 'workflow_dispatch'
         uses: peter-evans/repository-dispatch@v3
         with:
           token: ${{ secrets.pat_token || github.token }}
           repository: ${{ github.repository }}
           event-type: release-passed
           client-payload: '{"ref": "${{ steps.gem-tag-ref.outputs.value }}", "sha": "${{ github.sha }}", "type": "release-passed"}'
-
-      # Ci#358 ask #3(b): the gated dispatch leg (workflow_dispatch with
-      # gated=true + PAT) bumps version + pushes tag but does NOT publish
-      # — publication is deferred to the do-release repository_dispatch
-      # fired by the tag-listener workflow (typically rake.yml) after tests
-      # pass. Without an explicit summary/notice, this run reads green as
-      # if it shipped a gem. Two recent incidents where a green dispatch
-      # leg was misread as a completed release: metanorma-plugin-lutaml
-      # v0.7.47-v0.7.50 (ci#358 origin) and metanorma-core v0.2.2
-      # (2026-07-20). This step's summary + notice make the disambiguation
-      # unambiguous in the run's UI.
-      - name: Dispatch leg summary — publication DEFERRED (this run did NOT publish)
-        if: >-
-          always() &&
-          github.event_name == 'workflow_dispatch' &&
-          env.SHOULD_PUBLISH != 'true'
-        env:
-          GEM_VERSION: ${{ steps.gem-identity.outputs.version || 'unknown' }}
-          GEM_NAME: ${{ steps.gem-identity.outputs.name || 'unknown' }}
-        run: |
-          {
-            echo "# ⚠️ Publication DEFERRED — this run did NOT publish"
-            echo ""
-            echo "This was the **gated dispatch leg** of the release chain (workflow_dispatch with \`gated=true\` + PAT):"
-            echo ""
-            echo "- Version bump ✓"
-            echo "- Tag \`v${GEM_VERSION}\` pushed ✓"
-            echo "- \`gem push\` **NOT run** (\`SHOULD_PUBLISH=false\` by design)"
-            echo ""
-            echo "Publication happens in the \`do-release\` \`repository_dispatch\` run triggered by the tag-listener workflow (typically \`rake.yml\`) after tests pass."
-            echo ""
-            echo "## To confirm the gem is actually published"
-            echo ""
-            echo "1. Watch the \`rake\` workflow run on tag \`v${GEM_VERSION}\`."
-            echo "2. Watch the subsequent \`release\` workflow triggered by \`repository_dispatch: do-release\`."
-            echo "3. Verify with \`gem list -r ${GEM_NAME} -a\` that the new version is on rubygems.org."
-            echo ""
-            echo "## Why this matters"
-            echo ""
-            echo "Two recent incidents where a green dispatch leg was misread as a completed release: metanorma-plugin-lutaml v0.7.47-v0.7.50 (metanorma/ci#358 origin) and metanorma-core v0.2.2 (2026-07-20). Ci#358 ask #3(b) mandates this explicit disambiguation."
-          } >> "$GITHUB_STEP_SUMMARY"
-          echo "::notice title=Publication DEFERRED::This gated dispatch leg did NOT publish ${GEM_NAME} ${GEM_VERSION}. Publication happens in the do-release repository_dispatch run. See this run's job summary for confirmation steps."

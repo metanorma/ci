@@ -54,6 +54,7 @@ Shared GitHub Actions workflows and composite actions for building, testing, and
 | [`ffmpeg-setup-action`](ffmpeg-setup-action/) | Install FFmpeg |
 | [`exiftool-setup-action`](exiftool-setup-action/) | Install ExifTool |
 | [`xml2rfc-setup-action`](xml2rfc-setup-action/) | Install xml2rfc |
+| [`yq-setup-action`](yq-setup-action/) | Install yq |
 | [`native-deps-action`](native-deps-action/) | List native library dependencies |
 | [`change-tmpdir-action`](change-tmpdir-action/) | Change temp directory |
 
@@ -67,64 +68,28 @@ gh workflow run release.yml -f next_version=patch
 
 ### How it works
 
-The release is **test-gated by default**: the gem is only published after all tests pass.
+A release is **atomic**: a maintainer dispatches `release.yml` with a version bump, and the workflow bumps, tags, and publishes in one job. A green run means the gem is on rubygems.org — there is no deferred state, no second phase gated on tests.
 
 ```
 gh workflow run release.yml -f next_version=patch
   │
   ▼
-Phase 1 — BUMP (workflow_dispatch → rubygems-release.yml)
-  Bumps version, creates git tag, pushes tag + commit.
-  Does NOT publish the gem.
+workflow_dispatch → rubygems-release.yml
   │
-  ▼
-Phase 2 — TEST (tag push → rake.yml → generic-rake.yml)
-  Runs the full test matrix (Ruby versions × OSes).
+  ├─ preflight (bundle install, gem build, credentials check — fail-fast)
   │
-  ▼
-Phase 3 — PUBLISH (tests pass → do-release → rubygems-release.yml)
-  Checks out the tagged commit, builds gem, pushes to RubyGems.
-  An idempotent guard prevents double-publish.
-  Dispatches release-passed for downstream dependents.
+  ├─ bump version + push tag
+  │
+  ├─ idempotent push guard (skip if already published)
+  │
+  ├─ gem build + gem push
+  │
+  ├─ verify gem live on rubygems.org (poll)
+  │
+  └─ dispatch release-passed → downstream cascade
 ```
 
-### Bypassing the test gate
-
-```bash
-gh workflow run release.yml -f next_version=patch -f gated=false
-```
-
-Publishes immediately. The idempotent guard handles the second push from do-release.
-
-### Event chain
-
-```
-workflow_dispatch ──► rubygems-release.yml ──► gem bump --tag --push
-                                                       │
-                                                       ▼
-                                              tag push event
-                                                    ┌────┴──────────────────┐
-                                                    │                       │
-                                              rake.yml          (gated=false: publish
-                                                    │            immediately in Phase 1)
-                                                    ▼
-                                          generic-rake.yml
-                                          (test matrix runs)
-                                                    │
-                                        ┌───────────┴───────────┐
-                                        ▼                       ▼
-                                tests-passed dispatch    do-release dispatch
-                                (downstream repos        (triggers release.yml
-                                 notified)                → rubygems-release.yml
-                                                          as repository_dispatch)
-                                                                  │
-                                                                  ▼
-                                                          build + push gem
-                                                          (idempotent guard)
-                                                                  │
-                                                                  ▼
-                                                          release-passed dispatch
-```
+Tests still run on tag push via the consumer repo's `rake.yml`, but they no longer gate publication. Branch protection with required status checks is the right tool for gating merges on test passage; release-time gating is the wrong layer.
 
 ### Setting up a new repo
 
@@ -146,7 +111,7 @@ jobs:
       pat_token: ${{ secrets.METANORMA_CI_PAT_TOKEN }}
 ```
 
-**release.yml** — release on manual trigger or do-release event:
+**release.yml** — release on manual trigger:
 
 ```yaml
 name: release
@@ -169,9 +134,13 @@ jobs:
       pat_token: ${{ secrets.METANORMA_CI_PAT_TOKEN }}
 ```
 
+The `repository_dispatch: do-release` listener is optional — kept for backward compatibility with consumer rake.yml files that still dispatch it. In the new model the gem is already published by the time do-release fires; the idempotent guard handles the duplicate push.
+
+Any GitHub secret works for authentication. The `METANORMA_CI_*` naming convention is used by [cimas](https://github.com/metanorma/cimas)-managed repos; standalone consumers can name their secrets however they like.
+
 Set these repository secrets:
-- `METANORMA_CI_RUBYGEMS_API_KEY` — RubyGems API key for publishing
-- `METANORMA_CI_PAT_TOKEN` — GitHub PAT for cross-repo operations
+- `METANORMA_CI_RUBYGEMS_API_KEY` — RubyGems API key for publishing (or any name you choose)
+- `METANORMA_CI_PAT_TOKEN` — GitHub PAT for cross-repo operations (or any name you choose)
 
 ### Monorepo releases
 
@@ -194,6 +163,6 @@ jobs:
 | File | Responsibility |
 |------|---------------|
 | `prepare-rake.yml` | Detect tags, foreign PRs, resolve test matrix |
-| `generic-rake.yml` | Run test matrix, dispatch tests-passed + do-release |
-| `rubygems-release.yml` | Bump+tag (workflow_dispatch) or publish (repository_dispatch) |
+| `generic-rake.yml` | Run test matrix |
+| `rubygems-release.yml` | Bump + tag + publish (atomic) |
 | `monorepo-rubygems-release.yml` | Same as rubygems-release.yml for monorepo gems |

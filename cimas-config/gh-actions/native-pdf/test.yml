@@ -77,13 +77,13 @@ jobs:
 
       - run: make all published
 
-      - uses: actions/upload-artifact@v3
+      - uses: actions/upload-artifact@v4
         with:
           name: published-${{ matrix.os }}
           path: published
 
       - if: matrix.os == 'ubuntu'
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: xslt
           path: xslt
@@ -96,7 +96,7 @@ jobs:
     - name: Checkout code
       uses: actions/checkout@v6
 
-    - uses: actions/download-artifact@v3
+    - uses: actions/download-artifact@v4
       with:
         name: published-ubuntu
         path: published
@@ -111,7 +111,7 @@ jobs:
         PUBLISH_BRANCH: gh-pages
         PUBLISH_DIR: ./published
 
-    - uses: actions/download-artifact@v3
+    - uses: actions/download-artifact@v4
       with:
         name: xslt
         path: xslt

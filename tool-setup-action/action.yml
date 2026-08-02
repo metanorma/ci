@@ -2,13 +2,13 @@ name: 'tool-setup-action'
 description: >-
   Installs CI tools specified by a comma-separated list.
   Supported tools: inkscape, ghostscript, graphviz, libreoffice,
-  xml2rfc, exiftool, ffmpeg, imagemagick.
+  xml2rfc, exiftool, ffmpeg, imagemagick, yq.
   To add a new tool: create its *-setup-action, then add a step here.
 inputs:
   setup-tools:
     description: >-
       Comma-separated list of tools to install (no spaces):
-      inkscape,ghostscript,graphviz,libreoffice,xml2rfc,exiftool,ffmpeg,imagemagick
+      inkscape,ghostscript,graphviz,libreoffice,xml2rfc,exiftool,ffmpeg,imagemagick,yq
     default: ''
   setup-inkscape:
     description: 'Legacy flag — use setup-tools instead. Pass "true" to enable.'
@@ -42,3 +42,6 @@ runs:
 
     - if: contains(format(',{0},', inputs.setup-tools), ',imagemagick,')
       uses: metanorma/ci/imagemagick-setup-action@main
+
+    - if: contains(format(',{0},', inputs.setup-tools), ',yq,')
+      uses: metanorma/ci/yq-setup-action@main

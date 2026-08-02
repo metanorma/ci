@@ -23,15 +23,12 @@ on:
         type: string
       gated:
         description: |
-          Defer gem publish until tests pass via the do-release chain.
-          - true (default): workflow_dispatch bumps+tags only; publish happens after
-            tests pass via repository_dispatch (do-release). Requires a pat_token
-            to trigger downstream workflows. Falls back to immediate publish when
-            no pat_token is configured.
-          - false: workflow_dispatch bumps+tags+publishes immediately. The idempotent
-            guard handles the inevitable second push from do-release.
+          DEPRECATED — IGNORED. Kept as a no-op input for backward compatibility
+          with consumer repos that still pass it. The release workflow always
+          publishes immediately; the idempotent push guard handles any duplicate
+          push from a downstream do-release listener. See metanorma/ci#370.
         type: boolean
-        default: true
+        default: false
       release_command:
         description: >-
           Command to build and publish the gem. Defaults to
@@ -91,13 +88,6 @@ jobs:
       HAVE_PAT_TOKEN: ${{ secrets.pat_token != '' }}
       HAS_API_KEY: ${{ secrets.rubygems-api-key != '' }}
       USE_OIDC: ${{ secrets.rubygems-api-key == '' }}
-      SHOULD_PUBLISH: >-
-        ${{
-          github.event_name == 'repository_dispatch' ||
-          github.event_name == 'push' ||
-          (github.event_name == 'workflow_dispatch' &&
-            (inputs.gated == false || secrets.pat_token == ''))
-        }}
     defaults:
       run:
         working-directory: >-
@@ -173,42 +163,15 @@ jobs:
           echo "version=${GEM_VERSION}" >> "$GITHUB_OUTPUT"
           echo "gemspec=${GEMSPEC}" >> "$GITHUB_OUTPUT"
 
-      # ============ Auto-tag for skip mode (gated only) ============
-      # When next_version=skip and gated=true, create and push a tag from the
-      # current gemspec version so the test chain fires and do-release publishes.
-      - name: Tag current version (skip mode)
-        if: github.event_name == 'workflow_dispatch' && inputs.next_version == 'skip' && inputs.gated == true
-        run: |
-          TAG="v${{ steps.gem-identity.outputs.version }}"
-          if git rev-parse "$TAG" >/dev/null 2>&1; then
-            echo "Tag ${TAG} already exists; pushing to trigger test chain."
-          else
-            git tag "$TAG"
-          fi
-          git push origin "$TAG"
-        working-directory: .
-
-      # ============ No-PAT fallback notice ============
-      # When gated=true but no PAT is configured, tag pushes made with
-      # GITHUB_TOKEN cannot trigger downstream workflows (GHA design).
-      # Degrade gracefully: publish immediately with idempotent guard.
-      - name: Notice — publishing immediately (no PAT)
-        if: >-
-          github.event_name == 'workflow_dispatch' &&
-          inputs.gated == true &&
-          env.HAVE_PAT_TOKEN == 'false'
-        run: |
-          echo "::warning::No pat_token configured. Publishing immediately because the relay chain (bump → tag push → tests → do-release → publish) requires a PAT for tag pushes to trigger downstream workflows. To enable test-gated releases, configure a PAT token."
-
       # ============ Publish: API Key path ============
       - name: Idempotency guard (API key)
-        if: env.SHOULD_PUBLISH == 'true' && env.HAS_API_KEY == 'true'
+        if: env.HAS_API_KEY == 'true'
         uses: metanorma/ci/gem-idempotent-push-guard-action@main
         with:
           gem-name: ${{ steps.gem-identity.outputs.name }}
           gem-version: ${{ steps.gem-identity.outputs.version }}
 
-      - if: env.SHOULD_PUBLISH == 'true' && env.HAS_API_KEY == 'true' && env.skip_push != 'true'
+      - if: env.HAS_API_KEY == 'true' && env.skip_push != 'true'
         name: Publish to RubyGems (API key)
         env:
           RUBYGEMS_API_KEY: ${{ secrets.rubygems-api-key }}
@@ -222,20 +185,20 @@ jobs:
           ${{ inputs.release_command }}
 
       # ============ Publish: OIDC Trusted Publisher path ============
-      - if: env.SHOULD_PUBLISH == 'true' && env.USE_OIDC == 'true'
+      - if: env.USE_OIDC == 'true'
         name: Configure RubyGems credentials for Trusted Publishing
-        uses: rubygems/configure-rubygems-credentials@v1.0.0
+        uses: rubygems/configure-rubygems-credentials@v2.1.0
         with:
           role-to-assume: ${{ inputs.role_to_assume }}
 
       - name: Idempotency guard (OIDC)
-        if: env.SHOULD_PUBLISH == 'true' && env.USE_OIDC == 'true'
+        if: env.USE_OIDC == 'true'
         uses: metanorma/ci/gem-idempotent-push-guard-action@main
         with:
           gem-name: ${{ steps.gem-identity.outputs.name }}
           gem-version: ${{ steps.gem-identity.outputs.version }}
 
-      - if: env.SHOULD_PUBLISH == 'true' && env.USE_OIDC == 'true' && env.skip_push != 'true'
+      - if: env.USE_OIDC == 'true' && env.skip_push != 'true'
         name: Build and push gem (OIDC)
         run: |
           gem build *.gemspec
@@ -243,7 +206,7 @@ jobs:
           mv *.gem pkg/
           gem push pkg/*.gem
 
-      - if: env.SHOULD_PUBLISH == 'true' && env.USE_OIDC == 'true' && env.skip_push != 'true'
+      - if: env.USE_OIDC == 'true' && env.skip_push != 'true'
         name: Wait for release to propagate
         run: gem exec rubygems-await pkg/*.gem
 
@@ -253,7 +216,7 @@ jobs:
         run: echo "value=refs/tags/v${{ steps.gem-identity.outputs.version }}" >> "$GITHUB_OUTPUT"
 
       - name: Dispatch release-passed
-        if: env.SHOULD_PUBLISH == 'true'
+        if: github.event_name == 'workflow_dispatch'
         uses: peter-evans/repository-dispatch@v3
         with:
           token: ${{ secrets.pat_token || github.token }}

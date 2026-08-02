@@ -1,0 +1,62 @@
+name: 'yq-setup-action'
+description: 'Installs yq (mikefarah/yq) for all OSes'
+runs:
+  using: "composite"
+  steps:
+    - shell: python
+      run: |
+        import sys, os, platform, re, shutil, subprocess
+        sys.path.insert(0, os.path.join(os.environ['GITHUB_ACTION_PATH'], '..', '_shared'))
+        from tool_runner import get_platform_name, run_commands
+
+        # GitHub-hosted Ubuntu and macOS runners already ship mikefarah/yq, so
+        # skip the install there. Match on the version rather than the name:
+        # Ubuntu's apt "yq" is an unrelated jq wrapper reporting "yq 3.4.3",
+        # and that one has to be replaced rather than kept.
+        existing = shutil.which("yq")
+        if existing:
+          version = subprocess.run(
+            [existing, "--version"], capture_output=True, text=True
+          ).stdout.strip()
+          print("{}: {}".format(existing, version))
+          if re.search(r"version v\d", version):
+            sys.exit(0)
+          print("Not mikefarah/yq, installing over it")
+
+        platform_name = get_platform_name()
+
+        if platform_name in ("Ubuntu", "Linux"):
+          # Ubuntu's apt "yq" package is an unrelated jq wrapper, so take the
+          # release binary instead. Download unprivileged, then install, so a
+          # failed fetch cannot leave a broken /usr/local/bin/yq behind.
+          machine = platform.machine().lower()
+          arch = {"x86_64": "amd64", "aarch64": "arm64"}.get(machine)
+          if not arch:
+            print("Unsupported Linux architecture: {}".format(machine))
+            sys.exit(1)
+          download = os.path.join(
+            os.environ.get("RUNNER_TEMP", "/tmp"), "yq.download"
+          )
+          run_commands([
+            "curl -fsSL --retry 3 -o {} "
+            "https://github.com/mikefarah/yq/releases/latest/download/yq_linux_{}"
+            .format(download, arch),
+            "sudo install -m 0755 {} /usr/local/bin/yq".format(download),
+            "rm -f {}".format(download),
+            "which yq",
+            "yq --version",
+          ])
+        else:
+          run_commands({
+            "Darwin": [
+              "brew install yq",
+              "yq --version"
+            ],
+            "Windows": [
+              "choco install --no-progress -y yq",
+              "yq --version"
+            ],
+          }.get(platform_name, [
+            "echo 'Unsupported platform: {}'".format(platform_name),
+            "exit 1"
+          ]))

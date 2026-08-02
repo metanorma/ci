@@ -33,7 +33,7 @@ on:
       setup-tools:
         description: >-
           Comma-separated list of tools to install (no spaces):
-          inkscape,ghostscript,graphviz,libreoffice,xml2rfc,exiftool,ffmpeg,imagemagick
+          inkscape,ghostscript,graphviz,libreoffice,xml2rfc,exiftool,ffmpeg,imagemagick,yq
         type: string
         default: ''
         required: false
