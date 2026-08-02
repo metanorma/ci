@@ -34,38 +34,23 @@ repositories:
     branch: main
     files:
       .rubocop.yml: gh-actions/master/.rubocop.yml
-<<<<<<< HEAD
-      .github/workflows/rake.yml: gh-actions/master/rake.yml
-      .github/workflows/release.yml: gh-actions/master/release_wo_bundle_install_manual_notes.yml
-=======
       # .github/workflows/rake.yml: unmapped 2026-07-29 per metanorma/cimas#68: consumer-owned as reusable-workflow ref @v1
-      .github/workflows/release.yml: gh-actions/master/release_wo_bundle_install.yml
->>>>>>> origin/main
+      .github/workflows/release.yml: gh-actions/master/release_wo_bundle_install_manual_notes.yml
   metanorma-core:
     remote: ssh://git@github.com/metanorma/metanorma-core
     branch: main
     files:
       .rubocop.yml: gh-actions/master/.rubocop.yml
-<<<<<<< HEAD
-      .github/workflows/rake.yml: gh-actions/master/rake.yml
-      .github/workflows/release.yml: gh-actions/master/release_manual_notes.yml
-=======
       # .github/workflows/rake.yml: unmapped 2026-07-29 per metanorma/cimas#68: consumer-owned as reusable-workflow ref @v1
-      .github/workflows/release.yml: gh-actions/master/release.yml
->>>>>>> origin/main
+      .github/workflows/release.yml: gh-actions/master/release_manual_notes.yml
       .github/workflows/automerge.yml: gh-actions/master/automerge.yml
   metanorma-ogc:
     remote: ssh://git@github.com/metanorma/metanorma-ogc
     branch: main
     files:
       .rubocop.yml: gh-actions/master/.rubocop.yml
-<<<<<<< HEAD
-      .github/workflows/rake.yml: gh-actions/master/rake.yml
-      .github/workflows/release.yml: gh-actions/master/release_manual_notes.yml
-=======
       # .github/workflows/rake.yml: unmapped 2026-07-29 per metanorma/cimas#68: consumer-owned as reusable-workflow ref @v1
-      .github/workflows/release.yml: gh-actions/master/release.yml
->>>>>>> origin/main
+      .github/workflows/release.yml: gh-actions/master/release_manual_notes.yml
       .github/workflows/automerge.yml: gh-actions/master/automerge.yml
   # metanorma-m3aawg — OBSOLETE 2026-06-29 (last release 2023-03-13, 3+ yrs).
   # Removed per maintainer triage; not part of the active processor family.
@@ -74,54 +59,34 @@ repositories:
     branch: main
     files:
       .rubocop.yml: gh-actions/master/.rubocop.yml
-<<<<<<< HEAD
-      .github/workflows/rake.yml: gh-actions/master/rake.yml
-      .github/workflows/release.yml: gh-actions/master/release_manual_notes.yml
-=======
       # rake.yml unmapped 2026-07-24: consumer-owned as reusable-workflow ref
       # to metanorma/ci@v1 per cimas#68 canary #1 (metanorma-cc PR #509).
       # release.yml unmapped 2026-07-25: consumer-owned as reusable-workflow ref
       # to metanorma/ci@v1 per cimas#68 canary #2 (metanorma-cc PR #510).
->>>>>>> origin/main
       .github/workflows/automerge.yml: gh-actions/master/automerge.yml
   metanorma-ribose:
     remote: ssh://git@github.com/metanorma/metanorma-ribose
     branch: main
     files:
       .rubocop.yml: gh-actions/master/.rubocop.yml
-<<<<<<< HEAD
-      .github/workflows/rake.yml: gh-actions/master/rake.yml
-      .github/workflows/release.yml: gh-actions/master/release_manual_notes.yml
-=======
       # .github/workflows/rake.yml: unmapped 2026-07-29 per metanorma/cimas#68: consumer-owned as reusable-workflow ref @v1
-      .github/workflows/release.yml: gh-actions/master/release.yml
->>>>>>> origin/main
+      .github/workflows/release.yml: gh-actions/master/release_manual_notes.yml
       .github/workflows/automerge.yml: gh-actions/master/automerge.yml
   metanorma-iho:
     remote: ssh://git@github.com/metanorma/metanorma-iho
     branch: main
     files:
       .rubocop.yml: gh-actions/master/.rubocop.yml
-<<<<<<< HEAD
-      .github/workflows/rake.yml: gh-actions/master/rake.yml
-      .github/workflows/release.yml: gh-actions/master/release_manual_notes.yml
-=======
       # .github/workflows/rake.yml: unmapped 2026-07-29 per metanorma/cimas#68: consumer-owned as reusable-workflow ref @v1
-      .github/workflows/release.yml: gh-actions/master/release.yml
->>>>>>> origin/main
+      .github/workflows/release.yml: gh-actions/master/release_manual_notes.yml
       .github/workflows/automerge.yml: gh-actions/master/automerge.yml
   metanorma-ieee:
     remote: ssh://git@github.com/metanorma/metanorma-ieee
     branch: main
     files:
       .rubocop.yml: gh-actions/master/.rubocop.yml
-<<<<<<< HEAD
-      .github/workflows/rake.yml: gh-actions/master/rake.yml
-      .github/workflows/release.yml: gh-actions/master/release_manual_notes.yml
-=======
       # .github/workflows/rake.yml: unmapped 2026-07-30 per metanorma/cimas#68: consumer-owned as reusable-workflow ref @v1
-      .github/workflows/release.yml: gh-actions/master/release.yml
->>>>>>> origin/main
+      .github/workflows/release.yml: gh-actions/master/release_manual_notes.yml
       .github/workflows/automerge.yml: gh-actions/master/automerge.yml
   # metanorma-gb removed 2026-07-05 — treat as archived (per opoudjis).
   # Was still being swept despite being in `ignore: obsolete` group because
@@ -140,13 +105,8 @@ repositories:
     branch: main
     files:
       .rubocop.yml: gh-actions/master/.rubocop.yml
-<<<<<<< HEAD
-      .github/workflows/rake.yml: gh-actions/master/rake.yml
-      .github/workflows/release.yml: gh-actions/master/release_manual_notes.yml
-=======
       # .github/workflows/rake.yml: unmapped 2026-07-29 per metanorma/cimas#68: consumer-owned as reusable-workflow ref @v1
-      .github/workflows/release.yml: gh-actions/master/release.yml
->>>>>>> origin/main
+      .github/workflows/release.yml: gh-actions/master/release_manual_notes.yml
       .github/workflows/automerge.yml: gh-actions/master/automerge.yml
   metanorma-ietf:
     remote: ssh://git@github.com/metanorma/metanorma-ietf
@@ -178,26 +138,16 @@ repositories:
     branch: main
     files:
       .rubocop.yml: gh-actions/master/.rubocop.yml
-<<<<<<< HEAD
-      .github/workflows/rake.yml: gh-actions/master/rake.yml
-      .github/workflows/release.yml: gh-actions/master/release_manual_notes.yml
-=======
       # .github/workflows/rake.yml: unmapped 2026-07-30 per metanorma/cimas#68: consumer-owned as reusable-workflow ref @v1
-      .github/workflows/release.yml: gh-actions/master/release.yml
->>>>>>> origin/main
+      .github/workflows/release.yml: gh-actions/master/release_manual_notes.yml
       .github/workflows/automerge.yml: gh-actions/master/automerge.yml
   metanorma-taste:
     remote: ssh://git@github.com/metanorma/metanorma-taste
     branch: main
     files:
       .rubocop.yml: gh-actions/master/.rubocop.yml
-<<<<<<< HEAD
-      .github/workflows/rake.yml: gh-actions/master/rake.yml
-      .github/workflows/release.yml: gh-actions/master/release_manual_notes.yml
-=======
       # .github/workflows/rake.yml: unmapped 2026-07-29 per metanorma/cimas#68: consumer-owned as reusable-workflow ref @v1
-      .github/workflows/release.yml: gh-actions/master/release.yml
->>>>>>> origin/main
+      .github/workflows/release.yml: gh-actions/master/release_manual_notes.yml
       .github/workflows/automerge.yml: gh-actions/master/automerge.yml
   # metanorma-un — OBSOLETE 2026-06-29 (last release 2024-09-30, 21 mo).
   # Removed per maintainer triage; not part of the active processor family.
@@ -206,26 +156,16 @@ repositories:
     branch: main
     files:
       .rubocop.yml: gh-actions/master/.rubocop.yml
-<<<<<<< HEAD
-      .github/workflows/rake.yml: gh-actions/master/rake.yml
-      .github/workflows/release.yml: gh-actions/master/release_manual_notes.yml
-=======
       # .github/workflows/rake.yml: unmapped 2026-07-30 per metanorma/cimas#68: consumer-owned as reusable-workflow ref @v1
-      .github/workflows/release.yml: gh-actions/master/release.yml
->>>>>>> origin/main
+      .github/workflows/release.yml: gh-actions/master/release_manual_notes.yml
       .github/workflows/automerge.yml: gh-actions/master/automerge.yml
   metanorma-generic:
     remote: ssh://git@github.com/metanorma/metanorma-generic
     branch: main
     files:
       .rubocop.yml: gh-actions/master/.rubocop.yml
-<<<<<<< HEAD
-      .github/workflows/rake.yml: gh-actions/master/rake.yml
-      .github/workflows/release.yml: gh-actions/master/release_manual_notes.yml
-=======
       # .github/workflows/rake.yml: unmapped 2026-07-29 per metanorma/cimas#68: consumer-owned as reusable-workflow ref @v1
-      .github/workflows/release.yml: gh-actions/master/release.yml
->>>>>>> origin/main
+      .github/workflows/release.yml: gh-actions/master/release_manual_notes.yml
       .github/workflows/automerge.yml: gh-actions/master/automerge.yml
   # metanorma-csa — OBSOLETE 2026-06-29 (last release 2025-09-01, 10 mo).
   # Removed per maintainer triage; not part of the active processor family.
@@ -234,13 +174,8 @@ repositories:
     branch: main
     files:
       .rubocop.yml: gh-actions/master/.rubocop.yml
-<<<<<<< HEAD
-      .github/workflows/rake.yml: gh-actions/master/rake.yml
-      .github/workflows/release.yml: gh-actions/master/release_manual_notes.yml
-=======
       # .github/workflows/rake.yml: unmapped 2026-07-29 per metanorma/cimas#68: consumer-owned as reusable-workflow ref @v1
-      .github/workflows/release.yml: gh-actions/master/release.yml
->>>>>>> origin/main
+      .github/workflows/release.yml: gh-actions/master/release_manual_notes.yml
       .github/workflows/automerge.yml: gh-actions/master/automerge.yml
   metanorma-bsi:
     remote: ssh://git@github.com/metanorma/metanorma-bsi
@@ -256,39 +191,24 @@ repositories:
     branch: main
     files:
       .rubocop.yml: gh-actions/master/.rubocop.yml
-<<<<<<< HEAD
-      .github/workflows/rake.yml: gh-actions/master/rake.yml
-      .github/workflows/release.yml: gh-actions/master/release_manual_notes.yml
-=======
       # .github/workflows/rake.yml: unmapped 2026-07-29 per metanorma/cimas#68: consumer-owned as reusable-workflow ref @v1
-      .github/workflows/release.yml: gh-actions/master/release.yml
->>>>>>> origin/main
+      .github/workflows/release.yml: gh-actions/master/release_manual_notes.yml
       .github/workflows/automerge.yml: gh-actions/master/automerge.yml
   metanorma-plateau:
     remote: ssh://git@github.com/metanorma/metanorma-plateau
     branch: main
     files:
       .rubocop.yml: gh-actions/master/.rubocop.yml
-<<<<<<< HEAD
-      .github/workflows/rake.yml: gh-actions/master/rake.yml
-      .github/workflows/release.yml: gh-actions/master/release_manual_notes.yml
-=======
       # .github/workflows/rake.yml: unmapped 2026-07-29 per metanorma/cimas#68: consumer-owned as reusable-workflow ref @v1
-      .github/workflows/release.yml: gh-actions/master/release.yml
->>>>>>> origin/main
+      .github/workflows/release.yml: gh-actions/master/release_manual_notes.yml
       .github/workflows/automerge.yml: gh-actions/master/automerge.yml
   metanorma-document:
     remote: ssh://git@github.com/metanorma/metanorma-document
     branch: main
     files:
       .rubocop.yml: gh-actions/master/.rubocop.yml
-<<<<<<< HEAD
-      .github/workflows/rake.yml: gh-actions/master/rake.yml
-      .github/workflows/release.yml: gh-actions/master/release_manual_notes.yml
-=======
       # .github/workflows/rake.yml: unmapped 2026-07-29 per metanorma/cimas#68: consumer-owned as reusable-workflow ref @v1
-      .github/workflows/release.yml: gh-actions/master/release.yml
->>>>>>> origin/main
+      .github/workflows/release.yml: gh-actions/master/release_manual_notes.yml
   # DEPRECATED pubid-family entries — all removed. Timeline:
   # - 2026-06-29 (refs #274, #300 Gap 3): 11 standalone `pubid-*` repos removed
   #   as superseded by the `pubid` monorepo.
@@ -501,38 +421,22 @@ repositories:
     branch: main
     files:
       .rubocop.yml: gh-actions/master/.rubocop.yml
-<<<<<<< HEAD
-      .github/workflows/rake.yml: gh-actions/master/rake.yml
-      .github/workflows/release.yml: gh-actions/master/release_manual_notes.yml
-=======
       # .github/workflows/rake.yml: unmapped 2026-07-29 per metanorma/cimas#68: consumer-owned as reusable-workflow ref @v1
-      .github/workflows/release.yml: gh-actions/master/release.yml
->>>>>>> origin/main
+      .github/workflows/release.yml: gh-actions/master/release_manual_notes.yml
   cnccs:
     remote: ssh://git@github.com/metanorma/cnccs
     branch: master
     files:
-<<<<<<< HEAD
-      .rubocop.yml: gh-actions/master/.rubocop.yml
-      .github/workflows/rake.yml: gh-actions/master/rake.yml
-      .github/workflows/release.yml: gh-actions/master/release_manual_notes.yml
-=======
       # .rubocop.yml: unmapped 2026-08-02 — repo dormant (last release 2020-05-24; last code change 2022-10-26; cimas syncs actively rejected 2026 PRs #23/#24/#25); archive-candidate (opoudjis-maintained)
       # .github/workflows/rake.yml: unmapped 2026-08-02 — rake.yml already removed from repo 2026-07-05 (commit cff277a); repo dormant per above
-      .github/workflows/release.yml: gh-actions/master/release.yml
->>>>>>> origin/main
+      .github/workflows/release.yml: gh-actions/master/release_manual_notes.yml
   isoics:
     remote: ssh://git@github.com/metanorma/isoics
     branch: main
     files:
       .rubocop.yml: gh-actions/master/.rubocop.yml
-<<<<<<< HEAD
-      .github/workflows/rake.yml: gh-actions/master/rake.yml
-      .github/workflows/release.yml: gh-actions/master/release_manual_notes.yml
-=======
       # .github/workflows/rake.yml: unmapped 2026-07-30 per metanorma/cimas#68: consumer-owned as reusable-workflow ref @v1
-      .github/workflows/release.yml: gh-actions/master/release.yml
->>>>>>> origin/main
+      .github/workflows/release.yml: gh-actions/master/release_manual_notes.yml
   # iso690render — DEPRECATED 2026-06-29: this repo hosts a legacy `relaton-render`
   # gemspec; the active relaton-render gem is now published from
   # https://github.com/relaton/relaton-render (different org). The metanorma/iso690render
@@ -558,25 +462,15 @@ repositories:
     branch: master
     files:
       .rubocop.yml: gh-actions/master/.rubocop.yml
-<<<<<<< HEAD
-      .github/workflows/rake.yml: gh-actions/master/rake.yml
-      .github/workflows/release.yml: gh-actions/master/release_manual_notes.yml
-=======
       # .github/workflows/rake.yml: unmapped 2026-07-29 per metanorma/cimas#68: consumer-owned as reusable-workflow ref @v1
-      .github/workflows/release.yml: gh-actions/master/release.yml
->>>>>>> origin/main
+      .github/workflows/release.yml: gh-actions/master/release_manual_notes.yml
   isodoc-i18n:
     remote: ssh://git@github.com/metanorma/isodoc-i18n
     branch: main
     files:
       .rubocop.yml: gh-actions/master/.rubocop.yml
-<<<<<<< HEAD
-      .github/workflows/rake.yml: gh-actions/master/rake.yml
-      .github/workflows/release.yml: gh-actions/master/release_manual_notes.yml
-=======
       # .github/workflows/rake.yml: unmapped 2026-07-30 per metanorma/cimas#68: consumer-owned as reusable-workflow ref @v1
-      .github/workflows/release.yml: gh-actions/master/release.yml
->>>>>>> origin/main
+      .github/workflows/release.yml: gh-actions/master/release_manual_notes.yml
   # edoxen: transferred to `edoxen/edoxen` (new one-repo org created to
   # receive it). Surfaced by cimas-drift-audit MVP (metanorma/ci#335) on
   # 2026-07-02 as class (c) external transfer. Now lives at
@@ -1471,13 +1365,8 @@ repositories:
     branch: main
     files:
       .rubocop.yml: gh-actions/master/.rubocop.yml
-<<<<<<< HEAD
-      .github/workflows/rake.yml: gh-actions/master/rake.yml
-      .github/workflows/release.yml: gh-actions/master/release_wo_bundle_install_manual_notes.yml
-=======
       # .github/workflows/rake.yml: unmapped 2026-07-29 per metanorma/cimas#68: consumer-owned as reusable-workflow ref @v1
-      .github/workflows/release.yml: gh-actions/master/release_wo_bundle_install.yml
->>>>>>> origin/main
+      .github/workflows/release.yml: gh-actions/master/release_wo_bundle_install_manual_notes.yml
   ammitto:
     remote: ssh://git@github.com/ammitto/ammitto
     branch: main

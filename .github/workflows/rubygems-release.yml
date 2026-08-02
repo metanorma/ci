@@ -59,17 +59,6 @@ on:
         required: false
         type: string
         default: ''
-<<<<<<< HEAD
-      acknowledge_breaking_in_patch:
-        description: |
-          Override the patch-release breaking-change heuristic guard for this run.
-          Set to true ONLY when the guard's trip is a known false-positive
-          (e.g. removing an accidentally-shipped fixture file, or a rename that
-          preserves API). The override is recorded in the run inputs and visible
-          in the audit trail. See metanorma/ci#278.
-        required: false
-        type: boolean
-        default: false
       release_notes:
         description: |
           Controls whether the workflow ensures a GitHub Release exists for the
@@ -89,8 +78,6 @@ on:
         required: false
         type: string
         default: 'auto'
-=======
->>>>>>> origin/main
     secrets:
       rubygems-api-key:
         required: false
