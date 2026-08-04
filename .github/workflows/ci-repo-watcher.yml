@@ -49,7 +49,7 @@ jobs:
       with:
         token: ${{ secrets.GITHUB_TOKEN || secrets.token }}
         title: New repos in ${{ github.repository_owner }} found
-        assignees: CAMOBAP
+        assignees: opoudjis,ronaldtse
         comment: |
           Review new discovered repositories during run ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}:
 
