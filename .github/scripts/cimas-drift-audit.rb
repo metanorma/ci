@@ -124,12 +124,18 @@ VARIANT_REGISTRY = [
     expected_delta_lines: 8,
     note: "Header comment block + one gem line — introduced in ci#353.",
   },
-  # Additions expected once ci#355 (release-notes floor) lands:
-  #   - release_manual_notes.yml vs release.yml
-  #   - release_wo_bundle_install_manual_notes.yml vs
-  #     release_wo_bundle_install.yml
-  # Both introduced in ci#354 for the auto-generated GitHub Release
-  # notes opt-out path.
+  {
+    variant: "cimas-config/gh-actions/master/release_manual_notes.yml",
+    parent: "cimas-config/gh-actions/master/release.yml",
+    expected_delta_lines: 31,
+    note: "Auto-generated GitHub Release notes opt-out — introduced in ci#354, floor landed in ci#355.",
+  },
+  {
+    variant: "cimas-config/gh-actions/master/release_wo_bundle_install_manual_notes.yml",
+    parent: "cimas-config/gh-actions/master/release_wo_bundle_install.yml",
+    expected_delta_lines: 28,
+    note: "Auto-generated GitHub Release notes opt-out (no-bundle-install variant) — introduced in ci#354, floor landed in ci#355.",
+  },
 ].freeze
 
 # ---------- Data model ----------
