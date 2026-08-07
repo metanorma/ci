@@ -80,6 +80,8 @@ Version-bump semantics for this reusable follow SemVer at the reusable-interface
 | `role_to_assume` | no | — | OIDC Role ID (`rg_oidc_akr_…`) for RubyGems Trusted Publishing. If omitted with no API key, the workflow uses Trusted Publisher auto-discovery via `GITHUB_REPOSITORY`. |
 | `environment` | no | `''` | GitHub environment name (e.g. `release` for required approvers) |
 | `event_name` | no | — | Deprecated alias for `github.event_name`. |
+| `release_notes` | no | `auto` | `auto` creates a GitHub Release with auto-generated notes if none exists; `manual` skips. See [ci#354](https://github.com/metanorma/ci/issues/354). |
+| `version_advisory` | no | `false` | When true, run the Prism AST change-detector in preflight and emit a suggested bump. Advisory only — never blocks. See [ci#369](https://github.com/metanorma/ci/issues/369). |
 
 ## Secrets
 
@@ -112,6 +114,7 @@ Motivated by [ci#309](https://github.com/metanorma/ci/issues/309): the `metanorm
 | **OIDC Trusted Publisher exchange** (only when no API key and no role) | Trust-policy mismatch on rubygems.org — runs the same `configure-rubygems-credentials@v2.1.0` action the publish step uses, just upfront |
 | **`bundle exec rake` resolves** (release job, API-key path only) | `rake` not installed because the Gemfile excludes the development group. See [ci#363](https://github.com/metanorma/ci/issues/363). |
 | **Version awareness** (informational, non-blocking) | Current gemspec version already on rubygems.org. For `next_version=skip` this means the publish will idempotent-skip. |
+| **Version advisory** (opt-in, non-blocking) | Prism AST diff of `lib/` vs previous tag → suggested SemVer bump. Only when `version_advisory: true`. |
 
 Preflight cannot catch everything. It runs on `ubuntu-latest` only, doesn't run the actual test matrix, can't dry-run MFA/OTP prompts, and doesn't verify downstream-cascade receivers.
 
@@ -147,6 +150,39 @@ Previous versions of this workflow had a `gated` mode that deferred publication 
 - The original motivation (a double-publish race) was already handled by the idempotent push guard.
 
 The `gated` input remains as a deprecated no-op for backward compatibility. Consumer repos that still pass `gated: true` will see no behavior change beyond the publish now happening immediately.
+
+## Version advisory (opt-in)
+
+When `version_advisory: true`, preflight runs the encapsulated composite action [`version-advisory-action`](../version-advisory-action/action.yml). It diffs `lib/` between the previous tag and HEAD via Prism AST and emits:
+
+- a markdown table to `$GITHUB_STEP_SUMMARY` (change / classification / evidence / suggested bump)
+- a `::notice::` with the overall suggested bump
+
+Never blocks (exit 0 always). Default off — no behaviour change for existing consumers.
+
+### Classification signals (first-match-wins)
+
+1. Annotations: `# @api public` / `# @api private` / `:nodoc:` / Yard `@!method`
+2. Contract file: `public_api.txt` allowlist at repo root (use-only-if-present)
+3. Namespace convention: `Internal::` / `Private::` / leading `_`
+4. Directory convention: `lib/*/internal/`, `lib/*/private/`
+5. Default: `unknown`
+
+### Bump table
+
+| Change | public | internal | unknown |
+|---|---|---|---|
+| added | minor | patch | patch |
+| removed / signature-broken | major (minor pre-1.0) | patch | unknown |
+| body-changed | unknown | patch | unknown |
+
+### Phase-2 limitations
+
+`class << self`, `attr_*`, inheritance/include changes, `define_method` metaprogramming — not covered. Documented in the script header.
+
+### Encapsulation
+
+The heuristic lives in a composite action. Consumers of `rubygems-release.yml` never curl a raw script from main. Pin the reusable (and thereby the action) via the three-tier tag discipline.
 
 ## Related
 

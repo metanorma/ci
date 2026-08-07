@@ -1,0 +1,2 @@
+# Contract file — listed symbols are public
+Foo::listed

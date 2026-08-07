@@ -1,0 +1,32 @@
+name: version-advisory
+description: >
+  Advisory-only release-version heuristic (ci#369). Runs Prism AST diff of lib/
+  against the previous tag and emits a markdown table + ::notice:: with a
+  suggested bump. Never blocks. Encapsulated composite — consumers pin a tag
+  (e.g. @v1), never curl from main.
+
+inputs:
+  requested-bump:
+    description: The bump the maintainer selected (patch/minor/major/skip)
+    required: false
+    default: ''
+  fetch-history:
+    description: When true, fetch tags + unshallow before running
+    required: false
+    default: 'true'
+
+runs:
+  using: composite
+  steps:
+    - name: Fetch git history for advisory
+      if: inputs.fetch-history == 'true'
+      shell: bash
+      run: |
+        git fetch --tags origin || true
+        git fetch --unshallow 2>/dev/null || true
+
+    - name: Version advisory
+      shell: bash
+      env:
+        ADVISORY_REQUESTED_BUMP: ${{ inputs.requested-bump }}
+      run: ruby "${{ github.action_path }}/../.github/scripts/release-version-advisory.rb"
