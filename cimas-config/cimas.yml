@@ -3,7 +3,8 @@ settings:
   reviewers:
     - ronaldtse
   assignees:
-    - CAMOBAP
+    - opoudjis
+    - ronaldtse
 
 repositories:
   metanorma-cli:
