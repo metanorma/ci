@@ -1,0 +1,32 @@
+# Least-privilege caller for repositories that run rake but do not participate
+# in the release cascade. Thin variant of rake.yml — same reusable, cascade off.
+#
+# Use for repos that:
+#   - run `bundle exec rake` for CI, but
+#   - do NOT publish a gem on tag push (no do-release consumer), and
+#   - do NOT participate in the tests-passed downstream cascade.
+#
+# Gains `permissions: contents: read` by setting cascade: false on the single
+# generic-rake.yml reusable (no sibling reusable — matrix body stays in one place).
+#
+# To switch a repo back to the cascade variant, replace this template mapping
+# with `master/rake.yml` in the repo's cimas.yml entry.
+
+name: rake
+
+on:
+  push:
+    branches: [ master, main ]
+    tags: [ v* ]
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  rake:
+    uses: metanorma/ci/.github/workflows/generic-rake.yml@main
+    with:
+      cascade: false
+    secrets:
+      pat_token: ${{ secrets.METANORMA_CI_PAT_TOKEN }}

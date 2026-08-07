@@ -136,6 +136,12 @@ VARIANT_REGISTRY = [
     expected_delta_lines: 28,
     note: "Auto-generated GitHub Release notes opt-out (no-bundle-install variant) — introduced in ci#354, floor landed in ci#355.",
   },
+  {
+    variant: "cimas-config/gh-actions/master/rake_test_only.yml",
+    parent: "cimas-config/gh-actions/master/rake.yml",
+    expected_delta_lines: 18,
+    note: "Least-privilege cascade-off caller — same generic-rake.yml reusable with cascade: false. Introduced with cascade input (closes ci#362).",
+  },
 ].freeze
 
 # ---------- Data model ----------

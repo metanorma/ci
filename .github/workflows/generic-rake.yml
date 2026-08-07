@@ -3,6 +3,16 @@ name: rake
 on:
   workflow_call:
     inputs:
+      cascade:
+        description: >
+          When true (default), fire tests-passed / do-release repository_dispatch
+          after the matrix succeeds. When false, skip the cascade job entirely so
+          callers can declare permissions: contents: read (least privilege).
+          Use false for sample/model repos and any gem whose release is triggered
+          externally rather than via do-release.
+        type: boolean
+        default: true
+        required: false
       tests-passed-event:
         description: Name of event sent with repository-dispatch after rake tests are passed successfully
         default: 'tests-passed'
@@ -131,6 +141,7 @@ jobs:
       - run: bundle exec rake
 
   tests-passed:
+    if: ${{ inputs.cascade }}
     needs: rake
     runs-on: ubuntu-latest
     permissions:
