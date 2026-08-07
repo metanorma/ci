@@ -1,0 +1,56 @@
+name: test-version-advisory
+# CI for the release-version-advisory.rb change detector (per ci#369).
+# Runs the fixture suite on push/PR to the script or fixtures. Ruby 3.3 (Prism
+# is bundled from 3.3).
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - .github/scripts/release-version-advisory.rb
+      - .github/scripts/test-fixtures/version-advisory/**
+      - .github/workflows/test-version-advisory.yml
+  pull_request:
+    paths:
+      - .github/scripts/release-version-advisory.rb
+      - .github/scripts/test-fixtures/version-advisory/**
+      - .github/workflows/test-version-advisory.yml
+
+permissions:
+  contents: read
+
+jobs:
+  fixtures:
+    name: Fixture suite
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: "3.3"
+
+      - name: Syntax check
+        run: ruby -c .github/scripts/release-version-advisory.rb
+
+      - name: Run fixture suite
+        run: bash .github/scripts/test-fixtures/version-advisory/run-fixtures.sh
+
+  no-network-libs:
+    name: AC 6 — no network libraries in advisory script
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Assert no network-lib requires
+        # AC 6 (per ci#369): no rubygems.org calls, no network. Enforce via
+        # static grep against known Ruby HTTP libraries. Prism + Digest + Open3
+        # + JSON are all Ruby stdlib; anything else in a `require` is suspect.
+        run: |
+          set -e
+          script=.github/scripts/release-version-advisory.rb
+          if grep -Ei 'require\s+["'\''"](net/http|open-uri|faraday|httparty|excon|typhoeus|http)["'\''"]' "$script"; then
+            echo "::error title=AC 6 violation::advisory script requires a network library — see grep hit above"
+            exit 1
+          fi
+          echo "OK — no network library requires in $script"
