@@ -591,6 +591,14 @@ repositories:
       .github/workflows/generate.yml: gh-actions/samples/public-generate.yml
       .github/workflows/test.yml: gh-actions/samples/test.yml
       .github/workflows/automerge.yml: gh-actions/master/automerge.yml
+  mn-samples-iso-10303:
+    remote: ssh://git@github.com/metanorma/mn-samples-iso-10303
+    branch: main
+    files:
+      .github/workflows/docker.yml: gh-actions/samples/docker.yml
+      .github/workflows/generate.yml: gh-actions/samples/public-generate.yml
+      .github/workflows/test.yml: gh-actions/samples/test.yml
+      .github/workflows/automerge.yml: gh-actions/master/automerge.yml
   mn-samples-cc:
     remote: ssh://git@github.com/metanorma/mn-samples-cc
     branch: main
