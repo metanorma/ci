@@ -1,0 +1,211 @@
+name: standoc-models make
+
+# Reusable workflow for metanorma/standoc-models (monorepo consolidation of
+# ex-metanorma-model-* repos, landed via metanorma-core#16). Called by the
+# consumer template at cimas-config/gh-actions/standoc-models/make.yml.
+#
+# Shape: prepare (matrix + path-filter + full-rebuild flag) → grammar-build
+# (conditional) + per-flavor-make (matrix over changed flavors × OS).
+#
+# Path-filter rules:
+#   - push to main / tag / workflow_dispatch → full rebuild (all 16 flavors +
+#     grammar-build)
+#   - PR touching only <flavor>/ subtrees → matrix over changed flavors
+#   - PR touching grammars/ → grammar-build runs; per-flavor unaffected
+#     (flavors consume vendored RNG via opoudjis's manual grammars/copy.sh)
+#   - PR touching root files (.github, README, .gitmodules) → full rebuild
+#     (conservative: cross-cutting change assumed)
+#   - git diff failure (shallow clone, missing base) → full rebuild
+#     (fail-safe: don't let CI report vacuously green)
+
+on:
+  workflow_call:
+
+permissions:
+  contents: read
+
+jobs:
+  # OS matrix + default Ruby version — delegate to the shared reusable used
+  # by generic-rake.yml and model-make.yml. Local-ref (./) is used here
+  # instead of the external-ref @main pattern from model-make.yml — same
+  # repo, same ref as caller, sidesteps the standing-rule question about
+  # @main vs @v1 for intra-repo references. Follow-up: audit and migrate
+  # existing intra-ci external-ref @main usages to local-ref shape.
+  prepare-matrix:
+    uses: ./.github/workflows/prepare-rake.yml
+
+  # Path-filter + full-rebuild flag — custom to standoc-models because the
+  # per-flavor path-filter shape is monorepo-specific.
+  prepare-filter:
+    runs-on: ubuntu-latest
+    outputs:
+      changed_flavors: ${{ steps.filter.outputs.changed_flavors }}
+      grammars_changed: ${{ steps.filter.outputs.grammars_changed }}
+      full_rebuild: ${{ steps.filter.outputs.full_rebuild }}
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          fetch-depth: 0
+
+      - id: filter
+        name: Compute path-filter + full-rebuild flag
+        shell: bash
+        env:
+          EVENT: ${{ github.event_name }}
+          REF: ${{ github.ref }}
+          BASE_SHA: ${{ github.event.pull_request.base.sha }}
+        run: |
+          set -eu
+
+          # Single source of truth for the 16-flavor list — used to derive
+          # both the all_flavors JSON literal AND the alternation-regex
+          # for path-filter grep. Adding a new flavor requires updating
+          # THIS line only (not three separate sites).
+          FLAVORS_LIST='bipm bsi cc csa gb ieee iho iso itu m3aawg mpfa nist ogc ribose standoc un'
+          all_flavors=$(printf '%s\n' $FLAVORS_LIST | jq -R -s -c 'split("\n") | map(select(length > 0))')
+          FLAVORS_ALT=$(printf '%s\n' $FLAVORS_LIST | paste -sd '|' -)
+
+          # Full rebuild triggers: main-push, tag push, workflow_dispatch.
+          full_rebuild=false
+          case "$EVENT" in
+            push)
+              case "$REF" in
+                refs/heads/main) full_rebuild=true ;;
+                refs/tags/*) full_rebuild=true ;;
+              esac
+              ;;
+            workflow_dispatch) full_rebuild=true ;;
+          esac
+
+          if [ "$full_rebuild" = "true" ]; then
+            changed_flavors="$all_flavors"
+            grammars_changed=true
+          elif [ -z "$BASE_SHA" ]; then
+            # No base SHA (shouldn't happen on PR) — fall through to full
+            # rebuild rather than emit an empty matrix.
+            echo "WARNING: no BASE_SHA — defaulting to full rebuild" >&2
+            full_rebuild=true
+            changed_flavors="$all_flavors"
+            grammars_changed=true
+          elif ! changed_files=$(git diff --name-only "$BASE_SHA"...HEAD 2>&1); then
+            # git diff failed (shallow clone, base force-pushed, etc.) —
+            # fall through to full rebuild rather than silently emit an
+            # empty matrix (which would make CI vacuously green).
+            echo "WARNING: git diff failed — defaulting to full rebuild. Output was: $changed_files" >&2
+            full_rebuild=true
+            changed_flavors="$all_flavors"
+            grammars_changed=true
+          else
+            # PR event: compute path-filter from diff.
+            # Cross-flavor / root-touching detection: any change outside a
+            # single-flavor subtree (or grammars/) triggers full rebuild.
+            # Root files (.github/, README, .gitmodules, LICENSE) fall here.
+            root_or_cross=$(echo "$changed_files" \
+              | grep -vE "^(${FLAVORS_ALT}|grammars)/" \
+              | grep -v '^$' | head -1 || true)
+
+            if [ -n "$root_or_cross" ]; then
+              full_rebuild=true
+              changed_flavors="$all_flavors"
+              grammars_changed=true
+            else
+              # Extract changed flavors from diff paths.
+              flavors=$(echo "$changed_files" | awk -F/ '{print $1}' \
+                | grep -v '^grammars$' | sort -u)
+              if [ -z "$flavors" ]; then
+                changed_flavors='[]'
+              else
+                changed_flavors=$(echo "$flavors" | jq -R -s -c 'split("\n") | map(select(length > 0))')
+              fi
+
+              # Grammars changed?
+              grammars_changed=false
+              if echo "$changed_files" | grep -q '^grammars/'; then
+                grammars_changed=true
+              fi
+            fi
+          fi
+
+          echo "full_rebuild=$full_rebuild" >> "$GITHUB_OUTPUT"
+          echo "changed_flavors=$changed_flavors" >> "$GITHUB_OUTPUT"
+          echo "grammars_changed=$grammars_changed" >> "$GITHUB_OUTPUT"
+
+          echo "=== path filter result ==="
+          echo "full_rebuild: $full_rebuild"
+          echo "changed_flavors: $changed_flavors"
+          echo "grammars_changed: $grammars_changed"
+
+  grammar-build:
+    needs: [prepare-matrix, prepare-filter]
+    if: needs.prepare-filter.outputs.grammars_changed == 'true' || needs.prepare-filter.outputs.full_rebuild == 'true'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          submodules: recursive
+
+      - uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: ${{ needs.prepare-matrix.outputs.default-ruby-version }}
+          bundler-cache: true
+          working-directory: grammars
+
+      - name: Build grammars
+        working-directory: grammars
+        run: ./make.sh
+
+      - name: Verify grammar build output
+        working-directory: grammars
+        shell: bash
+        run: |
+          set -eu
+          # Defensive: trang silently exiting 0 without producing .rng is a
+          # class of failure worth catching at CI time. Analog to the
+          # verify-images check in gh-actions/model/Makefile (ci#302/#303).
+          rnc_count=$(find . -maxdepth 1 -name '*.rnc' | wc -l | tr -d ' ')
+          rng_count=$(find . -maxdepth 1 -name '*.rng' | wc -l | tr -d ' ')
+          if [ "$rng_count" -eq 0 ] && [ "$rnc_count" -gt 0 ]; then
+            echo "ERROR: grammar build produced no .rng despite $rnc_count .rnc sources" >&2
+            exit 1
+          fi
+          echo "grammar-build: $rng_count .rng file(s) present after build (from $rnc_count .rnc source(s))"
+
+  per-flavor-make:
+    needs: [prepare-matrix, prepare-filter]
+    if: needs.prepare-filter.outputs.changed_flavors != '[]' && needs.prepare-filter.outputs.changed_flavors != ''
+    name: Build ${{ matrix.flavor }} on ${{ matrix.os }}
+    runs-on: ${{ matrix.os }}
+    concurrency:
+      # For PRs, head_ref scopes concurrency to the branch (cancel earlier
+      # in-flight jobs on new commits). For push events, head_ref is empty;
+      # falling back to github.sha means each commit gets its own group (no
+      # cross-commit cancellation), which protects full-rebuild waves on
+      # main from being interrupted by rapid follow-up pushes.
+      group: '${{ github.workflow }}-${{ matrix.flavor }}-${{ matrix.os }}-${{ github.head_ref || github.sha }}'
+      cancel-in-progress: true
+    strategy:
+      fail-fast: false
+      matrix:
+        flavor: ${{ fromJson(needs.prepare-filter.outputs.changed_flavors) }}
+        os: ${{ fromJson(needs.prepare-matrix.outputs.matrix).os }}
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          submodules: recursive
+
+      - if: runner.os == 'Windows'
+        uses: metanorma/ci/choco-cache-action@main
+
+      - uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: ${{ needs.prepare-matrix.outputs.default-ruby-version }}
+          bundler-cache: true
+          working-directory: ${{ matrix.flavor }}
+
+      - uses: metanorma/ci/tool-setup-action@main
+        with:
+          setup-tools: 'graphviz'
+
+      - name: Build flavor ${{ matrix.flavor }}
+        working-directory: ${{ matrix.flavor }}
+        run: bundle exec make clean all

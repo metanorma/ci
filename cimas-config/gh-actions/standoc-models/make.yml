@@ -1,0 +1,11 @@
+name: make
+
+on:
+  push:
+    branches: [main]
+    tags: [v*]
+  pull_request:
+
+jobs:
+  make:
+    uses: metanorma/ci/.github/workflows/standoc-models-make.yml@v1

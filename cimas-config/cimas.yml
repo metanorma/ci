@@ -239,152 +239,64 @@ repositories:
   # so no entry to remove.
 
   # models
-  metanorma-model-gb:
-    remote: ssh://git@github.com/metanorma/metanorma-model-gb
+  # standoc-models: monorepo consolidation of 16 metanorma-model-* repos.
+  # Landed via metanorma-core#16 (opoudjis + Quark, 2026-08-10). Per-flavor
+  # Makefile + Gemfile mappings sync the 16 subdirectories from the shared
+  # gh-actions/model/* templates. grammars/ has its own Gemfile
+  # (Gemfile.grammar-build variant with lutaml-xsd for grammar packaging).
+  # Repo-level workflows: make.yml (monorepo caller for
+  # standoc-models-make.yml reusable in metanorma/ci), deploy.yml (iso-only
+  # "Build and Deploy Grammars" workflow inherited from ex-model-iso,
+  # retained per opoudjis's directive with monorepo path adaptation),
+  # automerge.yml (standard). 16 old metanorma-model-* repos untouched
+  # pending archival (P4).
+  standoc-models:
+    remote: ssh://git@github.com/metanorma/standoc-models
     branch: main
     files:
-      Gemfile: gh-actions/model/Gemfile
-      Makefile: gh-actions/model/Makefile
-      .github/workflows/make.yml: gh-actions/model/make.yml
-      .github/workflows/automerge.yml: gh-actions/master/automerge.yml
-  metanorma-model-iso:
-    remote: ssh://git@github.com/metanorma/metanorma-model-iso
-    branch: main
-    files:
-      # model-iso alone among the model repos carries a `.github/workflows/deploy.yml`
-      # (the "Build and Deploy Grammars" workflow) that shells out to
-      # `bundle exec lutaml-xsd build ...`. The `lutaml-xsd` executable dropped
-      # out of the `lutaml` gem's runtime dep chain in the early-July 2026 lutaml
-      # restructuring, so its Gemfile needs `gem "lutaml-xsd"` explicitly.
-      # `Gemfile.grammar-build` is a scoped variant of `gh-actions/model/Gemfile`
-      # for exactly that use case; other model repos keep the plain template.
-      Gemfile: gh-actions/model/Gemfile.grammar-build
-      Makefile: gh-actions/model/Makefile
-      .github/workflows/make.yml: gh-actions/model/make.yml
-      .github/workflows/automerge.yml: gh-actions/master/automerge.yml
-  metanorma-model-standoc:
-    remote: ssh://git@github.com/metanorma/metanorma-model-standoc
-    branch: main
-    files:
-      Gemfile: gh-actions/model/Gemfile
-      Makefile: gh-actions/model/Makefile
-      .github/workflows/make.yml: gh-actions/model/make.yml
-      .github/workflows/automerge.yml: gh-actions/master/automerge.yml
-  metanorma-model-un:
-    remote: ssh://git@github.com/metanorma/metanorma-model-un
-    branch: main
-    files:
-      Gemfile: gh-actions/model/Gemfile
-      Makefile: gh-actions/model/Makefile
-      .github/workflows/make.yml: gh-actions/model/make.yml
-      .github/workflows/automerge.yml: gh-actions/master/automerge.yml
-  metanorma-model-mpfa:
-    remote: ssh://git@github.com/metanorma/metanorma-model-mpfa
-    branch: master
-    files:
-      Gemfile: gh-actions/model/Gemfile
-      Makefile: gh-actions/model/Makefile
-      .github/workflows/make.yml: gh-actions/model/make.yml
-      .github/workflows/automerge.yml: gh-actions/master/automerge.yml
-  metanorma-model-itu:
-    remote: ssh://git@github.com/metanorma/metanorma-model-itu
-    branch: main
-    files:
-      Gemfile: gh-actions/model/Gemfile
-      Makefile: gh-actions/model/Makefile
-      .github/workflows/make.yml: gh-actions/model/make.yml
-      .github/workflows/automerge.yml: gh-actions/master/automerge.yml
-  metanorma-model-csa:
-    remote: ssh://git@github.com/metanorma/metanorma-model-csa
-    branch: main
-    files:
-      Gemfile: gh-actions/model/Gemfile
-      Makefile: gh-actions/model/Makefile
-      .github/workflows/make.yml: gh-actions/model/make.yml
-      .github/workflows/automerge.yml: gh-actions/master/automerge.yml
-  metanorma-model-nist:
-    remote: ssh://git@github.com/metanorma/metanorma-model-nist
-    branch: master
-    files:
-      Gemfile: gh-actions/model/Gemfile
-      Makefile: gh-actions/model/Makefile
-      .github/workflows/make.yml: gh-actions/model/make.yml
-      .github/workflows/automerge.yml: gh-actions/master/automerge.yml
-  metanorma-model-iho:
-    remote: ssh://git@github.com/metanorma/metanorma-model-iho
-    branch: master
-    files:
-      Gemfile: gh-actions/model/Gemfile
-      Makefile: gh-actions/model/Makefile
-      .github/workflows/make.yml: gh-actions/model/make.yml
-      .github/workflows/automerge.yml: gh-actions/master/automerge.yml
-  metanorma-model-cc:
-    remote: ssh://git@github.com/metanorma/metanorma-model-cc
-    branch: main
-    files:
-      Gemfile: gh-actions/model/Gemfile
-      Makefile: gh-actions/model/Makefile
-      .github/workflows/make.yml: gh-actions/model/make.yml
-      .github/workflows/automerge.yml: gh-actions/master/automerge.yml
-  # metanorma-model-m3d: renamed within `metanorma` to `metanorma-model-m3aawg`
-  # (the model tracks the M3AAWG standards body's evolution). Surfaced by
-  # cimas-drift-audit MVP (metanorma/ci#335) on 2026-07-02 as class (c)
-  # internal rename. Stale duplicate — the `metanorma-model-m3aawg:` entry
-  # below already exists with equivalent config; keeping this here would
-  # double-count. Pre-rename entry preserved in git history.
-  metanorma-model-ogc:
-    remote: ssh://git@github.com/metanorma/metanorma-model-ogc
-    branch: main
-    files:
-      Gemfile: gh-actions/model/Gemfile
-      Makefile: gh-actions/model/Makefile
-      .github/workflows/make.yml: gh-actions/model/make.yml
-      .github/workflows/automerge.yml: gh-actions/master/automerge.yml
-  # metanorma-model-rsd: renamed within `metanorma` to `metanorma-model-ribose`
-  # (the model tracks the Ribose-branded standard). Surfaced by
-  # cimas-drift-audit MVP (metanorma/ci#335) on 2026-07-02 as class (c)
-  # internal rename. Stale duplicate — the `metanorma-model-ribose:` entry
-  # below already exists with equivalent config; keeping this here would
-  # double-count. Pre-rename entry preserved in git history.
-  metanorma-model-bipm:
-    remote: ssh://git@github.com/metanorma/metanorma-model-bipm
-    branch: main
-    files:
-      Gemfile: gh-actions/model/Gemfile
-      Makefile: gh-actions/model/Makefile
-      .github/workflows/make.yml: gh-actions/model/make.yml
-      .github/workflows/automerge.yml: gh-actions/master/automerge.yml
-  metanorma-model-ieee:
-    remote: ssh://git@github.com/metanorma/metanorma-model-ieee
-    branch: master
-    files:
-      Gemfile: gh-actions/model/Gemfile
-      Makefile: gh-actions/model/Makefile
-      .github/workflows/make.yml: gh-actions/model/make.yml
-      .github/workflows/automerge.yml: gh-actions/master/automerge.yml
-  metanorma-model-bsi:
-    remote: ssh://git@github.com/metanorma/metanorma-model-bsi
-    branch: main
-    files:
-      Gemfile: gh-actions/model/Gemfile
-      Makefile: gh-actions/model/Makefile
-      .github/workflows/make.yml: gh-actions/model/make.yml
-      .github/workflows/automerge.yml: gh-actions/master/automerge.yml
-  metanorma-model-ribose:
-    remote: ssh://git@github.com/metanorma/metanorma-model-ribose
-    branch: main
-    files:
-      Gemfile: gh-actions/model/Gemfile
-      Makefile: gh-actions/model/Makefile
-      .github/workflows/make.yml: gh-actions/model/make.yml
-      .github/workflows/automerge.yml: gh-actions/master/automerge.yml
-  metanorma-model-m3aawg:
-    remote: ssh://git@github.com/metanorma/metanorma-model-m3aawg
-    branch: main
-    files:
-      Gemfile: gh-actions/model/Gemfile
-      Makefile: gh-actions/model/Makefile
-      .github/workflows/make.yml: gh-actions/model/make.yml
+      # Per-flavor Makefile + Gemfile (16 flavors x 2 files = 32 mappings).
+      # All flavors sync the same uniform templates. Any Makefile
+      # improvement (e.g., the verify-images defensive check from ci#302/
+      # #303) lands uniformly across all flavors on next sync.
+      bipm/Gemfile: gh-actions/model/Gemfile
+      bipm/Makefile: gh-actions/model/Makefile
+      bsi/Gemfile: gh-actions/model/Gemfile
+      bsi/Makefile: gh-actions/model/Makefile
+      cc/Gemfile: gh-actions/model/Gemfile
+      cc/Makefile: gh-actions/model/Makefile
+      csa/Gemfile: gh-actions/model/Gemfile
+      csa/Makefile: gh-actions/model/Makefile
+      gb/Gemfile: gh-actions/model/Gemfile
+      gb/Makefile: gh-actions/model/Makefile
+      ieee/Gemfile: gh-actions/model/Gemfile
+      ieee/Makefile: gh-actions/model/Makefile
+      iho/Gemfile: gh-actions/model/Gemfile
+      iho/Makefile: gh-actions/model/Makefile
+      iso/Gemfile: gh-actions/model/Gemfile
+      iso/Makefile: gh-actions/model/Makefile
+      itu/Gemfile: gh-actions/model/Gemfile
+      itu/Makefile: gh-actions/model/Makefile
+      m3aawg/Gemfile: gh-actions/model/Gemfile
+      m3aawg/Makefile: gh-actions/model/Makefile
+      mpfa/Gemfile: gh-actions/model/Gemfile
+      mpfa/Makefile: gh-actions/model/Makefile
+      nist/Gemfile: gh-actions/model/Gemfile
+      nist/Makefile: gh-actions/model/Makefile
+      ogc/Gemfile: gh-actions/model/Gemfile
+      ogc/Makefile: gh-actions/model/Makefile
+      ribose/Gemfile: gh-actions/model/Gemfile
+      ribose/Makefile: gh-actions/model/Makefile
+      standoc/Gemfile: gh-actions/model/Gemfile
+      standoc/Makefile: gh-actions/model/Makefile
+      un/Gemfile: gh-actions/model/Gemfile
+      un/Makefile: gh-actions/model/Makefile
+      # Grammar-build Gemfile (Gemfile.grammar-build variant with
+      # lutaml-xsd for grammar packaging - inherited from ex-model-iso's
+      # grammar-build capability, now hosted at grammars/ in the monorepo).
+      grammars/Gemfile: gh-actions/model/Gemfile.grammar-build
+      # Repo-level workflows.
+      .github/workflows/make.yml: gh-actions/standoc-models/make.yml
+      .github/workflows/deploy.yml: gh-actions/standoc-models/deploy.yml
       .github/workflows/automerge.yml: gh-actions/master/automerge.yml
   basicdoc-models:
     remote: ssh://git@github.com/metanorma/basicdoc-models
