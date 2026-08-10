@@ -1,0 +1,84 @@
+name: Build and Deploy Grammars
+
+# Iso-only "Build and Deploy Grammars" workflow, inherited from ex-
+# metanorma-model-iso and adapted for the standoc-models monorepo layout.
+# Runs the lutaml-xsd grammar-package build + SPA HTML generation + GitHub
+# Pages deploy. Artefact names preserved from original (metanorma-model-
+# iso.lxr / .html) for downstream consumer compatibility. All build steps
+# run with working-directory: iso/ since the source files (scripts,
+# build-config-small.yml, images, Gemfile) preserve their pre-monorepo
+# repo-root paths under the iso/ subdirectory (git filter-repo
+# --to-subdirectory-filter output).
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v6
+        with:
+          submodules: 'true'
+
+      - name: Setup Ruby
+        # Ruby 4.0 preserved from original ex-model-iso deploy.yml. Per
+        # opoudjis 2026-08-10, 4.0 is no longer experimental in the
+        # metanorma stack. Deploy Ruby intentionally may differ from
+        # make.yml's default (3.3.5); if lutaml-xsd or a transitive dep
+        # breaks on 4.0, revisit here.
+        uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: '4.0'
+          bundler-cache: true
+          working-directory: iso
+
+      - name: Fix include paths in rnc files
+        working-directory: iso
+        run: ruby scripts/flatten-include-files.rb
+
+      - name: Build LXR package
+        working-directory: iso
+        run: bundle exec lutaml-xsd build from-config build-config-small.yml --output metanorma-model-iso.lxr
+
+      - name: Generate SPA documentation
+        working-directory: iso
+        run: bundle exec lutaml-xsd spa metanorma-model-iso.lxr --mode inlined --output metanorma-model-iso.html
+
+      - name: Prepare artifact
+        working-directory: iso
+        run: |
+          mkdir -p _site
+          cp metanorma-model-iso.html _site/index.html
+          cp -r images _site/
+
+      - name: Upload artifact
+        uses: actions/upload-pages-artifact@v4
+        with:
+          path: iso/_site
+
+  deploy:
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    if: ${{ github.ref == 'refs/heads/main' }}
+    runs-on: ubuntu-latest
+    needs: build
+    steps:
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4
