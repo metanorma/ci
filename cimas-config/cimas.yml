@@ -718,9 +718,12 @@ repositories:
     remote: ssh://git@github.com/metanorma/mn-samples-plateau
     branch: main
     files:
-      .github/workflows/docker.yml:
-        if_public: gh-actions/samples/public-docker.yml
-        if_private: gh-actions/samples/private-docker.yml.erb
+      # .github/workflows/docker.yml intentionally unmapped 2026-08-10 —
+      # this repo maintains a custom Firelight docker.yml (fl-build +
+      # deploy-pages jobs); cimas sync would strip it (as happened
+      # inadvertently in mn-samples-plateau#536 on 2026-07-12). Longer-
+      # term fix: opt-in Firelight support in samples/public-docker.yml
+      # (design ticket to follow, needs @strogonoff input).
       .github/workflows/test.yml: gh-actions/samples/test.yml
     template:
       binding:
