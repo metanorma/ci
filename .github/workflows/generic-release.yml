@@ -1,0 +1,194 @@
+name: generic-release
+
+# Reusable release job for the metanorma *-ruby Java-jar-wrapper cluster.
+# Consumers: mn2pdf-ruby, mn2sts-ruby, mnconvert-ruby. Implements ci#82
+# action items [2] and [3] for the (d) Java-jar-wrapper family per the
+# 2026-08-12 inventory.
+#
+# The caller stub authored per-repo assembles: prepare (external reusable)
+# + optional prepare-<flavor> (local) + release (this reusable). The
+# reusable itself is single-job so the dependency graph stays in the
+# caller — one caller can add extra `needs` (e.g. mnconvert-ruby's
+# prepare-ieee) without this reusable knowing.
+
+on:
+  workflow_call:
+    inputs:
+      ruby_version:
+        type: string
+        required: true
+        description: >-
+          Ruby version to install for the release run. Typically
+          `${{ needs.prepare.outputs.default-ruby-version }}` from the
+          caller's prepare-rake.yml invocation.
+      jar_name:
+        type: string
+        required: true
+        description: >-
+          Filename of the bundled JAR under bin/, e.g. `mn2pdf.jar`,
+          `mn2sts.jar`, `mnconvert.jar`. Used for jar removal (all) and
+          optional rebuild (mnconvert-ruby).
+      version_file_path:
+        type: string
+        required: true
+        description: >-
+          Path to the gem's version.rb, e.g. `lib/mn2pdf/version.rb`.
+          Passed to `git add -u` during workflow_dispatch version bumps.
+      next_version:
+        type: string
+        required: true
+        description: >-
+          Pass-through of the caller's `workflow_dispatch` input
+          `next_version`. Values: `skip`, `x.y.z`, `major`, `minor`,
+          `patch`, `pre|rc|etc`. Only used when the workflow is
+          dispatched (push-tag runs skip the version-bump path).
+      checkout_uses_pat_token:
+        type: boolean
+        default: false
+        description: >-
+          Use the caller-supplied `pat_token` secret on actions/checkout.
+          True for mn2pdf-ruby (needs elevated push for the version-bump
+          commit); false for mn2sts-ruby (relies on default GITHUB_TOKEN).
+      download_artifact_name:
+        type: string
+        default: ''
+        description: >-
+          Optional artifact name to download before the release build.
+          For mnconvert-ruby (`ieee-test-input`, produced by its
+          `prepare-ieee` job). Leave empty for gems with no external
+          artefact dependency.
+      download_artifact_path:
+        type: string
+        default: ''
+        description: >-
+          Target path for the downloaded artifact. Required if
+          `download_artifact_name` is set.
+      jar_needs_rebuild:
+        type: boolean
+        default: false
+        description: >-
+          Whether the JAR is rebuilt via `bundle exec rake bin/<jar>`
+          during the version-bump path. True for mnconvert-ruby (JAR is
+          committed to the repo and needs to reflect the new version);
+          false for the others (JAR is downloaded fresh at rake time).
+      git_add_includes_jar:
+        type: boolean
+        default: false
+        description: >-
+          Whether to `git add -u` the JAR alongside the version.rb during
+          the workflow_dispatch bump. True for mnconvert-ruby (jar is
+          tracked); false for the others (jar is .gitignored).
+      failure_issue_template:
+        type: string
+        default: ''
+        description: >-
+          Optional filepath (relative to repo root) of a
+          RELEASE_ISSUE_TEMPLATE.md for JasonEtco/create-an-issue@v2 to
+          fire on release failure. Leave empty to skip failure-issue
+          creation. Set for mn2pdf-ruby.
+      failure_issue_assignees:
+        type: string
+        default: ''
+        description: >-
+          Comma-separated GitHub handles to assign on any failure issue.
+          Used only when `failure_issue_template` is set.
+    secrets:
+      pat_token:
+        required: false
+        description: >-
+          METANORMA_CI_PAT_TOKEN. Required when
+          `checkout_uses_pat_token: true` or when
+          `failure_issue_template` is set (used by
+          JasonEtco/create-an-issue).
+      rubygems_api_key:
+        required: true
+        description: >-
+          METANORMA_CI_RUBYGEMS_API_KEY for the rubygems/release-gem
+          action.
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v6
+        with:
+          token: >-
+            ${{ inputs.checkout_uses_pat_token
+                && secrets.pat_token
+                || github.token }}
+
+      - name: Configure git identity
+        run: |
+          git config user.name "metanorma-ci"
+          git config user.email "metanorma-ci@users.noreply.github.com"
+
+      - name: Set up Ruby
+        uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: ${{ inputs.ruby_version }}
+          bundler-cache: true
+
+      - name: Download upstream artifact
+        if: inputs.download_artifact_name != ''
+        uses: actions/download-artifact@v4
+        with:
+          name: ${{ inputs.download_artifact_name }}
+          path: ${{ inputs.download_artifact_path }}
+
+      - name: Install gem-release (workflow_dispatch bump path only)
+        if: >-
+          github.event_name == 'workflow_dispatch'
+          && inputs.next_version != 'skip'
+        run: gem install gem-release
+
+      - name: Remove stale JAR (workflow_dispatch bump path only)
+        if: >-
+          github.event_name == 'workflow_dispatch'
+          && inputs.next_version != 'skip'
+          && !inputs.jar_needs_rebuild
+        run: rm -f bin/${{ inputs.jar_name }}
+
+      - name: Rebuild JAR (workflow_dispatch bump path, mnconvert-ruby only)
+        if: >-
+          github.event_name == 'workflow_dispatch'
+          && inputs.next_version != 'skip'
+          && inputs.jar_needs_rebuild
+        run: |
+          rm -f bin/${{ inputs.jar_name }}
+          bundle exec rake bin/${{ inputs.jar_name }}
+
+      - name: Run rake (test + build)
+        run: bundle exec rake
+
+      - name: Bump version, tag, push (workflow_dispatch bump path only)
+        if: >-
+          github.event_name == 'workflow_dispatch'
+          && inputs.next_version != 'skip'
+        run: |
+          gem bump --version ${{ inputs.next_version }} --no-commit
+          if [ "${{ inputs.git_add_includes_jar }}" = "true" ]; then
+            git add -u bin/${{ inputs.jar_name }} ${{ inputs.version_file_path }}
+          else
+            git add -u ${{ inputs.version_file_path }}
+          fi
+          git commit -m "Bump version to ${{ inputs.next_version }}"
+          git tag v${{ inputs.next_version }}
+          git push origin HEAD:${GITHUB_REF} --tags
+
+      - name: Publish gem to RubyGems
+        uses: rubygems/release-gem@v1
+        with:
+          api-key: ${{ secrets.rubygems_api_key }}
+          release-command: gem release
+
+      - name: Create failure issue
+        if: failure() && inputs.failure_issue_template != ''
+        uses: JasonEtco/create-an-issue@v2
+        env:
+          GITHUB_TOKEN: ${{ secrets.pat_token }}
+        with:
+          assignees: ${{ inputs.failure_issue_assignees }}
+          update_existing: true
+          search_existing: all
+          filename: ${{ inputs.failure_issue_template }}
