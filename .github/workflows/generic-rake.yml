@@ -67,6 +67,11 @@ on:
         type: boolean
         default: false
         required: false
+      skip-java-setup:
+        description: 'Whether to skip Java setup'
+        type: boolean
+        default: false
+        required: false
     secrets:
       pat_token:
         required: false
@@ -104,7 +109,7 @@ jobs:
           token: ${{ secrets.pat_token || github.token }}
           submodules: ${{ inputs.submodules }}
 
-      - if: matrix.os == 'windows-latest'
+      - if: ${{ !inputs.skip-java-setup }}
         uses: actions/setup-java@v5
         with:
           distribution: 'temurin'
