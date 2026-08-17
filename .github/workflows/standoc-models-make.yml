@@ -110,8 +110,10 @@ jobs:
               grammars_changed=true
             else
               # Extract changed flavors from diff paths.
+              # NOTE: under `set -e -o pipefail`, `grep -v` exits 1 when it
+              # filters out every line (a grammars/-only PR) — guard it.
               flavors=$(echo "$changed_files" | awk -F/ '{print $1}' \
-                | grep -v '^grammars$' | sort -u)
+                | { grep -v '^grammars$' || true; } | sort -u)
               if [ -z "$flavors" ]; then
                 changed_flavors='[]'
               else
@@ -150,9 +152,11 @@ jobs:
           bundler-cache: true
           working-directory: grammars
 
-      - name: Build grammars
+      - name: Build grammars (from pinned submodules)
         working-directory: grammars
-        run: ./make.sh
+        # GRAMMARS_PINNED=1: deterministic build from the checked-out
+        # submodule pins — no --remote updates, no versions.json writes.
+        run: GRAMMARS_PINNED=1 ./make.sh
 
       - name: Verify grammar build output
         working-directory: grammars
@@ -169,6 +173,22 @@ jobs:
             exit 1
           fi
           echo "grammar-build: $rng_count .rng file(s) present after build (from $rnc_count .rnc source(s))"
+
+      - name: Regeneration parity gate
+        working-directory: grammars
+        run: |
+          set -eu
+          # Committed .rng artifacts must be byte-identical to regeneration
+          # output from the pinned sources (golden-diff gate:
+          # metanorma/metanorma-model-iso#181, standoc-models PR #3).
+          # Hand-edits to generated artifacts fail here.
+          if git diff --quiet -- '*.rng'; then
+            echo "parity: committed .rng artifacts byte-identical to regeneration output"
+          else
+            echo "ERROR: committed .rng artifacts differ from regeneration output:" >&2
+            git diff --stat -- '*.rng' >&2
+            exit 1
+          fi
 
   per-flavor-make:
     needs: [prepare-matrix, prepare-filter]
