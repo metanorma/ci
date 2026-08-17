@@ -248,8 +248,8 @@ repositories:
   # standoc-models-make.yml reusable in metanorma/ci), deploy.yml (iso-only
   # "Build and Deploy Grammars" workflow inherited from ex-model-iso,
   # retained per opoudjis's directive with monorepo path adaptation),
-  # automerge.yml (standard). 16 old metanorma-model-* repos untouched
-  # pending archival (P4).
+  # automerge.yml (standard). The 16 old metanorma-model-* repos were
+  # archived 2026-08-17 (P4 complete); their cimas entries removed.
   standoc-models:
     remote: ssh://git@github.com/metanorma/standoc-models
     branch: main
@@ -1367,26 +1367,13 @@ groups:
   - metanorma-registry
   - metanorma-utils
   model:
-  - metanorma-model-csa
-  - metanorma-model-cc
-  - metanorma-model-iso
-  - metanorma-model-itu
-  # - metanorma-model-m3d      (stripped: renamed to metanorma-model-m3aawg)
-  - metanorma-model-mpfa
-  - metanorma-model-nist
-  - metanorma-model-ogc
-  # - metanorma-model-rsd      (stripped: renamed to metanorma-model-ribose)
-  - metanorma-model-standoc
-  - metanorma-model-un
-  - metanorma-model-bipm
-  - metanorma-model-ieee
-  - metanorma-model-bsi
-  - metanorma-model-ribose
-  - metanorma-model-m3aawg
+  # The 16 metanorma-model-* repositories were consolidated into
+  # metanorma/standoc-models (metanorma-core#16 P4, 2026-08-17) and
+  # archived with pointer READMEs; their cimas entries are removed.
+  # The definition-source repositories stay standalone:
+  - standoc-models
   - basicdoc-models
   - metanorma-requirements-models
-  - metanorma-model-iho
-  - metanorma-model-gb
   infrastructure:
   - metanorma-release
   - metanorma-document-gh-pages
@@ -1556,7 +1543,6 @@ groups:
   - metanorma-ogc-style
   # models
   - edoxen-model
-  - metanorma-model-gb
   - iso690xml
   # docs
   - csd-metanorma-training
