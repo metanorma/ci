@@ -119,12 +119,6 @@ end
 # introduced (documented in the variant's header comment block).
 VARIANT_REGISTRY = [
   {
-    variant: "cimas-config/gh-actions/model/Gemfile.grammar-build",
-    parent: "cimas-config/gh-actions/model/Gemfile",
-    expected_delta_lines: 8,
-    note: "Header comment block + one gem line — introduced in ci#353.",
-  },
-  {
     variant: "cimas-config/gh-actions/master/release_manual_notes.yml",
     parent: "cimas-config/gh-actions/master/release.yml",
     expected_delta_lines: 31,
