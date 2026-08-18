@@ -3,3 +3,7 @@ source "https://rubygems.org"
 # lutaml-lml >= 0.1.2 accepts namespace-qualified types (xsd:date) and
 # ships the lutaml-lml executable the Makefile invokes.
 gem "lutaml-lml", ">= 0.1.2"
+# lutaml-xsd: required by the iso/ LXR grammar-package build (deploy.yml);
+# the pre-consolidation metanorma-model-iso Gemfile carried it and the
+# template sync dropped it, breaking that job.
+gem "lutaml-xsd"
