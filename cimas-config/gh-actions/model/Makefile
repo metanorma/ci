@@ -7,24 +7,14 @@ SHELL := /bin/bash
 RM    := rm -f
 endif
 
-SRC := $(wildcard views/*.lutaml)
+SRC := $(wildcard models/*.lml)
 
-ifeq ($(SRC),)
-SRC := $(patsubst models/%.wsd,views/%.lutaml,$(wildcard models/*.wsd))
-endif
-
-PNG := $(patsubst views/%.lutaml,images/%.png,$(SRC))
+PNG := $(patsubst models/%.lml,images/%.png,$(SRC))
 
 all: $(PNG) verify-images
 
-images/%.png: views/%.lutaml
+images/%.png: models/%.lml
 	lutaml-lml generate $< -o $@ -t png
-
-views/%.lutaml: models/%.wsd | views
-	lutaml-wsd2uml $< > $@
-
-views:
-	mkdir views
 
 # Defensive content-type check. The lutaml CLI happily writes Graphviz dot
 # source into a .png output path when the wrong flag is passed (the bug
