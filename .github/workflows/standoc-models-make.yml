@@ -148,15 +148,25 @@ jobs:
 
       - uses: ruby/setup-ruby@v1
         with:
+          # Single root Gemfile (lutaml-lml, lutaml-xsd, ruby-jing).
           ruby-version: ${{ needs.prepare-matrix.outputs.default-ruby-version }}
           bundler-cache: true
-          working-directory: grammars
 
-      - name: Build grammars (from pinned submodules)
+      - name: Cache jing-trang build
+        # make.sh resolves trang from TRANG_JAR, PATH, or a one-time build of
+        # the pinned ref under grammars/vendor/. Cache that build so CI does
+        # not clone+ant-build jing-trang on every run.
+        uses: actions/cache@v4
+        with:
+          path: grammars/vendor
+          key: jing-trang-V20241231
+
+      - name: Build grammars (deterministic, from pinned submodules)
         working-directory: grammars
-        # GRAMMARS_PINNED=1: deterministic build from the checked-out
-        # submodule pins — no --remote updates, no versions.json writes.
-        run: GRAMMARS_PINNED=1 ./make.sh
+        # make.sh is always deterministic now: vendors .rnc from the
+        # checked-out submodule pins, never updates them, never writes
+        # versions.json (that is refresh-submodules.sh, manual-only).
+        run: ./make.sh
 
       - name: Verify grammar build output
         working-directory: grammars
@@ -218,14 +228,20 @@ jobs:
 
       - uses: ruby/setup-ruby@v1
         with:
+          # Single root Gemfile (lutaml-lml, lutaml-xsd, ruby-jing).
           ruby-version: ${{ needs.prepare-matrix.outputs.default-ruby-version }}
           bundler-cache: true
-          working-directory: ${{ matrix.flavor }}
 
       - uses: metanorma/ci/tool-setup-action@main
         with:
           setup-tools: 'graphviz'
 
       - name: Build flavor ${{ matrix.flavor }}
-        working-directory: ${{ matrix.flavor }}
-        run: bundle exec make clean all
+        # One root Makefile: per-flavor phony targets drive diagram
+        # generation from models/*.lml; -B forces regeneration so CI proves
+        # the committed .lml sources build; verify asserts PNG magic bytes
+        # on every committed diagram (ci#302/#303). Byte-parity is NOT
+        # gated — graphviz versions differ across runners, so regenerating
+        # may produce valid-but-different bytes; only the committed set
+        # must regenerate and verify.
+        run: bundle exec make -B ${{ matrix.flavor }} verify
