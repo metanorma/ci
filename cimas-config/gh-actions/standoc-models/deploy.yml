@@ -1,14 +1,9 @@
 name: Build and Deploy Grammars
 
-# Iso-only "Build and Deploy Grammars" workflow, inherited from ex-
-# metanorma-model-iso and adapted for the standoc-models monorepo layout.
-# Runs the lutaml-xsd grammar-package build + SPA HTML generation + GitHub
-# Pages deploy. Artefact names preserved from original (metanorma-model-
-# iso.lxr / .html) for downstream consumer compatibility. All build steps
-# run with working-directory: iso/ since the source files (scripts,
-# build-config-small.yml, images, Gemfile) preserve their pre-monorepo
-# repo-root paths under the iso/ subdirectory (git filter-repo
-# --to-subdirectory-filter output).
+# LXR grammar-package + SPA HTML generation for EVERY flavour, deployed to
+# GitHub Pages (one directory per flavour). Uniform: each flavour directory
+# carries the same Gemfile (lutaml-lml + lutaml-xsd) and a build-config.yml
+# listing its schema set.
 
 on:
   push:
@@ -29,6 +24,10 @@ concurrency:
 jobs:
   build:
     runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        flavor: [bipm, bsi, cc, csa, gb, ieee, iho, iso, itu, m3aawg, mpfa, nist, ogc, ribose, standoc, un]
     steps:
       - name: Checkout
         uses: actions/checkout@v6
@@ -36,40 +35,35 @@ jobs:
           submodules: 'true'
 
       - name: Setup Ruby
-        # Ruby 4.0 preserved from original ex-model-iso deploy.yml. Per
-        # opoudjis 2026-08-10, 4.0 is no longer experimental in the
-        # metanorma stack. Deploy Ruby intentionally may differ from
-        # make.yml's default (3.3.5); if lutaml-xsd or a transitive dep
-        # breaks on 4.0, revisit here.
         uses: ruby/setup-ruby@v1
         with:
-          ruby-version: '4.0'
+          ruby-version: '3.3'
           bundler-cache: true
-          working-directory: iso
+          working-directory: ${{ matrix.flavor }}
 
-      - name: Fix include paths in rnc files
-        working-directory: iso
+      - name: Vendor submodule grammars
         run: ruby scripts/flatten-include-files.rb
 
       - name: Build LXR package
-        working-directory: iso
-        run: bundle exec lutaml-xsd build from-config build-config-small.yml --output metanorma-model-iso.lxr
+        working-directory: ${{ matrix.flavor }}
+        run: bundle exec lutaml-xsd build from-config build-config.yml --output ${{ matrix.flavor }}.lxr
 
       - name: Generate SPA documentation
-        working-directory: iso
-        run: bundle exec lutaml-xsd spa metanorma-model-iso.lxr --mode inlined --output metanorma-model-iso.html
+        working-directory: ${{ matrix.flavor }}
+        run: bundle exec lutaml-xsd spa ${{ matrix.flavor }}.lxr --mode inlined --output ${{ matrix.flavor }}.html
 
       - name: Prepare artifact
-        working-directory: iso
+        working-directory: ${{ matrix.flavor }}
         run: |
-          mkdir -p _site
-          cp metanorma-model-iso.html _site/index.html
-          cp -r images _site/
+          mkdir -p _site/${{ matrix.flavor }}
+          cp ${{ matrix.flavor }}.html _site/${{ matrix.flavor }}/index.html
+          cp -r images _site/${{ matrix.flavor }}/ 2>/dev/null || true
 
       - name: Upload artifact
-        uses: actions/upload-pages-artifact@v4
+        uses: actions/upload-artifact@v4
         with:
-          path: iso/_site
+          name: lxr-${{ matrix.flavor }}
+          path: ${{ matrix.flavor }}/_site
 
   deploy:
     environment:
@@ -79,6 +73,25 @@ jobs:
     runs-on: ubuntu-latest
     needs: build
     steps:
+      - name: Download all flavour artifacts
+        uses: actions/download-artifact@v5
+        with:
+          path: _artifacts
+          pattern: lxr-*
+          merge-multiple: true
+      - name: Assemble site
+        run: |
+          mkdir -p _site
+          cp -r _artifacts/*/* _site/
+          cat > _site/index.html <<HTML
+          <!doctype html><html><body><h1>Metanorma grammar packages</h1><ul>
+          $(for f in bipm bsi cc csa gb ieee iho iso itu m3aawg mpfa nist ogc ribose standoc un; do echo "<li><a href=\"$f/\">$f</a></li>"; done)
+          </ul></body></html>
+          HTML
+      - name: Upload pages artifact
+        uses: actions/upload-pages-artifact@v4
+        with:
+          path: _site
       - name: Deploy to GitHub Pages
         id: deployment
         uses: actions/deploy-pages@v4
