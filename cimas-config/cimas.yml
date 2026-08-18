@@ -240,64 +240,26 @@ repositories:
 
   # models
   # standoc-models: monorepo consolidation of 16 metanorma-model-* repos.
-  # Landed via metanorma-core#16 (opoudjis + Quark, 2026-08-10). Per-flavor
-  # Makefile + Gemfile mappings sync the 16 subdirectories from the shared
-  # gh-actions/model/* templates. grammars/ has its own Gemfile
-  # (Gemfile.grammar-build variant with lutaml-xsd for grammar packaging).
+  # Landed via metanorma-core#16 (opoudjis + Quark, 2026-08-10). The
+  # repository owns ONE root Gemfile (lutaml-lml, lutaml-xsd, ruby-jing) and
+  # ONE root Makefile (per-flavor diagram targets) — the 32 per-flavor
+  # Gemfile/Makefile mappings and the grammars/Gemfile mapping are retired;
+  # cimas only syncs the repo-level workflows now. The root files are
+  # monorepo-specific and live in the repository itself.
   # Repo-level workflows: make.yml (monorepo caller for
-  # standoc-models-make.yml reusable in metanorma/ci), deploy.yml (iso-only
-  # "Build and Deploy Grammars" workflow inherited from ex-model-iso,
-  # retained per opoudjis's directive with monorepo path adaptation),
-  # automerge.yml (standard). The 16 old metanorma-model-* repos were
-  # archived 2026-08-17 (P4 complete); their cimas entries removed.
+  # standoc-models-make.yml reusable in metanorma/ci), deploy.yml
+  # (16-flavour LXR/SPA matrix to GitHub Pages).
+  # The 16 old metanorma-model-* repos were archived 2026-08-17 (P4
+  # complete); their cimas entries removed.
   standoc-models:
     remote: ssh://git@github.com/metanorma/standoc-models
     branch: main
     files:
-      # Per-flavor Makefile + Gemfile (16 flavors x 2 files = 32 mappings).
-      # All flavors sync the same uniform templates. Any Makefile
-      # improvement (e.g., the verify-images defensive check from ci#302/
-      # #303) lands uniformly across all flavors on next sync.
-      bipm/Gemfile: gh-actions/model/Gemfile
-      bipm/Makefile: gh-actions/model/Makefile
-      bsi/Gemfile: gh-actions/model/Gemfile
-      bsi/Makefile: gh-actions/model/Makefile
-      cc/Gemfile: gh-actions/model/Gemfile
-      cc/Makefile: gh-actions/model/Makefile
-      csa/Gemfile: gh-actions/model/Gemfile
-      csa/Makefile: gh-actions/model/Makefile
-      gb/Gemfile: gh-actions/model/Gemfile
-      gb/Makefile: gh-actions/model/Makefile
-      ieee/Gemfile: gh-actions/model/Gemfile
-      ieee/Makefile: gh-actions/model/Makefile
-      iho/Gemfile: gh-actions/model/Gemfile
-      iho/Makefile: gh-actions/model/Makefile
-      iso/Gemfile: gh-actions/model/Gemfile
-      iso/Makefile: gh-actions/model/Makefile
-      itu/Gemfile: gh-actions/model/Gemfile
-      itu/Makefile: gh-actions/model/Makefile
-      m3aawg/Gemfile: gh-actions/model/Gemfile
-      m3aawg/Makefile: gh-actions/model/Makefile
-      mpfa/Gemfile: gh-actions/model/Gemfile
-      mpfa/Makefile: gh-actions/model/Makefile
-      nist/Gemfile: gh-actions/model/Gemfile
-      nist/Makefile: gh-actions/model/Makefile
-      ogc/Gemfile: gh-actions/model/Gemfile
-      ogc/Makefile: gh-actions/model/Makefile
-      ribose/Gemfile: gh-actions/model/Gemfile
-      ribose/Makefile: gh-actions/model/Makefile
-      standoc/Gemfile: gh-actions/model/Gemfile
-      standoc/Makefile: gh-actions/model/Makefile
-      un/Gemfile: gh-actions/model/Gemfile
-      un/Makefile: gh-actions/model/Makefile
-      # Grammar-build Gemfile (Gemfile.grammar-build variant with
-      # lutaml-xsd for grammar packaging - inherited from ex-model-iso's
-      # grammar-build capability, now hosted at grammars/ in the monorepo).
-      grammars/Gemfile: gh-actions/model/Gemfile.grammar-build
       # Repo-level workflows.
       .github/workflows/make.yml: gh-actions/standoc-models/make.yml
       .github/workflows/deploy.yml: gh-actions/standoc-models/deploy.yml
       .github/workflows/automerge.yml: gh-actions/master/automerge.yml
+
   basicdoc-models:
     remote: ssh://git@github.com/metanorma/basicdoc-models
     branch: main

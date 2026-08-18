@@ -1,9 +1,9 @@
 name: Build and Deploy Grammars
 
 # LXR grammar-package + SPA HTML generation for EVERY flavour, deployed to
-# GitHub Pages (one directory per flavour). Uniform: each flavour directory
-# carries the same Gemfile (lutaml-lml + lutaml-xsd) and a build-config.yml
-# listing its schema set.
+# GitHub Pages (one directory per flavour). One root Gemfile (lutaml-lml +
+# lutaml-xsd + ruby-jing); each flavour directory carries only its
+# build-config.yml schema set.
 
 on:
   push:
@@ -39,7 +39,6 @@ jobs:
         with:
           ruby-version: '3.3'
           bundler-cache: true
-          working-directory: ${{ matrix.flavor }}
 
       - name: Vendor submodule grammars
         run: ruby scripts/flatten-include-files.rb
