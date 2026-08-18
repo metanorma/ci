@@ -1,0 +1,32 @@
+name: actions-audit
+
+# Quarterly audit of GitHub Actions pins in metanorma/ci reusables +
+# cimas-config templates. Surfaces deprecated pins as issues on this
+# repo. Surface-only — no auto-bump PRs. Design: metanorma/ci#377.
+
+on:
+  schedule:
+    # 1st Monday of Feb/May/Aug/Nov at 08:00 UTC — quarterly cadence
+    # right-sized to GitHub's typical 6+ month deprecation window.
+    - cron: '0 8 1-7 2,5,8,11 1'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  issues: write
+
+jobs:
+  audit:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+
+      - uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: '3.4'
+          bundler-cache: false
+
+      - name: Run audit
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: ruby .github/scripts/audit-actions.rb

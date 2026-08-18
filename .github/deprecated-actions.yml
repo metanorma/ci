@@ -1,0 +1,47 @@
+# Hand-curated deprecated GitHub Actions version list, consumed by
+# .github/workflows/actions-audit.yml (metanorma/ci#377). Updated
+# manually as deprecations are announced.
+#
+# Schema per entry:
+#   action: <owner>/<action-name>
+#   deprecated_versions: [v1, v2, ...]      # versions to flag as deprecated
+#   current_version: <ver>                  # suggested replacement (optional)
+#   notes: "..."                            # short human-readable rationale (optional)
+#   reference: "https://..."                # link to deprecation announcement (optional)
+
+- action: actions/upload-artifact
+  deprecated_versions: [v1, v2, v3]
+  current_version: v4
+  notes: "v3 deprecation announced 2024-Q4; surfaced fleet-wide by ci#374 sweep 2026-07-27."
+  reference: https://github.blog/changelog/2024-04-16-deprecation-notice-v3-of-the-artifact-actions/
+
+- action: actions/download-artifact
+  deprecated_versions: [v1, v2, v3]
+  current_version: v4
+  notes: "Deprecated alongside upload-artifact@v3."
+  reference: https://github.blog/changelog/2024-04-16-deprecation-notice-v3-of-the-artifact-actions/
+
+- action: actions/checkout
+  deprecated_versions: [v1, v2, v3]
+  current_version: v6
+  notes: "v3 uses Node16 (deprecated). v4/v5/v6 in current use across the stack."
+
+- action: actions/setup-node
+  deprecated_versions: [v1, v2, v3]
+  current_version: v4
+  notes: "Node16-based majors deprecated; v4 uses Node20."
+
+- action: actions/cache
+  deprecated_versions: [v1, v2, v3]
+  current_version: v4
+  notes: "v3 deprecated alongside other Node16-based actions."
+
+- action: actions/setup-python
+  deprecated_versions: [v1, v2, v3, v4]
+  current_version: v5
+  notes: "v4 and earlier use Node16 or older."
+
+- action: actions/setup-java
+  deprecated_versions: [v1, v2, v3]
+  current_version: v4
+  notes: "v3 uses Node16."
