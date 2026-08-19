@@ -1,0 +1,94 @@
+name: bot-pr-merge
+
+# Wait-and-merge reusable for bot-generated PRs (ci#386).
+#
+# Companion to a peter-evans/create-pull-request step: the generator job
+# creates the PR and exports its number; this job (called from the same
+# workflow run) watches the PR's checks and squash-merges once they pass.
+# On failing checks it warns and exits 0 so the PR stays open for manual
+# review — never force-merges red PRs.
+#
+# Distinct from the #379 label-based `generic-automerge.yml` arc
+# (pascalgn/automerge-action for human-labeled PRs); different mechanism,
+# different name, no collision.
+#
+# Caller shape:
+#
+#   jobs:
+#     generate:
+#       outputs:
+#         pr-number: ${{ steps.create-pr.outputs.pull-request-number }}
+#       steps:
+#         - id: create-pr
+#           uses: peter-evans/create-pull-request@v7
+#           ...
+#     merge:
+#       needs: generate
+#       if: needs.generate.outputs.pr-number != '' && <your non-draft condition>
+#       uses: metanorma/ci/.github/workflows/generic-bot-pr-merge.yml@main
+#       with:
+#         pr-number: ${{ needs.generate.outputs.pr-number }}
+
+on:
+  workflow_call:
+    inputs:
+      pr-number:
+        description: Number of the PR to watch and merge.
+        required: true
+        type: number
+      interval:
+        description: Poll interval (seconds) while watching checks.
+        required: false
+        type: number
+        default: 30
+      merge-method:
+        description: One of squash | merge | rebase.
+        required: false
+        type: string
+        default: squash
+      delete-branch:
+        description: Delete the head branch after merging.
+        required: false
+        type: boolean
+        default: true
+
+jobs:
+  merge:
+    runs-on: ubuntu-latest
+    timeout-minutes: 90
+    permissions:
+      contents: write
+      pull-requests: write
+    steps:
+      - name: Wait for checks and merge
+        env:
+          GH_TOKEN: ${{ github.token }}
+          PR: ${{ inputs.pr-number }}
+          INTERVAL: ${{ inputs.interval }}
+          DELETE_BRANCH: ${{ inputs.delete-branch && 'true' || 'false' }}
+        run: |
+          # merge-method is caller-controlled input; validate before it
+          # reaches a command line (this reusable is callable org-wide).
+          case "${{ inputs.merge-method }}" in
+            squash|merge|rebase) METHOD="--${{ inputs.merge-method }}" ;;
+            *) echo "::error::merge-method must be squash, merge or rebase"; exit 1 ;;
+          esac
+
+          set +e
+          gh pr checks "$PR" --watch --interval "$INTERVAL"
+          rc=$?
+          set -e
+
+          # gh exit 8 = no checks reported for this PR (nothing to wait for)
+          if [ "$rc" -eq 8 ]; then
+            echo "No checks reported on PR #$PR — proceeding."
+          elif [ "$rc" -ne 0 ]; then
+            echo "::warning::checks failed on PR #$PR — leaving for manual review"
+            exit 0
+          fi
+
+          DELETE_FLAG=""
+          [ "$DELETE_BRANCH" = "true" ] && DELETE_FLAG="--delete-branch"
+
+          gh pr merge "$PR" $METHOD $DELETE_FLAG
+          echo "Merged PR #$PR ($METHOD)."
