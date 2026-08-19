@@ -11,10 +11,14 @@ name: generic-release
 # caller — one caller can add extra `needs` (e.g. mnconvert-ruby's
 # prepare-ieee) without this reusable knowing.
 #
+# Publish auth is Trusted-Publishing-first (org API-key secret deleted;
+# ci#373 migration complete). An explicit rubygems_api_key secret, if a
+# caller still passes one, takes the legacy API-key path.
+#
 # Deliberate gaps vs rubygems-release.yml (parity with the *-ruby
-# consumers' current workflows, not oversights): no OIDC/Trusted-Publishing
-# path (see ci#373 migration), no idempotent push guard, no release-notes
-# floor. Add per ci#373/ci#354 if/when the consumers adopt them.
+# consumers' current workflows, not oversights): no idempotent push
+# guard, no release-notes floor. Add per ci#354 if/when the consumers
+# adopt them.
 
 on:
   workflow_call:
@@ -107,17 +111,23 @@ on:
           `failure_issue_template` is set (used by
           JasonEtco/create-an-issue).
       rubygems_api_key:
-        required: true
+        required: false
         description: >-
-          METANORMA_CI_RUBYGEMS_API_KEY for the rubygems/release-gem
-          action.
+          Legacy API-key path. The org METANORMA_CI_RUBYGEMS_API_KEY
+          secret is deleted (ci#373 complete) — omit this and the
+          workflow publishes via RubyGems Trusted Publishing (requires
+          id-token: write, granted below, and a TP entry on rubygems.org
+          matching the caller repo + workflow filename).
 
 permissions:
   contents: write
+  id-token: write
 
 jobs:
   release:
     runs-on: ubuntu-latest
+    env:
+      HAS_API_KEY: ${{ secrets.rubygems_api_key != '' }}
     steps:
       - name: Checkout
         uses: actions/checkout@v6
@@ -185,7 +195,18 @@ jobs:
           git tag "v${{ inputs.next_version }}"
           git push origin "HEAD:${GITHUB_REF}" --tags
 
-      - name: Publish gem to RubyGems
+      # Publish: Trusted Publishing by default; legacy API key only if a
+      # caller still passes one (org secret deleted — ci#373).
+      - name: Publish gem to RubyGems (Trusted Publishing)
+        if: env.HAS_API_KEY == 'false'
+        uses: rubygems/configure-rubygems-credentials@v2.1.0
+
+      - name: Release gem (Trusted Publishing)
+        if: env.HAS_API_KEY == 'false'
+        run: gem release
+
+      - name: Publish gem to RubyGems (legacy API key)
+        if: env.HAS_API_KEY == 'true'
         uses: rubygems/release-gem@v1
         with:
           api-key: ${{ secrets.rubygems_api_key }}
