@@ -10,6 +10,11 @@ name: generic-release
 # reusable itself is single-job so the dependency graph stays in the
 # caller — one caller can add extra `needs` (e.g. mnconvert-ruby's
 # prepare-ieee) without this reusable knowing.
+#
+# Deliberate gaps vs rubygems-release.yml (parity with the *-ruby
+# consumers' current workflows, not oversights): no OIDC/Trusted-Publishing
+# path (see ci#373 migration), no idempotent push guard, no release-notes
+# floor. Add per ci#373/ci#354 if/when the consumers adopt them.
 
 on:
   workflow_call:
@@ -18,9 +23,10 @@ on:
         type: string
         required: true
         description: >-
-          Ruby version to install for the release run. Typically
-          `${{ needs.prepare.outputs.default-ruby-version }}` from the
-          caller's prepare-rake.yml invocation.
+          Ruby version for the release run. Typically the caller passes
+          `needs.prepare.outputs.default_ruby_version` (from
+          prepare-rake.yml) via `with:` — expressions are not evaluated
+          in this description.
       jar_name:
         type: string
         required: true
@@ -106,6 +112,9 @@ on:
           METANORMA_CI_RUBYGEMS_API_KEY for the rubygems/release-gem
           action.
 
+permissions:
+  contents: write
+
 jobs:
   release:
     runs-on: ubuntu-latest
@@ -147,7 +156,7 @@ jobs:
           github.event_name == 'workflow_dispatch'
           && inputs.next_version != 'skip'
           && !inputs.jar_needs_rebuild
-        run: rm -f bin/${{ inputs.jar_name }}
+        run: rm -f "bin/${{ inputs.jar_name }}"
 
       - name: Rebuild JAR (workflow_dispatch bump path, mnconvert-ruby only)
         if: >-
@@ -155,8 +164,8 @@ jobs:
           && inputs.next_version != 'skip'
           && inputs.jar_needs_rebuild
         run: |
-          rm -f bin/${{ inputs.jar_name }}
-          bundle exec rake bin/${{ inputs.jar_name }}
+          rm -f "bin/${{ inputs.jar_name }}"
+          bundle exec rake "bin/${{ inputs.jar_name }}"
 
       - name: Run rake (test + build)
         run: bundle exec rake
@@ -166,15 +175,15 @@ jobs:
           github.event_name == 'workflow_dispatch'
           && inputs.next_version != 'skip'
         run: |
-          gem bump --version ${{ inputs.next_version }} --no-commit
+          gem bump --version "${{ inputs.next_version }}" --no-commit
           if [ "${{ inputs.git_add_includes_jar }}" = "true" ]; then
-            git add -u bin/${{ inputs.jar_name }} ${{ inputs.version_file_path }}
+            git add -u "bin/${{ inputs.jar_name }}" "${{ inputs.version_file_path }}"
           else
-            git add -u ${{ inputs.version_file_path }}
+            git add -u "${{ inputs.version_file_path }}"
           fi
           git commit -m "Bump version to ${{ inputs.next_version }}"
-          git tag v${{ inputs.next_version }}
-          git push origin HEAD:${GITHUB_REF} --tags
+          git tag "v${{ inputs.next_version }}"
+          git push origin "HEAD:${GITHUB_REF}" --tags
 
       - name: Publish gem to RubyGems
         uses: rubygems/release-gem@v1
