@@ -57,11 +57,16 @@ jobs:
         run: |
           set -eu
 
-          # Single source of truth for the 16-flavor list — used to derive
-          # both the all_flavors JSON literal AND the alternation-regex
-          # for path-filter grep. Adding a new flavor requires updating
-          # THIS line only (not three separate sites).
-          FLAVORS_LIST='bipm bsi cc csa gb ieee iho iso itu m3aawg mpfa nist ogc ribose standoc un'
+          # Flavor list source of truth: the consumer repo's flavors.txt —
+          # the same file its root Makefile and deploy.yml read. Adding a
+          # flavor means adding a line there (and the flavor directory).
+          # Inline fallback only covers consumer branches that predate the
+          # file; retire it once standoc-models#46 lands.
+          if [ -f flavors.txt ]; then
+            FLAVORS_LIST=$(grep -v '^$' flavors.txt | paste -sd ' ' -)
+          else
+            FLAVORS_LIST='bipm bsi cc csa gb ieee iho iso itu m3aawg mpfa nist ogc ribose standoc un'
+          fi
           all_flavors=$(printf '%s\n' $FLAVORS_LIST | jq -R -s -c 'split("\n") | map(select(length > 0))')
           FLAVORS_ALT=$(printf '%s\n' $FLAVORS_LIST | paste -sd '|' -)
 
