@@ -101,7 +101,9 @@ on:
         default: ''
         description: >-
           Comma-separated GitHub handles to assign on any failure issue.
-          Used only when `failure_issue_template` is set.
+          Fires the failure-issue step when either this or
+          failure_issue_template is non-empty (mn2sts-ruby uses assignees
+          without a custom template).
     secrets:
       pat_token:
         required: false
@@ -213,10 +215,13 @@ jobs:
           release-command: gem release
 
       - name: Create failure issue
-        if: failure() && inputs.failure_issue_template != ''
+        if: >-
+          failure() &&
+          (inputs.failure_issue_template != '' ||
+           inputs.failure_issue_assignees != '')
         uses: JasonEtco/create-an-issue@v2
         env:
-          GITHUB_TOKEN: ${{ secrets.pat_token }}
+          GITHUB_TOKEN: ${{ secrets.pat_token || github.token }}
         with:
           assignees: ${{ inputs.failure_issue_assignees }}
           update_existing: true
