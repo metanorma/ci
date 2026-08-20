@@ -1,0 +1,31 @@
+name: automerge (reusable)
+
+# Label-based automerge reusable (ci#379). Distinct from
+# generic-bot-pr-merge.yml (#399) which wait-and-merges bot PRs after
+# create-pull-request. This one wraps pascalgn/automerge-action for
+# human-labeled consumer PRs.
+#
+# Triggers stay on the caller (reusable structural requirement). Caller
+# must declare permissions: contents: write + pull-requests: write.
+
+on:
+  workflow_call:
+    secrets:
+      # Optional PAT if a consumer needs broader permissions than GITHUB_TOKEN.
+      # Default path uses github.token from the caller job context.
+      pat_token:
+        required: false
+
+permissions:
+  contents: write
+  pull-requests: write
+
+jobs:
+  automerge:
+    runs-on: ubuntu-latest
+    steps:
+      - id: automerge
+        name: automerge
+        uses: pascalgn/automerge-action@v0.16.4
+        env:
+          GITHUB_TOKEN: ${{ secrets.pat_token || github.token }}
