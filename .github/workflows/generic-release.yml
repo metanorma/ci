@@ -15,10 +15,8 @@ name: generic-release
 # ci#373 migration complete). An explicit rubygems_api_key secret, if a
 # caller still passes one, takes the legacy API-key path.
 #
-# Deliberate gaps vs rubygems-release.yml (parity with the *-ruby
-# consumers' current workflows, not oversights): no idempotent push
-# guard, no release-notes floor. Add per ci#354 if/when the consumers
-# adopt them.
+# Deliberate gap vs rubygems-release.yml: no release-notes floor.
+# (Re-push idempotency and tag-ensure are handled inline — ci#403 class.)
 
 on:
   workflow_call:
@@ -203,9 +201,26 @@ jobs:
         if: env.HAS_API_KEY == 'false'
         uses: rubygems/configure-rubygems-credentials@v2.1.0
 
-      - name: Release gem (Trusted Publishing)
+      # Idempotent: every dispatch release pushes a tag, which re-triggers
+      # this workflow (on.push.tags in the caller); the re-run republishes
+      # the same version and must not fail (it previously failed hard and
+      # fired a spurious failure issue on every release). Same tolerance
+      # pattern as rubygems-release.yml (ci#403 class).
+      - name: Release gem (Trusted Publishing, idempotent)
         if: env.HAS_API_KEY == 'false'
-        run: gem release
+        run: |
+          set +e
+          rel_out=$(gem release 2>&1)
+          rc=$?
+          set -e
+          echo "$rel_out"
+          if [ "$rc" -ne 0 ]; then
+            if printf '%s' "$rel_out" | grep -qiE 'already been pushed|Repushing of gem versions is not allowed'; then
+              echo "::notice title=Idempotent publish::Version already on rubygems.org; treating as success."
+              exit 0
+            fi
+            exit "$rc"
+          fi
 
       - name: Publish gem to RubyGems (legacy API key)
         if: env.HAS_API_KEY == 'true'
@@ -213,6 +228,22 @@ jobs:
         with:
           api-key: ${{ secrets.rubygems_api_key }}
           release-command: gem release
+
+      # ci#403 parity: tagging previously lived only in the bump step
+      # (dispatch, non-skip). Skip-path publishes and tag-triggered re-runs
+      # never verified the tag. Idempotent — no-op when the tag exists.
+      - name: Ensure release tag exists
+        run: |
+          GEMSPEC=$(find . -maxdepth 1 -name '*.gemspec' | head -1)
+          VERSION=$(ruby -e "puts Gem::Specification.load('${GEMSPEC}').version.to_s")
+          TAG="v${VERSION}"
+          if git ls-remote --tags origin "refs/tags/${TAG}" | grep -q "refs/tags/${TAG}$"; then
+            echo "✓ Tag ${TAG} already exists on origin."
+          else
+            echo "Tag ${TAG} missing on origin — creating annotated tag at ${GITHUB_SHA}."
+            git tag -a "${TAG}" -m "Release ${TAG}"
+            git push origin "refs/tags/${TAG}"
+          fi
 
       - name: Create failure issue
         if: >-
