@@ -429,6 +429,75 @@ jobs:
           fi
 
       # ============ Post-release event ============
+      # ============ Versions register annotation (ci#367) ============
+      # Best-effort forward-population of release provenance into the
+      # metanorma/versions register. Scoped to metanorma-cli (the only
+      # channel the register tracks); requires the org PAT; never blocks
+      # the release (continue-on-error). The transform lives in the
+      # versions repo (annotate_versions.py, versions#47) — single source
+      # of truth next to the schema it must satisfy.
+      - name: Annotate versions register (best-effort)
+        if: >-
+          env.SHOULD_PUBLISH == 'true' &&
+          github.repository == 'metanorma/metanorma-cli' &&
+          env.HAVE_PAT_TOKEN == 'true'
+        continue-on-error: true
+        env:
+          GH_TOKEN: ${{ secrets.pat_token }}
+          GEM_VERSION: ${{ steps.gem-identity.outputs.version }}
+          RUN_ID: ${{ github.run_id }}
+          RUN_URL: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
+        run: |
+          set -euo pipefail
+          created=$(curl -sf "https://rubygems.org/api/v1/versions/metanorma-cli.json" \
+            | jq -r --arg v "$GEM_VERSION" '.[] | select(.number == $v) | .created_at' | head -1)
+          if [ -z "$created" ]; then
+            echo "::warning title=provenance::no rubygems created_at for metanorma-cli $GEM_VERSION; skipping"
+            exit 0
+          fi
+          created_iso=$(date -u -d "$created" +%Y-%m-%dT%H:%M:%SZ)
+
+          work=$(mktemp -d)
+          git clone -q --depth 1 "https://x-access-token:${GH_TOKEN}@github.com/metanorma/versions.git" "$work/versions"
+          cd "$work/versions"
+
+          python3 .github/scripts/annotate_versions.py "$GEM_VERSION" "$created_iso" "$RUN_ID" "$RUN_URL"
+          if git diff --quiet; then
+            echo "Register already up to date for $GEM_VERSION — nothing to do."
+            exit 0
+          fi
+
+          branch="provenance/cli-v${GEM_VERSION}"
+          git config user.name "metanorma-ci"
+          git config user.email "metanorma-ci@users.noreply.github.com"
+          git checkout -q -b "$branch"
+          git add data/gemfile/versions.yaml
+          git commit -q -m "provenance: metanorma-cli v${GEM_VERSION} (workflow run ${RUN_ID})"
+          # bot-owned branch, fresh shallow clone on re-runs: plain force
+          git push -q --force origin "$branch"
+
+          cat > /tmp/provenance-pr-body.md << 'PRBODY'
+          Automated release-provenance annotation (ci#367).
+
+          - gem: metanorma-cli
+          - version: VERSION_PLACEHOLDER
+          - published via: workflow (run RUNID_PLACEHOLDER)
+          - transform: annotate_versions.py (idempotent; schema-validated on the versions CI)
+
+          PRBODY
+          # heredoc keeps the YAML indentation — strip it before use
+          sed -i "s/^[[:space:]]*//" /tmp/provenance-pr-body.md
+          sed -i "s/VERSION_PLACEHOLDER/v${GEM_VERSION}/g; s/RUNID_PLACEHOLDER/${RUN_ID}/g" /tmp/provenance-pr-body.md
+
+          if gh pr create --repo metanorma/versions \
+              --base main --head "$branch" \
+              --title "provenance: metanorma-cli v${GEM_VERSION} (workflow ${RUN_ID})" \
+              --body-file /tmp/provenance-pr-body.md; then
+            echo "Provenance PR opened."
+          else
+            echo "::notice title=provenance::PR already exists for $branch — branch force-pushed with updated data."
+          fi
+
       - name: Get current gem ref
         id: gem-tag-ref
         run: echo "value=refs/tags/v${{ steps.gem-identity.outputs.version }}" >> "$GITHUB_OUTPUT"
