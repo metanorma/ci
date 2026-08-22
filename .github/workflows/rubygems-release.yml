@@ -291,10 +291,12 @@ jobs:
           if [ "$rc" -ne 0 ]; then
             if grep -qiE 'already been pushed|Repushing of gem versions is not allowed' /tmp/release-out.log; then
               echo "::notice title=Idempotent publish::Version already on rubygems.org; treating as success."
+              echo "SHOULD_PUBLISH=true" >> "$GITHUB_ENV"
               exit 0
             fi
             exit "$rc"
           fi
+          echo "SHOULD_PUBLISH=true" >> "$GITHUB_ENV"
 
       # ============ Publish: OIDC Trusted Publisher path ============
       - if: env.USE_OIDC == 'true'
@@ -324,14 +326,25 @@ jobs:
           if [ "$rc" -ne 0 ]; then
             if printf '%s' "$push_out" | grep -qiE 'already been pushed|Repushing of gem versions is not allowed'; then
               echo "::notice title=Idempotent publish::Version already on rubygems.org; treating as success."
+              echo "SHOULD_PUBLISH=true" >> "$GITHUB_ENV"
               exit 0
             fi
             exit "$rc"
           fi
+          echo "SHOULD_PUBLISH=true" >> "$GITHUB_ENV"
 
       - if: env.USE_OIDC == 'true' && env.skip_push != 'true'
         name: Wait for release to propagate
         run: gem exec rubygems-await pkg/*.gem
+
+      # Guard-detected already-published: the version IS on rubygems.org, so
+      # the tag + Release floor below should still run (backfill path —
+      # metanorma-plugin-lutaml and lutaml-lml both accumulated published
+      # versions with no tag/Release). Sets the same flag the publish steps
+      # set on a fresh push (ci#403).
+      - name: Mark already-published version for release floor
+        if: env.skip_push == 'true'
+        run: echo "SHOULD_PUBLISH=true" >> "$GITHUB_ENV"
 
       # ============ Post-publish verification ============
       - name: Verify gem published on rubygems.org
@@ -358,6 +371,26 @@ jobs:
           echo "::error::Either the publish step failed silently or rubygems propagation is unusually slow."
           exit 1
 
+      # ============ Ensure release tag (ci#403 defect 1) ============
+      # Tag creation previously lived only in `Bump version` (gem bump
+      # --tag) or, on the API-key path, as a side effect of
+      # `rake release`. The OIDC path (gem build + gem push) never tags,
+      # so `next_version=skip` OIDC releases published gems with no git
+      # tag, and the release-passed dispatch below advertised a ref that
+      # did not exist (lutaml/lutaml-lml v0.1.3). Idempotent: no-op when
+      # the tag already exists.
+      - name: Ensure release tag exists
+        env:
+          TAG: v${{ steps.gem-identity.outputs.version }}
+        run: |
+          if git ls-remote --tags origin "refs/tags/${TAG}" | grep -q "refs/tags/${TAG}$"; then
+            echo "✓ Tag ${TAG} already exists on origin."
+          else
+            echo "Tag ${TAG} missing on origin — creating annotated tag at ${GITHUB_SHA}."
+            git tag -a "${TAG}" -m "Release ${TAG}"
+            git push origin "refs/tags/${TAG}"
+          fi
+
       # ============ GitHub Release notes floor ============
       # Guarantee that every tag this workflow publishes carries a GitHub
       # Release with at least auto-generated notes (PR titles since the
@@ -372,11 +405,13 @@ jobs:
       # already created the Release (with hand-written notes) by the time
       # this step runs, we detect it and leave it alone.
       #
-      # See metanorma/ci#354.
+      # See metanorma/ci#354. Defect fixed per ci#403: this step never ran
+      # before because SHOULD_PUBLISH was never set anywhere; it is now set
+      # by both publish paths (fresh push and already-pushed) and by the
+      # guard-detected already-published backfill step above.
       - name: Ensure GitHub Release for tag exists
         if: >-
           env.SHOULD_PUBLISH == 'true' &&
-          env.skip_push != 'true' &&
           inputs.release_notes != 'manual'
         env:
           GH_TOKEN: ${{ github.token }}
