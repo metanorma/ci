@@ -434,7 +434,7 @@ jobs:
       # metanorma/versions register. Scoped to metanorma-cli (the only
       # channel the register tracks); requires the org PAT; never blocks
       # the release (continue-on-error). The transform lives in the
-      # versions repo (annotate_versions.py, versions#47) — single source
+      # versions repo (annotate_versions.rb, versions#48) — single source
       # of truth next to the schema it must satisfy.
       - name: Annotate versions register (best-effort)
         if: >-
@@ -461,7 +461,7 @@ jobs:
           git clone -q --depth 1 "https://x-access-token:${GH_TOKEN}@github.com/metanorma/versions.git" "$work/versions"
           cd "$work/versions"
 
-          python3 .github/scripts/annotate_versions.py "$GEM_VERSION" "$created_iso" "$RUN_ID" "$RUN_URL"
+          ruby .github/scripts/annotate_versions.rb "$GEM_VERSION" "$created_iso" "$RUN_ID" "$RUN_URL"
           if git diff --quiet; then
             echo "Register already up to date for $GEM_VERSION — nothing to do."
             exit 0
@@ -482,7 +482,7 @@ jobs:
           - gem: metanorma-cli
           - version: VERSION_PLACEHOLDER
           - published via: workflow (run RUNID_PLACEHOLDER)
-          - transform: annotate_versions.py (idempotent; schema-validated on the versions CI)
+          - transform: annotate_versions.rb (idempotent; schema-validated on the versions CI)
 
           PRBODY
           # heredoc keeps the YAML indentation — strip it before use
