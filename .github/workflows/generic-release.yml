@@ -245,6 +245,20 @@ jobs:
             git push origin "refs/tags/${TAG}"
           fi
 
+      # JasonEtco/create-an-issue splits assignees on whitespace only —
+      # a comma string is sent as one invalid assignee (dry-run evidence:
+      # {"value":["ronaldtse,opoudjis"],"field":"assignees","code":"invalid"}).
+      # GitHub expressions have no split(); normalize in shell.
+      - name: Normalize failure-issue assignees
+        id: norm-assignees
+        if: >-
+          failure() &&
+          (inputs.failure_issue_template != '' ||
+           inputs.failure_issue_assignees != '')
+        run: |
+          norm=$(printf '%s' "${{ inputs.failure_issue_assignees }}" | tr ',' ' ')
+          echo "assignees=${norm}" >> "$GITHUB_OUTPUT"
+
       - name: Create failure issue
         if: >-
           failure() &&
@@ -254,7 +268,7 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.pat_token || github.token }}
         with:
-          assignees: ${{ inputs.failure_issue_assignees }}
+          assignees: ${{ steps.norm-assignees.outputs.assignees }}
           update_existing: true
           search_existing: all
           filename: ${{ inputs.failure_issue_template }}
