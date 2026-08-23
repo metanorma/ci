@@ -155,10 +155,9 @@ jobs:
           name: ${{ inputs.download_artifact_name }}
           path: ${{ inputs.download_artifact_path }}
 
-      - name: Install gem-release (workflow_dispatch bump path only)
-        if: >-
-          github.event_name == 'workflow_dispatch'
-          && inputs.next_version != 'skip'
+      # gem-release provides `gem release` used by the publish step on every
+      # path (dispatch-bump, dispatch-skip, tag re-runs) — unconditional.
+      - name: Install gem-release
         run: gem install gem-release
 
       - name: Remove stale JAR (workflow_dispatch bump path only)
@@ -245,10 +244,11 @@ jobs:
             git push origin "refs/tags/${TAG}"
           fi
 
-      # JasonEtco/create-an-issue splits assignees on whitespace only —
-      # a comma string is sent as one invalid assignee (dry-run evidence:
-      # {"value":["ronaldtse,opoudjis"],"field":"assignees","code":"invalid"}).
-      # GitHub expressions have no split(); normalize in shell.
+      # JasonEtco/create-an-issue's listToArray splits on exactly ", "
+      # (comma-space) — plain commas or plain spaces are sent as ONE
+      # invalid assignee (live evidence: both {"value":["ronaldtse,opoudjis"]}
+      # and {"value":["ronaldtse opoudjis"]} rejected). Normalize any
+      # comma/space mix to single ", " separators.
       - name: Normalize failure-issue assignees
         id: norm-assignees
         if: >-
@@ -256,7 +256,16 @@ jobs:
           (inputs.failure_issue_template != '' ||
            inputs.failure_issue_assignees != '')
         run: |
-          norm=$(printf '%s' "${{ inputs.failure_issue_assignees }}" | tr ',' ' ')
+          norm=$(printf '%s' "${{ inputs.failure_issue_assignees }}" | awk '{
+            gsub(/,/, " ")
+            n = split($0, a, /[ 	]+/)
+            out = ""
+            for (i = 1; i <= n; i++) {
+              gsub(/^[ 	]*,[ 	]*/, "", a[i]); gsub(/,[ 	]*$/, "", a[i])
+              if (a[i] != "") out = (out == "" ? a[i] : out ", " a[i])
+            }
+            print out
+          }')
           echo "assignees=${norm}" >> "$GITHUB_OUTPUT"
 
       - name: Create failure issue
