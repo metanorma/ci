@@ -104,6 +104,10 @@ jobs:
       run: ${{ inputs.before-setup-ruby }}
       working-directory: dependent
 
+    - uses: metanorma/ci/gh-rubygems-setup-action@main
+      with:
+        token: ${{ secrets.pat_token || github.token }}
+
     - uses: ruby/setup-ruby@v1
       with:
         ruby-version: ${{ matrix.ruby.version }}
