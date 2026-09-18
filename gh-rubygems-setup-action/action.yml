@@ -15,7 +15,7 @@ inputs:
 runs:
   using: "composite"
   steps:
-    - run: source ${GITHUB_ACTION_PATH//\\//}/gen-gemrc-for-gh-packages.sh ${{ inputs.token }} ${{ inputs.owner }}
+    - run: source ${GITHUB_ACTION_PATH//\\//}/gen-gemrc-for-gh-packages.sh
       shell: bash
 
     - run: |
