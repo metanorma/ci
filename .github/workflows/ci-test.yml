@@ -137,7 +137,10 @@ jobs:
 
       - run: |
           yq -e e '.["BUNDLE_HTTPS://RUBYGEMS__PKG__GITHUB__COM/METANORMA/"] == "x-access-token:dummy_token"' ~/.bundle/config
-          yq -e e '.[":sources"] | length == 2' ~/.gemrc
+          # The gemrc carries rubygems.org only since 875ae77 (the GitHub
+          # Packages entry aborted `gem update --system` with 403).
+          yq -e e '.[":sources"] | length == 1' ~/.gemrc
+          yq -e e '.[":sources"][0] == "https://rubygems.org/"' ~/.gemrc
 
       - run: |
           env
