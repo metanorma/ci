@@ -36,6 +36,8 @@ runs:
               "gs --version",
             ],
             "Ubuntu": [
+              "sudo apt update --fix-missing",
+              "sudo apt upgrade -y",
               "sudo apt install -y ghostscript",
               "which gs",
               "gs --version",
