@@ -48,7 +48,11 @@ on:
         default: ''
         required: false
       submodules:
-        description: 'Checkout submodules: true, false, or recursive'
+        description: >-
+          Checkout submodules. This input is a STRING — write 'true',
+          'false', or 'recursive' WITH quotes. An unquoted YAML boolean
+          is a type mismatch and startup-fails the caller's workflow
+          with zero diagnostics.
         type: string
         default: 'recursive'
         required: false
@@ -149,8 +153,16 @@ jobs:
     if: ${{ inputs.cascade }}
     needs: rake
     runs-on: ubuntu-latest
-    permissions:
-      contents: write
+    # No job-level `permissions:` here — deliberately. GitHub validates
+    # a reusable workflow's job permissions STATICALLY against the
+    # caller's grants at startup, before `if:` is evaluated, so a job
+    # declaring `contents: write` makes every caller that declares the
+    # documented least-privilege `permissions: contents: read`
+    # startup-fail with zero logs (lutaml/xmi was dark for a month this
+    # way). The dispatch below authorizes via `pat_token` when
+    # provided; a GITHUB_TOKEN-driven repository_dispatch does not
+    # create workflow runs regardless, so the job-level write
+    # permission bought nothing.
     steps:
       - uses: peter-evans/repository-dispatch@v3
         name: Tests passed
