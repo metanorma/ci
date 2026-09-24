@@ -48,7 +48,11 @@ on:
         default: ''
         required: false
       submodules:
-        description: 'Checkout submodules: true, false, or recursive'
+        description: >-
+          Checkout submodules. This input is a STRING — write 'true',
+          'false', or 'recursive' WITH quotes. An unquoted YAML boolean
+          is a type mismatch and startup-fails the caller's workflow
+          with zero diagnostics.
         type: string
         default: 'recursive'
         required: false
