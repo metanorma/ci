@@ -12,12 +12,15 @@ runs:
         platform_name = get_platform_name()
 
         if platform_name == "Windows":
+          # choco ghostscript is an empty metapackage whose
+          # ghostscript.app dependency no longer resolves on the
+          # Community Repo (2026-09) — installing it yields no
+          # binaries. Download the Artifex NSIS installer directly
+          # (/S = silent) and keep the same gs* install-layout probe
+          # below.
           run_commands([
-            # --ignore-dependencies: the pinned ghostscript 10.0.0.20230317
-            # declares a ghostscript.app dependency that the Chocolatey
-            # Community Repo no longer resolves (2026-09); the package
-            # itself carries the binaries.
-            "choco install --no-progress -y --ignore-dependencies ghostscript --version 10.0.0.20230317",
+            "curl -L -o C:\\gs10040w64.exe https://github.com/ArtifexSoftware/ghostpdl-downloads/releases/download/gs10040/gs10040w64.exe",
+            "C:\\gs10040w64.exe /S",
           ])
           gs_dirs = sorted(glob.glob("C:\\Program Files\\gs\\gs*"))
           if gs_dirs:
