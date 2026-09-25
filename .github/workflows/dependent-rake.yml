@@ -160,6 +160,12 @@ jobs:
         if os.path.exists("Gemfile.lock"):
           os.remove("Gemfile.lock")
           print("Gemfile.lock dropped")
+        # ruby/setup-ruby's bundler-cache sets deployment mode (frozen)
+        # in .bundle/config; frozen + the deleted lockfile makes
+        # `bundle add` abort with "Frozen mode is set, but there's no
+        # lockfile" (metanorma/uniword dependent leg, 2026-09-24).
+        subprocess.run("bundle config unset --local deployment", shell=True)
+        subprocess.run("bundle config unset --local frozen", shell=True)
         print("> git diff")
         sys.stdout.flush()
         subprocess.run("git diff", check=False, shell=True)
