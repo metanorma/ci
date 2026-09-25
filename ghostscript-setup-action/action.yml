@@ -15,13 +15,13 @@ runs:
           # choco ghostscript is an empty metapackage whose
           # ghostscript.app dependency no longer resolves on the
           # Community Repo (2026-09) — installing it yields no
-          # binaries. Download the Artifex installer directly
-          # (Inno Setup: /VERYSILENT, not the NSIS /S, which leaves the
-          # wizard waiting on a headless runner) and keep the gs*
-          # install-layout probe below.
+          # binaries. Download the Artifex installer directly and
+          # install silently with /S — fingerprinting gs10040w64.exe
+          # shows Nullsoft (NSIS), so Inno-style flags are unrecognized
+          # and leave the wizard waiting on a headless runner.
           run_commands([
             "curl -L -o C:\\gs10040w64.exe https://github.com/ArtifexSoftware/ghostpdl-downloads/releases/download/gs10040/gs10040w64.exe",
-            "C:\\gs10040w64.exe /VERYSILENT /NORESTART /SUPPRESSMSGBOXES",
+            "C:\\gs10040w64.exe /S",
           ])
           gs_dirs = sorted(glob.glob("C:\\Program Files\\gs\\gs*"))
           if gs_dirs:
