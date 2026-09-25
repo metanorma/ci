@@ -337,6 +337,24 @@ jobs:
         name: Wait for release to propagate
         run: gem exec rubygems-await pkg/*.gem
 
+      # Multi-gem repos (e.g. relaton/relaton ships relaton + relaton-cli):
+      # a custom release_command names the secondary push steps, but it only
+      # ever ran on the API-key path — under OIDC the generic push above
+      # ships the root gem and every secondary gem was silently stranded
+      # (relaton-cli 3.0.0.pre.alpha.3/.4, 2026-09-25). Deliberately ignores
+      # skip_push: each push inside is idempotent-tolerant, so a partially
+      # published version can always be completed by re-dispatch.
+      - if: env.USE_OIDC == 'true' && inputs.release_command != '' && inputs.release_command != 'bundle exec rake release'
+        name: Publish additional gems (OIDC, custom release_command)
+        run: |
+          set +e
+          ${{ inputs.release_command }} 2>&1 | tee /tmp/release-command-out.log
+          rc=${PIPESTATUS[0]}
+          set -e
+          if [ "$rc" -ne 0 ] && ! grep -qiE 'already been pushed|Repushing of gem versions is not allowed' /tmp/release-command-out.log; then
+            exit "$rc"
+          fi
+
       # Guard-detected already-published: the version IS on rubygems.org, so
       # the tag + Release floor below should still run (backfill path —
       # metanorma-plugin-lutaml and lutaml-lml both accumulated published
