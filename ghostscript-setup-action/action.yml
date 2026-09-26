@@ -12,23 +12,33 @@ runs:
         platform_name = get_platform_name()
 
         if platform_name == "Windows":
+          # choco ghostscript is an empty metapackage whose
+          # ghostscript.app dependency no longer resolves on the
+          # Community Repo (2026-09). The Artifex NSIS installer is also
+          # unusable here: run silently it wedges forever before
+          # extracting a file — an elevation prompt it cannot display on
+          # a headless runner (observed 2026-09-25/26). The payload is
+          # unpacked with 7-Zip instead — no installer, no elevation —
+          # and the discovered bin/lib directories go on PATH.
           run_commands([
-            "choco install --no-progress -y ghostscript --version 10.0.0.20230317",
+            "curl -L -o C:\\gs10040w64.exe https://github.com/ArtifexSoftware/ghostpdl-downloads/releases/download/gs10040/gs10040w64.exe",
+            '"C:\\Program Files\\7-Zip\\7z.exe" x -y -oC:\\gs-payload C:\\gs10040w64.exe',
           ])
-          gs_dirs = sorted(glob.glob("C:\\Program Files\\gs\\gs*"))
-          if gs_dirs:
-            gs_root = gs_dirs[-1]
-            gs_bin = os.path.join(gs_root, "bin")
-            gs_lib = os.path.join(gs_root, "lib")
-            run_commands([
-              "echo {}>> {}".format(gs_bin, os.environ["GITHUB_PATH"]),
-              "echo {}>> {}".format(gs_lib, os.environ["GITHUB_PATH"]),
-              "\"{}\\gswin64c.exe\" --version".format(gs_bin),
-              "\"{}\\ps2pdf\" --version".format(gs_lib),
-            ])
-          else:
-            print("Ghostscript installation directory not found")
+          gs_exe = glob.glob("C:\\gs-payload\\**\\gswin64c.exe", recursive=True)
+          if not gs_exe:
+            for root, dirs, files in os.walk("C:\\gs-payload"):
+              print(root, "->", dirs[:8])
+            print("gswin64c.exe not found in the extracted payload")
             sys.exit(1)
+          gs_bin = os.path.dirname(gs_exe[0])
+          gs_lib = os.path.join(os.path.dirname(gs_bin), "lib")
+          if not os.path.isdir(gs_lib):
+            gs_lib = gs_bin
+          run_commands([
+            "echo {}>> {}".format(gs_bin, os.environ["GITHUB_PATH"]),
+            "echo {}>> {}".format(gs_lib, os.environ["GITHUB_PATH"]),
+            "\"{}\\gswin64c.exe\" --version".format(gs_bin),
+          ])
         else:
           run_commands({
             "Darwin": [
