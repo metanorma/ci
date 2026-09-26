@@ -20,8 +20,18 @@ runs:
           # shows Nullsoft (NSIS).
           run_commands([
             "curl -L -o C:\\gs10040w64.exe https://github.com/ArtifexSoftware/ghostpdl-downloads/releases/download/gs10040/gs10040w64.exe",
-            "C:\\gs10040w64.exe /S",
           ])
+          # The NSIS /S install intermittently wedges forever on windows
+          # runners regardless of flags (three multi-hour hangs). Bound
+          # it: if the process has not exited in 5 minutes, kill it and
+          # continue to the location scan — the file copy is usually
+          # already complete by then.
+          import subprocess
+          try:
+            subprocess.run("C:\\gs10040w64.exe /S", shell=True, timeout=300)
+          except subprocess.TimeoutExpired:
+            print("installer exceeded 300s; killing and scanning for the install")
+            subprocess.run("taskkill /F /IM gs10040w64.exe", shell=True)
           # The NSIS build can land per-machine (Program Files) or
           # per-user (LocalAppData Programs) depending on elevation;
           # search both before giving up, and say WHERE it looked.
