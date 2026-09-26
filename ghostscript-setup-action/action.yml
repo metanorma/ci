@@ -17,13 +17,23 @@ runs:
           # Community Repo (2026-09) — installing it yields no
           # binaries. Download the Artifex installer directly and
           # install silently with /S — fingerprinting gs10040w64.exe
-          # shows Nullsoft (NSIS), so Inno-style flags are unrecognized
-          # and leave the wizard waiting on a headless runner.
+          # shows Nullsoft (NSIS).
           run_commands([
             "curl -L -o C:\\gs10040w64.exe https://github.com/ArtifexSoftware/ghostpdl-downloads/releases/download/gs10040/gs10040w64.exe",
             "C:\\gs10040w64.exe /S",
           ])
-          gs_dirs = sorted(glob.glob("C:\\Program Files\\gs\\gs*"))
+          # The NSIS build can land per-machine (Program Files) or
+          # per-user (LocalAppData Programs) depending on elevation;
+          # search both before giving up, and say WHERE it looked.
+          gs_dirs = sorted(glob.glob("C:\\Program Files\\gs\\gs*")) or sorted(
+            glob.glob(os.path.expandvars("%LOCALAPPDATA%\\Programs\\gs\\gs*"))
+          )
+          if not gs_dirs:
+            for root in ("C:\\Program Files", "C:\\Program Files (x86)",
+                         os.path.expandvars("%LOCALAPPDATA%\\Programs")):
+              print("scanned %s: %s" % (root, sorted(glob.glob(root + "\\*"))))
+            print("Ghostscript installation directory not found")
+            sys.exit(1)
           if gs_dirs:
             gs_root = gs_dirs[-1]
             gs_bin = os.path.join(gs_root, "bin")
