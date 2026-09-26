@@ -20,6 +20,8 @@ runs:
             "magick -version"
           ],
           "Ubuntu": [
+            "sudo apt update --fix-missing",
+            "sudo apt upgrade -y",
             "sudo apt install -y imagemagick",
             "which convert",
             "convert -version"
