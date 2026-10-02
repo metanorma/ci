@@ -72,8 +72,10 @@ jobs:
           # VERSION is published to npm by the target repository, so only
           # a semver string may leave this job. A RubyGems prerelease such
           # as 2.5.0.rc1 is not one.
-          if ! printf '%s' "$NEW" \
-            | grep -qE '^[0-9]+\.[0-9]+\.[0-9]+([-+][0-9A-Za-z.-]+)?$'; then
+          # grep matches line by line, so a value with a newline is
+          # refused before it reaches grep.
+          if [[ "$NEW" == *$'\n'* ]] || ! printf '%s' "$NEW" \
+            | grep -qE '^(0|[1-9][0-9]*)\.(0|[1-9][0-9]*)\.(0|[1-9][0-9]*)(-((0|[1-9][0-9]*|[0-9]*[a-zA-Z-][0-9a-zA-Z-]*)(\.(0|[1-9][0-9]*|[0-9]*[a-zA-Z-][0-9a-zA-Z-]*))*))?(\+([0-9a-zA-Z-]+(\.[0-9a-zA-Z-]+)*))?$'; then
             echo "::error::VERSION $NEW is not a semver version npm can publish"
             exit 1
           fi
@@ -97,7 +99,8 @@ jobs:
 
       - name: Dispatch ${{ inputs.event-type }} to ${{ inputs.repository }}
         if: steps.ver.outputs.changed == 'true'
-        uses: peter-evans/repository-dispatch@ff45666b9427631e3450c54a1bcbee4d9ff4d7c0 # v3.0.0
+        # v3.0.0
+        uses: peter-evans/repository-dispatch@ff45666b9427631e3450c54a1bcbee4d9ff4d7c0
         with:
           token: ${{ secrets.pat_token }}
           repository: ${{ inputs.repository }}
