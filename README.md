@@ -34,6 +34,7 @@ Shared GitHub Actions workflows and composite actions for building, testing, and
 | [`template-test.yml`](.github/workflows/template-test.yml) | Test template rendering |
 | [`sample-docker.yml`](.github/workflows/sample-docker.yml) | Generate samples in Docker |
 | [`build-sample-matrix.yml`](.github/workflows/build-sample-matrix.yml) | Build sample test matrix |
+| [`generic-notify-js.yml`](.github/workflows/generic-notify-js.yml) | Dispatch a gem release to its Opal/npm `-js` repository |
 | [`mn-processor-notify.yml`](.github/workflows/mn-processor-notify.yml) | Notify downstream processors |
 
 ## Composite actions
