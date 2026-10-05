@@ -92,11 +92,16 @@ jobs:
           # The bump commit is the commit on the branch's first-parent
           # line whose parent is head_sha.
           BUMP=$(git rev-list --first-parent --parents "refs/remotes/origin/$BRANCH" \
-            | awk -v h="$HEAD_SHA" '$2 == h { print $1; exit }')
+            | awk -v h="$HEAD_SHA" '!found && $2 == h { print $1; found = 1 }')
           NEW=""
           if [ -n "$BUMP" ]; then
-            NEW=$(git show "$BUMP:$VERSION_FILE" 2>/dev/null \
-              | grep -oE 'VERSION = "[^"]+"' | sed -n 1p | cut -d'"' -f2 || true)
+            # A version file that cannot be read is a caller error.
+            if ! SOURCE=$(git show "$BUMP:$VERSION_FILE"); then
+              printf '::error::cannot read %q at %s\n' "$VERSION_FILE" "$BUMP"
+              exit 1
+            fi
+            NEW=$(printf '%s\n' "$SOURCE" \
+              | { grep -oE 'VERSION = "[^"]+"' || true; } | sed -n 1p | cut -d'"' -f2)
           fi
           if [ -z "$NEW" ] || [ "$(git rev-parse -q --verify "refs/tags/v$NEW^{commit}" || true)" != "$BUMP" ]; then
             echo "no release commit for this run; not dispatching"
