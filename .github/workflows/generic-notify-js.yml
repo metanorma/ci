@@ -23,9 +23,9 @@ name: notify-js
 #         pat_token: ${{ secrets.PLURIMATH_CI_PAT_TOKEN }}
 #
 # The caller listens for the release workflow finishing rather than for
-# the version-bump push: the release workflow pushes that bump with the
-# repository GITHUB_TOKEN, and GitHub starts no push-triggered runs for
-# pushes made with that token.
+# the version-bump push: when the release workflow pushes that bump with
+# the repository GITHUB_TOKEN, GitHub starts no push-triggered runs for
+# it.
 #
 # The version is bound to the release run, not read from the branch
 # tip: the release bumps the version in a commit directly on top of the
@@ -80,22 +80,23 @@ jobs:
           BRANCH: ${{ github.event.workflow_run.head_branch }}
           VERSION_FILE: ${{ inputs.version-file }}
         run: |
-          set -eu
+          set -euo pipefail
           if ! printf '%s' "$HEAD_SHA" | grep -qxE '[0-9a-f]{40}'; then
             printf '::error::unexpected head_sha: %q\n' "$HEAD_SHA"
             exit 1
           fi
-          if ! git check-ref-format --branch "$BRANCH" >/dev/null 2>&1; then
+          if ! git check-ref-format "refs/heads/$BRANCH"; then
             printf '::error::unexpected head_branch: %q\n' "$BRANCH"
             exit 1
           fi
-          # The bump commit is the first commit on the branch after
-          # head_sha.
-          BUMP=$(git rev-list --ancestry-path --reverse "$HEAD_SHA..origin/$BRANCH" | head -1)
+          # The bump commit is the commit on the branch's first-parent
+          # line whose parent is head_sha.
+          BUMP=$(git rev-list --first-parent --parents "refs/remotes/origin/$BRANCH" \
+            | awk -v h="$HEAD_SHA" '$2 == h { print $1; exit }')
           NEW=""
           if [ -n "$BUMP" ]; then
             NEW=$(git show "$BUMP:$VERSION_FILE" 2>/dev/null \
-              | grep -oE 'VERSION = "[^"]+"' | head -1 | cut -d'"' -f2 || true)
+              | grep -oE 'VERSION = "[^"]+"' | sed -n 1p | cut -d'"' -f2 || true)
           fi
           if [ -z "$NEW" ] || [ "$(git rev-parse -q --verify "refs/tags/v$NEW^{commit}" || true)" != "$BUMP" ]; then
             echo "no release commit for this run; not dispatching"
