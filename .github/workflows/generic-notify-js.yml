@@ -1,12 +1,37 @@
 name: notify-js
 
-# Reusable: after a gem release bumps its VERSION on the pushed branch,
-# dispatch to the gem's Opal/npm "-js" sibling repository so it can
-# compile and publish the same version.
+# Reusable: after a successful gem release, dispatch to the gem's
+# Opal/npm "-js" sibling repository so it can compile and publish the
+# same version.
 #
-# Call it from a workflow triggered by `push`: the VERSION change is
-# detected across the whole push (github.event.before..github.sha), so
-# a bump followed by other commits in the same push is still detected.
+# Call it from a workflow triggered by `workflow_run` on the release
+# workflow completing, for example:
+#
+#   on:
+#     workflow_run:
+#       workflows: [release]
+#       types: [completed]
+#       branches: [main]
+#   jobs:
+#     notify:
+#       if: github.event.workflow_run.conclusion == 'success'
+#       uses: metanorma/ci/.github/workflows/generic-notify-js.yml@main
+#       with:
+#         repository: plurimath/mml-js
+#         version-file: lib/mml/version.rb
+#       secrets:
+#         pat_token: ${{ secrets.PLURIMATH_CI_PAT_TOKEN }}
+#
+# The caller listens for the release workflow finishing rather than for
+# the version-bump push: the release workflow pushes that bump with the
+# repository GITHUB_TOKEN, and GitHub starts no push-triggered runs for
+# pushes made with that token.
+#
+# The version is bound to the release run, not read from the branch
+# tip: the release bumps the version in a commit directly on top of the
+# run's head_sha and tags that commit, so only a version whose tag
+# points at that commit is dispatched. A run that made no bump
+# dispatches nothing.
 
 on:
   workflow_call:
@@ -35,39 +60,47 @@ permissions:
 jobs:
   dispatch:
     name: Dispatch release to JS repository
+    if: >-
+      github.event_name == 'workflow_run'
+      && github.event.workflow_run.conclusion == 'success'
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v6
         with:
+          ref: ${{ github.event.workflow_run.head_branch }}
           fetch-depth: 0
+          fetch-tags: true
 
-      - name: Detect a VERSION change in this push
+      - name: Find the version this release run tagged
         id: ver
-        # Inputs and SHAs reach the shell through env; the SHAs are
-        # checked to be hex before use.
+        # Event values and inputs reach the shell through env; the SHA
+        # is checked to be hex before use.
         env:
-          BEFORE: ${{ github.event.before }}
-          AFTER: ${{ github.sha }}
+          HEAD_SHA: ${{ github.event.workflow_run.head_sha }}
+          BRANCH: ${{ github.event.workflow_run.head_branch }}
           VERSION_FILE: ${{ inputs.version-file }}
         run: |
           set -eu
-          read_version() {
-            git show "$1:$VERSION_FILE" 2>/dev/null \
-              | grep -oE 'VERSION = "[^"]+"' | head -1 | cut -d'"' -f2
-          }
-          is_sha() { printf '%s' "$1" | grep -qE '^[0-9a-f]{40}$'; }
-          if ! is_sha "$AFTER"; then
-            echo "::error::unexpected commit SHA: $AFTER"
+          if ! printf '%s' "$HEAD_SHA" | grep -qxE '[0-9a-f]{40}'; then
+            printf '::error::unexpected head_sha: %q\n' "$HEAD_SHA"
             exit 1
           fi
-          if [ -n "$BEFORE" ] && ! is_sha "$BEFORE"; then
-            echo "::error::unexpected commit SHA: $BEFORE"
+          if ! git check-ref-format --branch "$BRANCH" >/dev/null 2>&1; then
+            printf '::error::unexpected head_branch: %q\n' "$BRANCH"
             exit 1
           fi
-          NEW=$(read_version "$AFTER")
-          if [ -z "$NEW" ]; then
-            echo "::error::could not read VERSION from $VERSION_FILE"
-            exit 1
+          # The bump commit is the first commit on the branch after
+          # head_sha.
+          BUMP=$(git rev-list --ancestry-path --reverse "$HEAD_SHA..origin/$BRANCH" | head -1)
+          NEW=""
+          if [ -n "$BUMP" ]; then
+            NEW=$(git show "$BUMP:$VERSION_FILE" 2>/dev/null \
+              | grep -oE 'VERSION = "[^"]+"' | head -1 | cut -d'"' -f2 || true)
+          fi
+          if [ -z "$NEW" ] || [ "$(git rev-parse -q --verify "refs/tags/v$NEW^{commit}" || true)" != "$BUMP" ]; then
+            echo "no release commit for this run; not dispatching"
+            echo "dispatch=false" >> "$GITHUB_OUTPUT"
+            exit 0
           fi
           # VERSION is published to npm by the target repository, so only
           # a semver string may leave this job. A RubyGems prerelease such
@@ -76,29 +109,15 @@ jobs:
           # refused before it reaches grep.
           if [[ "$NEW" == *$'\n'* ]] || ! printf '%s' "$NEW" \
             | grep -qE '^(0|[1-9][0-9]*)\.(0|[1-9][0-9]*)\.(0|[1-9][0-9]*)(-((0|[1-9][0-9]*|[0-9]*[a-zA-Z-][0-9a-zA-Z-]*)(\.(0|[1-9][0-9]*|[0-9]*[a-zA-Z-][0-9a-zA-Z-]*))*))?(\+([0-9a-zA-Z-]+(\.[0-9a-zA-Z-]+)*))?$'; then
-            echo "::error::VERSION $NEW is not a semver version npm can publish"
+            printf '::error::VERSION %q is not a semver version npm can publish\n' "$NEW"
             exit 1
           fi
-          OLD=""
-          # An empty or all-zero BEFORE (the push created the branch) and a
-          # BEFORE missing from history (a force push) all count as a
-          # change.
-          if [ -n "$BEFORE" ] \
-            && [ "$BEFORE" != "0000000000000000000000000000000000000000" ] \
-            && git cat-file -e "$BEFORE^{commit}" 2>/dev/null; then
-            OLD=$(read_version "$BEFORE")
-          fi
-          if [ "$OLD" = "$NEW" ]; then
-            echo "VERSION unchanged ($NEW); not dispatching"
-            echo "changed=false" >> "$GITHUB_OUTPUT"
-          else
-            echo "VERSION ${OLD:-<none>} -> $NEW"
-            echo "changed=true" >> "$GITHUB_OUTPUT"
-          fi
+          echo "release commit $BUMP is tagged v$NEW; dispatching"
+          echo "dispatch=true" >> "$GITHUB_OUTPUT"
           echo "version=$NEW" >> "$GITHUB_OUTPUT"
 
       - name: Dispatch ${{ inputs.event-type }} to ${{ inputs.repository }}
-        if: steps.ver.outputs.changed == 'true'
+        if: steps.ver.outputs.dispatch == 'true'
         # v3.0.0
         uses: peter-evans/repository-dispatch@ff45666b9427631e3450c54a1bcbee4d9ff4d7c0
         with:
