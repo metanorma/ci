@@ -27,31 +27,37 @@ name: notify-js
 # the repository GITHUB_TOKEN, GitHub starts no push-triggered runs for
 # it.
 #
-# The version is bound to the release run, not read from the branch
-# tip. Only a commit that carries the tag v<VERSION> for its own
+# The version is bound to the release run's head_sha, not read from
+# the branch tip. Only a commit that carries the tag v<VERSION> for its own
 # version-file is dispatched, and that commit must be one of two:
 #
-# - the bump commit: the release bumps the version in a commit that it
-#   expects to sit directly on top of the run's head_sha (the branch's
-#   first-parent child of head_sha), and tags it. This is the normal
-#   case. If the branch moved between the release being started and
-#   its checkout, the bump is not that child, and nothing is dispatched.
+# - head_sha's child: the commit on the branch's first-parent line whose
+#   parent is head_sha. The release bumps the version in a commit on
+#   top of the branch it checks out, and tags it; normally that is
+#   head_sha, so the bump is this child. This is the normal case.
 # - head_sha itself: a recovery run. When a release run bumps and tags
-#   but then fails, it is re-run without a bump (next_version=skip),
-#   and that run's head_sha is the tagged bump commit. This applies
-#   only while no later v* tag exists on the branch after head_sha;
-#   otherwise head_sha's release is not the latest and a run on it is
-#   not treated as its recovery.
+#   but then fails, a new release run started without a bump (next_version=skip) on the
+#   branch, whose tip is the tagged bump commit, has that commit as its
+#   head_sha. This applies only while no later v* tag exists on the
+#   branch after head_sha; otherwise head_sha's release is not the latest
+#   and a run on it is not treated as its recovery.
 #
-# A run that made no bump, on a head_sha that is not a tagged release
-# commit, dispatches nothing. A version-file that cannot be read, or
-# that has no `VERSION = "..."` line, fails the job.
+# Anything else dispatches nothing. A version file that cannot be read,
+# or that does not have exactly one `VERSION = "..."` line, fails the
+# job.
 #
-# The same version can be dispatched more than once: re-running a
-# successful release run dispatches its version again, and so does a
-# no-bump run started while the branch tip is still the commit of an
-# earlier, successful release. The target repository has to treat an
-# already-published version as done.
+# Known limits. The release checks out the branch tip, not head_sha, so
+# the child of head_sha is the commit this run tagged only if the branch
+# did not move in between. If it moved, the new release is not
+# dispatched; if the commit that moved it was itself a tagged release
+# (another run, or a re-run of this one, which keeps the first
+# attempt's head_sha), that earlier version is dispatched again
+# instead. A run that made no bump, whose head_sha's child is a release
+# commit tagged since, dispatches that version too. The same version
+# can therefore be dispatched more than once, and the target repository has to treat
+# an already-published version as done. A missed release is sent by
+# starting a release run without a bump (next_version=skip) while the branch tip is still that
+# release's commit.
 
 on:
   workflow_call:
@@ -117,9 +123,13 @@ jobs:
               printf '::error::cannot read %q at %s\n' "$VERSION_FILE" "$1"
               exit 1
             fi
-            V=$(printf '%s\n' "$source" \
-              | { grep -oE 'VERSION = "[^"]+"' || true; } | sed -n 1p | cut -d'"' -f2)
-            if [ -z "$V" ]; then
+            # Only an assignment at the start of a line counts, and it has
+            # to be the only one.
+            local lines
+            lines=$(printf '%s\n' "$source" \
+              | { grep -E '^[[:space:]]*VERSION = "[^"]+"' || true; })
+            V=$(printf '%s\n' "$lines" | sed -n '1s/^[^"]*"\([^"]*\)".*$/\1/p')
+            if [ -z "$V" ] || [ "$(printf '%s\n' "$lines" | wc -l)" -ne 1 ]; then
               printf '::error::no VERSION = "..." line in %q at %s\n' "$VERSION_FILE" "$1"
               exit 1
             fi
