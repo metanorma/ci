@@ -38,7 +38,10 @@ name: notify-js
 #   its checkout, the bump is not that child, and nothing is dispatched.
 # - head_sha itself: a recovery run. When a release run bumps and tags
 #   but then fails, it is re-run without a bump (next_version=skip),
-#   and that run's head_sha is the tagged bump commit.
+#   and that run's head_sha is the tagged bump commit. This applies
+#   only while no later v* tag exists on the branch after head_sha;
+#   otherwise head_sha's release is not the latest and a run on it is
+#   not treated as its recovery.
 #
 # A run that made no bump, on a head_sha that is not a tagged release
 # commit, dispatches nothing. A version-file that cannot be read, or
@@ -137,7 +140,10 @@ jobs:
           fi
           # Recovery run: head_sha is on the branch and is itself the
           # tagged release commit.
-          if [ -z "$RELEASE" ] && git merge-base --is-ancestor "$HEAD_SHA" "refs/remotes/origin/$BRANCH" 2>/dev/null; then
+          # A v* tag on a commit after head_sha means a later release
+          # exists, so this run is not a recovery of head_sha's release.
+          if [ -z "$RELEASE" ] && git merge-base --is-ancestor "$HEAD_SHA" "refs/remotes/origin/$BRANCH" 2>/dev/null \
+            && [ -z "$(git tag -l 'v*' --merged "refs/remotes/origin/$BRANCH" --no-merged "$HEAD_SHA")" ]; then
             read_version "$HEAD_SHA"
             if [ "$(tag_commit "$V")" = "$HEAD_SHA" ]; then
               RELEASE=$HEAD_SHA
@@ -165,8 +171,8 @@ jobs:
 
       - name: Dispatch ${{ inputs.event-type }} to ${{ inputs.repository }}
         if: steps.ver.outputs.dispatch == 'true'
-        # v3.0.0
-        uses: peter-evans/repository-dispatch@ff45666b9427631e3450c54a1bcbee4d9ff4d7c0
+        # v4.0.1
+        uses: peter-evans/repository-dispatch@28959ce8df70de7be546dd1250a005dd32156697
         with:
           token: ${{ secrets.pat_token }}
           repository: ${{ inputs.repository }}
