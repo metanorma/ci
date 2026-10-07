@@ -28,10 +28,27 @@ name: notify-js
 # it.
 #
 # The version is bound to the release run, not read from the branch
-# tip: the release bumps the version in a commit directly on top of the
-# run's head_sha and tags that commit, so only a version whose tag
-# points at that commit is dispatched. A run that made no bump
-# dispatches nothing.
+# tip. Only a commit that carries the tag v<VERSION> for its own
+# version-file is dispatched, and that commit must be one of two:
+#
+# - the bump commit: the release bumps the version in a commit that it
+#   expects to sit directly on top of the run's head_sha (the branch's
+#   first-parent child of head_sha), and tags it. This is the normal
+#   case. If the branch moved between the release being started and
+#   its checkout, the bump is not that child, and nothing is dispatched.
+# - head_sha itself: a recovery run. When a release run bumps and tags
+#   but then fails, it is re-run without a bump (next_version=skip),
+#   and that run's head_sha is the tagged bump commit.
+#
+# A run that made no bump, on a head_sha that is not a tagged release
+# commit, dispatches nothing. A version-file that cannot be read, or
+# that has no `VERSION = "..."` line, fails the job.
+#
+# The same version can be dispatched more than once: re-running a
+# successful release run dispatches its version again, and so does a
+# no-bump run started while the branch tip is still the commit of an
+# earlier, successful release. The target repository has to treat an
+# already-published version as done.
 
 on:
   workflow_call:
@@ -89,21 +106,45 @@ jobs:
             printf '::error::unexpected head_branch: %q\n' "$BRANCH"
             exit 1
           fi
-          # The bump commit is the commit on the branch's first-parent
-          # line whose parent is head_sha.
-          BUMP=$(git rev-list --first-parent --parents "refs/remotes/origin/$BRANCH" \
-            | awk -v h="$HEAD_SHA" '!found && $2 == h { print $1; found = 1 }')
-          NEW=""
-          if [ -n "$BUMP" ]; then
-            # A version file that cannot be read is a caller error.
-            if ! SOURCE=$(git show "$BUMP:$VERSION_FILE"); then
-              printf '::error::cannot read %q at %s\n' "$VERSION_FILE" "$BUMP"
+          # Sets V to the VERSION string in the version-file at commit
+          # $1; fails the job if the file or the line is missing.
+          read_version() {
+            local source
+            if ! source=$(git show "$1:$VERSION_FILE"); then
+              printf '::error::cannot read %q at %s\n' "$VERSION_FILE" "$1"
               exit 1
             fi
-            NEW=$(printf '%s\n' "$SOURCE" \
+            V=$(printf '%s\n' "$source" \
               | { grep -oE 'VERSION = "[^"]+"' || true; } | sed -n 1p | cut -d'"' -f2)
+            if [ -z "$V" ]; then
+              printf '::error::no VERSION = "..." line in %q at %s\n' "$VERSION_FILE" "$1"
+              exit 1
+            fi
+          }
+          tag_commit() { git rev-parse -q --verify "refs/tags/v$1^{commit}" || true; }
+          RELEASE=""
+          NEW=""
+          # Normal run: the bump commit is the commit on the branch's
+          # first-parent line whose parent is head_sha.
+          BUMP=$(git rev-list --first-parent --parents "refs/remotes/origin/$BRANCH" \
+            | awk -v h="$HEAD_SHA" '!found && $2 == h { print $1; found = 1 }')
+          if [ -n "$BUMP" ]; then
+            read_version "$BUMP"
+            if [ "$(tag_commit "$V")" = "$BUMP" ]; then
+              RELEASE=$BUMP
+              NEW=$V
+            fi
           fi
-          if [ -z "$NEW" ] || [ "$(git rev-parse -q --verify "refs/tags/v$NEW^{commit}" || true)" != "$BUMP" ]; then
+          # Recovery run: head_sha is on the branch and is itself the
+          # tagged release commit.
+          if [ -z "$RELEASE" ] && git merge-base --is-ancestor "$HEAD_SHA" "refs/remotes/origin/$BRANCH" 2>/dev/null; then
+            read_version "$HEAD_SHA"
+            if [ "$(tag_commit "$V")" = "$HEAD_SHA" ]; then
+              RELEASE=$HEAD_SHA
+              NEW=$V
+            fi
+          fi
+          if [ -z "$RELEASE" ]; then
             echo "no release commit for this run; not dispatching"
             echo "dispatch=false" >> "$GITHUB_OUTPUT"
             exit 0
@@ -118,7 +159,7 @@ jobs:
             printf '::error::VERSION %q is not a semver version npm can publish\n' "$NEW"
             exit 1
           fi
-          echo "release commit $BUMP is tagged v$NEW; dispatching"
+          echo "release commit $RELEASE is tagged v$NEW; dispatching"
           echo "dispatch=true" >> "$GITHUB_OUTPUT"
           echo "version=$NEW" >> "$GITHUB_OUTPUT"
 
