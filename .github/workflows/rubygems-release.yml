@@ -253,7 +253,17 @@ jobs:
 
       - name: Bump version
         if: github.event_name == 'workflow_dispatch' && inputs.next_version != 'skip'
-        run: gem bump --version ${{ inputs.next_version }} --tag --push
+        env:
+          NEXT_VERSION: ${{ inputs.next_version }}
+        run: |
+          # gem-release's auto-detection only probes lib/<name-with-dashes-
+          # as-slashes>/version.rb and lib/<name>/version.rb, so gems whose
+          # module path underscores the name (relaton_bib, relaton_itu, ...)
+          # abort with "Version file ? not found". Resolve the real file
+          # from the gemspec instead.
+          GEMSPEC=$(ls *.gemspec | head -1)
+          VERSION_FILE=$(ruby -Ilib -e "spec = Gem::Specification.load(ARGV[0]); f = spec.files.grep(%r{(^|/)version\.rb\z}).first; abort 'version file not found in gemspec' unless f; puts f" "$GEMSPEC")
+          gem bump --file "$VERSION_FILE" --version "$NEXT_VERSION" --tag --push
 
       - name: Resolve gem identity
         id: gem-identity
