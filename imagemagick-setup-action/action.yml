@@ -21,7 +21,7 @@ runs:
           ],
           "Ubuntu": [
             "sudo apt update --fix-missing",
-            "sudo apt upgrade -y",
+            "sudo apt upgrade -y || echo 'apt upgrade failed; continuing with installed packages'",
             "sudo apt install -y imagemagick",
             "which convert",
             "convert -version"
