@@ -172,6 +172,8 @@ jobs:
         bundle add metanorma-${{ needs.build-matrices.outputs.flavor }} --path .. --skip-install
         bundle add sassc --skip-install
         echo 'eval_gemfile("../Gemfile.devel") rescue nil' >> Gemfile
+        grep -q 'gem "metanorma-standoc"' Gemfile || echo 'gem "metanorma-standoc", github: "metanorma/metanorma-standoc", branch: "main"' >> Gemfile
+        grep -q 'gem "suma"' Gemfile || echo 'gem "suma", github: "metanorma/suma", branch: "main"' >> Gemfile
         bundle install
       shell: bash
       working-directory: template
@@ -247,6 +249,12 @@ jobs:
         fi
       shell: bash
 
+    - name: Pre-release stack pins (standoc relaton-cli-3 + suma svg_conform-0.2; suma#127)
+      run: |
+        grep -q 'gem "metanorma-standoc"' Gemfile || echo 'gem "metanorma-standoc", github: "metanorma/metanorma-standoc", branch: "main"' >> Gemfile
+        grep -q 'gem "suma"' Gemfile || echo 'gem "suma", github: "metanorma/suma", branch: "main"' >> Gemfile
+      shell: bash
+      working-directory: samples
     - uses: metanorma/ci/gh-rubygems-setup-action@main
       with:
         token: ${{ secrets.pat_token }}
