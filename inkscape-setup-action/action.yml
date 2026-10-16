@@ -51,7 +51,7 @@ runs:
               "$UBUNTU_CODENAME main\" "
               "| sudo tee /etc/apt/sources.list.d/inkscape-dev-stable.list",
             "sudo apt update",
-            "sudo apt install -y inkscape={}".format(version),
+            "sudo apt install -y inkscape={0} || sudo apt install -y inkscape".format(version),
           ])
           run_commands([
             "which inkscape",
