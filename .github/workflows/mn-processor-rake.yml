@@ -174,6 +174,7 @@ jobs:
         echo 'eval_gemfile("../Gemfile.devel") rescue nil' >> Gemfile
         grep -q 'metanorma-standoc.*github:' Gemfile || echo 'gem "metanorma-standoc", github: "metanorma/metanorma-standoc", branch: "main"' >> Gemfile
         grep -q 'suma.*github:' Gemfile || echo 'gem "suma", github: "metanorma/suma", branch: "main"' >> Gemfile
+        grep -q 'metanorma-ogc.*github:' Gemfile || echo 'gem "metanorma-ogc", github: "metanorma/metanorma-ogc", branch: "main"' >> Gemfile
         bundle install
       shell: bash
       working-directory: template
@@ -249,9 +250,10 @@ jobs:
         fi
       shell: bash
 
-    - name: Pre-release stack pins (standoc relaton-cli-3 + suma svg_conform-0.2; suma#127)
+    - name: Pre-release stack pins (standoc relaton-cli-3, ogc relaton-3 shadow fix, suma svg_conform-0.2)
       run: |
         grep -q 'metanorma-standoc.*github:' Gemfile || echo 'gem "metanorma-standoc", github: "metanorma/metanorma-standoc", branch: "main"' >> Gemfile
+        grep -q 'metanorma-ogc.*github:' Gemfile || echo 'gem "metanorma-ogc", github: "metanorma/metanorma-ogc", branch: "main"' >> Gemfile
         grep -q 'suma.*github:' Gemfile || echo 'gem "suma", github: "metanorma/suma", branch: "main"' >> Gemfile
       shell: bash
       working-directory: samples
