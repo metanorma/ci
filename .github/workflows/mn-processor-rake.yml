@@ -169,13 +169,13 @@ jobs:
     - run: |
         rm -f Gemfile.lock
         bundle config set --local frozen false
-        bundle remove metanorma-${{ needs.build-matrices.outputs.flavor }} --skip-install || true
-        bundle add metanorma-${{ needs.build-matrices.outputs.flavor }} --path .. --skip-install
-        bundle add sassc --skip-install
         echo 'eval_gemfile("../Gemfile.devel") rescue nil' >> Gemfile
         grep -q 'metanorma-standoc.*github:' Gemfile || echo 'gem "metanorma-standoc", github: "metanorma/metanorma-standoc", branch: "main"' >> Gemfile
         grep -q 'suma.*github:' Gemfile || echo 'gem "suma", github: "metanorma/suma", branch: "main"' >> Gemfile
         grep -q 'metanorma-ogc.*github:' Gemfile || echo 'gem "metanorma-ogc", github: "metanorma/metanorma-ogc", branch: "main"' >> Gemfile
+        bundle remove metanorma-${{ needs.build-matrices.outputs.flavor }} --skip-install || true
+        bundle add metanorma-${{ needs.build-matrices.outputs.flavor }} --path .. --skip-install
+        bundle add sassc --skip-install
         bundle install
       shell: bash
       working-directory: template
@@ -272,10 +272,10 @@ jobs:
     - run: |
         rm -f Gemfile.lock
         bundle config set --local frozen false
+        echo 'eval_gemfile("../Gemfile.devel") rescue nil' >> Gemfile
         bundle remove metanorma-${{ needs.build-matrices.outputs.flavor }} --skip-install || true
         bundle add metanorma-${{ needs.build-matrices.outputs.flavor }} --path .. --skip-install
         bundle add sassc --skip-install
-        echo 'eval_gemfile("../Gemfile.devel") rescue nil' >> Gemfile
         cat Gemfile
         bundle install
       shell: bash
