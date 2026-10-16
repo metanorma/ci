@@ -173,6 +173,14 @@ jobs:
         grep -q 'metanorma-standoc.*github:' Gemfile || echo 'gem "metanorma-standoc", github: "metanorma/metanorma-standoc", branch: "main"' >> Gemfile
         grep -q 'suma.*github:' Gemfile || echo 'gem "suma", github: "metanorma/suma", branch: "main"' >> Gemfile
         grep -q 'metanorma-ogc.*github:' Gemfile || echo 'gem "metanorma-ogc", github: "metanorma/metanorma-ogc", branch: "main"' >> Gemfile
+        grep -q 'metanorma-itu.*github:' Gemfile || echo 'gem "metanorma-itu", github: "metanorma/metanorma-itu", branch: "main"' >> Gemfile
+        grep -q 'metanorma-iec.*github:' Gemfile || echo 'gem "metanorma-iec", github: "metanorma/metanorma-iec", branch: "main"' >> Gemfile
+        grep -q 'metanorma-ieee.*github:' Gemfile || echo 'gem "metanorma-ieee", github: "metanorma/metanorma-ieee", branch: "main"' >> Gemfile
+        grep -q 'metanorma-jis.*github:' Gemfile || echo 'gem "metanorma-jis", github: "metanorma/metanorma-jis", branch: "main"' >> Gemfile
+        grep -q 'metanorma-iho.*github:' Gemfile || echo 'gem "metanorma-iho", github: "metanorma/metanorma-iho", branch: "main"' >> Gemfile
+        grep -q 'metanorma-bipm.*github:' Gemfile || echo 'gem "metanorma-bipm", github: "metanorma/metanorma-bipm", branch: "main"' >> Gemfile
+        grep -q 'metanorma-iso.*github:' Gemfile || echo 'gem "metanorma-iso", github: "metanorma/metanorma-iso", branch: "main"' >> Gemfile
+        grep -q 'metanorma-ietf.*github:' Gemfile || echo 'gem "metanorma-ietf", github: "metanorma/metanorma-ietf", branch: "main"' >> Gemfile
         bundle remove metanorma-${{ needs.build-matrices.outputs.flavor }} --skip-install || true
         bundle add metanorma-${{ needs.build-matrices.outputs.flavor }} --path .. --skip-install
         bundle add sassc --skip-install
@@ -256,6 +264,14 @@ jobs:
         grep -q 'metanorma-standoc.*github:' Gemfile || echo 'gem "metanorma-standoc", github: "metanorma/metanorma-standoc", branch: "main"' >> Gemfile
         grep -q 'metanorma-ogc.*github:' Gemfile || echo 'gem "metanorma-ogc", github: "metanorma/metanorma-ogc", branch: "main"' >> Gemfile
         grep -q 'suma.*github:' Gemfile || echo 'gem "suma", github: "metanorma/suma", branch: "main"' >> Gemfile
+        grep -q 'metanorma-itu.*github:' Gemfile || echo 'gem "metanorma-itu", github: "metanorma/metanorma-itu", branch: "main"' >> Gemfile
+        grep -q 'metanorma-iec.*github:' Gemfile || echo 'gem "metanorma-iec", github: "metanorma/metanorma-iec", branch: "main"' >> Gemfile
+        grep -q 'metanorma-ieee.*github:' Gemfile || echo 'gem "metanorma-ieee", github: "metanorma/metanorma-ieee", branch: "main"' >> Gemfile
+        grep -q 'metanorma-jis.*github:' Gemfile || echo 'gem "metanorma-jis", github: "metanorma/metanorma-jis", branch: "main"' >> Gemfile
+        grep -q 'metanorma-iho.*github:' Gemfile || echo 'gem "metanorma-iho", github: "metanorma/metanorma-iho", branch: "main"' >> Gemfile
+        grep -q 'metanorma-bipm.*github:' Gemfile || echo 'gem "metanorma-bipm", github: "metanorma/metanorma-bipm", branch: "main"' >> Gemfile
+        grep -q 'metanorma-iso.*github:' Gemfile || echo 'gem "metanorma-iso", github: "metanorma/metanorma-iso", branch: "main"' >> Gemfile
+        grep -q 'metanorma-ietf.*github:' Gemfile || echo 'gem "metanorma-ietf", github: "metanorma/metanorma-ietf", branch: "main"' >> Gemfile
       shell: bash
       working-directory: samples
     - uses: metanorma/ci/gh-rubygems-setup-action@main
