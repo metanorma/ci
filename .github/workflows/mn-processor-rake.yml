@@ -286,6 +286,7 @@ jobs:
         grep -q 'gem "relaton-render"' Gemfile || echo 'gem "relaton-render", "~> 3.0.0.pre.alpha"' >> Gemfile
         grep -q 'gem "relaton-cli"' Gemfile || echo 'gem "relaton-cli", "~> 3.0.0.pre.alpha"' >> Gemfile
         grep -q 'gem "pubid"' Gemfile || echo 'gem "pubid", "~> 2.0.0.pre.alpha"' >> Gemfile
+        rm -f Gemfile.lock
       shell: bash
       working-directory: samples
     - uses: metanorma/ci/gh-rubygems-setup-action@main
