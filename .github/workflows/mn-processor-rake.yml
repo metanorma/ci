@@ -188,6 +188,7 @@ jobs:
         grep -q 'gem "relaton-render"' Gemfile || echo 'gem "relaton-render", "~> 3.0.0.pre.alpha"' >> Gemfile
         grep -q 'gem "relaton-cli"' Gemfile || echo 'gem "relaton-cli", "~> 3.0.0.pre.alpha"' >> Gemfile
         grep -q 'gem "pubid"' Gemfile || echo 'gem "pubid", "~> 2.0.0.pre.alpha"' >> Gemfile
+        grep -q 'gem "sassc-embedded"' Gemfile || echo 'gem "sassc-embedded", "~> 1.80"' >> Gemfile
         bundle remove metanorma-${{ needs.build-matrices.outputs.flavor }} --skip-install || true
         bundle add metanorma-${{ needs.build-matrices.outputs.flavor }} --path .. --skip-install
         bundle add sassc --skip-install
@@ -286,6 +287,7 @@ jobs:
         grep -q 'gem "relaton-render"' Gemfile || echo 'gem "relaton-render", "~> 3.0.0.pre.alpha"' >> Gemfile
         grep -q 'gem "relaton-cli"' Gemfile || echo 'gem "relaton-cli", "~> 3.0.0.pre.alpha"' >> Gemfile
         grep -q 'gem "pubid"' Gemfile || echo 'gem "pubid", "~> 2.0.0.pre.alpha"' >> Gemfile
+        grep -q 'gem "sassc-embedded"' Gemfile || echo 'gem "sassc-embedded", "~> 1.80"' >> Gemfile
         rm -f Gemfile.lock
       shell: bash
       working-directory: samples
