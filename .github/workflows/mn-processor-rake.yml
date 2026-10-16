@@ -181,6 +181,13 @@ jobs:
         grep -q 'metanorma-bipm.*github:' Gemfile || echo 'gem "metanorma-bipm", github: "metanorma/metanorma-bipm", branch: "main"' >> Gemfile
         grep -q 'metanorma-iso.*github:' Gemfile || echo 'gem "metanorma-iso", github: "metanorma/metanorma-iso", branch: "main"' >> Gemfile
         grep -q 'metanorma-ietf.*github:' Gemfile || echo 'gem "metanorma-ietf", github: "metanorma/metanorma-ietf", branch: "main"' >> Gemfile
+        grep -q 'gem "isodoc"' Gemfile || echo 'gem "isodoc", github: "metanorma/isodoc", branch: "main"' >> Gemfile
+        grep -q 'gem "metanorma-document"' Gemfile || echo 'gem "metanorma-document", github: "metanorma/metanorma-document", branch: "main"' >> Gemfile
+        grep -q 'gem "metanorma-core"' Gemfile || echo 'gem "metanorma-core", github: "metanorma/metanorma-core", branch: "main"' >> Gemfile
+        grep -q 'gem "relaton"' Gemfile || echo 'gem "relaton", "~> 3.0.0.pre.alpha"' >> Gemfile
+        grep -q 'gem "relaton-render"' Gemfile || echo 'gem "relaton-render", "~> 3.0.0.pre.alpha"' >> Gemfile
+        grep -q 'gem "relaton-cli"' Gemfile || echo 'gem "relaton-cli", "~> 3.0.0.pre.alpha"' >> Gemfile
+        grep -q 'gem "pubid"' Gemfile || echo 'gem "pubid", "~> 2.0.0.pre.alpha"' >> Gemfile
         bundle remove metanorma-${{ needs.build-matrices.outputs.flavor }} --skip-install || true
         bundle add metanorma-${{ needs.build-matrices.outputs.flavor }} --path .. --skip-install
         bundle add sassc --skip-install
@@ -272,6 +279,13 @@ jobs:
         grep -q 'metanorma-bipm.*github:' Gemfile || echo 'gem "metanorma-bipm", github: "metanorma/metanorma-bipm", branch: "main"' >> Gemfile
         grep -q 'metanorma-iso.*github:' Gemfile || echo 'gem "metanorma-iso", github: "metanorma/metanorma-iso", branch: "main"' >> Gemfile
         grep -q 'metanorma-ietf.*github:' Gemfile || echo 'gem "metanorma-ietf", github: "metanorma/metanorma-ietf", branch: "main"' >> Gemfile
+        grep -q 'gem "isodoc"' Gemfile || echo 'gem "isodoc", github: "metanorma/isodoc", branch: "main"' >> Gemfile
+        grep -q 'gem "metanorma-document"' Gemfile || echo 'gem "metanorma-document", github: "metanorma/metanorma-document", branch: "main"' >> Gemfile
+        grep -q 'gem "metanorma-core"' Gemfile || echo 'gem "metanorma-core", github: "metanorma/metanorma-core", branch: "main"' >> Gemfile
+        grep -q 'gem "relaton"' Gemfile || echo 'gem "relaton", "~> 3.0.0.pre.alpha"' >> Gemfile
+        grep -q 'gem "relaton-render"' Gemfile || echo 'gem "relaton-render", "~> 3.0.0.pre.alpha"' >> Gemfile
+        grep -q 'gem "relaton-cli"' Gemfile || echo 'gem "relaton-cli", "~> 3.0.0.pre.alpha"' >> Gemfile
+        grep -q 'gem "pubid"' Gemfile || echo 'gem "pubid", "~> 2.0.0.pre.alpha"' >> Gemfile
       shell: bash
       working-directory: samples
     - uses: metanorma/ci/gh-rubygems-setup-action@main
