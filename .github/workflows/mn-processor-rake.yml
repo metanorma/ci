@@ -170,25 +170,25 @@ jobs:
         rm -f Gemfile.lock
         bundle config set --local frozen false
         echo 'eval_gemfile("../Gemfile.devel") rescue nil' >> Gemfile
-        grep -q 'metanorma-standoc.*github:' Gemfile || echo 'gem "metanorma-standoc", github: "metanorma/metanorma-standoc", branch: "main"' >> Gemfile
-        grep -q 'suma.*github:' Gemfile || echo 'gem "suma", github: "metanorma/suma", branch: "main"' >> Gemfile
-        grep -q 'metanorma-ogc.*github:' Gemfile || echo 'gem "metanorma-ogc", github: "metanorma/metanorma-ogc", branch: "main"' >> Gemfile
-        grep -q 'metanorma-itu.*github:' Gemfile || echo 'gem "metanorma-itu", github: "metanorma/metanorma-itu", branch: "main"' >> Gemfile
-        grep -q 'metanorma-iec.*github:' Gemfile || echo 'gem "metanorma-iec", github: "metanorma/metanorma-iec", branch: "main"' >> Gemfile
-        grep -q 'metanorma-ieee.*github:' Gemfile || echo 'gem "metanorma-ieee", github: "metanorma/metanorma-ieee", branch: "main"' >> Gemfile
-        grep -q 'metanorma-jis.*github:' Gemfile || echo 'gem "metanorma-jis", github: "metanorma/metanorma-jis", branch: "main"' >> Gemfile
-        grep -q 'metanorma-iho.*github:' Gemfile || echo 'gem "metanorma-iho", github: "metanorma/metanorma-iho", branch: "main"' >> Gemfile
-        grep -q 'metanorma-bipm.*github:' Gemfile || echo 'gem "metanorma-bipm", github: "metanorma/metanorma-bipm", branch: "main"' >> Gemfile
-        grep -q 'metanorma-iso.*github:' Gemfile || echo 'gem "metanorma-iso", github: "metanorma/metanorma-iso", branch: "main"' >> Gemfile
-        grep -q 'metanorma-ietf.*github:' Gemfile || echo 'gem "metanorma-ietf", github: "metanorma/metanorma-ietf", branch: "main"' >> Gemfile
-        grep -q 'gem "isodoc"' Gemfile || echo 'gem "isodoc", github: "metanorma/isodoc", branch: "main"' >> Gemfile
-        grep -q 'gem "metanorma-document"' Gemfile || echo 'gem "metanorma-document", github: "metanorma/metanorma-document", branch: "main"' >> Gemfile
-        grep -q 'gem "metanorma-core"' Gemfile || echo 'gem "metanorma-core", github: "metanorma/metanorma-core", branch: "main"' >> Gemfile
-        grep -q 'gem "relaton"' Gemfile || echo 'gem "relaton", "~> 3.0.0.pre.alpha"' >> Gemfile
-        grep -q 'gem "relaton-render"' Gemfile || echo 'gem "relaton-render", "~> 3.0.0.pre.alpha"' >> Gemfile
-        grep -q 'gem "relaton-cli"' Gemfile || echo 'gem "relaton-cli", "~> 3.0.0.pre.alpha"' >> Gemfile
-        grep -q 'gem "pubid"' Gemfile || echo 'gem "pubid", "~> 2.0.0.pre.alpha"' >> Gemfile
-        grep -q 'gem "sassc-embedded"' Gemfile || echo 'gem "sassc-embedded", "~> 1.80"' >> Gemfile
+        grep -qE '^[[:space:]]*gem "metanorma-standoc"' Gemfile || echo 'gem "metanorma-standoc", github: "metanorma/metanorma-standoc", branch: "main"' >> Gemfile
+        grep -qE '^[[:space:]]*gem "suma"' Gemfile || echo 'gem "suma", github: "metanorma/suma", branch: "main"' >> Gemfile
+        grep -qE '^[[:space:]]*gem "metanorma-ogc"' Gemfile || echo 'gem "metanorma-ogc", github: "metanorma/metanorma-ogc", branch: "main"' >> Gemfile
+        grep -qE '^[[:space:]]*gem "metanorma-itu"' Gemfile || echo 'gem "metanorma-itu", github: "metanorma/metanorma-itu", branch: "main"' >> Gemfile
+        grep -qE '^[[:space:]]*gem "metanorma-iec"' Gemfile || echo 'gem "metanorma-iec", github: "metanorma/metanorma-iec", branch: "main"' >> Gemfile
+        grep -qE '^[[:space:]]*gem "metanorma-ieee"' Gemfile || echo 'gem "metanorma-ieee", github: "metanorma/metanorma-ieee", branch: "main"' >> Gemfile
+        grep -qE '^[[:space:]]*gem "metanorma-jis"' Gemfile || echo 'gem "metanorma-jis", github: "metanorma/metanorma-jis", branch: "main"' >> Gemfile
+        grep -qE '^[[:space:]]*gem "metanorma-iho"' Gemfile || echo 'gem "metanorma-iho", github: "metanorma/metanorma-iho", branch: "main"' >> Gemfile
+        grep -qE '^[[:space:]]*gem "metanorma-bipm"' Gemfile || echo 'gem "metanorma-bipm", github: "metanorma/metanorma-bipm", branch: "main"' >> Gemfile
+        grep -qE '^[[:space:]]*gem "metanorma-iso"' Gemfile || echo 'gem "metanorma-iso", github: "metanorma/metanorma-iso", branch: "main"' >> Gemfile
+        grep -qE '^[[:space:]]*gem "metanorma-ietf"' Gemfile || echo 'gem "metanorma-ietf", github: "metanorma/metanorma-ietf", branch: "main"' >> Gemfile
+        grep -qE '^[[:space:]]*gem "isodoc"' Gemfile || echo 'gem "isodoc", github: "metanorma/isodoc", branch: "main"' >> Gemfile
+        grep -qE '^[[:space:]]*gem "metanorma-document"' Gemfile || echo 'gem "metanorma-document", github: "metanorma/metanorma-document", branch: "main"' >> Gemfile
+        grep -qE '^[[:space:]]*gem "metanorma-core"' Gemfile || echo 'gem "metanorma-core", github: "metanorma/metanorma-core", branch: "main"' >> Gemfile
+        grep -qE '^[[:space:]]*gem "relaton"' Gemfile || echo 'gem "relaton", "~> 3.0.0.pre.alpha"' >> Gemfile
+        grep -qE '^[[:space:]]*gem "relaton-render"' Gemfile || echo 'gem "relaton-render", "~> 3.0.0.pre.alpha"' >> Gemfile
+        grep -qE '^[[:space:]]*gem "relaton-cli"' Gemfile || echo 'gem "relaton-cli", "~> 3.0.0.pre.alpha"' >> Gemfile
+        grep -qE '^[[:space:]]*gem "pubid"' Gemfile || echo 'gem "pubid", "~> 2.0.0.pre.alpha"' >> Gemfile
+        grep -qE '^[[:space:]]*gem "sassc-embedded"' Gemfile || echo 'gem "sassc-embedded", "~> 1.80"' >> Gemfile
         bundle remove metanorma-${{ needs.build-matrices.outputs.flavor }} --skip-install || true
         bundle add metanorma-${{ needs.build-matrices.outputs.flavor }} --path .. --skip-install
         bundle add sassc --skip-install
@@ -269,25 +269,25 @@ jobs:
 
     - name: Pre-release stack pins (standoc relaton-cli-3, ogc relaton-3 shadow fix, suma svg_conform-0.2)
       run: |
-        grep -q 'metanorma-standoc.*github:' Gemfile || echo 'gem "metanorma-standoc", github: "metanorma/metanorma-standoc", branch: "main"' >> Gemfile
-        grep -q 'metanorma-ogc.*github:' Gemfile || echo 'gem "metanorma-ogc", github: "metanorma/metanorma-ogc", branch: "main"' >> Gemfile
-        grep -q 'suma.*github:' Gemfile || echo 'gem "suma", github: "metanorma/suma", branch: "main"' >> Gemfile
-        grep -q 'metanorma-itu.*github:' Gemfile || echo 'gem "metanorma-itu", github: "metanorma/metanorma-itu", branch: "main"' >> Gemfile
-        grep -q 'metanorma-iec.*github:' Gemfile || echo 'gem "metanorma-iec", github: "metanorma/metanorma-iec", branch: "main"' >> Gemfile
-        grep -q 'metanorma-ieee.*github:' Gemfile || echo 'gem "metanorma-ieee", github: "metanorma/metanorma-ieee", branch: "main"' >> Gemfile
-        grep -q 'metanorma-jis.*github:' Gemfile || echo 'gem "metanorma-jis", github: "metanorma/metanorma-jis", branch: "main"' >> Gemfile
-        grep -q 'metanorma-iho.*github:' Gemfile || echo 'gem "metanorma-iho", github: "metanorma/metanorma-iho", branch: "main"' >> Gemfile
-        grep -q 'metanorma-bipm.*github:' Gemfile || echo 'gem "metanorma-bipm", github: "metanorma/metanorma-bipm", branch: "main"' >> Gemfile
-        grep -q 'metanorma-iso.*github:' Gemfile || echo 'gem "metanorma-iso", github: "metanorma/metanorma-iso", branch: "main"' >> Gemfile
-        grep -q 'metanorma-ietf.*github:' Gemfile || echo 'gem "metanorma-ietf", github: "metanorma/metanorma-ietf", branch: "main"' >> Gemfile
-        grep -q 'gem "isodoc"' Gemfile || echo 'gem "isodoc", github: "metanorma/isodoc", branch: "main"' >> Gemfile
-        grep -q 'gem "metanorma-document"' Gemfile || echo 'gem "metanorma-document", github: "metanorma/metanorma-document", branch: "main"' >> Gemfile
-        grep -q 'gem "metanorma-core"' Gemfile || echo 'gem "metanorma-core", github: "metanorma/metanorma-core", branch: "main"' >> Gemfile
-        grep -q 'gem "relaton"' Gemfile || echo 'gem "relaton", "~> 3.0.0.pre.alpha"' >> Gemfile
-        grep -q 'gem "relaton-render"' Gemfile || echo 'gem "relaton-render", "~> 3.0.0.pre.alpha"' >> Gemfile
-        grep -q 'gem "relaton-cli"' Gemfile || echo 'gem "relaton-cli", "~> 3.0.0.pre.alpha"' >> Gemfile
-        grep -q 'gem "pubid"' Gemfile || echo 'gem "pubid", "~> 2.0.0.pre.alpha"' >> Gemfile
-        grep -q 'gem "sassc-embedded"' Gemfile || echo 'gem "sassc-embedded", "~> 1.80"' >> Gemfile
+        grep -qE '^[[:space:]]*gem "metanorma-standoc"' Gemfile || echo 'gem "metanorma-standoc", github: "metanorma/metanorma-standoc", branch: "main"' >> Gemfile
+        grep -qE '^[[:space:]]*gem "metanorma-ogc"' Gemfile || echo 'gem "metanorma-ogc", github: "metanorma/metanorma-ogc", branch: "main"' >> Gemfile
+        grep -qE '^[[:space:]]*gem "suma"' Gemfile || echo 'gem "suma", github: "metanorma/suma", branch: "main"' >> Gemfile
+        grep -qE '^[[:space:]]*gem "metanorma-itu"' Gemfile || echo 'gem "metanorma-itu", github: "metanorma/metanorma-itu", branch: "main"' >> Gemfile
+        grep -qE '^[[:space:]]*gem "metanorma-iec"' Gemfile || echo 'gem "metanorma-iec", github: "metanorma/metanorma-iec", branch: "main"' >> Gemfile
+        grep -qE '^[[:space:]]*gem "metanorma-ieee"' Gemfile || echo 'gem "metanorma-ieee", github: "metanorma/metanorma-ieee", branch: "main"' >> Gemfile
+        grep -qE '^[[:space:]]*gem "metanorma-jis"' Gemfile || echo 'gem "metanorma-jis", github: "metanorma/metanorma-jis", branch: "main"' >> Gemfile
+        grep -qE '^[[:space:]]*gem "metanorma-iho"' Gemfile || echo 'gem "metanorma-iho", github: "metanorma/metanorma-iho", branch: "main"' >> Gemfile
+        grep -qE '^[[:space:]]*gem "metanorma-bipm"' Gemfile || echo 'gem "metanorma-bipm", github: "metanorma/metanorma-bipm", branch: "main"' >> Gemfile
+        grep -qE '^[[:space:]]*gem "metanorma-iso"' Gemfile || echo 'gem "metanorma-iso", github: "metanorma/metanorma-iso", branch: "main"' >> Gemfile
+        grep -qE '^[[:space:]]*gem "metanorma-ietf"' Gemfile || echo 'gem "metanorma-ietf", github: "metanorma/metanorma-ietf", branch: "main"' >> Gemfile
+        grep -qE '^[[:space:]]*gem "isodoc"' Gemfile || echo 'gem "isodoc", github: "metanorma/isodoc", branch: "main"' >> Gemfile
+        grep -qE '^[[:space:]]*gem "metanorma-document"' Gemfile || echo 'gem "metanorma-document", github: "metanorma/metanorma-document", branch: "main"' >> Gemfile
+        grep -qE '^[[:space:]]*gem "metanorma-core"' Gemfile || echo 'gem "metanorma-core", github: "metanorma/metanorma-core", branch: "main"' >> Gemfile
+        grep -qE '^[[:space:]]*gem "relaton"' Gemfile || echo 'gem "relaton", "~> 3.0.0.pre.alpha"' >> Gemfile
+        grep -qE '^[[:space:]]*gem "relaton-render"' Gemfile || echo 'gem "relaton-render", "~> 3.0.0.pre.alpha"' >> Gemfile
+        grep -qE '^[[:space:]]*gem "relaton-cli"' Gemfile || echo 'gem "relaton-cli", "~> 3.0.0.pre.alpha"' >> Gemfile
+        grep -qE '^[[:space:]]*gem "pubid"' Gemfile || echo 'gem "pubid", "~> 2.0.0.pre.alpha"' >> Gemfile
+        grep -qE '^[[:space:]]*gem "sassc-embedded"' Gemfile || echo 'gem "sassc-embedded", "~> 1.80"' >> Gemfile
         rm -f Gemfile.lock
       shell: bash
       working-directory: samples
