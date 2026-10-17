@@ -181,6 +181,7 @@ jobs:
         grep -qE '^[[:space:]]*gem "metanorma-bipm"' Gemfile || echo 'gem "metanorma-bipm", github: "metanorma/metanorma-bipm", branch: "main"' >> Gemfile
         grep -qE '^[[:space:]]*gem "metanorma-iso"' Gemfile || echo 'gem "metanorma-iso", github: "metanorma/metanorma-iso", branch: "main"' >> Gemfile
         grep -qE '^[[:space:]]*gem "metanorma-ietf"' Gemfile || echo 'gem "metanorma-ietf", github: "metanorma/metanorma-ietf", branch: "main"' >> Gemfile
+        grep -qE '^[[:space:]]*gem "metanorma-oiml"' Gemfile || echo 'gem "metanorma-oiml", github: "metanorma/metanorma-oiml", branch: "main"' >> Gemfile
         grep -qE '^[[:space:]]*gem "isodoc"' Gemfile || echo 'gem "isodoc", github: "metanorma/isodoc", branch: "main"' >> Gemfile
         grep -qE '^[[:space:]]*gem "metanorma-document"' Gemfile || echo 'gem "metanorma-document", github: "metanorma/metanorma-document", branch: "main"' >> Gemfile
         grep -qE '^[[:space:]]*gem "metanorma-core"' Gemfile || echo 'gem "metanorma-core", github: "metanorma/metanorma-core", branch: "main"' >> Gemfile
@@ -280,6 +281,7 @@ jobs:
         grep -qE '^[[:space:]]*gem "metanorma-bipm"' Gemfile || echo 'gem "metanorma-bipm", github: "metanorma/metanorma-bipm", branch: "main"' >> Gemfile
         grep -qE '^[[:space:]]*gem "metanorma-iso"' Gemfile || echo 'gem "metanorma-iso", github: "metanorma/metanorma-iso", branch: "main"' >> Gemfile
         grep -qE '^[[:space:]]*gem "metanorma-ietf"' Gemfile || echo 'gem "metanorma-ietf", github: "metanorma/metanorma-ietf", branch: "main"' >> Gemfile
+        grep -qE '^[[:space:]]*gem "metanorma-oiml"' Gemfile || echo 'gem "metanorma-oiml", github: "metanorma/metanorma-oiml", branch: "main"' >> Gemfile
         grep -qE '^[[:space:]]*gem "isodoc"' Gemfile || echo 'gem "isodoc", github: "metanorma/isodoc", branch: "main"' >> Gemfile
         grep -qE '^[[:space:]]*gem "metanorma-document"' Gemfile || echo 'gem "metanorma-document", github: "metanorma/metanorma-document", branch: "main"' >> Gemfile
         grep -qE '^[[:space:]]*gem "metanorma-core"' Gemfile || echo 'gem "metanorma-core", github: "metanorma/metanorma-core", branch: "main"' >> Gemfile
