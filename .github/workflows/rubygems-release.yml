@@ -262,7 +262,7 @@ jobs:
           # abort with "Version file ? not found". Resolve the real file
           # from the gemspec instead.
           GEMSPEC=$(ls *.gemspec | head -1)
-          VERSION_FILE=$(ruby -Ilib -e "spec = Gem::Specification.load(ARGV[0]); f = spec.files.grep(%r{(^|/)version\.rb\z}).first; abort 'version file not found in gemspec' unless f; puts f" "$GEMSPEC")
+          VERSION_FILE=$(ruby -Ilib -e "spec = Gem::Specification.load(ARGV[0]); f = spec.files.grep(%r{(^|/)version\.rb\z}).find { |file| File.read(file) =~ /^\s*VERSION\s*=/ }; abort 'version file not found in gemspec' unless f; puts f" "$GEMSPEC")
           gem bump --file "$VERSION_FILE" --version "$NEXT_VERSION" --tag --push
 
       - name: Resolve gem identity
