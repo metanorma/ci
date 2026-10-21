@@ -41,12 +41,13 @@ runs:
             "sudo install -d -m 0755 /etc/apt/keyrings",
           ])
           run_commands_with_retry([
-            "curl -fsSL "
+            "curl -fsSL --retry 5 --retry-all-errors "
               "'https://keyserver.ubuntu.com/pks/lookup"
               "?op=get&search=0x56BDFFD2F1C96B3D1575E3B85C9A0B86CD2FCB38' "
               # gpg --batch needs no tty; the ubuntu-26 image denies
-              # `sudo gpg` one ("cannot open '/dev/tty'")
-              "| gpg --batch --dearmor -o /tmp/inkscape-dev-stable.gpg",
+              # `sudo gpg` one ("cannot open '/dev/tty'"). --yes lets a
+              # retry overwrite a stale/partial output file.
+              "| gpg --batch --yes --dearmor -o /tmp/inkscape-dev-stable.gpg",
             "sudo install -m 0644 /tmp/inkscape-dev-stable.gpg "
               "/etc/apt/keyrings/inkscape-dev-stable.gpg",
             ". /etc/os-release && echo "
