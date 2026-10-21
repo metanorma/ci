@@ -44,7 +44,11 @@ runs:
             "curl -fsSL "
               "'https://keyserver.ubuntu.com/pks/lookup"
               "?op=get&search=0x56BDFFD2F1C96B3D1575E3B85C9A0B86CD2FCB38' "
-              "| sudo gpg --dearmor -o /etc/apt/keyrings/inkscape-dev-stable.gpg",
+              # gpg --batch needs no tty; the ubuntu-26 image denies
+              # `sudo gpg` one ("cannot open '/dev/tty'")
+              "| gpg --batch --dearmor -o /tmp/inkscape-dev-stable.gpg",
+            "sudo install -m 0644 /tmp/inkscape-dev-stable.gpg "
+              "/etc/apt/keyrings/inkscape-dev-stable.gpg",
             ". /etc/os-release && echo "
               "\"deb [signed-by=/etc/apt/keyrings/inkscape-dev-stable.gpg] "
               "https://ppa.launchpadcontent.net/inkscape.dev/stable/ubuntu "
