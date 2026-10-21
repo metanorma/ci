@@ -190,6 +190,10 @@ RUBY
       for f in "$GEMS_DIR"/*.gem; do
         read -r n v <<< "$(gem_file_identity "$f")"
         gem unpack "$f" --target vendor > /dev/null
+        # gem unpack does not emit the .gemspec (it is generated at
+        # install time); serialize the built spec for bundler's path
+        # source --ruby form is fully literal, no git needed
+        gem specification "$f" --ruby > "vendor/$n-$v/$n.gemspec"
         printf 'gem "%s", path: "vendor/%s-%s"\n' "$n" "$n" "$v"
       done
     } > Gemfile
@@ -204,10 +208,19 @@ RUBY
     # assert the flavor registry loads. Partial manifest: require every
     # built gem instead.
     if compgen -G "$GEMS_DIR/metanorma-cli-*.gem" > /dev/null; then
+      # Require every built gem explicitly: the CLI's SUPPORTED_GEMS
+      # list deliberately excludes flavors whose *released* gems predate
+      # the current engine (m3aawg, un) — the built set here is exactly
+      # what a coordinated cut would ship, so load it whole and then
+      # assert the registry (metanorma-core) saw the flavors.
       smoke='require "metanorma/cli"
-        regs = Metanorma::Registry.instance.registers
+        require "rubygems/package"
+        names = ARGV.map { |f| Gem::Package.new(f).spec.name }
+        names.each { |n| require n }
+        regs = Metanorma::Registry.instance.processors
         puts "flavors: #{regs.keys.sort.join(" ")}"
         abort "no flavors registered" if regs.empty?'
+      set -- "$GEMS_DIR"/*.gem
     else
       smoke='require "rubygems/package"
         names = ARGV.map { |f| Gem::Package.new(f).spec.name }
