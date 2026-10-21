@@ -233,8 +233,23 @@ jobs:
 
       - run: gem install gem-release
 
-      - name: Remove Gemfile.lock before bump
-        run: rm -f Gemfile.lock
+      # Repos that COMMIT their Gemfile.lock keep it: deleting it forces a
+      # from-scratch resolve, and the regenerated lockfile then differs from
+      # the committed one (any dependency published since the last lockfile
+      # write, a new bundler's lockfile format, or a resolve made under a
+      # different Ruby) — and the dirty tree aborts `gem bump` ("Uncommitted
+      # changes found"). For tracked lockfiles the lockfile IS the release
+      # resolution — install it as-is; staleness is that repo's own guard's
+      # job. Untracked lockfiles (the common case) keep the fresh-resolve
+      # behavior that ci#314 introduced.
+      - name: Remove Gemfile.lock before bump (only if untracked)
+        run: |
+          if git ls-files --error-unmatch Gemfile.lock >/dev/null 2>&1; then
+            echo "Gemfile.lock is tracked — installing as-is (no re-resolve)."
+          else
+            echo "Gemfile.lock is untracked — removing for a fresh resolve."
+            rm -f Gemfile.lock
+          fi
 
       - name: Fresh bundle install (excluding test group)
         run: |
