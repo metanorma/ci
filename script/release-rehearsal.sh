@@ -179,16 +179,22 @@ RUBY
 
   # Bundler, pinned to the exact built versions: the chain must resolve
   # and load together, with everything non-chain pulled from rubygems.
+  # Chain gems enter as path gems (unpacked artifacts): when a built
+  # version equals its released number, bundler reads dependency
+  # metadata from the remote index, not the local install — only a path
+  # source guarantees the built gemspec is the one under test.
   (
     cd "$WORKDIR/chain"
     {
       echo 'source "https://rubygems.org"'
       for f in "$GEMS_DIR"/*.gem; do
         read -r n v <<< "$(gem_file_identity "$f")"
-        printf 'gem "%s", "%s"\n' "$n" "$v"
+        gem unpack "$f" --target vendor > /dev/null
+        printf 'gem "%s", path: "vendor/%s-%s"\n' "$n" "$n" "$v"
       done
     } > Gemfile
-    bundle config set --local path .bundle
+    # No --path: the bundle must see GEM_HOME, so the exact-pinned chain
+    # gems resolve from the scratch install instead of rubygems.org.
     if ! bundle install --jobs 4 --retry 3 > "$LOG_DIR/chain-bundle.log" 2>&1; then
       echo "chain bundle resolve failed (see $LOG_DIR/chain-bundle.log)"
       tail -30 "$LOG_DIR/chain-bundle.log"
