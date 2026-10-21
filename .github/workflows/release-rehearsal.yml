@@ -50,13 +50,19 @@ jobs:
     timeout-minutes: 240
     steps:
       - uses: actions/checkout@v6
+      # The rehearsal script lives in this repository while the reusable
+      # runs against the caller's checkout; bring the script along.
+      - uses: actions/checkout@v6
+        with:
+          repository: metanorma/ci
+          path: ci
       - uses: ruby/setup-ruby@v1
         with:
           ruby-version: ${{ inputs.ruby_version || '3.3' }}
           bundler-cache: false
       - name: Rehearse the full chain
         run: |
-          bash script/release-rehearsal.sh \
+          bash ci/script/release-rehearsal.sh \
             "${{ inputs.manifest || '.github/workflows/metanorma-chain.json' }}" \
             rehearsal
       - name: Summary
