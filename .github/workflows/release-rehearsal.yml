@@ -1,0 +1,141 @@
+name: release-rehearsal
+
+# Prove that the whole metanorma gem chain can be released — without
+# releasing anything. One build job per chain gem mirrors the preflight
+# of rubygems-release.yml (fresh bundle resolve, `bundle exec rake`
+# resolves, `gem build`, version-vs-rubygems awareness); the chain job
+# then installs every built gem into an isolated GEM_HOME, checks all
+# chain-internal runtime constraints against the built set, and loads
+# metanorma-cli + the flavor registry from a bundle pinned to the exact
+# built versions.
+#
+# Run it before dispatching releases (the same manifest order you intend
+# to cut), locally via script/release-rehearsal.sh or here.
+# See docs/release-rehearsal.md.
+
+on:
+  workflow_dispatch:
+    inputs:
+      ref:
+        description: Ref to rehearse in every chain repo (per-entry overrides in the manifest)
+        required: false
+        default: main
+      manifest:
+        description: Manifest path in this repo
+        required: false
+        default: .github/workflows/metanorma-chain.json
+      ruby_version:
+        description: Ruby version (match rubygems-release.yml)
+        required: false
+        default: '3.3'
+  workflow_call:
+    inputs:
+      ref:
+        type: string
+        default: main
+      manifest:
+        type: string
+        default: .github/workflows/metanorma-chain.json
+      ruby_version:
+        type: string
+        default: '3.3'
+
+permissions:
+  contents: read
+
+concurrency:
+  group: release-rehearsal-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  build-matrix:
+    runs-on: ubuntu-latest
+    outputs:
+      matrix: ${{ steps.matrix.outputs.matrix }}
+    steps:
+      - uses: actions/checkout@v6
+      - id: matrix
+        run: |
+          manifest=${{ inputs.manifest || '.github/workflows/metanorma-chain.json' }}
+          echo "matrix=$(jq -c '{include: [.[] | . + {name: (.repo | split("/")[1])}]}' "$manifest")" >> "$GITHUB_OUTPUT"
+
+  gem:
+    name: build ${{ matrix.name }}
+    needs: build-matrix
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      max-parallel: 10
+      matrix: ${{ fromJson(needs.build-matrix.outputs.matrix) }}
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          path: ci
+      - uses: actions/checkout@v6
+        with:
+          repository: ${{ matrix.repo }}
+          ref: ${{ matrix.ref }}
+          path: gem
+      - uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: ${{ inputs.ruby_version || '3.3' }}
+          bundler-cache: false
+      - name: Rehearse the release preflight
+        env:
+          REHEARSAL_DIR: ${{ github.workspace }}/gem
+          REHEARSAL_REF: ${{ matrix.ref }}
+        run: |
+          printf '[{"repo": "%s", "ref": "%s"}]\n' \
+            "${{ matrix.repo }}" "${{ matrix.ref }}" > single.json
+          bash ci/script/release-rehearsal.sh single.json rehearsal
+      - name: Upload built gems
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: gem-${{ matrix.name }}
+          path: rehearsal/gems/*.gem
+          if-no-files-found: ignore
+      - name: Upload rehearsal logs
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: log-${{ matrix.name }}
+          path: rehearsal/logs
+          if-no-files-found: ignore
+
+  chain:
+    name: chain install + smoke
+    needs: [build-matrix, gem]
+    if: always() && needs.gem.result == 'success'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          path: ci
+      - uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: ${{ inputs.ruby_version || '3.3' }}
+          bundler-cache: false
+      - uses: actions/download-artifact@v4
+        with:
+          pattern: gem-*
+          merge-multiple: true
+          path: rehearsal/gems
+      - name: Chain install, constraint check, smoke
+        run: bash ci/script/release-rehearsal.sh --chain-only ci/.github/workflows/metanorma-chain.json rehearsal
+      - name: Summary
+        if: always()
+        run: |
+          {
+            echo "## release-rehearsal summary"
+            echo '```'
+            cat rehearsal/results.tsv 2>/dev/null || true
+            echo '```'
+          } >> "$GITHUB_STEP_SUMMARY"
+      - name: Upload chain logs
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: log-chain
+          path: rehearsal/logs
+          if-no-files-found: ignore
