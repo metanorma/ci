@@ -1,0 +1,126 @@
+[
+  {
+    "repo": "metanorma/metanorma-utils",
+    "ref": "main"
+  },
+  {
+    "repo": "metanorma/mn-requirements",
+    "ref": "main"
+  },
+  {
+    "repo": "metanorma/basicdoc-models",
+    "ref": "main"
+  },
+  {
+    "repo": "metanorma/metanorma-document",
+    "ref": "main"
+  },
+  {
+    "repo": "metanorma/metanorma-core",
+    "ref": "main"
+  },
+  {
+    "repo": "metanorma/isodoc-i18n",
+    "ref": "main"
+  },
+  {
+    "repo": "metanorma/isodoc",
+    "ref": "main"
+  },
+  {
+    "repo": "metanorma/metanorma-standoc",
+    "ref": "main"
+  },
+  {
+    "repo": "metanorma/metanorma-generic",
+    "ref": "main"
+  },
+  {
+    "repo": "metanorma/metanorma-iso",
+    "ref": "main"
+  },
+  {
+    "repo": "metanorma/metanorma-ietf",
+    "ref": "main"
+  },
+  {
+    "repo": "metanorma/metanorma-itu",
+    "ref": "main"
+  },
+  {
+    "repo": "metanorma/metanorma-ogc",
+    "ref": "main"
+  },
+  {
+    "repo": "metanorma/metanorma-bipm",
+    "ref": "main"
+  },
+  {
+    "repo": "metanorma/metanorma-cc",
+    "ref": "main"
+  },
+  {
+    "repo": "metanorma/metanorma-iec",
+    "ref": "main"
+  },
+  {
+    "repo": "metanorma/metanorma-ribose",
+    "ref": "main"
+  },
+  {
+    "repo": "metanorma/metanorma-iho",
+    "ref": "main"
+  },
+  {
+    "repo": "metanorma/metanorma-ieee",
+    "ref": "main"
+  },
+  {
+    "repo": "metanorma/metanorma-jis",
+    "ref": "main"
+  },
+  {
+    "repo": "metanorma/metanorma-plateau",
+    "ref": "main"
+  },
+  {
+    "repo": "metanorma/metanorma-m3aawg",
+    "ref": "main"
+  },
+  {
+    "repo": "metanorma/metanorma-un",
+    "ref": "main"
+  },
+  {
+    "repo": "metanorma/metanorma-gb",
+    "ref": "main"
+  },
+  {
+    "repo": "metanorma/metanorma-csa",
+    "ref": "main"
+  },
+  {
+    "repo": "metanorma/metanorma-mirror",
+    "ref": "main"
+  },
+  {
+    "repo": "metanorma/metanorma-taste",
+    "ref": "main"
+  },
+  {
+    "repo": "metanorma/metanorma-plugin-lutaml",
+    "ref": "main"
+  },
+  {
+    "repo": "metanorma/metanorma-plugin-datastruct",
+    "ref": "main"
+  },
+  {
+    "repo": "metanorma/metanorma-cli",
+    "ref": "main"
+  },
+  {
+    "repo": "metanorma/metanorma",
+    "ref": "main"
+  }
+]
