@@ -49,6 +49,10 @@ if [ -z "$MANIFEST" ] && [ "$CHAIN_ONLY" = 0 ]; then usage 1; fi
 
 REF=${REHEARSAL_REF:-main}
 WORKDIR=${WORKDIR:-$PWD/.release-rehearsal}
+# absolutize: the per-gem subshell cd's into each checkout, so a
+# relative WORKDIR would resolve identity/log paths there and fail
+mkdir -p "$WORKDIR"
+WORKDIR=$(cd "$WORKDIR" && pwd)
 GEMS_DIR=$WORKDIR/gems
 SRC_DIR=$WORKDIR/src
 LOG_DIR=$WORKDIR/logs
