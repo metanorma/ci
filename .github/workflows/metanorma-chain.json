@@ -8,10 +8,6 @@
     "ref": "main"
   },
   {
-    "repo": "metanorma/basicdoc-models",
-    "ref": "main"
-  },
-  {
     "repo": "metanorma/metanorma-document",
     "ref": "main"
   },
