@@ -270,6 +270,11 @@ jobs:
 
     - name: Pre-release stack pins (standoc relaton-cli-3, ogc relaton-3 shadow fix, suma svg_conform-0.2)
       run: |
+        # Sample Gemfiles still carry exact engine pins from earlier engine
+        # eras (leptris = 1.9.31x, moxml = 0.5.13x) that deadlock or
+        # desync fresh resolves against the current vectory/leptris line;
+        # the smoke bundle floats the engine line.
+        sed -i.bak -e '/^gem "leptris", "[0-9]/d' -e '/^gem "moxml", "[0-9]/d' Gemfile && rm -f Gemfile.bak
         grep -qE '^[[:space:]]*gem "metanorma-standoc"' Gemfile || echo 'gem "metanorma-standoc", github: "metanorma/metanorma-standoc", branch: "main"' >> Gemfile
         grep -qE '^[[:space:]]*gem "metanorma-ogc"' Gemfile || echo 'gem "metanorma-ogc", github: "metanorma/metanorma-ogc", branch: "main"' >> Gemfile
         grep -qE '^[[:space:]]*gem "suma"' Gemfile || echo 'gem "suma", github: "metanorma/suma", branch: "main"' >> Gemfile
