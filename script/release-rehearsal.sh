@@ -216,7 +216,14 @@ RUBY
       smoke='require "metanorma/cli"
         require "rubygems/package"
         names = ARGV.map { |f| Gem::Package.new(f).spec.name }
-        names.each { |n| require n }
+        names.each do |n|
+          begin
+            require n
+          rescue LoadError
+            # the post-flavor-refactor entry convention: metanorma/document
+            require n.tr("-", "/")
+          end
+        end
         regs = Metanorma::Registry.instance.processors
         puts "flavors: #{regs.keys.sort.join(" ")}"
         abort "no flavors registered" if regs.empty?'
