@@ -343,24 +343,37 @@ jobs:
           gem build *.gemspec
           mkdir -p pkg
           mv *.gem pkg/
+          # pkg/ may hold committed stray .gem files (e.g. metanorma-gb ships
+          # historical asciidoctor-gb gems there); `gem push pkg/*.gem` hands
+          # the whole glob to one invocation and dies on "Too many gem names".
+          # Push one file per invocation.
           set +e
-          push_out=$(gem push pkg/*.gem 2>&1)
-          rc=$?
-          set -e
-          echo "$push_out"
-          if [ "$rc" -ne 0 ]; then
-            if printf '%s' "$push_out" | grep -qiE 'already been pushed|Repushing of gem versions is not allowed'; then
-              echo "::notice title=Idempotent publish::Version already on rubygems.org; treating as success."
-              echo "SHOULD_PUBLISH=true" >> "$GITHUB_ENV"
-              exit 0
+          push_rc=0
+          for f in pkg/*.gem; do
+            push_out=$(gem push "$f" 2>&1)
+            rc=$?
+            echo "$push_out"
+            if [ "$rc" -ne 0 ]; then
+              if printf '%s' "$push_out" | grep -qiE 'already been pushed|Repushing of gem versions is not allowed'; then
+                echo "::notice title=Idempotent publish::$f already on rubygems.org; treating as success."
+                continue
+              fi
+              push_rc="$rc"
+              break
             fi
-            exit "$rc"
+          done
+          set -e
+          if [ "$push_rc" -eq 0 ]; then
+            echo "SHOULD_PUBLISH=true" >> "$GITHUB_ENV"
           fi
-          echo "SHOULD_PUBLISH=true" >> "$GITHUB_ENV"
+          exit "$push_rc"
 
       - if: env.USE_OIDC == 'true' && env.skip_push != 'true'
         name: Wait for release to propagate
-        run: gem exec rubygems-await pkg/*.gem
+        run: |
+          for f in pkg/*.gem; do
+            gem exec rubygems-await "$f"
+          done
 
       # Multi-gem repos (e.g. relaton/relaton ships relaton + relaton-cli):
       # a custom release_command names the secondary push steps, but it only
