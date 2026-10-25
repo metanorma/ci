@@ -290,7 +290,22 @@ jobs:
           # from the gemspec instead.
           GEMSPEC=$(ls *.gemspec | head -1)
           VERSION_FILE=$(ruby -Ilib -e "spec = Gem::Specification.load(ARGV[0]); f = spec.files.grep(%r{(^|/)version\.rb\z}).find { |file| File.read(file) =~ /^\s*VERSION\s*=/ }; abort 'version file not found in gemspec' unless f; puts f" "$GEMSPEC")
-          gem bump --file "$VERSION_FILE" --version "$NEXT_VERSION" --tag --push
+          # No --tag/--push: the tag is ensured idempotently after publish
+          # (ci#403), and the bump commit must carry the refreshed lockfile —
+          # gem bump edits version.rb only, so a pushed bump commit whose
+          # lockfile still records the old self-version leaves main failing
+          # frozen installs ("The gemspecs for path gems changed") and
+          # breaks dependent harnesses until a follow-up refresh
+          # (metanorma/ci#447, lutaml/lutaml-xsd#164).
+          gem bump --file "$VERSION_FILE" --version "$NEXT_VERSION"
+          if git ls-files --error-unmatch Gemfile.lock >/dev/null 2>&1; then
+            bundle lock
+            if ! git diff --quiet -- Gemfile.lock; then
+              git add Gemfile.lock
+              git commit --amend --no-edit
+            fi
+          fi
+          git push origin "HEAD:${GITHUB_REF_NAME}"
 
       - name: Resolve gem identity
         id: gem-identity
