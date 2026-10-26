@@ -34,9 +34,11 @@ on:
           the gemspec file list needs — e.g. isodoc runs
           `bundle exec rake build_scss` so released gems ship compiled
           stylesheets instead of the runtime sassc-embedded require.
+          Defaults to `true` (the shell no-op): an unset expansion inside an
+          if-guard renders an empty if-body, a bash syntax error.
         required: false
         type: string
-        default: ""
+        default: "true"
       bundler_cache:
         description: |
           DEPRECATED — IGNORED as of 2026-06-28 (see metanorma/ci#314).
