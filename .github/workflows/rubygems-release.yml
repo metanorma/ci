@@ -379,8 +379,14 @@ jobs:
       - if: env.USE_OIDC == 'true' && env.skip_push != 'true'
         name: Build and push gem (OIDC)
         run: |
-          if [ -n "${{ inputs.pre_build_command }}" ]; then
-            ${{ inputs.pre_build_command }}
+          # Quoted-variable + eval: with the input at its default (""),
+          # the inline expression form rendered an empty then-list
+          # (`if [ -n "" ]` + blank + fi) — a bash grammar error that
+          # failed every default-input release before gem build
+          # (metanorma/ci#452, lutaml-model 0.8.132 run 40250688531).
+          pre_build='${{ inputs.pre_build_command }}'
+          if [ -n "$pre_build" ]; then
+            eval "$pre_build"
           fi
           gem build *.gemspec
           mkdir -p pkg
