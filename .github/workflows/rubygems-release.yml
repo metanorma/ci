@@ -27,6 +27,16 @@ on:
         required: false
         type: string
         default: bundle exec rake release
+      pre_build_command:
+        description: |
+          Command to run in the packaging job BEFORE the gem is built (both
+          the OIDC and the API-key paths). Use it for build-time generation
+          the gemspec file list needs — e.g. isodoc runs
+          `bundle exec rake build_scss` so released gems ship compiled
+          stylesheets instead of the runtime sassc-embedded require.
+        required: false
+        type: string
+        default: ""
       bundler_cache:
         description: |
           DEPRECATED — IGNORED as of 2026-06-28 (see metanorma/ci#314).
@@ -367,6 +377,9 @@ jobs:
       - if: env.USE_OIDC == 'true' && env.skip_push != 'true'
         name: Build and push gem (OIDC)
         run: |
+          if [ -n "${{ inputs.pre_build_command }}" ]; then
+            ${{ inputs.pre_build_command }}
+          fi
           gem build *.gemspec
           mkdir -p pkg
           mv *.gem pkg/
