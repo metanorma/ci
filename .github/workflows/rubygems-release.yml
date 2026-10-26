@@ -377,8 +377,9 @@ jobs:
       - if: env.USE_OIDC == 'true' && env.skip_push != 'true'
         name: Build and push gem (OIDC)
         run: |
-          if [ -n "${{ inputs.pre_build_command }}" ]; then
-            ${{ inputs.pre_build_command }}
+          pre_build="${{ inputs.pre_build_command }}"
+          if [ -n "$pre_build" ]; then
+            eval "$pre_build"
           fi
           gem build *.gemspec
           mkdir -p pkg
