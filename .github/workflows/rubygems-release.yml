@@ -5,7 +5,9 @@ on:
     inputs:
       next_version:
         description: |
-          Next release version. Possible values: x.y.z, major, minor, patch (or pre|rc|etc).
+          Next release version. Possible values: x.y.z, major, minor, patch, prerelease (or pre|rc|etc).
+          'prerelease' (alias 'pre') computes the next prerelease from the current version file:
+          X.Y.Z becomes X.Y.(Z+1).pre.alpha.1, and X.Y.Z.pre.alpha.N becomes X.Y.Z.pre.alpha.(N+1).
           Pass 'skip' to skip version bump and release the current gemspec version.
         required: true
         type: string
@@ -290,10 +292,34 @@ jobs:
           fi
           echo "✓ bundle exec rake resolves ($(bundle exec rake --version | head -1))"
 
+      - name: Resolve prerelease version
+        id: prerelease
+        if: github.event_name == 'workflow_dispatch' && (inputs.next_version == 'prerelease' || inputs.next_version == 'pre')
+        run: |
+          # Same version-file resolution the Bump version step uses: gemspec
+          # files, not gem-release's lib/ path probing.
+          GEMSPEC=$(ls *.gemspec | head -1)
+          VERSION_FILE=$(ruby -Ilib -e "spec = Gem::Specification.load(ARGV[0]); f = spec.files.grep(%r{(^|/)version\.rb\z}).find { |file| File.read(file) =~ /^\s*VERSION\s*=/ }; abort 'version file not found in gemspec' unless f; puts f" "$GEMSPEC")
+          NEXT=$(ruby - "$VERSION_FILE" <<'RB'
+          cur = File.read(ARGV[0])[/^\s*VERSION\s*=\s*["']([^"']+)["']/, 1]
+          abort "cannot read VERSION from #{ARGV[0]}" unless cur
+          warn "current version: #{cur}"
+          if (m = cur.match(/\A(\d+\.\d+\.\d+)\.pre\.alpha\.(\d+)\z/))
+            puts "#{m[1]}.pre.alpha.#{m[2].to_i + 1}"
+          else
+            segs = cur.split(".")
+            abort "unrecognized stable version format: #{cur}" unless segs.size == 3 && segs.all? { |s| s.match?(/\A\d+\z/) }
+            puts "#{segs[0]}.#{segs[1]}.#{segs[2].to_i + 1}.pre.alpha.1"
+          end
+          RB
+          )
+          echo "version=${NEXT}" >> "$GITHUB_OUTPUT"
+          echo "Next prerelease: ${NEXT}"
+
       - name: Bump version
         if: github.event_name == 'workflow_dispatch' && inputs.next_version != 'skip'
         env:
-          NEXT_VERSION: ${{ inputs.next_version }}
+          NEXT_VERSION: ${{ steps.prerelease.outputs.version || inputs.next_version }}
         run: |
           # gem-release's auto-detection only probes lib/<name-with-dashes-
           # as-slashes>/version.rb and lib/<name>/version.rb, so gems whose
