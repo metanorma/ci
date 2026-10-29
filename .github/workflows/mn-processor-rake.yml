@@ -194,6 +194,9 @@ jobs:
         bundle remove metanorma-${{ needs.build-matrices.outputs.flavor }} --skip-install || true
         bundle add metanorma-${{ needs.build-matrices.outputs.flavor }} --path .. --skip-install
         bundle add sassc --skip-install
+        # git gem 6.0.0 removed Repository#branches (fontist repo setup,
+        # fontist#493 pending) — hold the samples bundle on the 5.x line
+        bundle add git --version '~> 5.7' --skip-install
         bundle install
       shell: bash
       working-directory: template
@@ -318,6 +321,9 @@ jobs:
         bundle remove metanorma-${{ needs.build-matrices.outputs.flavor }} --skip-install || true
         bundle add metanorma-${{ needs.build-matrices.outputs.flavor }} --path .. --skip-install
         bundle add sassc --skip-install
+        # git gem 6.0.0 removed Repository#branches (fontist repo setup,
+        # fontist#493 pending) — hold the samples bundle on the 5.x line
+        bundle add git --version '~> 5.7' --skip-install
         cat Gemfile
         bundle install
       shell: bash

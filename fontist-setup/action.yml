@@ -40,6 +40,11 @@ runs:
 
   - if: ${{ steps.check.outputs.fontist-installed == 'false' || inputs.force-install == 'true' }}
     run: |
+      # git gem 6.0.0 removed Repository#branches, which fontist's repo
+      # setup still uses (fontist#493 ports it; pending release). Install
+      # git 5.7.1 first so fontist's `git > 1.0` resolves against it
+      # instead of pulling 6.x.
+      gem install git -v 5.7.1
       if gem install fontist; then
         echo "Fontist installed successfully"
       elif [[ "${{ runner.os }}" != "Windows" ]]; then
