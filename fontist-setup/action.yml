@@ -44,7 +44,7 @@ runs:
       # setup still uses (fontist#493 ports it; pending release). Install
       # git 5.7.1 first so fontist's `git > 1.0` resolves against it
       # instead of pulling 6.x.
-      gem install git -v 5.7.1
+      gem install git -v 5.7.1 || sudo gem install git -v 5.7.1 || true
       if gem install fontist; then
         echo "Fontist installed successfully"
       elif [[ "${{ runner.os }}" != "Windows" ]]; then
