@@ -279,6 +279,10 @@ jobs:
         # desync fresh resolves against the current vectory/leptris line;
         # the smoke bundle floats the engine line.
         sed -i.bak -e '/^gem "leptris", "[0-9]/d' -e '/^gem "moxml", "[0-9]/d' Gemfile && rm -f Gemfile.bak
+        # The appends below must not fuse onto a last line that lacks a
+        # trailing newline (a Gemfile without one parses as a syntax error
+        # after the first append).
+        tail -c 1 Gemfile | od -An -c | grep -q '\\n' || echo >> Gemfile
         grep -qE '^[[:space:]]*gem "metanorma-standoc"' Gemfile || echo 'gem "metanorma-standoc", github: "metanorma/metanorma-standoc", branch: "main"' >> Gemfile
         grep -qE '^[[:space:]]*gem "metanorma-ogc"' Gemfile || echo 'gem "metanorma-ogc", github: "metanorma/metanorma-ogc", branch: "main"' >> Gemfile
         grep -qE '^[[:space:]]*gem "suma"' Gemfile || echo 'gem "suma", github: "metanorma/suma", branch: "main"' >> Gemfile
