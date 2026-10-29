@@ -186,10 +186,10 @@ jobs:
         grep -qE '^[[:space:]]*gem "isodoc"' Gemfile || echo 'gem "isodoc", github: "metanorma/isodoc", branch: "main"' >> Gemfile
         grep -qE '^[[:space:]]*gem "metanorma-document"' Gemfile || echo 'gem "metanorma-document", github: "metanorma/metanorma-document", branch: "main"' >> Gemfile
         grep -qE '^[[:space:]]*gem "metanorma-core"' Gemfile || echo 'gem "metanorma-core", github: "metanorma/metanorma-core", branch: "main"' >> Gemfile
-        grep -qE '^[[:space:]]*gem "relaton"' Gemfile || echo 'gem "relaton", "~> 3.0.0.pre.alpha"' >> Gemfile
-        grep -qE '^[[:space:]]*gem "relaton-render"' Gemfile || echo 'gem "relaton-render", "~> 3.0.0.pre.alpha"' >> Gemfile
-        grep -qE '^[[:space:]]*gem "relaton-cli"' Gemfile || echo 'gem "relaton-cli", "~> 3.0.0.pre.alpha"' >> Gemfile
-        grep -qE '^[[:space:]]*gem "pubid"' Gemfile || echo 'gem "pubid", "~> 2.0.0.pre.alpha"' >> Gemfile
+        grep -qE '^[[:space:]]*gem "relaton"' Gemfile || echo 'gem "relaton", "~> 3.0"' >> Gemfile
+        grep -qE '^[[:space:]]*gem "relaton-render"' Gemfile || echo 'gem "relaton-render", "~> 3.0"' >> Gemfile
+        grep -qE '^[[:space:]]*gem "relaton-cli"' Gemfile || echo 'gem "relaton-cli", "~> 3.0"' >> Gemfile
+        grep -qE '^[[:space:]]*gem "pubid"' Gemfile || echo 'gem "pubid", "~> 2.0"' >> Gemfile
         grep -qE '^[[:space:]]*gem "sassc-embedded"' Gemfile || echo 'gem "sassc-embedded", "~> 1.80"' >> Gemfile
         bundle remove metanorma-${{ needs.build-matrices.outputs.flavor }} --skip-install || true
         bundle add metanorma-${{ needs.build-matrices.outputs.flavor }} --path .. --skip-install
@@ -299,10 +299,10 @@ jobs:
         grep -qE '^[[:space:]]*gem "isodoc"' Gemfile || echo 'gem "isodoc", github: "metanorma/isodoc", branch: "main"' >> Gemfile
         grep -qE '^[[:space:]]*gem "metanorma-document"' Gemfile || echo 'gem "metanorma-document", github: "metanorma/metanorma-document", branch: "main"' >> Gemfile
         grep -qE '^[[:space:]]*gem "metanorma-core"' Gemfile || echo 'gem "metanorma-core", github: "metanorma/metanorma-core", branch: "main"' >> Gemfile
-        grep -qE '^[[:space:]]*gem "relaton"' Gemfile || echo 'gem "relaton", "~> 3.0.0.pre.alpha"' >> Gemfile
-        grep -qE '^[[:space:]]*gem "relaton-render"' Gemfile || echo 'gem "relaton-render", "~> 3.0.0.pre.alpha"' >> Gemfile
-        grep -qE '^[[:space:]]*gem "relaton-cli"' Gemfile || echo 'gem "relaton-cli", "~> 3.0.0.pre.alpha"' >> Gemfile
-        grep -qE '^[[:space:]]*gem "pubid"' Gemfile || echo 'gem "pubid", "~> 2.0.0.pre.alpha"' >> Gemfile
+        grep -qE '^[[:space:]]*gem "relaton"' Gemfile || echo 'gem "relaton", "~> 3.0"' >> Gemfile
+        grep -qE '^[[:space:]]*gem "relaton-render"' Gemfile || echo 'gem "relaton-render", "~> 3.0"' >> Gemfile
+        grep -qE '^[[:space:]]*gem "relaton-cli"' Gemfile || echo 'gem "relaton-cli", "~> 3.0"' >> Gemfile
+        grep -qE '^[[:space:]]*gem "pubid"' Gemfile || echo 'gem "pubid", "~> 2.0"' >> Gemfile
         grep -qE '^[[:space:]]*gem "sassc-embedded"' Gemfile || echo 'gem "sassc-embedded", "~> 1.80"' >> Gemfile
         rm -f Gemfile.lock
       shell: bash
