@@ -14,6 +14,15 @@ on:
       matrix_os:
         description: define the operating systems on which to execute jobs
         type: string
+      matrix_ruby:
+        description: >-
+          define the Ruby matrix on which to execute jobs, as a raw JSON
+          array substituted into the builder's jq program (e.g.
+          '[{"version":"4.0","rubygems":"latest","bundler":"default","experimental":false}']).
+          Empty keeps the default single-version slice of ruby-matrix.json.
+        type: string
+        required: false
+        default: ''
       before-setup-ruby:
         description: Command to execute before setting up Ruby
         type: string
@@ -63,6 +72,9 @@ jobs:
         echo "$(jq 'del(.ruby[1, 2])' ruby-matrix.json)" > ruby-matrix.json
         if [ -n "${{ inputs.matrix_os }}" ]; then
           echo "$(jq '.os = ${{inputs.matrix_os}}' ruby-matrix.json)" > ruby-matrix.json
+        fi
+        if [ -n "${{ inputs.matrix_ruby }}" ]; then
+          echo "$(jq '.ruby = ${{inputs.matrix_ruby}}' ruby-matrix.json)" > ruby-matrix.json
         fi
         echo "matrix=$(jq -s add ${{ inputs.repos-json-file }} ruby-matrix.json | tr '\n' ' ')" >> $GITHUB_OUTPUT
 
