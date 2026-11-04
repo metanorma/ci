@@ -24,7 +24,7 @@ runs:
         version = {
           "Darwin": None,
           "Windows": None,
-          "Ubuntu": "1:1.4*",
+          "Ubuntu": "*",  # ubuntu-latest moved to 26.04, whose inkscape carries no 1:1.4 epoch
           "Linux": "https://inkscape.org/gallery/item/53678/Inkscape-e7c3feb-x86_64.AppImage"
         }.get(platform_name, None)
 
