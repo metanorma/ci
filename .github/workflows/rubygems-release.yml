@@ -242,8 +242,13 @@ jobs:
         run: ${{ inputs.post_install }}
 
       - run: |
-          git config user.name github-actions
-          git config user.email github-actions@github.com
+          # The bare github-actions@github.com identity renders as
+          # "invalid-email-address" author on modern GitHub; the [bot]
+          # noreply form attributes release-bump commits to
+          # github-actions[bot] under the GITHUB_TOKEN (matches the
+          # lock-refresh block below).
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
 
       - run: gem install gem-release
 
