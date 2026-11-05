@@ -343,7 +343,18 @@ jobs:
           # frozen installs ("The gemspecs for path gems changed") and
           # breaks dependent harnesses until a follow-up refresh
           # (metanorma/ci#447, lutaml/lutaml-xsd#164).
+          #
+          # gem-release treats a gems/ directory as monorepo mode and bumps
+          # every gem in it, demanding a version file per shell gem — shells
+          # carry literal gemspec versions (relaton#462). Confine the bump to
+          # the root gem by hiding gems/ from gem-release's detection, then
+          # restore before the lock refresh so path gems still resolve.
+          if [ -d gems ]; then
+            mv gems .gems-release-stash
+            trap 'if [ -d .gems-release-stash ]; then mv .gems-release-stash gems; fi' EXIT
+          fi
           gem bump --file "$VERSION_FILE" --version "$NEXT_VERSION"
+          if [ -d .gems-release-stash ]; then mv .gems-release-stash gems; fi
           if git ls-files --error-unmatch Gemfile.lock >/dev/null 2>&1; then
             bundle lock
             if ! git diff --quiet -- Gemfile.lock; then
