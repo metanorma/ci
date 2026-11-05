@@ -363,6 +363,7 @@ jobs:
             bundle lock
             git add Gemfile.lock
           fi
+          git add "$VERSION_FILE"
           git commit -m "Bump version to ${NEXT_VERSION}"
           git push origin "HEAD:${GITHUB_REF_NAME}"
 
