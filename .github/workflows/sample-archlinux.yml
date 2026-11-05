@@ -1,0 +1,46 @@
+name: archlinux
+
+on:
+  workflow_call:
+
+permissions:
+  contents: read
+
+jobs:
+  test:
+    name: archlinux
+    runs-on: ubuntu-latest
+    container: docker://archlinux/archlinux:latest
+    concurrency:
+      group: '${{ github.workflow }}-archlinux-${{ github.head_ref || github.ref_name }}'
+      cancel-in-progress: true
+    steps:
+      - name: Update pacman repositories
+        run: pacman -Syu --noconfirm
+
+      - name: Install Metanorma dependencies via pacman
+        # ruby-bundler: metanorma-cli's lib/metanorma/flavor.rb does
+        # `require "bundler"` unconditionally at load time; Arch's ruby
+        # package no longer ships bundler (metanorma/ci#472).
+        # ruby-erb, ruby-rdoc, ruby-irb: Arch's ruby splits stdlib default
+        # gems into separate packages; fontist -> octokit -> require 'erb'
+        # fails without ruby-erb. rdoc + irb kept defensively (same shape
+        # recurs across stdlib requires).
+        run: pacman -Sy --noconfirm git ruby ruby-bundler ruby-erb ruby-rdoc ruby-irb jre-openjdk-headless gcc libffi libxml2 libxslt make fontconfig ttf-dejavu
+
+      - name: Install Metanorma
+        run: gem install metanorma-cli
+
+      - uses: actions/checkout@v6
+        with:
+          token: ${{ secrets.METANORMA_CI_PAT_TOKEN || github.token }}
+          submodules: true
+
+      - run: |
+          PATH="$PATH:$(ruby -e 'puts Gem.user_dir')/bin"
+          metanorma site generate --agree-to-terms
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: site
+          path: site
