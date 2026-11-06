@@ -323,10 +323,43 @@ jobs:
           echo "version=${NEXT}" >> "$GITHUB_OUTPUT"
           echo "Next prerelease: ${NEXT}"
 
+      - name: Resolve keyword version
+        id: keyword
+        if: github.event_name == 'workflow_dispatch' && (inputs.next_version == 'patch' || inputs.next_version == 'minor' || inputs.next_version == 'major')
+        env:
+          INPUT_KIND: ${{ inputs.next_version }}
+        run: |
+          # Restore the documented patch/minor/major keywords (ci#485):
+          # #477's direct version-file write dropped gem-release's keyword
+          # expansion, so the raw keyword reached the writer's x.y.z
+          # validation ("invalid version: \"patch\""). Expand against the
+          # highest x.y.z v-tag, skipping prerelease tags. Identical to the
+          # old gem-release behavior whenever the version file matches the
+          # latest tag — the state every keyword dispatch assumes.
+          TAG=""
+          for t in $(git tag --list 'v*' --sort=-v:refname | head -30); do
+            if [[ "${t#v}" =~ ^[0-9]+\.[0-9]+\.[0-9]+$ ]]; then TAG="$t"; break; fi
+          done
+          if [ -z "$TAG" ]; then
+            echo "::error::no x.y.z v-tag found to expand ${INPUT_KIND} against"
+            exit 1
+          fi
+          NEXT=$(ruby - "${TAG#v}" "${INPUT_KIND}" <<'RB'
+          major, minor, patch = ARGV[0].split(".").map(&:to_i)
+          puts case ARGV[1]
+               when "major" then "#{major + 1}.0.0"
+               when "minor" then "#{major}.#{minor + 1}.0"
+               else              "#{major}.#{minor}.#{patch + 1}"
+               end
+          RB
+          )
+          echo "version=${NEXT}" >> "$GITHUB_OUTPUT"
+          echo "Next version (${INPUT_KIND} from ${TAG}): ${NEXT}"
+
       - name: Bump version
         if: github.event_name == 'workflow_dispatch' && inputs.next_version != 'skip'
         env:
-          NEXT_VERSION: ${{ steps.prerelease.outputs.version || inputs.next_version }}
+          NEXT_VERSION: ${{ steps.prerelease.outputs.version || steps.keyword.outputs.version || inputs.next_version }}
         run: |
           # gem-release's auto-detection only probes lib/<name-with-dashes-
           # as-slashes>/version.rb and lib/<name>/version.rb, so gems whose
