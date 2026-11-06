@@ -47,6 +47,12 @@ runs:
       else
         echo "Failed to install fontist" && exit 1
       fi
+      # Runner images no longer put the gem user-install bin dir on PATH,
+      # so `gem install fontist` succeeds while the fontist binary stays
+      # unreachable ("fontist: command not found"). Export it for the
+      # caller's later steps. Harmless when the sudo fallback installed
+      # into the system bin (already on PATH).
+      echo "$(ruby -e 'puts Gem.user_dir')/bin" >> "$GITHUB_PATH"
     shell: bash
 
   - if: ${{ inputs.private-fonts-pat != '' }}
