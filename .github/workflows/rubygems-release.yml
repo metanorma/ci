@@ -343,6 +343,27 @@ jobs:
         env:
           NEXT_VERSION: ${{ steps.prerelease.outputs.version || steps.keyword.outputs.version || inputs.next_version }}
         run: |
+          # Refuse to bump BELOW the highest published version (metanorma/ci#488):
+          # a stale re-dispatch would otherwise push a downgrade commit to the
+          # default branch (relaton/relaton 2026-11-07: a 3.1.0 re-run moved main
+          # behind its released 3.1.1 and the idempotency guard skipped the
+          # publish, so nothing on the run flagged it). Prerelease versions sort
+          # below their final via Gem::Version, so an alpha/pre bump of an
+          # unreleased line still passes.
+          GEMSPEC=$(ls *.gemspec | head -1)
+          GEM_NAME=$(ruby -e "puts Gem::Specification.load(ARGV[0]).name" "$GEMSPEC")
+          ruby -e '
+            require "rubygems"
+            require "net/http"
+            require "json"
+            name = ARGV[0]
+            next_version = Gem::Version.new(ARGV[1])
+            uri = URI("https://rubygems.org/api/v1/versions/#{name}.json")
+            versions = JSON.parse(Net::HTTP.get(uri)).map { |v| Gem::Version.new(v["number"]) rescue nil }.compact
+            highest = versions.max
+            exit 0 unless highest
+            abort "refusing to bump #{name}: requested #{next_version} is below the highest published #{highest} - cancel this dispatch (metanorma/ci#488)" if next_version < highest
+          ' "$GEM_NAME" "$NEXT_VERSION"
           # gem-release's auto-detection only probes lib/<name-with-dashes-
           # as-slashes>/version.rb and lib/<name>/version.rb, so gems whose
           # module path underscores the name (relaton_bib, relaton_itu, ...)
