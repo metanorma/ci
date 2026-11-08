@@ -288,7 +288,52 @@ jobs:
           # files (relaton's lib/relaton/cli/version.rb sorts before the
           # root's) whose assignments don't drive the release version.
           GEMSPEC=$(ls *.gemspec | head -1)
-          VERSION_FILE=$(ruby -Ilib -e "spec = Gem::Specification.load(ARGV[0]); root = %r{\Alib/[^/]+/version\.rb\z}; f = spec.files.grep(root).find { |file| File.read(file) =~ /^\s*VERSION\s*=/ }; f ||= spec.files.grep(%r{(^|/)version\.rb\z}).find { |file| File.read(file) =~ /^\s*VERSION\s*=/ }; abort 'version file not found in gemspec' unless f; puts f" "$GEMSPEC")
+          VERSION_FILE=$(ruby -Ilib - "$GEMSPEC" <<'RB'
+          # Version-file resolution survives a hostile spec.files: the
+          # intermittent "version file not found in gemspec" (ci#429 — three
+          # repos in one day, the same commands green locally) showed
+          # Gem::Specification.load coming back without usable files in CI,
+          # including on a Dir.glob gemspec that cannot lack the file. So:
+          # gemspec files first (with the count logged), then git ls-files,
+          # then the lib/ glob; the root gem's version file wins, and every
+          # candidate must still carry a VERSION assignment. Failures abort
+          # with the working-tree state the logs need.
+          spec = Gem::Specification.load(ARGV[0])
+          # Candidate paths are gemspec-relative, so every VERSION check
+          # reads against the gemspec's own directory — not the process
+          # cwd (the resolution must not depend on where git ran).
+          gemspec_dir = File.dirname(File.expand_path(ARGV[0]))
+          has_version = lambda do |f|
+            (File.read(File.expand_path(f, gemspec_dir)) =~ /^\s*VERSION\s*=/) ? true : false
+          rescue StandardError
+            false
+          end
+          candidates = []
+          files = []
+          begin
+            files = spec.respond_to?(:files) ? Array(spec.files).map(&:to_s) : []
+            candidates += files.grep(%r{(^|/)version\.rb\z})
+            warn "gemspec files: #{files.length} entries; version candidates: #{candidates.uniq.length}"
+          rescue StandardError => e
+            warn "gemspec files evaluation failed: #{e.class}: #{e.message}"
+          end
+          if candidates.empty?
+            candidates += `git ls-files`.split("\n").grep(%r{(^|/)version\.rb\z})
+            warn "git ls-files candidates: #{candidates.length} (pwd=#{Dir.pwd}, head=#{`git rev-parse --short HEAD`.chomp})"
+          end
+          if candidates.empty?
+            candidates += Dir[File.join(gemspec_dir, "lib/*/version.rb")].map { |f| f.delete_prefix("#{gemspec_dir}/") }
+            warn "filesystem candidates: #{candidates.length}"
+          end
+          file = candidates.find { |f| f.match?(%r{\Alib/[^/]+/version\.rb\z}) && has_version.call(f) }
+          file ||= candidates.find { |f| has_version.call(f) }
+          unless file
+            abort "version file not found: pwd=#{Dir.pwd}, gemspec=#{ARGV[0]}, " \
+                  "gemspec-files=#{files.length}, candidates=#{candidates.inspect[0, 200]}"
+          end
+          puts file
+          RB
+          )
           NEXT=$(ruby - "$VERSION_FILE" <<'RB'
           cur = File.read(ARGV[0])[/^\s*VERSION\s*=\s*["']([^"']+)["']/, 1]
           abort "cannot read VERSION from #{ARGV[0]}" unless cur
@@ -373,7 +418,52 @@ jobs:
           # lib/relaton/cli/version.rb sorts before the root's) whose
           # assignments don't drive the release version.
           GEMSPEC=$(ls *.gemspec | head -1)
-          VERSION_FILE=$(ruby -Ilib -e "spec = Gem::Specification.load(ARGV[0]); root = %r{\Alib/[^/]+/version\.rb\z}; f = spec.files.grep(root).find { |file| File.read(file) =~ /^\s*VERSION\s*=/ }; f ||= spec.files.grep(%r{(^|/)version\.rb\z}).find { |file| File.read(file) =~ /^\s*VERSION\s*=/ }; abort 'version file not found in gemspec' unless f; puts f" "$GEMSPEC")
+          VERSION_FILE=$(ruby -Ilib - "$GEMSPEC" <<'RB'
+          # Version-file resolution survives a hostile spec.files: the
+          # intermittent "version file not found in gemspec" (ci#429 — three
+          # repos in one day, the same commands green locally) showed
+          # Gem::Specification.load coming back without usable files in CI,
+          # including on a Dir.glob gemspec that cannot lack the file. So:
+          # gemspec files first (with the count logged), then git ls-files,
+          # then the lib/ glob; the root gem's version file wins, and every
+          # candidate must still carry a VERSION assignment. Failures abort
+          # with the working-tree state the logs need.
+          spec = Gem::Specification.load(ARGV[0])
+          # Candidate paths are gemspec-relative, so every VERSION check
+          # reads against the gemspec's own directory — not the process
+          # cwd (the resolution must not depend on where git ran).
+          gemspec_dir = File.dirname(File.expand_path(ARGV[0]))
+          has_version = lambda do |f|
+            (File.read(File.expand_path(f, gemspec_dir)) =~ /^\s*VERSION\s*=/) ? true : false
+          rescue StandardError
+            false
+          end
+          candidates = []
+          files = []
+          begin
+            files = spec.respond_to?(:files) ? Array(spec.files).map(&:to_s) : []
+            candidates += files.grep(%r{(^|/)version\.rb\z})
+            warn "gemspec files: #{files.length} entries; version candidates: #{candidates.uniq.length}"
+          rescue StandardError => e
+            warn "gemspec files evaluation failed: #{e.class}: #{e.message}"
+          end
+          if candidates.empty?
+            candidates += `git ls-files`.split("\n").grep(%r{(^|/)version\.rb\z})
+            warn "git ls-files candidates: #{candidates.length} (pwd=#{Dir.pwd}, head=#{`git rev-parse --short HEAD`.chomp})"
+          end
+          if candidates.empty?
+            candidates += Dir[File.join(gemspec_dir, "lib/*/version.rb")].map { |f| f.delete_prefix("#{gemspec_dir}/") }
+            warn "filesystem candidates: #{candidates.length}"
+          end
+          file = candidates.find { |f| f.match?(%r{\Alib/[^/]+/version\.rb\z}) && has_version.call(f) }
+          file ||= candidates.find { |f| has_version.call(f) }
+          unless file
+            abort "version file not found: pwd=#{Dir.pwd}, gemspec=#{ARGV[0]}, " \
+                  "gemspec-files=#{files.length}, candidates=#{candidates.inspect[0, 200]}"
+          end
+          puts file
+          RB
+          )
           # No --tag/--push: the tag is ensured idempotently after publish
           # (ci#403). Gemfile.lock NEVER enters git history for gems — the
           # bump commit stages ONLY the version file; a repo's tracked lock
