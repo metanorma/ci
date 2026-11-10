@@ -478,13 +478,21 @@ jobs:
           # on every monogem that commits its shell gems
           # (metanorma/ci#474 — relaton/relaton stranded). The version
           # file is already resolved above; the write is the whole job.
-          ruby -e 'path = ARGV[0]; version = ARGV[1]; abort "invalid version: #{version.inspect}" unless version.match?(/\A\d+\.\d+\.\d+(\.[A-Za-z0-9.]+)?\z/); text = File.read(path); updated = text.sub(/^(\s*)(VERSION\s*=\s*)(["\x27])[^"\x27]*\3/) { $1 + $2 + $3 + version + $3 }; abort "no VERSION assignment in #{path}" if updated == text; File.write(path, updated)' "$VERSION_FILE" "$NEXT_VERSION"
-          # Stage the version file EXPLICITLY: with the lock deleted above
-          # the bump commit would otherwise be empty and exit 1 with
-          # "no changes added" (ci#480 — lutaml-xsd releases blocked).
-          git add "$VERSION_FILE"
-          git commit -m "Bump version to ${NEXT_VERSION}"
-          git push origin "HEAD:${GITHUB_REF_NAME}"
+          # ci#493: `updated == text` fires both when the regex misses AND
+          # when the file already carries NEXT_VERSION (re-dispatch of a
+          # released version). Only the first is fatal; the second skips
+          # the bump commit and continues to the idempotent publish path.
+          rm -f /tmp/bump-skipped
+          ruby -e 'path = ARGV[0]; version = ARGV[1]; abort "invalid version: #{version.inspect}" unless version.match?(/\A\d+\.\d+\.\d+(\.[A-Za-z0-9.]+)?\z/); text = File.read(path); updated = text.sub(/^(\s*)(VERSION\s*=\s*)(["\x27])[^"\x27]*\3/) { $1 + $2 + $3 + version + $3 }; if updated == text; abort "no VERSION assignment in #{path}" unless text.match?(/^\s*VERSION\s*=\s*(["\x27])#{Regexp.escape(version)}\1/); warn "version file already at #{version} - skipping the bump (idempotent re-release; next_version=skip re-publishes as-is)"; File.write("/tmp/bump-skipped", "1"); exit; end; File.write(path, updated)' "$VERSION_FILE" "$NEXT_VERSION"
+          if [ -f /tmp/bump-skipped ]; then
+            echo "::notice title=Idempotent bump::version already at ${NEXT_VERSION}; bump commit skipped, publish proceeds."
+          else
+            # Stage explicitly: with the lock deleted above the bump commit
+            # would otherwise be empty and exit 1 "no changes added" (ci#480).
+            git add "$VERSION_FILE"
+            git commit -m "Bump version to ${NEXT_VERSION}"
+            git push origin "HEAD:${GITHUB_REF_NAME}"
+          fi
 
       - name: Resolve gem identity
         id: gem-identity
