@@ -44,7 +44,9 @@ jobs:
     with:
       next_version: ${{ github.event.inputs.next_version }}
     secrets:
-      rubygems-api-key: ${{ secrets.METANORMA_CI_RUBYGEMS_API_KEY }}
+      # Trusted Publishing (OIDC) is the only publish path; the org API-key
+      # secret was deleted (metanorma/ci#373). Omitting rubygems-api-key is
+      # the TP default (metanorma/ci#416).
       pat_token: ${{ secrets.METANORMA_CI_PAT_TOKEN }}
 ```
 
