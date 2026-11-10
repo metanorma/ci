@@ -1,12 +1,6 @@
 {
   "ruby": [
     {
-      "version": "3.3",
-      "rubygems": "latest",
-      "bundler": "default",
-      "experimental": false
-    },
-    {
       "version": "3.4",
       "rubygems": "latest",
       "bundler": "default",
@@ -16,7 +10,7 @@
       "version": "4.0",
       "rubygems": "latest",
       "bundler": "default",
-      "experimental": true
+      "experimental": false
     }
   ],
   "os": [
