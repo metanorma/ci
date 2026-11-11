@@ -9,7 +9,7 @@ runs:
   steps:
     - shell: python
       run: |
-        import sys, os
+        import sys, os, subprocess, time
         sys.path.insert(0, os.path.join(os.environ['GITHUB_ACTION_PATH'], '..', '_shared'))
         from tool_runner import (
             get_platform_name,
@@ -37,17 +37,41 @@ runs:
             "\"{}\\inkscape\" --version".format(win_prefix),
           ])
         elif platform_name == "Ubuntu":
+          import time
           run_commands([
             "sudo install -d -m 0755 /etc/apt/keyrings",
           ])
-          run_commands_with_retry([
-            "curl -fsSL --retry 5 --retry-all-errors "
-              "'https://keyserver.ubuntu.com/pks/lookup"
+          # keyserver.ubuntu.com has had runner-wide DNS outages
+          # (2026-11-11: curl (6) "Could not resolve host" burned three
+          # retries on every ubuntu leg and fail-fast-cancelled the rest
+          # of the fleet's matrices). Walk the SKS mirrors in order and
+          # keep the first keyring that dearmors.
+          key_fetched = False
+          for keyserver in ("keyserver.ubuntu.com",
+                            "keys.openpgp.org",
+                            "keyring.debian.org"):
+            fetch = (
+              "curl -fsSL --retry 5 --retry-all-errors "
+              "'https://{0}/pks/lookup"
               "?op=get&search=0x56BDFFD2F1C96B3D1575E3B85C9A0B86CD2FCB38' "
               # gpg --batch needs no tty; the ubuntu-26 image denies
               # `sudo gpg` one ("cannot open '/dev/tty'"). --yes lets a
               # retry overwrite a stale/partial output file.
-              "| gpg --batch --yes --dearmor -o /tmp/inkscape-dev-stable.gpg",
+              "| gpg --batch --yes --dearmor -o /tmp/inkscape-dev-stable.gpg"
+            ).format(keyserver)
+            for attempt in range(1, 4):
+              print("> {0} (mirror {1}, attempt {2}/3)".format(
+                  fetch, keyserver, attempt))
+              sys.stdout.flush()
+              if subprocess.run(fetch, shell=True).returncode == 0:
+                key_fetched = True
+                break
+              time.sleep(15)
+            if key_fetched:
+              break
+          if not key_fetched:
+            sys.exit("No keyserver could serve the Inkscape signing key")
+          run_commands_with_retry([
             "sudo install -m 0644 /tmp/inkscape-dev-stable.gpg "
               "/etc/apt/keyrings/inkscape-dev-stable.gpg",
             ". /etc/os-release && echo "
