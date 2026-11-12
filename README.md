@@ -14,7 +14,6 @@ Shared GitHub Actions workflows and composite actions for building, testing, and
 | [`monorepo-rake.yml`](.github/workflows/monorepo-rake.yml) | Test matrix for monorepo gems |
 | [`mn-processor-rake.yml`](.github/workflows/mn-processor-rake.yml) | Rake for Metanorma processor repos |
 | [`graphviz-rake.yml`](.github/workflows/graphviz-rake.yml) | Rake with Graphviz pre-installed |
-| [`inkscape-rake.yml`](.github/workflows/inkscape-rake.yml) | Rake with Inkscape pre-installed |
 | [`libreoffice-rake.yml`](.github/workflows/libreoffice-rake.yml) | Rake with LibreOffice pre-installed |
 | [`xml2rfc-rake.yml`](.github/workflows/xml2rfc-rake.yml) | Rake with xml2rfc pre-installed |
 
@@ -40,14 +39,12 @@ Shared GitHub Actions workflows and composite actions for building, testing, and
 
 | Action | Purpose |
 |--------|---------|
-| [`tool-setup-action`](tool-setup-action/) | Install optional tools (inkscape, ghostscript, graphviz, etc.) |
+| [`tool-setup-action`](tool-setup-action/) | Install optional tools (graphviz, libreoffice, etc.) |
 | [`gem-idempotent-push-guard-action`](docs/gem-idempotent-push-guard.md) | Skip gem push if version already exists on rubygems.org |
 | [`gh-rubygems-setup-action`](gh-rubygems-setup-action/) | Configure private GitHub Packages for RubyGems |
 | [`gh-repo-status-action`](gh-repo-status-action/) | Check if a repository is public or private |
 | [`gh-pages-status-action`](gh-pages-status-action/) | Check GitHub Pages deployment status |
 | [`choco-cache-action`](choco-cache-action/) | Cache Chocolatey packages on Windows |
-| [`inkscape-setup-action`](inkscape-setup-action/) | Install Inkscape |
-| [`ghostscript-setup-action`](ghostscript-setup-action/) | Install Ghostscript |
 | [`graphviz-setup-action`](graphviz-setup-action/) | Install Graphviz |
 | [`imagemagick-setup-action`](imagemagick-setup-action/) | Install ImageMagick |
 | [`libreoffice-setup-action`](libreoffice-setup-action/) | Install LibreOffice |
@@ -166,3 +163,12 @@ jobs:
 | `generic-rake.yml` | Run test matrix |
 | `rubygems-release.yml` | Bump + tag + publish (atomic) |
 | `monorepo-rubygems-release.yml` | Same as rubygems-release.yml for monorepo gems |
+
+## Retired actions
+
+[`inkscape-setup-action`](https://github.com/metanorma/ci/tree/main/inkscape-setup-action)
+and [`ghostscript-setup-action`](https://github.com/metanorma/ci/tree/main/ghostscript-setup-action)
+(linked in git history) are **retired and unused** as of 2026-11-12: no
+workflow in the fleet requests them, and nothing in the metanorma Ruby
+stack invokes either tool. Their directories remain for reference; the
+last functional versions are in git history.
