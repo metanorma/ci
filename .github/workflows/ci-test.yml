@@ -48,9 +48,6 @@ jobs:
       - uses: ./graphviz-setup-action
       - run: dot -V
 
-      - uses: ./inkscape-setup-action
-      - run: inkscape --version
-
       - uses: ./libreoffice-setup-action
       - if: matrix.os != 'macos-latest'
         run: soffice --version
@@ -196,24 +193,6 @@ jobs:
       - uses: ./xml2rfc-setup-action
 
       - run: xml2rfc --version
-
-  test-ghostscript-action:
-    name: Test ghostscript-setup-action ${{ matrix.os }}
-    runs-on: ${{ matrix.os }}
-    strategy:
-      fail-fast: false
-      matrix:
-        os: [ubuntu-latest, windows-latest, macos-latest]
-    steps:
-      - uses: actions/checkout@v6
-
-      - uses: ./ghostscript-setup-action
-
-      - if: matrix.os != 'windows-latest'
-        run: gs --version
-
-      - if: matrix.os == 'windows-latest'
-        run: gswin64c.exe --version
 
   test-fontist-action:
     name: Test fontist-setup-action ${{ matrix.os }}
@@ -451,18 +430,6 @@ jobs:
       - run: dot -V
       - run: exiftool -ver
 
-  test-tool-setup-legacy-inkscape:
-    name: Test tool-setup-action legacy setup-inkscape flag
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v6
-
-      - uses: ./tool-setup-action
-        with:
-          setup-inkscape: true
-
-      - run: inkscape --version
-
   test-tool-setup-empty:
     name: Test tool-setup-action with empty setup-tools
     runs-on: ubuntu-latest
@@ -485,26 +452,6 @@ jobs:
 
       - run: dot -V
       - run: exiftool -ver
-
-  test-tool-setup-ghostscript-dynamic:
-    name: Test ghostscript dynamic version detection ${{ matrix.os }}
-    runs-on: ${{ matrix.os }}
-    strategy:
-      fail-fast: false
-      matrix:
-        os: [ ubuntu-latest, windows-latest, macos-latest ]
-    steps:
-      - uses: actions/checkout@v6
-
-      - uses: ./tool-setup-action
-        with:
-          setup-tools: 'ghostscript'
-
-      - if: matrix.os != 'windows-latest'
-        run: gs --version
-
-      - if: matrix.os == 'windows-latest'
-        run: gswin64c.exe --version
 
   test-shared-module:
     name: Test _shared/tool_runner.py module
