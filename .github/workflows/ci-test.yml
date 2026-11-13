@@ -91,12 +91,6 @@ jobs:
             echo 'gem "metanorma", "~>1"'
             echo 'gem "metanorma-nist", source: "https://rubygems.pkg.github.com/metanorma"'
             echo 'gem "metanorma-standoc", git: "https://github.com/metanorma/metanorma-standoc", branch: "main"'
-            # json 3.1.0's native extension fails extconf in this image
-            # ("checking for ruby_xfree_sized() in ruby.h... no" — apt
-            # ruby-dev headers predate the image's ruby 4.0.x, metanorma
-            # 2.5.14 drift pulled json 3.1.0 into the resolve; #478). Pin
-            # below 3.1.0 until the image toolchain is rebuilt.
-            echo 'gem "json", "< 3.1.0"'
           } > Gemfile
 
       # libffi-dev + pkg-config are needed for fiddle's native extension build.
