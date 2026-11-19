@@ -150,7 +150,12 @@ jobs:
       - run: bundle exec rake
 
   tests-passed:
-    if: ${{ inputs.cascade }}
+    # pull_request events cannot fire repository_dispatch with the
+    # PR-scoped GITHUB_TOKEN ("Resource not accessible by integration",
+    # ci#500 — kotoshu PRs #254/#258): the cascade is meaningful only
+    # on push/tag workflows, so skip it there instead of reding every
+    # PR's summary check while the real matrix is green.
+    if: ${{ inputs.cascade && github.event_name != 'pull_request' }}
     needs: rake
     runs-on: ubuntu-latest
     # No job-level `permissions:` here — deliberately. GitHub validates

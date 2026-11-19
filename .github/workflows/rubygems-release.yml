@@ -304,7 +304,12 @@ jobs:
           # cwd (the resolution must not depend on where git ran).
           gemspec_dir = File.dirname(File.expand_path(ARGV[0]))
           has_version = lambda do |f|
-            (File.read(File.expand_path(f, gemspec_dir)) =~ /^\s*VERSION\s*=/) ? true : false
+            # Literal quoted assignment only: delegating stubs like
+            # `VERSION = Metanorma::Iso::VERSION` (metanorma-iso
+            # sts/version.rb, ci#511) match a bare VERSION check and,
+            # sorting before the primary file, hijack the fallback
+            # selection and abort the bump.
+            (File.read(File.expand_path(f, gemspec_dir)) =~ /^\s*VERSION\s*=\s*["']/) ? true : false
           rescue StandardError
             false
           end
@@ -434,7 +439,12 @@ jobs:
           # cwd (the resolution must not depend on where git ran).
           gemspec_dir = File.dirname(File.expand_path(ARGV[0]))
           has_version = lambda do |f|
-            (File.read(File.expand_path(f, gemspec_dir)) =~ /^\s*VERSION\s*=/) ? true : false
+            # Literal quoted assignment only: delegating stubs like
+            # `VERSION = Metanorma::Iso::VERSION` (metanorma-iso
+            # sts/version.rb, ci#511) match a bare VERSION check and,
+            # sorting before the primary file, hijack the fallback
+            # selection and abort the bump.
+            (File.read(File.expand_path(f, gemspec_dir)) =~ /^\s*VERSION\s*=\s*["']/) ? true : false
           rescue StandardError
             false
           end
@@ -491,7 +501,25 @@ jobs:
             # would otherwise be empty and exit 1 "no changes added" (ci#480).
             git add "$VERSION_FILE"
             git commit -m "Bump version to ${NEXT_VERSION}"
-            git push origin "HEAD:${GITHUB_REF_NAME}"
+            # GH006 (protected branch: cla/ribose required check suddenly
+            # applied to direct PAT pushes, ci#510) must not abort the
+            # release — the gem publish + tag steps below are independent
+            # of main's bump commit, and refs/tags pushes pass protection
+            # even when refs/heads are rejected. The bumped commit survives
+            # locally: the "Ensure release tag exists" step tags it, and
+            # main's version file is backfilled by the next release's bump.
+            set +e
+            push_out=$(git push origin "HEAD:${GITHUB_REF_NAME}" 2>&1)
+            push_rc=$?
+            set -e
+            if [ "$push_rc" -ne 0 ]; then
+              if printf '%s' "$push_out" | grep -qi "GH006"; then
+                echo "::warning title=Bump push rejected by branch protection (GH006)::Release proceeds — tag + publish are unaffected. Backfill main's bump commit after lifting the cla/ribose required check or adding the release PAT to bypass_actors (ci#510). Local bumped commit: $(git rev-parse --short HEAD)"
+              else
+                echo "$push_out" >&2
+                exit "$push_rc"
+              fi
+            fi
           fi
 
       - name: Resolve gem identity
@@ -591,12 +619,15 @@ jobs:
           fi
           exit "$push_rc"
 
-      - if: env.USE_OIDC == 'true' && env.skip_push != 'true'
-        name: Wait for release to propagate
-        run: |
-          for f in pkg/*.gem; do
-            gem exec rubygems-await "$f"
-          done
+      # rubygems-await (compact-index wait) REMOVED per #509/#512: it reads
+      # the laggy compact-index pipeline and both timed out (metanorma-iso
+      # 3.5.22, metanorma-taste 1.1.11, metanorma-iho 1.4.6 — gems live on
+      # rubygems the whole window) and crashed on 0.5.4's
+      # CompactIndexClient::Cache#dependencies NoMethodError
+      # (plugin-lutaml 0.7.75/0.7.76) — each failure orphaned the tag.
+      # The API-polling "Verify gem published" step below is the
+      # authoritative post-push verification; rubygems-await 0.5.4 is the
+      # newest release (2024) so there is no upgrade path.
 
       # Multi-gem repos (e.g. relaton/relaton ships relaton + relaton-cli):
       # a custom release_command names the secondary push steps, but it only
@@ -665,7 +696,7 @@ jobs:
           if git ls-remote --tags origin "refs/tags/${TAG}" | grep -q "refs/tags/${TAG}$"; then
             echo "✓ Tag ${TAG} already exists on origin."
           else
-            echo "Tag ${TAG} missing on origin — creating annotated tag at ${GITHUB_SHA}."
+            echo "Tag ${TAG} missing on origin — creating annotated tag at local HEAD (the bumped commit; refs/tags pushes pass protection even when the refs/heads bump was GH006-rejected, ci#510)."
             git tag -a "${TAG}" -m "Release ${TAG}"
             git push origin "refs/tags/${TAG}"
           fi
