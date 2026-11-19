@@ -566,8 +566,44 @@ jobs:
             PRNUM=$(basename "$PR_URL")
             if ! gh pr merge "$PRNUM" --auto --rebase 2> /tmp/automerge-err.txt; then
               cat /tmp/automerge-err.txt >&2 || true
-              echo "::warning title=Auto-merge unavailable::Merge the release PR manually — the publish leg runs on merge automatically."
+              echo "::warning title=Auto-merge unavailable::Merge the release PR manually — this run waits for the merge and publishes from it."
             fi
+            {
+              echo "## Release PR opened — this run publishes on merge"
+              echo ""
+              echo "${PR_URL}"
+              echo ""
+              echo "This run waits for the release pull request to merge (up to 20 minutes), then tags the merge commit and publishes to rubygems.org. If the wait times out, merge the pull request and dispatch next_version=skip."
+            } >> "$GITHUB_STEP_SUMMARY"
+            # The publish happens IN THIS RUN after the merge: events created
+            # by the repository's own GITHUB_TOKEN do not trigger workflow
+            # runs, so an event-driven publish leg (pull_request: closed)
+            # never fires for PAT-less repos — the relaton family's 3.1.6
+            # dispatch opened and merged its release PR and nothing followed.
+            # Waiting here makes the chain event-independent and restores
+            # true atomicity: one green run = the gem is on rubygems.org.
+            echo "Waiting for the release PR to merge (max 20 minutes)..."
+            merged="false"
+            for i in $(seq 1 60); do
+              state=$(gh pr view "$PRNUM" --json state,mergedAt 2> /dev/null || true)
+              if printf '%s' "$state" | jq -e '.state == "MERGED" and .mergedAt != null' > /dev/null 2>&1; then
+                merged="true"
+                break
+              fi
+              sleep 20
+            done
+            if [ "$merged" != "true" ]; then
+              echo "::error::The release PR did not merge within 20 minutes. Merge ${PR_URL} once its checks are green, then dispatch next_version=skip to publish from main."
+              exit 1
+            fi
+            echo "Release PR merged — checking out the merge commit and publishing."
+            git fetch origin "+${GITHUB_REF_NAME}:refs/remotes/origin/${GITHUB_REF_NAME}"
+            MERGE_SHA=$(gh pr view "$PRNUM" --json mergeCommit --jq .mergeCommit.oid)
+            git checkout --force "$MERGE_SHA"
+            # The publish tail is gated on BUMP_VIA_PR; the merge completed,
+            # so clear it for the remaining steps of this run.
+            echo "BUMP_VIA_PR=false" >> "$GITHUB_ENV"
+          fi
             echo "BUMP_VIA_PR=true" >> "$GITHUB_ENV"
             # A heredoc terminator must sit at column 0, which a YAML block
             # scalar cannot produce (an indented one silently swallows the
