@@ -547,11 +547,16 @@ jobs:
               --body "Release bump for ${NEXT_VERSION}. Merging this pull request is the release: the publish leg runs on merge, tags the merge commit, and pushes the gem to rubygems.org (Trusted Publishing). Opened by the release workflow (ci#515).")
             echo "Release PR: ${PR_URL}"
             # Enable auto-merge (rebase keeps the bump a single commit on
-            # main). Repos without the auto-merge setting (or with rebase
-            # merging disabled) degrade to a manual merge: the PR sits
-            # open, checks run, and the maintainer merges — the publish
-            # leg fires on that merge exactly the same.
-            if ! gh pr merge --auto --rebase 2> /tmp/automerge-err.txt; then
+            # main). The PR is named EXPLICITLY: gh without an argument
+            # infers from the checkout branch, which here is the default
+            # branch — "no pull requests found for branch main"
+            # (expressir 2.4.73). Repos without the auto-merge setting
+            # (or with rebase merging disabled) degrade to a manual
+            # merge: the PR sits open, checks run, and the maintainer
+            # merges — the publish leg fires on that merge exactly the
+            # same.
+            PRNUM=$(basename "$PR_URL")
+            if ! gh pr merge "$PRNUM" --auto --rebase 2> /tmp/automerge-err.txt; then
               cat /tmp/automerge-err.txt >&2 || true
               echo "::warning title=Auto-merge unavailable::Merge the release PR manually — the publish leg runs on merge automatically."
             fi
@@ -566,6 +571,8 @@ jobs:
               echo "${PR_URL}"
               echo ""
               echo "The publish leg runs when this pull request merges: it tags the merge commit and publishes to rubygems.org. No action is needed while checks run."
+              echo ""
+              echo "If this repository's release workflow lacks the \`pull_request: closed\` trigger (pre-ci#515 stub), the publish will not follow the merge — sync the stub, then dispatch \`next_version=skip\` to publish from main."
             } >> "$GITHUB_STEP_SUMMARY"
           fi
 
