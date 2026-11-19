@@ -156,19 +156,43 @@ jobs:
                 gem_name = match.group(1)
                 break
           print("Detected gem name from {}: {}".format(upstream_gemspecs[0], gem_name))
-        if glob.glob('*.gemspec'):
+        # Keep the dependent's gemspec as it is: specs may read it (e.g.
+        # metanorma-document's gemspec_dependencies_spec checks every
+        # load-time require is declared there), and Bundler uses the
+        # Gemfile path source below for the gem anyway. Only when the
+        # gemspec's version requirement rejects the checked-out version
+        # is that requirement dropped (the gem name stays declared).
+        name_pattern = re.escape(gem_name)
+        gemspec_dependency = re.compile(
+          r"""^(\s*\w+\.add_(?:runtime_|development_)?dependency\s*\(?\s*["']""" + name_pattern + r"""["'])\s*,[^)#\n]*""")
+        gemfile_dependency = re.compile(
+          r"""^\s*gem\s*\(?\s*["']""" + name_pattern + r"""["']""")
+        if glob.glob('*.gemspec') and upstream_gemspecs:
           gemspec = glob.glob('*.gemspec')[0]
-          with fileinput.FileInput(gemspec, inplace=True) as file:
-            for line in file:
-              if gem_name not in line:
-                print(line, end='')
-          print("'{}' removed from {}".format(gem_name, gemspec))
+          check = subprocess.run(
+            ["ruby", "-e",
+             "up = Gem::Specification.load(ARGV[0]); dep = Gem::Specification.load(ARGV[1]); "
+             "abort('could not load gemspecs') unless up && dep; "
+             "d = dep.dependencies.find { |x| x.name == up.name }; "
+             "puts(d.nil? || d.requirement.satisfied_by?(up.version) ? 'ok' : \"#{d.requirement} rejects #{up.version}\")",
+             os.path.abspath(upstream_gemspecs[0]), gemspec],
+            capture_output=True, text=True)
+          verdict = check.stdout.strip() or check.stderr.strip()
+          print("{} requirement on '{}': {}".format(gemspec, gem_name, verdict))
+          if check.returncode == 0 and verdict != 'ok':
+            with fileinput.FileInput(gemspec, inplace=True) as file:
+              for line in file:
+                print(gemspec_dependency.sub(r'\1', line), end='')
+            print("'{}' version requirement relaxed in {}".format(gem_name, gemspec))
         if os.path.exists("Gemfile"):
+          removed = 0
           with fileinput.FileInput("Gemfile", inplace=True) as file:
             for line in file:
-              if gem_name not in line:
+              if gemfile_dependency.match(line):
+                removed += 1
+              else:
                 print(line, end='')
-          print("'{}' removed from Gemfile".format(gem_name))
+          print("{} '{}' line(s) removed from Gemfile".format(removed, gem_name))
         if os.path.exists("Gemfile.lock"):
           os.remove("Gemfile.lock")
           print("Gemfile.lock dropped")
