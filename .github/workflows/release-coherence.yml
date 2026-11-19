@@ -1,0 +1,27 @@
+name: release-coherence
+
+# The standing verifier (metanorma/ci#515, Stage 3): completeness of the
+# PR-based release flow is a continuously-checked property, not a
+# one-time claim. Weekly, and on demand, for every consuming gem:
+# stub synced? latest tag has a GitHub Release? tag version equals the
+# latest rubygems version? Report-only — the summary IS the output.
+
+on:
+  schedule:
+    - cron: "0 6 * * 1" # Mondays 06:00 UTC
+  workflow_dispatch: {}
+
+permissions:
+  contents: read
+
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+      - name: Verify release coherence across the consuming gems
+        env:
+          GH_TOKEN: ${{ secrets.METANORMA_CI_PAT_TOKEN }}
+        run: |
+          python3 scripts/release_coherence.py > /tmp/coherence.md
+          cat /tmp/coherence.md >> "$GITHUB_STEP_SUMMARY"
