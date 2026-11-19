@@ -721,7 +721,16 @@ jobs:
       # (relaton-cli 3.0.0.pre.alpha.3/.4, 2026-09-25). Deliberately ignores
       # skip_push: each push inside is idempotent-tolerant, so a partially
       # published version can always be completed by re-dispatch.
-      - if: env.USE_OIDC == 'true' && inputs.release_command != '' && inputs.release_command != 'bundle exec rake release' && env.BUMP_VIA_PR != 'true'
+      # On the publish leg the checkout is detached: any release_command
+      # that runs Bundler's release machinery (rake release) pushes a
+      # branch that does not exist and rolls the tag back (expressir
+      # v2.4.72). Push-only commands are fine detached; rake-release-style
+      # commands are skipped with a notice instead of failing the leg.
+      - if: env.PUBLISH_LEG == 'true' && env.USE_OIDC == 'true' && contains(inputs.release_command, 'rake release')
+        name: Notice — rake release skipped on the publish leg
+        run: |
+          echo "::notice title=rake release skipped on the publish leg::The release_command '${{ inputs.release_command }}' runs Bundler's release machinery, which pushes the current branch — impossible on the detached merge-commit checkout. The root gem is already published by the generic push above. Secondary gems needing this command: dispatch next_version=skip, or make the release_command push-only (gem push)."
+      - if: env.USE_OIDC == 'true' && inputs.release_command != '' && inputs.release_command != 'bundle exec rake release' && env.BUMP_VIA_PR != 'true' && !(env.PUBLISH_LEG == 'true' && contains(inputs.release_command, 'rake release'))
         name: Publish additional gems (OIDC, custom release_command)
         run: |
           set +e
