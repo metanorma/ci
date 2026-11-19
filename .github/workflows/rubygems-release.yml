@@ -203,12 +203,19 @@ jobs:
 
   release:
     # Runs after preflight when preflight ran (workflow_dispatch path); runs
-    # directly when preflight was skipped (repository_dispatch / push paths).
-    # Do NOT run if preflight ran and failed.
+    # directly when preflight was skipped (repository_dispatch / push /
+    # pull_request paths). Do NOT run if preflight ran and failed.
+    #
+    # On `pull_request` (closed), run ONLY when the merged head branch is a
+    # release branch (`release/v*`): that merge is the publish trigger. Every
+    # other PR close is a neutral skip — no red noise on ordinary PR closes.
     needs: preflight
     if: |
       always() &&
-      (needs.preflight.result == 'success' || needs.preflight.result == 'skipped')
+      (needs.preflight.result == 'success' || needs.preflight.result == 'skipped') &&
+      (github.event_name != 'pull_request' ||
+        (github.event.pull_request.merged == true &&
+         startsWith(github.event.pull_request.head.ref, 'release/')))
     runs-on: ubuntu-latest
     environment: ${{ inputs.environment }}
     permissions:
@@ -221,11 +228,13 @@ jobs:
     steps:
       - uses: actions/checkout@v6
         with:
-          ref: ${{ github.event.client_payload.ref || github.ref }}
+          # Publish-leg precedence: the merged release PR's commit, then the
+          # do-release payload ref, then the dispatch ref.
+          ref: ${{ github.event.pull_request.merge_commit_sha || github.event.client_payload.ref || github.ref }}
           submodules: ${{ inputs.submodules }}
           token: ${{ secrets.pat_token || github.token }}
 
-      - if: github.event_name == 'workflow_dispatch' || github.event_name == 'repository_dispatch'
+      - if: github.event_name == 'workflow_dispatch' || github.event_name == 'repository_dispatch' || github.event_name == 'pull_request'
         run: git fetch --tags origin
 
       - if: ${{ env.HAVE_PAT_TOKEN == 'true' }}
@@ -392,6 +401,11 @@ jobs:
         if: github.event_name == 'workflow_dispatch' && inputs.next_version != 'skip'
         env:
           NEXT_VERSION: ${{ steps.prerelease.outputs.version || steps.keyword.outputs.version || inputs.next_version }}
+          # gh (pr create / pr merge --auto) acts as the PAT account: that
+          # account opening the PR is what makes the PR's own CI fire
+          # (rake tests + cla/ribose) — GITHUB_TOKEN-opened PRs do not
+          # trigger workflow runs.
+          GH_TOKEN: ${{ secrets.pat_token || github.token }}
         run: |
           # Refuse to bump BELOW the highest published version (metanorma/ci#488):
           # a stale re-dispatch would otherwise push a downgrade commit to the
@@ -501,25 +515,40 @@ jobs:
             # would otherwise be empty and exit 1 "no changes added" (ci#480).
             git add "$VERSION_FILE"
             git commit -m "Bump version to ${NEXT_VERSION}"
-            # GH006 (protected branch: cla/ribose required check suddenly
-            # applied to direct PAT pushes, ci#510) must not abort the
-            # release — the gem publish + tag steps below are independent
-            # of main's bump commit, and refs/tags pushes pass protection
-            # even when refs/heads are rejected. The bumped commit survives
-            # locally: the "Ensure release tag exists" step tags it, and
-            # main's version file is backfilled by the next release's bump.
-            set +e
-            push_out=$(git push origin "HEAD:${GITHUB_REF_NAME}" 2>&1)
-            push_rc=$?
-            set -e
-            if [ "$push_rc" -ne 0 ]; then
-              if printf '%s' "$push_out" | grep -qi "GH006"; then
-                echo "::warning title=Bump push rejected by branch protection (GH006)::Release proceeds — tag + publish are unaffected. Backfill main's bump commit after lifting the cla/ribose required check or adding the release PAT to bypass_actors (ci#510). Local bumped commit: $(git rev-parse --short HEAD)"
-              else
-                echo "$push_out" >&2
-                exit "$push_rc"
-              fi
+            # The bump NEVER pushes to main directly (ci#510, ci#515): a
+            # required cla/ribose check can never exist on a directly
+            # pushed commit, and the old warn-and-proceed left the release
+            # tag pointing at a commit unreachable from any branch. The
+            # bump lands on a release branch, a release PR carries it
+            # through the repo's own gates (tests + cla/ribose — the
+            # release PAT's account is allowlisted), auto-merge lands it,
+            # and the merge event triggers the publish leg, which tags the
+            # MERGE commit. A green dispatch run means: the release PR is
+            # open and merge-gated. A green merge leg means: published.
+            BRANCH="release/v${NEXT_VERSION}"
+            git push origin "HEAD:refs/heads/${BRANCH}"
+            PR_URL=$(gh pr create \
+              --base "${GITHUB_REF_NAME}" --head "${BRANCH}" \
+              --title "Bump version to ${NEXT_VERSION}" \
+              --body "Release bump for ${NEXT_VERSION}. Merging this pull request is the release: the publish leg runs on merge, tags the merge commit, and pushes the gem to rubygems.org (Trusted Publishing). Opened by the release workflow (ci#515).")
+            echo "Release PR: ${PR_URL}"
+            # Enable auto-merge (rebase keeps the bump a single commit on
+            # main). Repos without the auto-merge setting (or with rebase
+            # merging disabled) degrade to a manual merge: the PR sits
+            # open, checks run, and the maintainer merges — the publish
+            # leg fires on that merge exactly the same.
+            if ! gh pr merge --auto --rebase 2> /tmp/automerge-err.txt; then
+              cat /tmp/automerge-err.txt >&2 || true
+              echo "::warning title=Auto-merge unavailable::Merge the release PR manually — the publish leg runs on merge automatically."
             fi
+            echo "BUMP_VIA_PR=true" >> "$GITHUB_ENV"
+            cat >> "$GITHUB_STEP_SUMMARY" << SUMMARY
+            ## Release PR opened
+
+            ${PR_URL}
+
+            The publish leg runs when this pull request merges: it tags the merge commit and publishes to rubygems.org. No action is needed while checks run.
+            SUMMARY
           fi
 
       - name: Resolve gem identity
@@ -566,20 +595,20 @@ jobs:
           echo "SHOULD_PUBLISH=true" >> "$GITHUB_ENV"
 
       # ============ Publish: OIDC Trusted Publisher path ============
-      - if: env.USE_OIDC == 'true'
+      - if: env.USE_OIDC == 'true' && env.BUMP_VIA_PR != 'true'
         name: Configure RubyGems credentials for Trusted Publishing
         uses: rubygems/configure-rubygems-credentials@v2.1.0
         with:
           role-to-assume: ${{ inputs.role_to_assume }}
 
       - name: Idempotency guard (OIDC)
-        if: env.USE_OIDC == 'true'
+        if: env.USE_OIDC == 'true' && env.BUMP_VIA_PR != 'true'
         uses: metanorma/ci/gem-idempotent-push-guard-action@main
         with:
           gem-name: ${{ steps.gem-identity.outputs.name }}
           gem-version: ${{ steps.gem-identity.outputs.version }}
 
-      - if: env.USE_OIDC == 'true' && env.skip_push != 'true'
+      - if: env.USE_OIDC == 'true' && env.skip_push != 'true' && env.BUMP_VIA_PR != 'true'
         name: Build and push gem (OIDC)
         run: |
           # Quoted-variable + eval: with the input at its default (""),
@@ -636,7 +665,7 @@ jobs:
       # (relaton-cli 3.0.0.pre.alpha.3/.4, 2026-09-25). Deliberately ignores
       # skip_push: each push inside is idempotent-tolerant, so a partially
       # published version can always be completed by re-dispatch.
-      - if: env.USE_OIDC == 'true' && inputs.release_command != '' && inputs.release_command != 'bundle exec rake release'
+      - if: env.USE_OIDC == 'true' && inputs.release_command != '' && inputs.release_command != 'bundle exec rake release' && env.BUMP_VIA_PR != 'true'
         name: Publish additional gems (OIDC, custom release_command)
         run: |
           set +e
@@ -653,12 +682,12 @@ jobs:
       # versions with no tag/Release). Sets the same flag the publish steps
       # set on a fresh push (ci#403).
       - name: Mark already-published version for release floor
-        if: env.skip_push == 'true'
+        if: env.skip_push == 'true' && env.BUMP_VIA_PR != 'true'
         run: echo "SHOULD_PUBLISH=true" >> "$GITHUB_ENV"
 
       # ============ Post-publish verification ============
       - name: Verify gem published on rubygems.org
-        if: env.skip_push != 'true'
+        if: env.skip_push != 'true' && env.BUMP_VIA_PR != 'true'
         env:
           GEM_NAME: ${{ steps.gem-identity.outputs.name }}
           GEM_VERSION: ${{ steps.gem-identity.outputs.version }}
@@ -690,6 +719,7 @@ jobs:
       # did not exist (lutaml/lutaml-lml v0.1.3). Idempotent: no-op when
       # the tag already exists.
       - name: Ensure release tag exists
+        if: env.BUMP_VIA_PR != 'true'
         env:
           TAG: v${{ steps.gem-identity.outputs.version }}
         run: |
@@ -722,7 +752,8 @@ jobs:
       - name: Ensure GitHub Release for tag exists
         if: >-
           env.SHOULD_PUBLISH == 'true' &&
-          inputs.release_notes != 'manual'
+          inputs.release_notes != 'manual' &&
+          env.BUMP_VIA_PR != 'true'
         env:
           GH_TOKEN: ${{ github.token }}
           TAG: v${{ steps.gem-identity.outputs.version }}
@@ -750,7 +781,8 @@ jobs:
         if: >-
           env.SHOULD_PUBLISH == 'true' &&
           github.repository == 'metanorma/metanorma-cli' &&
-          env.HAVE_PAT_TOKEN == 'true'
+          env.HAVE_PAT_TOKEN == 'true' &&
+          env.BUMP_VIA_PR != 'true'
         continue-on-error: true
         env:
           GH_TOKEN: ${{ secrets.pat_token }}
@@ -813,7 +845,7 @@ jobs:
         run: echo "value=refs/tags/v${{ steps.gem-identity.outputs.version }}" >> "$GITHUB_OUTPUT"
 
       - name: Dispatch release-passed
-        if: github.event_name == 'workflow_dispatch'
+        if: github.event_name == 'workflow_dispatch' && env.BUMP_VIA_PR != 'true'
         uses: peter-evans/repository-dispatch@v3
         with:
           token: ${{ secrets.pat_token || github.token }}

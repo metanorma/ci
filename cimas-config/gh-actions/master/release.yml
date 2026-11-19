@@ -11,6 +11,12 @@ on:
         default: 'skip'
   repository_dispatch:
     types: [ do-release ]
+  # The publish leg: when the release PR (head branch `release/v*`) merges,
+  # the reusable tags the merge commit and publishes (ci#515). Ordinary PR
+  # closes are skipped inside the reusable — no noise on regular merges.
+  pull_request:
+    types:
+      - closed
 
 # Least-privilege ceiling for the called rubygems-release.yml: its release job
 # needs contents:write (git tag push) and id-token:write (OIDC Trusted Publishing).

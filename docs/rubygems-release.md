@@ -2,7 +2,14 @@
 
 Reusable workflow for building and publishing a single Ruby gem to RubyGems.org.
 
-A release is atomic: a maintainer dispatches the workflow with a version bump, and the workflow bumps, tags, and publishes in one job. There is no relay, no deferred publication, no second phase gated on tests. If the publish step does not run, the workflow fails — it does not report green.
+A release arrives on the default branch as a **pull request** (ci#515). A maintainer dispatches the workflow with a version bump; the workflow opens a **release PR** (`release/vX.Y.Z` → default branch) with auto-merge enabled. The release PR runs the repository's own gates — tests and the required status checks (the release PAT's account is allowlisted in the CLA configuration). When the release PR merges, the **publish leg** runs on the merge event: it checks out the merge commit, builds the gem, publishes to rubygems.org via Trusted Publishing, and creates the tag and the GitHub Release **on the merge commit**. Nobody tags locally anymore.
+
+The two phases are event-driven inside one workflow — there is no relay, no `repository_dispatch` choreography, no gated flag (the ci#370 lesson). The semantics are stated honestly:
+
+- A green `workflow_dispatch` run means **the release PR is open and merge-gated**.
+- A green merge-triggered run means **the gem is on rubygems.org**.
+
+If the publish step does not run, the publish-leg run fails — it does not report green. Publishing directly from the dispatch run is gone deliberately: a version published from a commit that never landed on the default branch produced tags unreachable from any branch and stale version files (the ci#510 direct-push defect class).
 
 ## Who is this for
 
@@ -15,7 +22,7 @@ Defaults and behavior are identical for both populations. Authentication works w
 
 ## When does the gem actually get published?
 
-**Always, on every `workflow_dispatch` run.** A green run means the gem is on rubygems.org. There is no deferred state.
+**Always, on the merged release PR's publish leg.** A green merge-leg run means the gem is on rubygems.org. The `next_version=skip` dispatch re-publishes the current default-branch head in the same run (no commit, no PR — unchanged behavior).
 
 The workflow also re-publishes idempotently if it's re-triggered by a stale `repository_dispatch: do-release` event from a consumer's rake.yml — the idempotent push guard sees the version is already published and treats that as success.
 
@@ -33,6 +40,11 @@ on:
         default: 'skip'
   repository_dispatch:
     types: [ do-release ]
+  # The publish leg: fires when a release PR (release/v*) merges. Ordinary
+  # PR closes are skipped inside the reusable workflow.
+  pull_request:
+    types:
+      - closed
 
 permissions:
   contents: write
