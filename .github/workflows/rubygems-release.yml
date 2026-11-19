@@ -542,13 +542,17 @@ jobs:
               echo "::warning title=Auto-merge unavailable::Merge the release PR manually — the publish leg runs on merge automatically."
             fi
             echo "BUMP_VIA_PR=true" >> "$GITHUB_ENV"
-            cat >> "$GITHUB_STEP_SUMMARY" << SUMMARY
-            ## Release PR opened
-
-            ${PR_URL}
-
-            The publish leg runs when this pull request merges: it tags the merge commit and publishes to rubygems.org. No action is needed while checks run.
-            SUMMARY
+            # A heredoc terminator must sit at column 0, which a YAML block
+            # scalar cannot produce (an indented one silently swallows the
+            # rest of the script — the exact failure the expressir pilot
+            # caught on the first dispatch). Echo lines instead.
+            {
+              echo "## Release PR opened"
+              echo ""
+              echo "${PR_URL}"
+              echo ""
+              echo "The publish leg runs when this pull request merges: it tags the merge commit and publishes to rubygems.org. No action is needed while checks run."
+            } >> "$GITHUB_STEP_SUMMARY"
           fi
 
       - name: Resolve gem identity
