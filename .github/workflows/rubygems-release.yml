@@ -221,6 +221,12 @@ jobs:
     permissions:
       contents: write
       id-token: write
+      # The release-PR leg (gh pr create / pr merge --auto) runs inside THIS
+      # job — a reusable's job-level permissions narrow the caller's grant,
+      # so the ceiling must be declared here, not only in the caller's stub
+      # (relaton/relaton: "Resource not accessible by integration" when the
+      # stub relied on its top-level grant alone).
+      pull-requests: write
     env:
       HAVE_PAT_TOKEN: ${{ secrets.pat_token != '' }}
       HAS_API_KEY: ${{ secrets.rubygems-api-key != '' }}
@@ -540,7 +546,9 @@ jobs:
             # MERGE commit. A green dispatch run means: the release PR is
             # open and merge-gated. A green merge leg means: published.
             BRANCH="release/v${NEXT_VERSION}"
-            git push origin "HEAD:refs/heads/${BRANCH}"
+            # Workflow-owned ephemeral branch: a re-dispatch after a failed
+            # leg must overwrite the stale branch, not refuse it.
+            git push --force origin "HEAD:refs/heads/${BRANCH}"
             PR_URL=$(gh pr create \
               --base "${GITHUB_REF_NAME}" --head "${BRANCH}" \
               --title "Bump version to ${NEXT_VERSION}" \
