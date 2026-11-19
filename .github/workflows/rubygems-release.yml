@@ -737,7 +737,13 @@ jobs:
         name: Notice — rake release skipped on the publish leg
         run: |
           echo "::notice title=rake release skipped on the publish leg::The release_command '${{ inputs.release_command }}' runs Bundler's release machinery, which pushes the current branch — impossible on the detached merge-commit checkout. The root gem is already published by the generic push above. Secondary gems needing this command: dispatch next_version=skip, or make the release_command push-only (gem push)."
-      - if: env.USE_OIDC == 'true' && inputs.release_command != '' && inputs.release_command != 'bundle exec rake release' && env.BUMP_VIA_PR != 'true' && !(env.PUBLISH_LEG == 'true' && contains(inputs.release_command, 'rake release'))
+      # API-key multi-gem repos (relaton ships relaton + relaton-cli) run
+      # their push-only release_command here too on the publish leg: the
+      # generic push above shipped only the root gem, stranding secondary
+      # gems (the OIDC additional-gems path already ran it; the API-key
+      # path now matches). Rake-release-style commands stay skipped on the
+      # detached leg.
+      - if: (env.USE_OIDC == 'true' || env.PUBLISH_LEG == 'true') && inputs.release_command != '' && inputs.release_command != 'bundle exec rake release' && env.BUMP_VIA_PR != 'true' && !(env.PUBLISH_LEG == 'true' && contains(inputs.release_command, 'rake release'))
         name: Publish additional gems (OIDC, custom release_command)
         run: |
           set +e
