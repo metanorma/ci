@@ -237,6 +237,20 @@ jobs:
       - if: github.event_name == 'workflow_dispatch' || github.event_name == 'repository_dispatch' || github.event_name == 'pull_request'
         run: git fetch --tags origin
 
+      # The merge-triggered leg checks out the merge commit DETACHED, so
+      # Bundler's `rake release` (the API-key release_command) cannot run
+      # there — it pushes the CURRENT BRANCH, and there is none
+      # (lutaml/expressir v2.4.71: "src refspec refs/heads/HEAD does not
+      # match any", tag rolled back, gem never pushed). On this leg the
+      # API-key path uses the same generic build+push as the OIDC path.
+      - name: Set publish-leg flag
+        run: |
+          if [ "${{ github.event_name }}" = "pull_request" ]; then
+            echo "PUBLISH_LEG=true" >> "$GITHUB_ENV"
+          else
+            echo "PUBLISH_LEG=false" >> "$GITHUB_ENV"
+          fi
+
       - if: ${{ env.HAVE_PAT_TOKEN == 'true' }}
         uses: metanorma/ci/gh-rubygems-setup-action@main
         with:
@@ -567,13 +581,13 @@ jobs:
 
       # ============ Publish: API Key path ============
       - name: Idempotency guard (API key)
-        if: env.HAS_API_KEY == 'true'
+        if: env.HAS_API_KEY == 'true' && env.BUMP_VIA_PR != 'true'
         uses: metanorma/ci/gem-idempotent-push-guard-action@main
         with:
           gem-name: ${{ steps.gem-identity.outputs.name }}
           gem-version: ${{ steps.gem-identity.outputs.version }}
 
-      - if: env.HAS_API_KEY == 'true' && env.skip_push != 'true'
+      - if: env.HAS_API_KEY == 'true' && env.skip_push != 'true' && env.BUMP_VIA_PR != 'true' && env.PUBLISH_LEG != 'true'
         name: Publish to rubygems.org (API Key)
         env:
           RUBYGEMS_API_KEY: ${{ secrets.rubygems-api-key }}
@@ -597,6 +611,44 @@ jobs:
             exit "$rc"
           fi
           echo "SHOULD_PUBLISH=true" >> "$GITHUB_ENV"
+
+      # Publish leg (merged release PR), API-key path: gem build + gem
+      # push with the already-configured credentials. No release_command,
+      # no bundler git machinery — the checkout is detached by design.
+      - if: env.HAS_API_KEY == 'true' && env.skip_push != 'true' && env.BUMP_VIA_PR != 'true' && env.PUBLISH_LEG == 'true'
+        name: Build and push gem (API key, publish leg)
+        env:
+          RUBYGEMS_API_KEY: ${{ secrets.rubygems-api-key }}
+        run: |
+          mkdir -p ~/.gem
+          envsubst << 'CREDS'
+          ---
+          :rubygems_api_key: ${RUBYGEMS_API_KEY}
+          CREDS
+          chmod 0600 ~/.gem/credentials
+          gem build *.gemspec
+          mkdir -p pkg
+          mv *.gem pkg/
+          set +e
+          push_rc=0
+          for f in pkg/*.gem; do
+            push_out=$(gem push "$f" 2>&1)
+            rc=$?
+            echo "$push_out"
+            if [ "$rc" -ne 0 ]; then
+              if printf '%s' "$push_out" | grep -qiE 'already been pushed|Repushing of gem versions is not allowed'; then
+                echo "::notice title=Idempotent publish::$f already on rubygems.org; treating as success."
+                continue
+              fi
+              push_rc="$rc"
+              break
+            fi
+          done
+          set -e
+          if [ "$push_rc" -eq 0 ]; then
+            echo "SHOULD_PUBLISH=true" >> "$GITHUB_ENV"
+          fi
+          exit "$push_rc"
 
       # ============ Publish: OIDC Trusted Publisher path ============
       - if: env.USE_OIDC == 'true' && env.BUMP_VIA_PR != 'true'
