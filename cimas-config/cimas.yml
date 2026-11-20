@@ -203,6 +203,24 @@ repositories:
       # .github/workflows/rake.yml: unmapped 2026-07-29 per metanorma/cimas#68: consumer-owned as reusable-workflow ref @v1
       .github/workflows/release.yml: gh-actions/master/release_manual_notes.yml
       .github/workflows/automerge.yml: gh-actions/master/automerge.yml
+  # The two flavor gems below surfaced via the ci-repo-watcher triage
+  # (ci#412, 2026-11-19): active processor-family gems that the fleet
+  # never managed. Release dispatch on these must be verified against
+  # rubygems.org Trusted Publishing on first cut.
+  metanorma-oiml:
+    remote: ssh://git@github.com/metanorma/metanorma-oiml
+    branch: main
+    files:
+      .rubocop.yml: gh-actions/master/.rubocop.yml
+      .github/workflows/release.yml: gh-actions/master/release_manual_notes.yml
+      .github/workflows/automerge.yml: gh-actions/master/automerge.yml
+  metanorma-pdfa:
+    remote: ssh://git@github.com/metanorma/metanorma-pdfa
+    branch: main
+    files:
+      .rubocop.yml: gh-actions/master/.rubocop.yml
+      .github/workflows/release.yml: gh-actions/master/release_manual_notes.yml
+      .github/workflows/automerge.yml: gh-actions/master/automerge.yml
   metanorma-document:
     remote: ssh://git@github.com/metanorma/metanorma-document
     branch: main
@@ -621,6 +639,39 @@ repositories:
     remote: ssh://git@github.com/metanorma/mn-samples-mbxif
     branch: main
     files: {}
+  # The following three samples repos surfaced via the ci-repo-watcher
+  # triage (ci#412, 2026-11-19): same product family as the managed
+  # siblings above, brought onto the standard samples shape.
+  mn-samples-pdfa:
+    remote: ssh://git@github.com/metanorma/mn-samples-pdfa
+    branch: main
+    files:
+      .github/workflows/docker.yml:
+        if_public: gh-actions/samples/public-docker.yml
+        if_private: gh-actions/samples/private-docker.yml.erb
+      .github/workflows/generate.yml: gh-actions/samples/public-generate.yml
+      .github/workflows/test.yml: gh-actions/samples/test.yml
+      .github/workflows/automerge.yml: gh-actions/master/automerge.yml
+  mn-samples-oiml:
+    remote: ssh://git@github.com/metanorma/mn-samples-oiml
+    branch: main
+    files:
+      .github/workflows/docker.yml:
+        if_public: gh-actions/samples/public-docker.yml
+        if_private: gh-actions/samples/private-docker.yml.erb
+      .github/workflows/generate.yml: gh-actions/samples/public-generate.yml
+      .github/workflows/test.yml: gh-actions/samples/test.yml
+      .github/workflows/automerge.yml: gh-actions/master/automerge.yml
+  mn-samples-plateau-cg3:
+    remote: ssh://git@github.com/metanorma/mn-samples-plateau-cg3
+    branch: main
+    files:
+      .github/workflows/docker.yml:
+        if_public: gh-actions/samples/public-docker.yml
+        if_private: gh-actions/samples/private-docker.yml.erb
+      .github/workflows/generate.yml: gh-actions/samples/public-generate.yml
+      .github/workflows/test.yml: gh-actions/samples/test.yml
+      .github/workflows/automerge.yml: gh-actions/master/automerge.yml
 
   # docs
   ogc-wfs:
@@ -1473,6 +1524,20 @@ groups:
   - metanorma-plugin-datastruct
   - metanorma-plugin-plantuml
   ignore: # obsolete
+  # ci-repo-watcher triage 2026-11-19 (ci#412): historically-triaged
+  # obsolete processors/defunct repos re-registered so the watcher
+  # stops listing them
+  - metanorma-csa # OBSOLETE 2026-06-29 (last release 2025-09-01)
+  - metanorma-m3aawg # OBSOLETE 2026-06-29 (last release 2023-03-13)
+  - metanorma-un # OBSOLETE 2026-06-29 (last release 2024-09-30)
+  - lapidist # defunct 2026-07-05 per opoudjis
+  # internal tooling/infra — deliberately outside fleet CI
+  - dashboard # "INTERNAL USE ONLY — gem releasing process"
+  - support
+  - branding
+  - versions # metanorma/versions register (actions-mn/setup consumes it)
+  - pngcheck-metanorma # C fork, own release flow
+  - sample-ogc-discussion-paper # stale since 2023
   # infrastructure
   - ci
   - ".github"
