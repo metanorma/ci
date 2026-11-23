@@ -171,11 +171,15 @@ jobs:
           else
             gem bump --version ${{ inputs.next_version }}
           fi
-          BRANCH="release/${{ inputs.gem_name }}-v$(ruby -e "puts Gem::Specification.load(Dir['${{ inputs.gem_directory }}/${{ inputs.gem_name }}/*.gemspec'].first).version")"
+          # The step runs in the gem's own directory (job working-directory
+          # default), so the gemspec is resolved from the CWD — the same
+          # convention the "Resolve gem identity" step below uses.
+          VERSION=$(ruby -e "puts Gem::Specification.load(Dir['*.gemspec'].first).version")
+          BRANCH="release/${{ inputs.gem_name }}-v${VERSION}"
           git push --force origin "HEAD:refs/heads/${BRANCH}"
           PR_URL=$(gh pr create \
             --base "${{ github.ref_name }}" --head "${BRANCH}" \
-            --title "Release ${{ inputs.gem_name }} $(ruby -e "puts Gem::Specification.load(Dir['${{ inputs.gem_directory }}/${{ inputs.gem_name }}/*.gemspec'].first).version")" \
+            --title "Release ${{ inputs.gem_name }} ${VERSION}" \
             --body "Release PR for ${{ inputs.gem_name }}. Merging it is the release: this run publishes the gem from the merge commit (Trusted Publishing or the configured API key). Opened by the release workflow (metanorma/ci#515).")
           echo "Release PR: ${PR_URL}"
           PRNUM=$(basename "$PR_URL")
