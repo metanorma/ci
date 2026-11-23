@@ -138,14 +138,64 @@ jobs:
       # every subdirectory and pick the wrong gem (or multiple) in a monorepo.
       # When version_file is set, pass --file so gem-release can locate
       # non-standard version paths (e.g. lib/foo/bar/version.rb for gem "foo").
-      - name: Bump version
+      - name: Bump version on a release branch and open the release PR
         if: github.event_name == 'workflow_dispatch' && inputs.next_version != 'skip'
+        env:
+          GH_TOKEN: ${{ secrets.pat_token || github.token }}
         run: |
+          # The PR-based release flow (metanorma/ci#515): the bump lands on
+          # a release branch and a release PR carries it through the
+          # repository's gates; THIS RUN waits for the merge, checks out
+          # the merge commit, and publishes from it. The old direct push
+          # (gem bump --tag --push) hit the GH006 wall on any repository
+          # whose default branch carries a required status check.
+          # gem-release bump defaults: commit, no tag, no push — exactly the
+          # shape we want (the branch push below is explicit).
           if [ -n "${{ inputs.version_file }}" ]; then
-            gem bump --version ${{ inputs.next_version }} --tag --push --file '${{ inputs.version_file }}'
+            gem bump --version ${{ inputs.next_version }} --file '${{ inputs.version_file }}'
           else
-            gem bump --version ${{ inputs.next_version }} --tag --push
+            gem bump --version ${{ inputs.next_version }}
           fi
+          BRANCH="release/${{ inputs.gem_name }}-v$(ruby -e "puts Gem::Specification.load(Dir['${{ inputs.gem_directory }}/${{ inputs.gem_name }}/*.gemspec'].first).version")"
+          git push --force origin "HEAD:refs/heads/${BRANCH}"
+          PR_URL=$(gh pr create \
+            --base "${{ github.ref_name }}" --head "${BRANCH}" \
+            --title "Release ${{ inputs.gem_name }} $(ruby -e "puts Gem::Specification.load(Dir['${{ inputs.gem_directory }}/${{ inputs.gem_name }}/*.gemspec'].first).version")" \
+            --body "Release PR for ${{ inputs.gem_name }}. Merging it is the release: this run publishes the gem from the merge commit (Trusted Publishing or the configured API key). Opened by the release workflow (metanorma/ci#515).")
+          echo "Release PR: ${PR_URL}"
+          PRNUM=$(basename "$PR_URL")
+          if ! gh pr merge "$PRNUM" --auto --rebase 2> /tmp/automerge-err.txt; then
+            cat /tmp/automerge-err.txt >&2 || true
+            echo "::warning title=Auto-merge unavailable::Merge the release PR manually — this run waits for the merge and publishes from it."
+          fi
+          {
+            echo "## Release PR opened — this run publishes on merge"
+            echo ""
+            echo "${PR_URL}"
+            echo ""
+            echo "This run waits for the release pull request to merge (up to 20 minutes), then tags the merge commit and publishes ${{ inputs.gem_name }} to rubygems.org. If the wait times out, merge the pull request and dispatch next_version=skip."
+          } >> "$GITHUB_STEP_SUMMARY"
+          echo "Waiting for the release PR to merge (max 20 minutes)..."
+          merged="false"
+          for i in $(seq 1 60); do
+            state=$(gh pr view "$PRNUM" --json state,mergedAt 2> /dev/null || true)
+            if printf '%s' "$state" | jq -e '.state == "MERGED" and .mergedAt != null' > /dev/null 2>&1; then
+              merged="true"
+              break
+            fi
+            sleep 20
+          done
+          if [ "$merged" != "true" ]; then
+            echo "::error::The release PR did not merge within 20 minutes. Merge ${PR_URL} once its checks are green, then dispatch next_version=skip to publish from main."
+            exit 1
+          fi
+          echo "Release PR merged — checking out the merge commit and publishing."
+          MERGE_SHA=$(gh pr view "$PRNUM" --json mergeCommit --jq .mergeCommit.oid)
+          # The merge commit exists only server-side; fetch the updated base
+          # branch (the merge landed on it) so the SHA resolves locally.
+          git fetch --force origin "+refs/heads/${{ github.ref_name }}:refs/remotes/origin/${{ github.ref_name }}"
+          git checkout --force "$MERGE_SHA"
+          echo "BUMP_VIA_PR=false" >> "$GITHUB_ENV"
 
       # ============ Gem identity ============
       # Resolved AFTER the bump so name/version/gemspec reflect the just-bumped
