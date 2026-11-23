@@ -102,6 +102,23 @@ on:
         required: false
         type: boolean
         default: false
+      upload_artifact:
+        description: |
+          When true, upload the built .gem package(s) as a workflow artifact
+          (release-gem-artifacts) and ensure a GitHub Release exists for the
+          tag even when release_notes is set to 'manual', so a downstream
+          provenance job can scan, attest, and attach release assets.
+        required: false
+        type: boolean
+        default: false
+      support_until:
+        description: |
+          Optional declared support end date (YYYY-MM-DD) forwarded as a job
+          output for downstream provenance generation. Defaults to 2 years
+          from the release date when omitted or empty.
+        required: false
+        type: string
+        default: ''
     secrets:
       rubygems-api-key:
         required: false
@@ -218,6 +235,11 @@ jobs:
          startsWith(github.event.pull_request.head.ref, 'release/')))
     runs-on: ubuntu-latest
     environment: ${{ inputs.environment }}
+    outputs:
+      published: ${{ steps.provenance-meta.outputs.published }}
+      release_tag: ${{ steps.provenance-meta.outputs.release_tag }}
+      artifact_name: ${{ steps.provenance-meta.outputs.artifact_name }}
+      support_until: ${{ steps.provenance-meta.outputs.support_until }}
     permissions:
       contents: write
       id-token: write
@@ -859,14 +881,22 @@ jobs:
       - name: Ensure GitHub Release for tag exists
         if: >-
           env.SHOULD_PUBLISH == 'true' &&
-          inputs.release_notes != 'manual' &&
+          (inputs.release_notes != 'manual' || inputs.upload_artifact == true) &&
           env.BUMP_VIA_PR != 'true'
         env:
           GH_TOKEN: ${{ github.token }}
           TAG: v${{ steps.gem-identity.outputs.version }}
+          RELEASE_NOTES_MODE: ${{ inputs.release_notes }}
         run: |
           if gh release view "$TAG" --repo "${{ github.repository }}" > /dev/null 2>&1; then
             echo "✓ Release for $TAG already exists — leaving alone (never overwrite)."
+          elif [ "$RELEASE_NOTES_MODE" = "manual" ]; then
+            echo "Creating GitHub Release for $TAG (manual notes mode; empty body for provenance assets)..."
+            gh release create "$TAG" \
+              --repo "${{ github.repository }}" \
+              --title "$TAG" \
+              --notes ""
+            echo "✓ Release created."
           else
             echo "Creating GitHub Release for $TAG with auto-generated notes..."
             gh release create "$TAG" \
@@ -875,6 +905,57 @@ jobs:
               --generate-notes
             echo "✓ Release created."
           fi
+
+      - name: Stage built gem artifact for provenance
+        if: inputs.upload_artifact == true && env.SHOULD_PUBLISH == 'true' && env.BUMP_VIA_PR != 'true'
+        env:
+          GEM_NAME: ${{ steps.gem-identity.outputs.name }}
+          GEM_VERSION: ${{ steps.gem-identity.outputs.version }}
+        run: |
+          set -euo pipefail
+          rm -rf release-artifacts
+          mkdir -p release-artifacts
+          GEM_FILE="pkg/${GEM_NAME}-${GEM_VERSION}.gem"
+          if [ ! -f "$GEM_FILE" ]; then
+            pre_build='${{ inputs.pre_build_command }}'
+            if [ -n "$pre_build" ]; then
+              eval "$pre_build"
+            fi
+            gem build *.gemspec
+            mkdir -p pkg
+            mv *.gem pkg/
+          fi
+          cp "$GEM_FILE" release-artifacts/
+          ls -la release-artifacts/
+
+      - name: Upload built gem artifact for provenance
+        if: inputs.upload_artifact == true && env.SHOULD_PUBLISH == 'true' && env.BUMP_VIA_PR != 'true'
+        uses: actions/upload-artifact@v4
+        with:
+          name: release-gem-artifacts
+          path: release-artifacts/
+          if-no-files-found: error
+          retention-days: 1
+
+      - name: Resolve provenance outputs
+        id: provenance-meta
+        if: env.SHOULD_PUBLISH == 'true' && env.BUMP_VIA_PR != 'true'
+        env:
+          GEM_VERSION: ${{ steps.gem-identity.outputs.version }}
+          INPUT_SUPPORT_UNTIL: ${{ inputs.support_until }}
+        run: |
+          set -euo pipefail
+          SUPPORT_UNTIL="${INPUT_SUPPORT_UNTIL:-$(date -u -d '+2 years' +%Y-%m-%d)}"
+          if [[ ! "$SUPPORT_UNTIL" =~ ^[0-9]{4}-[0-9]{2}-[0-9]{2}$ ]]; then
+            echo "::error::Invalid support_until '${SUPPORT_UNTIL}'. Expected YYYY-MM-DD."
+            exit 1
+          fi
+          {
+            echo "published=true"
+            echo "release_tag=v${GEM_VERSION}"
+            echo "artifact_name=release-gem-artifacts"
+            echo "support_until=${SUPPORT_UNTIL}"
+          } >> "$GITHUB_OUTPUT"
 
       # ============ Post-release event ============
       # ============ Versions register annotation (ci#367) ============

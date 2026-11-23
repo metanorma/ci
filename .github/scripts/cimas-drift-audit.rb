@@ -131,6 +131,12 @@ VARIANT_REGISTRY = [
     note: "Auto-generated GitHub Release notes opt-out (no-bundle-install variant) — introduced in ci#354, floor landed in ci#355.",
   },
   {
+    variant: "cimas-config/gh-actions/master/release_wo_bundle_install_manual_notes_provenance.yml",
+    parent: "cimas-config/gh-actions/master/release_wo_bundle_install_manual_notes.yml",
+    expected_delta_lines: 78,
+    note: "Tier A release provenance wiring via riboseinc/provenance-release (riboseinc/provenance#4).",
+  },
+  {
     variant: "cimas-config/gh-actions/master/rake_test_only.yml",
     parent: "cimas-config/gh-actions/master/rake.yml",
     expected_delta_lines: 18,
