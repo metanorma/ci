@@ -22,7 +22,7 @@ repositories:
     files:
       .rubocop.yml: gh-actions/master/.rubocop.yml
       .github/workflows/rake.yml: gh-actions/master/rake.yml.erb
-      .github/workflows/release.yml: gh-actions/master/release_wo_bundle_install_manual_notes.yml
+      .github/workflows/release.yml: gh-actions/master/release_wo_bundle_install_manual_notes_provenance.yml
     with:
       # First real consumer of the metanorma/ci#300 Gap 1 `with:` mechanism.
       # metanorma's live rake.yml has `private-fonts: true` (added in
