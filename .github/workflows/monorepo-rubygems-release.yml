@@ -137,8 +137,13 @@ jobs:
 
       # ============ Common git setup ============
       - run: |
-          git config user.name github-actions
-          git config user.email github-actions@github.com
+          # The bare github-actions@github.com identity renders as
+          # "invalid-email-address" author on modern GitHub — cla/ribose
+          # then (correctly) blocks the release PR as an unattributed
+          # committer (coridoc PR #342). The [bot] noreply form
+          # attributes release-bump commits to github-actions[bot].
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
         working-directory: .
 
       - run: gem install gem-release
@@ -177,10 +182,16 @@ jobs:
           VERSION=$(ruby -e "puts Gem::Specification.load(Dir['*.gemspec'].first).version")
           BRANCH="release/${{ inputs.gem_name }}-v${VERSION}"
           git push --force origin "HEAD:refs/heads/${BRANCH}"
-          PR_URL=$(gh pr create \
-            --base "${{ github.ref_name }}" --head "${BRANCH}" \
-            --title "Release ${{ inputs.gem_name }} ${VERSION}" \
-            --body "Release PR for ${{ inputs.gem_name }}. Merging it is the release: this run publishes the gem from the merge commit (Trusted Publishing or the configured API key). Opened by the release workflow (metanorma/ci#515).")
+          # Reuse the release PR when one is already open for the branch
+          # (re-dispatch after a partial failure); gh pr create would
+          # otherwise fail the step.
+          PR_URL=$(gh pr list --head "${BRANCH}" --state open --json url --jq '.[0].url')
+          if [ -z "${PR_URL}" ]; then
+            PR_URL=$(gh pr create \
+              --base "${{ github.ref_name }}" --head "${BRANCH}" \
+              --title "Release ${{ inputs.gem_name }} ${VERSION}" \
+              --body "Release PR for ${{ inputs.gem_name }}. Merging it is the release: this run publishes the gem from the merge commit (Trusted Publishing or the configured API key). Opened by the release workflow (metanorma/ci#515).")
+          fi
           echo "Release PR: ${PR_URL}"
           PRNUM=$(basename "$PR_URL")
           if ! gh pr merge "$PRNUM" --auto --rebase 2> /tmp/automerge-err.txt; then
