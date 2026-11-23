@@ -279,6 +279,44 @@ jobs:
         name: Wait for release to propagate
         run: gem exec rubygems-await pkg/*.gem
 
+      # ============ Ensure release tag (ci#403 defect 1, monorepo) ============
+      # The OIDC publish path (gem build + gem push) never tags, and gem
+      # bump no longer carries --tag in the PR-based flow, so without this
+      # leg every monorepo release published with no git tag and the
+      # release-passed dispatch advertised a ref that did not exist.
+      # Idempotent: no-op when the tag already exists.
+      - name: Ensure release tag exists
+        env:
+          TAG: v${{ steps.gem-identity.outputs.version }}
+        run: |
+          if git ls-remote --tags origin "refs/tags/${TAG}" | grep -q "refs/tags/${TAG}$"; then
+            echo "✓ Tag ${TAG} already exists on origin."
+          else
+            echo "Tag ${TAG} missing on origin — creating annotated tag at local HEAD (the merged release commit)."
+            git tag -a "${TAG}" -m "Release ${TAG}"
+            git push origin "refs/tags/${TAG}"
+          fi
+
+      # ============ GitHub Release notes floor (metanorma/ci#354) ============
+      # Every tag this workflow publishes carries a GitHub Release with
+      # auto-generated notes (PR titles since the previous tag). Never
+      # overwrites an existing Release body.
+      - name: Ensure GitHub Release for tag exists
+        env:
+          GH_TOKEN: ${{ github.token }}
+          TAG: v${{ steps.gem-identity.outputs.version }}
+        run: |
+          if gh release view "$TAG" --repo "${{ github.repository }}" > /dev/null 2>&1; then
+            echo "✓ Release for $TAG already exists — leaving alone (never overwrite)."
+          else
+            echo "Creating GitHub Release for $TAG with auto-generated notes..."
+            gh release create "$TAG" \
+              --repo "${{ github.repository }}" \
+              --title "$TAG" \
+              --generate-notes
+            echo "✓ Release created."
+          fi
+
       # ============ Post-release event ============
       - name: Get current gem ref
         id: gem-tag-ref

@@ -26,7 +26,7 @@ import subprocess
 import sys
 import time
 
-ORGS = ["metanorma", "lutaml", "relaton", "fontist", "plurimath", "glossarist", "pubid"]
+ORGS = ["metanorma", "lutaml", "relaton", "fontist", "plurimath", "glossarist", "pubid", "coridoc"]
 EXCLUDED = {"metanorma/ci", "metanorma/cimas", "metanorma/versions"}
 
 
@@ -42,13 +42,38 @@ def gh(path):
 
 
 def population():
+    """(repo, gem) pairs. Regular consumers verify one gem named after the
+    repo; monorepo consumers (monorepo-rubygems-release.yml) verify every
+    directory carrying a gemspec — the monorepo workflow's own contract is
+    that the gem lives at <gem_name>/ and its directory equals its name."""
     repos = set()
     for org in ORGS:
         data = gh(f"search/code?q=org:{org}+rubygems-release.yml+in:file&per_page=100")
         if data:
             repos.update(i["repository"]["full_name"] for i in data.get("items", []))
         time.sleep(3)
-    return sorted(repos - EXCLUDED)
+    pairs = []
+    for repo in sorted(repos - EXCLUDED):
+        org, name = repo.split("/", 1)
+        stub = gh(f"repos/{repo}/contents/.github/workflows/release.yml")
+        text = ""
+        if stub and isinstance(stub, dict) and stub.get("content"):
+            text = base64.b64decode(stub["content"]).decode(errors="replace")
+        if "monorepo-rubygems-release.yml" in text:
+            tree = gh(f"repos/{repo}/git/trees/HEAD?recursive=1")
+            gems = sorted({
+                i["path"].rsplit("/", 1)[0].rsplit("/", 1)[-1]
+                for i in (tree or {}).get("tree", [])
+                if i["path"].endswith(".gemspec")
+                and "vendor/" not in i["path"]
+            })
+            pairs.extend((repo, g) for g in gems if g != name)
+            if not gems:
+                pairs.append((repo, name))
+        else:
+            pairs.append((repo, name))
+        time.sleep(1)
+    return pairs
 
 
 def latest_tag(repo):
@@ -67,12 +92,31 @@ def latest_tag(repo):
 def main():
     token = os.environ.get("GH_TOKEN", "")
     rows = []
-    for repo in population():
-        org, name = repo.split("/", 1)
+    for repo, gem in population():
         tag = latest_tag(repo)
-        row = {"repo": repo, "tag": tag or "-", "release": "?", "rubygems": "?", "synced": "?"}
-        if tag:
-            rel = gh(f"repos/{repo}/releases/tags/v{tag}")
+        # For monorepo repos the v* tags are per-gem (v<gem version>), so
+        # coherence means: the tag for THIS gem's rubygems version exists,
+        # not just "the newest tag in the repo".
+        rg_version = None
+        rg = subprocess.run(["curl", "-sf", f"https://rubygems.org/api/v1/versions/{gem}.json"],
+                            capture_output=True, text=True, timeout=30)
+        if rg.returncode == 0 and rg.stdout:
+            try:
+                versions = [v["number"] for v in json.loads(rg.stdout)]
+                stable = [v for v in versions if re.match(r"^\d+\.\d+\.\d+$", v)]
+                rg_version = stable[0] if stable else (versions[0] if versions else None)
+            except Exception:
+                pass
+        row = {"repo": repo, "gem": gem, "tag": "-" if not rg_version else f"v{rg_version}",
+               "release": "?", "rubygems": rg_version or "?", "synced": "?"}
+        if rg_version:
+            has_tag = subprocess.run(
+                ["git", "ls-remote", "--tags", f"https://github.com/{repo}.git", f"refs/tags/v{rg_version}"],
+                capture_output=True, text=True, timeout=60)
+            row["tag"] = "yes" if f"refs/tags/v{rg_version}$" in has_tag.stdout or \
+                f"refs/tags/v{rg_version}\t" in has_tag.stdout or \
+                has_tag.stdout.strip().endswith(f"refs/tags/v{rg_version}") else "MISSING"
+            rel = gh(f"repos/{repo}/releases/tags/v{rg_version}")
             row["release"] = "yes" if rel else "MISSING"
         stub = gh(f"repos/{repo}/contents/.github/workflows/release.yml")
         if stub and isinstance(stub, dict) and stub.get("content"):
@@ -80,24 +124,13 @@ def main():
             row["synced"] = "yes" if "pull_request:" in text else "UNSYNCED"
         else:
             row["synced"] = "?"
-        rg = subprocess.run(["curl", "-sf", f"https://rubygems.org/api/v1/versions/{name}.json"],
-                            capture_output=True, text=True, timeout=30)
-        if rg.returncode == 0 and rg.stdout:
-            try:
-                versions = [v["number"] for v in json.loads(rg.stdout)]
-                stable = [v for v in versions if re.match(r"^\d+\.\d+\.\d+$", v)]
-                row["rubygems"] = stable[0] if stable else (versions[0] if versions else "?")
-            except Exception:
-                row["rubygems"] = "?"
-        else:
-            row["rubygems"] = "n/a"
         drift = []
         if row["synced"] != "yes":
             drift.append("stub")
-        if tag and row["release"] == "MISSING":
+        if row["tag"] == "MISSING":
+            drift.append("tag")
+        if row["release"] == "MISSING":
             drift.append("release")
-        if tag and row["rubygems"] not in ("?", "n/a") and row["rubygems"] != tag:
-            drift.append(f"version: tag {tag} vs rubygems {row['rubygems']}")
         row["drift"] = ", ".join(drift) if drift else "-"
         rows.append(row)
         time.sleep(1)
@@ -106,11 +139,11 @@ def main():
     out = []
     out.append(f"## Release coherence — {len(rows)} gems, {len(drift_rows)} with drift")
     out.append("")
-    out.append("| Repository | Latest tag | GitHub Release | rubygems | Stub synced | Drift |")
+    out.append("| Repository (gem) | Latest rubygems | Tag | GitHub Release | Stub synced | Drift |")
     out.append("|---|---|---|---|---|---|")
     for r in rows:
         if r["drift"] != "-":
-            out.append(f"| **{r['repo']}** | {r['tag']} | {r['release']} | {r['rubygems']} | {r['synced']} | **{r['drift']}** |")
+            out.append(f"| **{r['repo']} ({r['gem']})** | {r['rubygems']} | {r['tag']} | {r['release']} | {r['synced']} | **{r['drift']}** |")
     clean = [r for r in rows if r["drift"] == "-"]
     if clean:
         out.append(f"| ... {len(clean)} further gems coherent | | | | | |")
