@@ -79,11 +79,24 @@ on:
 
 jobs:
   release:
+    # On `pull_request` (closed), run ONLY when the merged head branch is a
+    # release branch (`release/*`): that merge is the publish trigger
+    # (recovery leg when the dispatch run's in-run wait timed out). Every
+    # other PR close is a neutral skip — otherwise the publish tail would
+    # run on ordinary PR closes, from the PR merge ref.
+    if: |
+      github.event_name != 'pull_request' ||
+      (github.event.pull_request.merged == true &&
+       startsWith(github.event.pull_request.head.ref, 'release/'))
     runs-on: ubuntu-latest
     environment: ${{ inputs.environment }}
     permissions:
       contents: write
       id-token: write
+      # The bump step creates and auto-merges the release PR; reusable
+      # workflow jobs narrow the caller's grants, so this must be declared
+      # even though the caller wrapper already carries it (metanorma/ci#523).
+      pull-requests: write
     env:
       HAVE_PAT_TOKEN: ${{ secrets.pat_token != '' }}
       HAS_API_KEY: ${{ secrets.rubygems-api-key != '' }}
@@ -96,7 +109,9 @@ jobs:
     steps:
       - uses: actions/checkout@v6
         with:
-          ref: ${{ github.event.client_payload.ref || github.ref }}
+          # Publish-leg precedence: the merged release PR's commit, then the
+          # do-release payload ref, then the dispatch ref.
+          ref: ${{ github.event.pull_request.merge_commit_sha || github.event.client_payload.ref || github.ref }}
           submodules: ${{ inputs.submodules }}
           token: ${{ secrets.pat_token || github.token }}
           fetch-depth: 0
@@ -177,7 +192,7 @@ jobs:
           } >> "$GITHUB_STEP_SUMMARY"
           echo "Waiting for the release PR to merge (max 20 minutes)..."
           merged="false"
-          for i in $(seq 1 60); do
+          for _ in $(seq 1 60); do
             state=$(gh pr view "$PRNUM" --json state,mergedAt 2> /dev/null || true)
             if printf '%s' "$state" | jq -e '.state == "MERGED" and .mergedAt != null' > /dev/null 2>&1; then
               merged="true"
