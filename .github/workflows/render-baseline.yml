@@ -1,0 +1,197 @@
+name: render-baseline
+
+# Output-diff harness (ci#504): render a samples repository with a
+# PINNED metanorma container image, hash every rendered file into a
+# manifest, and either freeze that manifest as the baseline (mode:
+# capture) or diff against the frozen baseline and report every changed
+# file (mode: compare).
+#
+# ci#505 vocabulary: a compare run classifies each diff via the
+# acceptlist (a YAML file stored beside the baseline on the baseline
+# ref): `accepted` path patterns pass with a notice, anything else is
+# `regression` and fails the run. There are no other classes — new
+# acceptable-change shapes get acceptlist entries with a reason, never
+# silent passes.
+
+on:
+  workflow_call:
+    inputs:
+      samples_repo:
+        description: 'Samples repo (metanorma/NAME) whose site is rendered'
+        required: true
+        type: string
+      image_tag:
+        description: 'metanorma/metanorma image tag the render is pinned to (frozen tag or digest for captures; :latest is only meaningful for drift runs)'
+        required: true
+        type: string
+      mode:
+        description: 'capture (freeze the manifest as baseline) | compare (diff against the frozen baseline)'
+        required: true
+        type: string
+      baseline_ref:
+        description: 'Branch of THIS repo holding the frozen manifests + acceptlists'
+        required: false
+        type: string
+        default: render-baselines
+      baseline_key:
+        description: 'Baseline file stem; defaults to the samples repo name'
+        required: false
+        type: string
+      acceptlist:
+        description: 'Path to the acceptlist YAML inside the samples repo (optional)'
+        required: false
+        type: string
+        default: ''
+    secrets:
+      pat_token:
+        required: false
+    outputs:
+      report_conclusion:
+        description: 'compare mode: clean | drift-accepted | regression'
+        value: ${{ jobs.compare.outputs.conclusion }}
+
+permissions:
+  contents: write
+
+jobs:
+  render:
+    name: Render (${{ inputs.samples_repo }} @ ${{ inputs.image_tag }})
+    runs-on: ubuntu-latest
+    container:
+      image: docker://metanorma/metanorma:${{ inputs.image_tag }}
+    outputs:
+      manifest_artifact: manifest-${{ inputs.samples_repo }}
+    steps:
+      - name: Checkout samples
+        uses: actions/checkout@v6
+        with:
+          repository: metanorma/${{ inputs.samples_repo }}
+          token: ${{ secrets.pat_token || github.token }}
+          submodules: true
+          path: samples
+
+      - name: Render site (deterministic invocation)
+        run: |
+          cd samples
+          PATH="$PATH:$(ruby -e 'puts Gem.user_dir')/bin"
+          metanorma site generate --agree-to-terms
+
+      - name: Build manifest (path → sha256, sorted)
+        run: |
+          cd samples/_site
+          : > /tmp/manifest.ndjson
+          find . -type f ! -name .dump.rdb | sort | while read -r f; do
+            printf '%s  %s\n' "$(sha256sum "$f" | cut -d" " -f1)" "${f#./}" >> /tmp/manifest.ndjson
+          done
+          wc -l /tmp/manifest.ndjson
+      - uses: actions/upload-artifact@v4
+        with:
+          name: manifest-${{ inputs.samples_repo }}
+          path: /tmp/manifest.ndjson
+          if-no-files-found: error
+
+  capture:
+    name: Freeze baseline
+    if: inputs.mode == 'capture'
+    needs: render
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/download-artifact@v4
+        with:
+          name: manifest-${{ inputs.samples_repo }}
+          path: /tmp
+      - uses: actions/checkout@v6
+        with:
+          ref: ${{ inputs.baseline_ref }}
+          token: ${{ secrets.pat_token || github.token }}
+          path: baselines
+      - name: Commit the frozen manifest
+        run: |
+          KEY="${{ inputs.baseline_key || inputs.samples_repo }}"
+          mkdir -p baselines/manifests
+          cp /tmp/manifest.ndjson "baselines/manifests/${KEY}.ndjson"
+          {
+            echo "baseline_key: ${KEY}"
+            echo "image_tag: ${{ inputs.image_tag }}"
+            echo "captured_at: $(date -u +%Y-%m-%dT%H:%M:%SZ)"
+            echo "captured_by: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}"
+          } > "baselines/manifests/${KEY}.meta.yaml"
+          cd baselines
+          git config user.name "render-baseline-bot"
+          git config user.email "actions@metanorma.org"
+          git add manifests/
+          git commit -m "Baseline: ${KEY} @ ${{ inputs.image_tag }}" || echo "no changes"
+          git push origin "${{ inputs.baseline_ref }}"
+
+  compare:
+    name: Compare against frozen baseline
+    if: inputs.mode == 'compare'
+    needs: render
+    runs-on: ubuntu-latest
+    outputs:
+      conclusion: ${{ steps.diff.outputs.conclusion }}
+    steps:
+      - uses: actions/download-artifact@v4
+        with:
+          name: manifest-${{ inputs.samples_repo }}
+          path: /tmp/fresh
+      - name: Fetch frozen baseline
+        run: |
+          KEY="${{ inputs.baseline_key || inputs.samples_repo }}"
+          curl -fsSL -o /tmp/frozen.ndjson \
+            "https://raw.githubusercontent.com/${{ github.repository }}/${{ inputs.baseline_ref }}/manifests/${KEY}.ndjson"
+          if [ "${{ inputs.acceptlist }}" != "" ]; then
+            curl -fsSL -o /tmp/acceptlist.yml \
+              "https://raw.githubusercontent.com/metanorma/${{ inputs.samples_repo }}/main/${{ inputs.acceptlist }}"
+          fi
+      - id: diff
+        run: |
+          ruby - /tmp/frozen.ndjson /tmp/fresh/manifest.ndjson /tmp/acceptlist.yml <<'RB'
+          require "json"; require "yaml"
+          frozen = Hash[File.readlines(ARGV[0]).map { |l| l.chomp.split("  ", 2).reverse }]
+          fresh  = Hash[File.readlines(ARGV[1]).map { |l| l.chomp.split("  ", 2).reverse }]
+          accept = YAML.safe_load_file(ARGV[2])["patterns"] || []
+          changed  = (fresh.keys & frozen.keys).select { |k| fresh[k] != frozen[k] }
+          added    = fresh.keys - frozen.keys
+          removed  = frozen.keys - fresh.keys
+          classify = lambda do |path|
+            hit = accept.find { |pat| File.fnmatch(pat.is_a?(Hash) ? pat.keys.first : pat, path) }
+            hit ? "accepted" : "regression"
+          end
+          report = {
+            "changed"  => changed.sort.map { |p| { "path" => p, "was" => frozen[p], "now" => fresh[p], "class" => classify.call(p) } },
+            "added"    => added.sort.map { |p| { "path" => p, "now" => fresh[p], "class" => classify.call(p) } },
+            "removed"  => removed.sort.map { |p| { "path" => p, "was" => frozen[p], "class" => classify.call(p) } },
+          }
+          regressions = %w[changed added removed].flat_map { |k| report[k].select { |e| e["class"] == "regression" } }
+          accepted    = %w[changed added removed].flat_map { |k| report[k].select { |e| e["class"] == "accepted" } }
+          File.write("/tmp/report.json", JSON.pretty_generate(report))
+          puts "diffs: #{changed.size} changed, #{added.size} added, #{removed.size} removed"
+          puts "accepted (ci#505 vocabulary): #{accepted.size}"
+          accepted.each { |e| puts "  ✓ accepted: #{e['path']}" }
+          puts "regressions: #{regressions.size}"
+          regressions.each { |e| puts "  ✗ regression: #{e['path']}" }
+          conclusion = regressions.empty? ? (accepted.empty? ? "clean" : "drift-accepted") : "regression"
+          open("/tmp/conclusion", "w") { |f| f.write(conclusion) }
+          RB
+          conclusion=$(cat /tmp/conclusion)
+          echo "conclusion=${conclusion}" >> "$GITHUB_OUTPUT"
+          if [ "$conclusion" = "regression" ]; then
+            echo "::error::Render regressions against the frozen baseline (ci#504/#505) — see the report artifact."
+          fi
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: render-diff-report-${{ inputs.samples_repo }}
+          path: /tmp/report.json
+          if-no-files-found: fallback
+      - name: Step summary
+        if: always()
+        run: |
+          {
+            echo "## Render baseline report — ${{ inputs.samples_repo }} vs frozen (${{ inputs.baseline_ref }})"
+            echo ""
+            echo '```json'
+            cat /tmp/report.json
+            echo '```'
+          } >> "$GITHUB_STEP_SUMMARY"
