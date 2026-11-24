@@ -143,8 +143,12 @@ jobs:
       - uses: ruby/setup-ruby@v1
         with:
           ruby-version: ${{ inputs.ruby_version }}
-          bundler-cache: true
-          working-directory: .ancora-engine
+          # No bundler cache: this job runs a caller-chosen ancora_ref, and a
+          # cache written from it could poison the default branch's cache.
+          bundler-cache: false
+      - name: Install the ancora engine
+        working-directory: .ancora-engine
+        run: bundle install --jobs 4 --retry 3
 
       - name: Validate inputs
         id: matrix
