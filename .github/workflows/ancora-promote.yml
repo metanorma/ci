@@ -1,0 +1,173 @@
+name: ancora-promote
+
+# Promotion stage of an ancora release wave (ci#508): publish the wave's
+# FINAL versions in wave order, after a human approves.
+#
+# Reusable and manual only: workflow_call / workflow_dispatch, never push.
+# The approval is a GitHub environment: the `approve` job runs in the FIXED
+# environment `ancora-promote` (deliberately not an input: an unknown name
+# is auto-created by GitHub with no protection rules, which would skip the
+# approval). Configure that environment in the CALLING repository with
+# required reviewers (the owner) and restrict it to the release branch;
+# verify with `gh api repos/OWNER/REPO/environments/ancora-promote` that
+# protection_rules lists required_reviewers before the first use. The `promote` job needs `approve`, so nothing is
+# dispatched until the reviewers approve the run. This workflow does not
+# create the environment.
+#
+# Pairing with ancora: `ancora step` only emits promote_wave once the wave
+# is gate-green AND `ancora approve --manifest` has recorded approval
+# (promote_approval: manual). This environment gate is the second,
+# independent human checkpoint on the publish itself.
+#
+# `items` is the `items` array of the `promote_wave` action
+# (`ancora step --format json`), in wave order; the terminus is alone in the
+# last wave. Each item is dispatched on the gem's release workflow
+# (ci#515 flow; no second publish path) and awaited on rubygems.org before
+# the next one is dispatched.
+
+on:
+  workflow_dispatch:
+    inputs:
+      items:
+        description: 'JSON array of {gem, repo, version} from the promote_wave action (wave order)'
+        required: true
+        type: string
+      gate_result:
+        description: 'Must be "green": the verdict of the ancora-gate run for this wave'
+        required: true
+        type: string
+      gate_run_url:
+        description: 'URL of the green ancora-gate run (recorded in the summary)'
+        required: true
+        type: string
+      release_workflow:
+        required: false
+        default: release.yml
+        type: string
+      ref:
+        required: false
+        default: main
+        type: string
+      wait_minutes:
+        required: false
+        default: '90'
+        type: string
+  workflow_call:
+    inputs:
+      items:
+        description: 'JSON array of {gem, repo, version} from the promote_wave action (wave order)'
+        required: true
+        type: string
+      gate_result:
+        description: 'Must be "green": the verdict of the ancora-gate run for this wave'
+        required: true
+        type: string
+      gate_run_url:
+        description: 'URL of the green ancora-gate run (recorded in the summary)'
+        required: true
+        type: string
+      release_workflow:
+        required: false
+        default: release.yml
+        type: string
+      ref:
+        required: false
+        default: main
+        type: string
+      wait_minutes:
+        required: false
+        default: '90'
+        type: string
+    secrets:
+      pat_token:
+        description: 'PAT with workflow scope on the gem repos (dispatches their release workflow)'
+        required: true
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ancora-promote-${{ github.repository }}
+  cancel-in-progress: false
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Validate (green gate, finals only)
+        env:
+          ITEMS: ${{ inputs.items }}
+          GATE_RESULT: ${{ inputs.gate_result }}
+          GATE_RUN_URL: ${{ inputs.gate_run_url }}
+          WAIT_MINUTES: ${{ inputs.wait_minutes }}
+        run: |
+          set -euo pipefail
+          [[ "$WAIT_MINUTES" =~ ^[1-9][0-9]{0,2}$ ]] \
+            || { echo "::error::wait_minutes must be an integer 1-999"; exit 1; }
+          [ "$GATE_RESULT" = "green" ] \
+            || { echo "::error::gate_result must be 'green', got '$GATE_RESULT'"; exit 1; }
+          jq -e '
+            type == "array" and length > 0 and
+            all(.[];
+              (.gem | type == "string" and test("^[A-Za-z0-9_.-]+$")) and
+              (.repo | type == "string" and test("^[A-Za-z0-9_.-]+/[A-Za-z0-9_.-]+$")) and
+              (.version | type == "string" and test("^[0-9]+\\.[0-9]+\\.[0-9]+$")))
+          ' <<<"$ITEMS" >/dev/null \
+            || { echo "::error::items must be a non-empty array of {gem, repo, version} with a FINAL version X.Y.Z"; exit 1; }
+          {
+            echo "## ancora-promote request"
+            echo "gate run: $GATE_RUN_URL"
+            echo
+            echo '| order | gem | repo | final |'
+            echo '|---|---|---|---|'
+            jq -r 'to_entries[] | "| \(.key + 1) | \(.value.gem) | \(.value.repo) | \(.value.version) |"' <<<"$ITEMS"
+          } >> "$GITHUB_STEP_SUMMARY"
+
+  approve:
+    needs: validate
+    runs-on: ubuntu-latest
+    # The gate: the run pauses here until the environment's required
+    # reviewers approve it.
+    environment: ancora-promote
+    steps:
+      - run: echo "approved by environment ancora-promote"
+
+  promote:
+    needs: approve
+    runs-on: ubuntu-latest
+    timeout-minutes: 360
+    steps:
+      - name: Promote finals in wave order
+        env:
+          GH_TOKEN: ${{ secrets.pat_token }}
+          ITEMS: ${{ inputs.items }}
+          WORKFLOW: ${{ inputs.release_workflow }}
+          REF: ${{ inputs.ref }}
+          WAIT_MINUTES: ${{ inputs.wait_minutes }}
+        run: |
+          set -euo pipefail
+          published() {
+            curl -fsS "https://rubygems.org/api/v1/versions/$1.json" \
+              | jq -e --arg v "$2" 'any(.[]; .number == $v)' >/dev/null
+          }
+          while IFS= read -r item; do
+            gem=$(jq -r .gem <<<"$item")
+            repo=$(jq -r .repo <<<"$item")
+            version=$(jq -r .version <<<"$item")
+            if published "$gem" "$version"; then
+              echo "$gem $version already published; skipping (idempotent)"
+              continue
+            fi
+            echo "promoting $gem $version via $repo $WORKFLOW@$REF"
+            gh workflow run "$WORKFLOW" -R "$repo" --ref "$REF" \
+              --field next_version="$version"
+            deadline=$(( $(date +%s) + WAIT_MINUTES * 60 ))
+            until published "$gem" "$version"; do
+              if [ "$(date +%s)" -ge "$deadline" ]; then
+                echo "::error::$gem $version not on rubygems.org after ${WAIT_MINUTES} minutes; stopping (later items depend on it)"
+                exit 1
+              fi
+              sleep 60
+            done
+            echo "$gem $version is on rubygems.org"
+          done < <(jq -c '.[]' <<<"$ITEMS")
