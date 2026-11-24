@@ -1,0 +1,125 @@
+name: native-gem
+
+# Parametric CI for gems with native components (ci#82). One reusable,
+# three build classes — the caller declares its class and the reusable
+# supplies the right build+test shape instead of every gem carrying a
+# bespoke workflow.
+#
+# Class reference (ci#82 taxonomy):
+#   class: ruby-ext      — Ruby C extension; a matrix over the supported
+#                          ruby minors is required (each minor compiles
+#                          its own binary; the compiled artifact is NOT
+#                          shipped — gemspec `extensions` builds at
+#                          install time, so this job is test-only).
+#   class: ffi-binary    — a single prebuilt native binary loaded via
+#                          ffi; one build per OS triplet, binary fetched
+#                          or compiled once and smoke-loaded.
+#   class: complex-build — bespoke build system (cmake/autotools/...);
+#                          the caller supplies `build_command` and the
+#                          reusable wraps it with the standard
+#                          checkout/setup/test/report shape.
+#
+# Inputs kept minimal on purpose: `class` + `build_command` (complex
+# only) + the standard matrix overrides. Anything more bespoke than
+# `build_command` is out of scope for the reusable — keep the bespoke
+# workflow locally.
+
+on:
+  workflow_call:
+    inputs:
+      class:
+        description: 'ruby-ext | ffi-binary | complex-build'
+        required: true
+        type: string
+      build_command:
+        description: 'complex-build only: the command that produces the native artifact'
+        required: false
+        type: string
+        default: ''
+      ruby_versions:
+        description: 'JSON array of ruby versions (ruby-ext matrix); defaults to the fleet ruby-matrix.json'
+        required: false
+        type: string
+        default: '["3.3", "3.4"]'
+      os_list:
+        description: 'JSON array of OS runners'
+        required: false
+        type: string
+        default: '["ubuntu-latest", "macos-latest", "windows-latest"]'
+      rake_task:
+        description: 'Test task after the build'
+        required: false
+        type: string
+        default: 'bundle exec rake'
+    secrets:
+      pat_token:
+        required: false
+
+permissions:
+  contents: read
+
+jobs:
+  ruby-ext:
+    if: inputs.class == 'ruby-ext'
+    strategy:
+      fail-fast: false
+      matrix:
+        os: ${{ fromJson(inputs.os_list) }}
+        ruby: ${{ fromJson(inputs.ruby_versions) }}
+    runs-on: ${{ matrix.os }}
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          submodules: true
+          token: ${{ secrets.pat_token || github.token }}
+      - uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: ${{ matrix.ruby }}
+          bundler-cache: true
+      - run: ${{ inputs.rake_task }}
+        env:
+          # Ruby ≥ 3.5/4.x removes bundled gems (ostruct et al — the
+          # mn2sts-ruby#22 class); gems on the 4.0 matrix must declare
+          # what they require.
+          BUNDLE_WITHOUT: ""
+
+  ffi-binary:
+    if: inputs.class == 'ffi-binary'
+    strategy:
+      fail-fast: false
+      matrix:
+        os: ${{ fromJson(inputs.os_list) }}
+    runs-on: ${{ matrix.os }}
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          submodules: true
+          token: ${{ secrets.pat_token || github.token }}
+      - uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: '3.3'
+          bundler-cache: true
+      - name: Smoke-load the ffi binary
+        run: |
+          ruby -e "require 'ffi'; puts 'ffi OK'"
+          ${{ inputs.rake_task }}
+
+  complex-build:
+    if: inputs.class == 'complex-build'
+    strategy:
+      fail-fast: false
+      matrix:
+        os: ${{ fromJson(inputs.os_list) }}
+    runs-on: ${{ matrix.os }}
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          submodules: true
+          token: ${{ secrets.pat_token || github.token }}
+      - name: Build the native artifact (caller-supplied command)
+        run: ${{ inputs.build_command }}
+      - uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: '3.3'
+          bundler-cache: true
+      - run: ${{ inputs.rake_task }}
