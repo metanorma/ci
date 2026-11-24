@@ -709,3 +709,22 @@ jobs:
           repository: ${{ github.repository }}
           event-type: release-passed
           client-payload: '{"ref": "${{ steps.gem-tag-ref.outputs.value }}", "sha": "${{ github.sha }}", "type": "release-passed"}'
+
+      - name: Dispatch packed-metanorma payload sync (stable cli cuts)
+        # release-engineering#8: a stable metanorma-cli publish rolls the
+        # packed (tebako) channel automatically. packed-metanorma's build
+        # receives this dispatch, resolves the payload version from the
+        # tag ref, and lands the versions.yaml roll by PR; the merge
+        # then presses and cuts the packed release. Prereleases keep the
+        # manual packed flow (their payloads are cut on demand).
+        if: >-
+          env.SHOULD_PUBLISH == 'true' &&
+          github.event_name == 'workflow_dispatch' &&
+          github.repository == 'metanorma/metanorma-cli' &&
+          !contains(steps.gem-identity.outputs.version, '-')
+        uses: peter-evans/repository-dispatch@v3
+        with:
+          token: ${{ secrets.pat_token }}
+          repository: metanorma/packed-metanorma
+          event-type: metanorma/metanorma-cli
+          client-payload: '{"ref": "${{ steps.gem-tag-ref.outputs.value }}"}'
