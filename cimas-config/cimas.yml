@@ -673,6 +673,122 @@ repositories:
       .github/workflows/test.yml: gh-actions/samples/test.yml
       .github/workflows/automerge.yml: gh-actions/master/automerge.yml
 
+  # ci-repo-watcher triage 2026-11-21 (ci#412 verdicts): IHO S-standards
+  # document repos — docker-only docs mapping (the S-102-Product-Specification
+  # shape). Managed so their renders ride the fleet image updates.
+  iho-s-97:
+    remote: ssh://git@github.com/metanorma/iho-s-97
+    branch: main
+    files:
+      .github/workflows/docker.yml:
+        if_public: gh-actions/samples/public-docker.yml
+        if_private: gh-actions/samples/private-docker.yml.erb
+  iho-s-98:
+    remote: ssh://git@github.com/metanorma/iho-s-98
+    branch: main
+    files:
+      .github/workflows/docker.yml:
+        if_public: gh-actions/samples/public-docker.yml
+        if_private: gh-actions/samples/private-docker.yml.erb
+  iho-s-99:
+    remote: ssh://git@github.com/metanorma/iho-s-99
+    branch: main
+    files:
+      .github/workflows/docker.yml:
+        if_public: gh-actions/samples/public-docker.yml
+        if_private: gh-actions/samples/private-docker.yml.erb
+  iho-s-100:
+    remote: ssh://git@github.com/metanorma/iho-s-100
+    branch: main
+    files:
+      .github/workflows/docker.yml:
+        if_public: gh-actions/samples/public-docker.yml
+        if_private: gh-actions/samples/private-docker.yml.erb
+  iho-s-101:
+    remote: ssh://git@github.com/metanorma/iho-s-101
+    branch: main
+    files:
+      .github/workflows/docker.yml:
+        if_public: gh-actions/samples/public-docker.yml
+        if_private: gh-actions/samples/private-docker.yml.erb
+  iho-s-104:
+    remote: ssh://git@github.com/metanorma/iho-s-104
+    branch: main
+    files:
+      .github/workflows/docker.yml:
+        if_public: gh-actions/samples/public-docker.yml
+        if_private: gh-actions/samples/private-docker.yml.erb
+  iho-s-111:
+    remote: ssh://git@github.com/metanorma/iho-s-111
+    branch: main
+    files:
+      .github/workflows/docker.yml:
+        if_public: gh-actions/samples/public-docker.yml
+        if_private: gh-actions/samples/private-docker.yml.erb
+  iho-s-123:
+    remote: ssh://git@github.com/metanorma/iho-s-123
+    branch: main
+    files:
+      .github/workflows/docker.yml:
+        if_public: gh-actions/samples/public-docker.yml
+        if_private: gh-actions/samples/private-docker.yml.erb
+  iho-s-124:
+    remote: ssh://git@github.com/metanorma/iho-s-124
+    branch: main
+    files:
+      .github/workflows/docker.yml:
+        if_public: gh-actions/samples/public-docker.yml
+        if_private: gh-actions/samples/private-docker.yml.erb
+  iho-s-125:
+    remote: ssh://git@github.com/metanorma/iho-s-125
+    branch: main
+    files:
+      .github/workflows/docker.yml:
+        if_public: gh-actions/samples/public-docker.yml
+        if_private: gh-actions/samples/private-docker.yml.erb
+  iho-s-127:
+    remote: ssh://git@github.com/metanorma/iho-s-127
+    branch: main
+    files:
+      .github/workflows/docker.yml:
+        if_public: gh-actions/samples/public-docker.yml
+        if_private: gh-actions/samples/private-docker.yml.erb
+  iho-s-128:
+    remote: ssh://git@github.com/metanorma/iho-s-128
+    branch: main
+    files:
+      .github/workflows/docker.yml:
+        if_public: gh-actions/samples/public-docker.yml
+        if_private: gh-actions/samples/private-docker.yml.erb
+  iho-s-129:
+    remote: ssh://git@github.com/metanorma/iho-s-129
+    branch: main
+    files:
+      .github/workflows/docker.yml:
+        if_public: gh-actions/samples/public-docker.yml
+        if_private: gh-actions/samples/private-docker.yml.erb
+  iho-s-130:
+    remote: ssh://git@github.com/metanorma/iho-s-130
+    branch: main
+    files:
+      .github/workflows/docker.yml:
+        if_public: gh-actions/samples/public-docker.yml
+        if_private: gh-actions/samples/private-docker.yml.erb
+  iho-s-131:
+    remote: ssh://git@github.com/metanorma/iho-s-131
+    branch: main
+    files:
+      .github/workflows/docker.yml:
+        if_public: gh-actions/samples/public-docker.yml
+        if_private: gh-actions/samples/private-docker.yml.erb
+  iho-s-158:
+    remote: ssh://git@github.com/metanorma/iho-s-158
+    branch: main
+    files:
+      .github/workflows/docker.yml:
+        if_public: gh-actions/samples/public-docker.yml
+        if_private: gh-actions/samples/private-docker.yml.erb
+
   # docs
   ogc-wfs:
     remote: ssh://git@github.com/metanorma/ogc-wfs
@@ -1051,6 +1167,71 @@ repositories:
   # (metanorma/ci#335) on 2026-07-02 as class (c) external transfer.
   # Now lives at https://github.com/lutaml/canon and is outside
   # cimas-managed scope. Pre-transfer entry preserved in git history.
+  # ci-repo-watcher triage 2026-11-21 (ci#412 verdicts): the new pre-release
+  # gem ecosystem — registered (files: {}) so the watcher stops listing
+  # them, but DELIBERATELY quiet-managed until each cuts its first release;
+  # ride the stagger decision in the triage table on ci#412.
+  isq:
+    remote: ssh://git@github.com/metanorma/isq
+    branch: main
+    files: {}
+  sdu-smart:
+    remote: ssh://git@github.com/metanorma/sdu-smart
+    branch: main
+    files: {}
+  iata:
+    remote: ssh://git@github.com/metanorma/iata
+    branch: main
+    files: {}
+  unlocodes:
+    remote: ssh://git@github.com/metanorma/unlocodes
+    branch: main
+    files: {}
+  iso-data-importer:
+    remote: ssh://git@github.com/metanorma/iso-data-importer
+    branch: main
+    files: {}
+  metanorma-tools:
+    remote: ssh://git@github.com/metanorma/metanorma-tools
+    branch: main
+    files: {}
+  mnenv:
+    remote: ssh://git@github.com/metanorma/mnenv
+    branch: main
+    files: {}
+  prosereflect:
+    remote: ssh://git@github.com/metanorma/prosereflect
+    branch: main
+    files: {}
+  uniword:
+    remote: ssh://git@github.com/metanorma/uniword
+    branch: main
+    files: {}
+  xseed:
+    remote: ssh://git@github.com/metanorma/xseed
+    branch: main
+    files: {}
+  xsdvi-ruby:
+    remote: ssh://git@github.com/metanorma/xsdvi-ruby
+    branch: main
+    files: {}
+  idml:
+    remote: ssh://git@github.com/metanorma/idml
+    branch: main
+    files: {}
+  commenter:
+    remote: ssh://git@github.com/metanorma/commenter
+    branch: main
+    files: {}
+  fractor:
+    remote: ssh://git@github.com/metanorma/fractor
+    branch: main
+    files: {}
+  serialbench:
+    remote: ssh://git@github.com/metanorma/serialbench
+    branch: main
+    files: {}
+
   # rfc
   rfc-divination-cfapi:
     remote: ssh://git@github.com/metanorma/rfc-divination-cfapi
@@ -1538,6 +1719,13 @@ groups:
   - versions # metanorma/versions register (actions-mn/setup consumes it)
   - pngcheck-metanorma # C fork, own release flow
   - sample-ogc-discussion-paper # stale since 2023
+  # ci-repo-watcher triage 2026-11-21 verdicts (ci#412): WIP/internal
+  - reflect # WIP ProseMirror editor (pre-production)
+  - metanorma-mirror-js # Mirror TS lib, pre-#515 era
+  - isq-smart # TS front-end
+  - oiml-terms # Python, idle since 2026-06
+  - plateau-iur-schema-browser # quiet
+  - docbook # mirror/import
   # infrastructure
   - ci
   - ".github"
