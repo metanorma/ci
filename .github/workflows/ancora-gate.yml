@@ -267,7 +267,15 @@ jobs:
               # git/path source would test unpublished code, not the candidate
               src = %i[git github gist bitbucket path glob branch ref tag submodules source]
               opts = args.select { |a| a.is_a?(Hash) }.map { |h| h.reject { |k, _| src.include?(k.to_sym) } }
-              super(name, pin, *opts)
+              # a `git ... do` / `path ... do` / `source ... do` block sets the
+              # inherited source; clear it so the pin resolves from rubygems.org
+              inherited = @source
+              @source = nil
+              begin
+                super(name, pin, *opts)
+              ensure
+                @source = inherited
+              end
             end
           end
           Bundler::Dsl.prepend(AncoraGatePins)
