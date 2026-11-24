@@ -207,3 +207,22 @@ The heuristic lives in a composite action. Consumers of `rubygems-release.yml` n
 - [ci#370](https://github.com/metanorma/ci/issues/370) — revert of the gated relay architecture
 - [ci#309](https://github.com/metanorma/ci/issues/309) — release-workflow maintainer experience (origin of preflight)
 - [ci#314](https://github.com/metanorma/ci/issues/314) — `bundler-cache: false` (stale-cache missing-gem class)
+
+## Trusted Publisher coordinates (ci#451)
+
+The OIDC preflight matches the OIDC token against the Trusted Publisher
+entry configured on rubygems.org for the gem. The three coordinates must
+match the CONSUMER repo's setup exactly — the preflight error does not
+say which one mismatched:
+
+| Coordinate | Required value |
+|---|---|
+| Repository | the consumer repo (`metanorma/<gem-repo>`), never `metanorma/ci` |
+| Workflow filename | the consumer's own `.github/workflows/release.yml` — **not** `metanorma/ci/.github/workflows/rubygems-release.yml` |
+| Environment | the `environment` input, verbatim (empty string when not passed) |
+
+A TP entry naming the reusable's own path never matches: the OIDC token
+carries the calling workflow's filename, which is always the consumer's
+`release.yml`. When the `rubygems-api-key` secret is present the
+preflight is skipped entirely (the API-key path needs no Trusted
+Publisher entry).
