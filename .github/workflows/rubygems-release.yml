@@ -118,7 +118,6 @@ on:
           from the release date when omitted or empty.
         required: false
         type: string
-        default: ''
     secrets:
       rubygems-api-key:
         required: false
