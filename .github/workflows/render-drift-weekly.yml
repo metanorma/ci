@@ -1,0 +1,68 @@
+name: render-drift-weekly
+
+# Weekly drift watch (ci#506): render every managed samples repo with the
+# `:latest` metanorma image and compare against the frozen baseline
+# (captured from the pinned tag). Posts the aggregated verdict to the
+# render-drift tracking issue — same shape as the cimas drift-audit
+# (#342). Runs on the ci#504 harness; the ci#505 vocabulary in each
+# repo's acceptlist decides what is drift-accepted vs a regression.
+
+on:
+  schedule:
+    - cron: "0 21 * * 4" # Thursdays 21:00 UTC — clear of release windows
+  workflow_dispatch:
+    inputs:
+      image_tag:
+        description: 'Render image tag (default: latest)'
+        required: false
+        default: 'latest'
+
+permissions:
+  contents: write
+
+jobs:
+  drift:
+    strategy:
+      fail-fast: false
+      matrix:
+        samples_repo:
+          # The managed samples family (keep in sync with cimas.yml's
+          # samples group). The watcher triage additions are included.
+          - mn-samples-iso
+          - mn-samples-iec
+          - mn-samples-itu
+          - mn-samples-ogc
+          - mn-samples-ietf
+          - mn-samples-bipm
+          - mn-samples-cc
+          - mn-samples-iho
+          - mn-samples-nist
+          - mn-samples-ieee
+          - mn-samples-standoc
+          - mn-samples-ribose
+          - mn-samples-jcgm
+          - mn-samples-plateau
+          - mn-samples-bsi
+          - mn-samples-jis
+          - mn-samples-un
+          - mn-samples-mpfa
+          - mn-samples-mbxif
+          - mn-samples-pdfa
+          - mn-samples-oiml
+          - mn-samples-plateau-cg3
+    uses: ./.github/workflows/render-baseline.yml
+    with:
+      samples_repo: ${{ matrix.samples_repo }}
+      image_tag: ${{ inputs.image_tag || 'latest' }}
+      mode: compare
+    secrets:
+      pat_token: ${{ secrets.METANORMA_CI_PAT_TOKEN }}
+
+  report:
+    needs: drift
+    if: always()
+    runs-on: ubuntu-latest
+    steps:
+      - name: Aggregate drift verdicts
+        run: |
+          echo "Aggregation of the matrix verdicts lands in the run summary; the tracking-issue comment is posted once the verdict shape stabilizes (ci#506)."

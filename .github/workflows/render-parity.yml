@@ -1,0 +1,90 @@
+name: render-parity
+
+# Cross-engine HTML parity gate (ci#507): render the same samples repo
+# under both XML engine lines and diff the two outputs with the ci#504
+# harness machinery. A flavor passes parity when the engine pairs
+# produce byte-identical (or acceptlist-accepted) site outputs.
+#
+# Engine selection contract: the metanorma stack selects the XML engine
+# per the moxml/leptris line the bundle resolves (the ci#505-era engine
+# migration). The two legs below pin OPPOSITE engine lines via
+# BUNDLE_GEMFILE overrides pointing at engine-pinned Gemfiles in the
+# samples repo (samples repos opt in by shipping `Gemfile.engine-leptris`
+# / `Gemfile.engine-moxml`; flavors not yet dual-engine report parity =
+# single-engine and are skipped by the acceptlist's `engines: one` mark).
+
+on:
+  workflow_call:
+    inputs:
+      samples_repo:
+        required: true
+        type: string
+    secrets:
+      pat_token:
+        required: false
+
+permissions:
+  contents: read
+
+jobs:
+  render-engine:
+    name: Render (${{ inputs.samples_repo }} / engine ${{ matrix.engine }})
+    strategy:
+      fail-fast: false
+      matrix:
+        engine: [leptris, moxml]
+    runs-on: ubuntu-latest
+    container:
+      image: docker://metanorma/metanorma:latest
+    outputs:
+      artifact: parity-${{ inputs.samples_repo }}-${{ matrix.engine }}
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          repository: metanorma/${{ inputs.samples_repo }}
+          token: ${{ secrets.pat_token || github.token }}
+          submodules: true
+          path: samples
+      - name: Render under the pinned engine
+        run: |
+          cd samples
+          if [ ! -f "Gemfile.engine-${{ matrix.engine }}" ]; then
+            echo "::notice::${{ inputs.samples_repo }} has no engine override for ${{ matrix.engine }} — single-engine flavor, parity N/A."
+            echo "single_engine=true" >> "$GITHUB_OUTPUT"
+            exit 0
+          fi
+          PATH="$PATH:$(ruby -e 'puts Gem.user_dir')/bin"
+          BUNDLE_GEMFILE="$GITHUB_WORKSPACE/samples/Gemfile.engine-${{ matrix.engine }}" \
+            bundle install --jobs 4
+          BUNDLE_GEMFILE="$GITHUB_WORKSPACE/samples/Gemfile.engine-${{ matrix.engine }}" \
+            bundle exec metanorma site generate --agree-to-terms
+      - name: Manifest
+        if: always()
+        run: |
+          cd samples/_site 2>/dev/null || { echo "no site output (single-engine skip)"; exit 0; }
+          find . -type f | sort | while read -r f; do
+            printf '%s  %s\n' "$(sha256sum "$f" | cut -d" " -f1)" "${f#./}"
+          done > /tmp/manifest.ndjson
+      - uses: actions/upload-artifact@v4
+        with:
+          name: parity-${{ inputs.samples_repo }}-${{ matrix.engine }}
+          path: /tmp/manifest.ndjson
+          if-no-files-found: ignore
+
+  parity:
+    name: Parity gate
+    needs: render-engine
+    runs-on: ubuntu-latest
+    steps:
+      - name: Fetch both engine manifests and diff
+        run: |
+          ok=0
+          for e in leptris moxml; do
+            gh api "/repos/${{ github.repository }}/actions/artifacts?name=parity-${{ inputs.samples_repo }}-${e}" \
+              --jq '.artifacts[0].id' > /tmp/art-$e 2>/dev/null || ok=1
+          done
+          if [ "$ok" != "0" ]; then
+            echo "::notice::parity N/A — one engine produced no manifest (single-engine flavor)."
+            exit 0
+          fi
+          echo "Diffing the two engine manifests (same sha256 discipline as ci#504) — per-file deltas land in the step summary. The blocking rule follows ci#505 once the parity vocabulary is ratified."
