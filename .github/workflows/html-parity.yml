@@ -1,0 +1,109 @@
+name: html-parity
+
+# Per-flavor two-engine HTML content parity (ci#507). Renders each launch
+# flavor's mn-samples-<flavor> repo with both HTML engines (isodoc and
+# document, via scripts/render_engines.rb) and runs
+# scripts/html_parity.py --mode content with the flavor's profile from
+# scripts/parity_profiles/.
+#
+# NON-BLOCKING by design: it runs only on a weekly schedule or by hand (never
+# on push or pull_request), and every job is continue-on-error, so a divergent
+# flavor shows up in the run summary and artifacts but never fails a gate.
+# Make it blocking later by dropping continue-on-error once the launch flavors
+# report content-parity.
+
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: "0 22 * * 5" # Fridays 22:00 UTC, clear of the Thursday drift run
+
+permissions:
+  contents: read
+
+concurrency:
+  group: html-parity-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  parity:
+    name: Parity (${{ matrix.flavor }})
+    runs-on: ubuntu-latest
+    continue-on-error: true
+    timeout-minutes: 60
+    strategy:
+      fail-fast: false
+      matrix:
+        # Launch flavors. iala and wmo are tastes: they load the iho base gem
+        # plus metanorma-taste (scripts/parity_flavor.rb). The samples repo is
+        # always mn-samples-<flavor>; render_engines.rb picks its sources/ dir.
+        flavor: [iso, iec, oiml, iala, wmo]
+    env:
+      PARITY_FLAVOR: ${{ matrix.flavor }}
+      BUNDLE_GEMFILE: ${{ github.workspace }}/gemfiles/html_parity.gemfile
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          path: ci
+
+      - uses: actions/checkout@v6
+        with:
+          repository: metanorma/mn-samples-${{ matrix.flavor }}
+          path: samples
+
+      - uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: "3.4"
+
+      - name: Bundle install (gemfiles/html_parity.gemfile)
+        working-directory: ci
+        run: |
+          export BUNDLE_GEMFILE="$GITHUB_WORKSPACE/ci/gemfiles/html_parity.gemfile"
+          bundle install --jobs 4
+
+      - name: Render both engines and compare content
+        id: parity
+        continue-on-error: true
+        run: |
+          export BUNDLE_GEMFILE="$GITHUB_WORKSPACE/ci/gemfiles/html_parity.gemfile"
+          set +e
+          python3 ci/scripts/html_parity.py "${{ matrix.flavor }}" \
+            --samples-dir "$GITHUB_WORKSPACE/samples" \
+            --mode content \
+            --work-dir "$GITHUB_WORKSPACE/parity-work" \
+            --out-dir "$GITHUB_WORKSPACE/parity-signoff" 2>&1 | tee parity.log
+          rc=${PIPESTATUS[0]}
+          echo "rc=$rc" >> "$GITHUB_OUTPUT"
+          exit "$rc"
+
+      - name: Step summary
+        if: always()
+        run: |
+          python3 -I - "${{ matrix.flavor }}" "${{ steps.parity.outputs.rc }}" <<'PY' >> "$GITHUB_STEP_SUMMARY"
+          import json, os, sys
+          flavor, rc = sys.argv[1], sys.argv[2] or "n/a"
+          path = os.path.join("parity-signoff", f"{flavor}.content.json")
+          print(f"### html parity: {flavor}\n")
+          if not os.path.isfile(path):
+              print(f"No sign-off JSON was written (exit code {rc}): the render or bundle step failed. See the step log.")
+              sys.exit(0)
+          doc = json.load(open(path))
+          t = doc.get("totals", {})
+          print(f"Conclusion: **{doc['conclusion']}** (exit code {rc}, max missing {doc.get('max_missing', 0)})\n")
+          print("| file | legacy blocks | matched | missing | extra | retyped | reflowed | out of order |")
+          print("|---|---:|---:|---:|---:|---:|---:|---:|")
+          for f in doc["files"]:
+              print("| {} | {} | {} | {} | {} | {} | {} | {} |".format(
+                  f["path"], *(f.get(k, "") for k in ("legacy_blocks", "matched", "missing", "extra", "retyped", "reflowed", "out_of_order"))))
+          print("| **total** | {} | {} | {} | {} | {} | {} | {} |".format(
+              *(t.get(k, 0) for k in ("legacy_blocks", "matched", "missing", "extra", "retyped", "reflowed", "out_of_order"))))
+          PY
+
+      - name: Upload sign-off JSON
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: html-parity-${{ matrix.flavor }}
+          path: |
+            parity-signoff/
+            parity.log
+          if-no-files-found: ignore
