@@ -17,15 +17,23 @@ against a frozen baseline; every diff is classified; regressions block.**
 
 ### Freeze a baseline (once per samples repo, and after every blessed change)
 
+Baselines live on the `render-baselines` branch of this repository (not
+in a separate repository). Capture is a manual dispatch of
+[`render-baseline-capture.yml`](../.github/workflows/render-baseline-capture.yml),
+which calls the reusable `render-baseline.yml` with `mode: capture`:
+
 ```sh
 gh workflow run render-baseline-capture.yml \
   -f samples_repo=mn-samples-iso \
   -f image_tag=metanorma-metanorma-<frozen-tag>
 ```
 
-The capture run commits `manifests/<repo>.ndjson` (sorted
-`sha256  path` lines) plus a `.meta.yaml` provenance sidecar to the
-[`render-baselines`](../../tree/render-baselines) branch.
+The optional `baseline_key` input overrides the file stem (default: the
+samples repo name). The capture run commits `manifests/<key>.ndjson`
+(sorted `sha256  path` lines) plus a `manifests/<key>.meta.yaml`
+provenance sidecar to the
+[`render-baselines`](https://github.com/metanorma/ci/tree/render-baselines)
+branch.
 
 ### Compare (CI gate or manual)
 
