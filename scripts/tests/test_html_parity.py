@@ -160,6 +160,39 @@ class ContentParityTest(unittest.TestCase):
             open(custom, "w").write('{"skip_classes": ["variant-title-toc"]}')
             self.assertEqual(hp.main(["rice"] + args[1:] + ["--profile", custom]), 0)
 
+    def test_title_block_plus_body_equals_legacy_label_body(self):
+        legacy = [("text", 0, "WARNING — Direct contact can cause lesions.")]
+        new = [("text", 0, "WARNING"), ("text", 0, "Direct contact can cause lesions.")]
+        r = hc.compare_blocks(legacy, new)
+        self.assertEqual((r["matched"], r["missing"], r["reflowed"]), (1, 0, 0))
+
+    def test_title_block_with_different_body_is_still_missing(self):
+        legacy = [("text", 0, "WARNING — Direct contact can cause lesions.")]
+        new = [("text", 0, "WARNING"), ("text", 0, "Something else entirely.")]
+        r = hc.compare_blocks(legacy, new)
+        self.assertEqual((r["matched"], r["missing"]), (0, 1))
+
+    def test_footnote_aside_equals_fn_popup_text(self):
+        legacy = [("text", 0, "1)Withdrawn."), ("text", 0, "↩"), ("text", 0, "Body.")]
+        html = '<p>Body.<span class="fn-popup">Withdrawn.</span></p>'
+        r = hc.compare_blocks(legacy, hc.extract_blocks(html, ["fn-popup"]),
+                              popups=hc.extract_popups(html))
+        self.assertEqual((r["matched"], r["missing"], r["reflowed"]), (2, 0, 0))
+
+    def test_footnote_with_different_popup_text_is_still_missing(self):
+        legacy = [("text", 0, "1)Withdrawn.")]
+        html = '<p>Body.<span class="fn-popup">Under preparation.</span></p>'
+        r = hc.compare_blocks(legacy, hc.extract_blocks(html, ["fn-popup"]),
+                              popups=hc.extract_popups(html))
+        self.assertEqual(r["missing"], 1)
+
+    def test_footnote_popup_is_used_once(self):
+        legacy = [("text", 0, "1)Withdrawn."), ("text", 0, "2)Withdrawn.")]
+        html = '<p>A<span class="fn-popup">Withdrawn.</span></p>'
+        r = hc.compare_blocks(legacy, hc.extract_blocks(html, ["fn-popup"]),
+                              popups=hc.extract_popups(html))
+        self.assertEqual(r["missing"], 1)
+
 
 if __name__ == "__main__":
     unittest.main()

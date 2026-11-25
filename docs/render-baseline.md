@@ -98,6 +98,17 @@ shows under `cover-*` classes and the header), `doctitle-en`/`doctitle-fr`
 (cover titles the document engine shows as `cover-title`) and
 `variant-title-toc` (`display:none` duplicate annex titles).
 
+### Known layout differences
+
+Two layout differences count as equal content, not `reflowed`, when the text
+matches exactly (whitespace normalized). A title-only block (admonition title,
+example or note label) followed by its body block equals the legacy single block
+`LABEL — body`. A legacy footnote `<aside class="footnote">` equals the document
+engine's inline `fn-popup` text next to the marker (its back-link block goes
+with it). A body or footnote whose text differs is not matched and still counts
+as missing or reflowed. The `____________` filler line is not skipped: its class
+`zzSTDTitle1` also carries the cover organization name and titles.
+
 ### Rendering both engines
 
 `html_parity.py` renders each engine through
