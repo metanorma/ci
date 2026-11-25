@@ -46,4 +46,6 @@ jobs:
       - name: Deploy to GitHub Pages
         uses: actions-mn/deploy-pages@v1
         with:
-          token: ${{ secrets.GITHUB_TOKEN }}
+          # deploy-pages re-clones the repo (submodules included): the
+          # default token cannot see private cross-repo submodules.
+          token: ${{ secrets.METANORMA_CI_PAT_TOKEN || secrets.GITHUB_TOKEN }}
