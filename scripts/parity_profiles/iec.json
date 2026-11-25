@@ -1,0 +1,14 @@
+{
+  "comment": "Content-mode chrome for IEC. Added to the default skip lists. Verified against iec-rice en/fr isodoc vs document HTML (ci#507).",
+  "skip_classes": [
+    "fn-popup",
+    "coverpage_docnumber",
+    "coverpage_techcommittee",
+    "coverpage_docstage",
+    "coverpage_warning",
+    "doctitle-en",
+    "doctitle-fr",
+    "variant-title-toc"
+  ],
+  "skip_ids": []
+}
