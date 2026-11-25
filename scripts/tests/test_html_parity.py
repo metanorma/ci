@@ -1,4 +1,4 @@
-import json, os, tempfile, unittest, sys
+import json, os, subprocess, tempfile, unittest, sys
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), ".."))
 import html_parity as hp
 import html_content as hc
@@ -33,6 +33,24 @@ class ParityTest(unittest.TestCase):
             rc = hp.main(["iso", "--isodoc-dir", f"{FX}/same/a",
                           "--document-dir", f"{FX}/same/b", "--out-dir", out])
             self.assertEqual(rc, 0)
+
+
+class ParityFlavorTest(unittest.TestCase):
+    def _gems(self, flavor):
+        script = os.path.join(os.path.dirname(__file__), "..", "parity_flavor.rb")
+        code = f'require "{script}"; puts ParityFlavor.gems("{flavor}").join(" "), ParityFlavor.base("{flavor}")'
+        out = subprocess.run(["ruby", "-e", code], capture_output=True, text=True, check=True)
+        gems, base = out.stdout.splitlines()
+        return gems.split(), base
+
+    def test_plain_flavor_is_its_own_gem(self):
+        self.assertEqual(self._gems("iec"), (["metanorma-iec"], "iec"))
+
+    def test_tastes_load_base_flavor_and_taste_gem(self):
+        for taste in ("iala", "wmo"):
+            gems, base = self._gems(taste)
+            self.assertEqual(base, "iho")
+            self.assertEqual(gems, ["metanorma-iho", "metanorma-iso", "metanorma-taste"])
 
 
 class RenderCmdTest(unittest.TestCase):
