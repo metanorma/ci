@@ -80,3 +80,40 @@ reduces each file to ordered `(block type, heading level, text)` blocks and
 reports `missing` (isodoc text absent from the document output), `extra`,
 `retyped`, `reflowed` and `out_of_order` counts. It passes when
 `missing <= --max-missing` (default 0): nothing lost against the legacy output.
+
+### Rendering both engines
+
+`html_parity.py` renders each engine through
+[`scripts/render_engines.rb`](../scripts/render_engines.rb), which calls
+metanorma-core's factory
+(`Metanorma::Core::Isodoc.create(flavor, ..., presxml: false, html_engine: :isodoc|:document)`,
+core PR #38). Nothing reads an engine environment variable, and
+`metanorma site generate` never calls the factory, so the CLI has no engine
+switch. The default render command is:
+
+```sh
+PARITY_FLAVOR={flavor} BUNDLE_GEMFILE=gemfiles/html_parity.gemfile \
+  bundle exec ruby scripts/render_engines.rb \
+  --flavor {flavor} --engine {engine} --input {samples} --out {out}
+```
+
+- `--input` is an `.adoc` file, a directory of `.adoc` files (a `sources/`
+  subdirectory is preferred), or a directory of `*.presentation.xml` files,
+  which skips the AsciiDoc and presentation steps. Output is `<out>/<name>.html`.
+- Gems come from
+  [`gemfiles/html_parity.gemfile`](../gemfiles/html_parity.gemfile):
+  `metanorma-<flavor>` (chosen by `PARITY_FLAVOR`), `metanorma-document`, and
+  `metanorma-core` from the `combine/engine-dispatch-682` branch until core#38
+  is released. Set `METANORMA_CORE_PATH` for a local core checkout or
+  `METANORMA_CORE_REF` for another ref. Run `bundle install` once with the same
+  two variables set; no lockfile is committed.
+- The command template accepts `{engine} {out} {flavor} {samples} {script} {gemfile}`.
+  `--render-cmd` replaces it, and `--isodoc-dir/--document-dir` skip rendering.
+
+Example (content mode):
+
+```sh
+export METANORMA_CORE_PATH=~/metanorma-core   # optional
+PARITY_FLAVOR=iec BUNDLE_GEMFILE=$PWD/gemfiles/html_parity.gemfile bundle install
+python3 scripts/html_parity.py iec --samples-dir ../mn-samples-iec --mode content
+```

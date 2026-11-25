@@ -35,6 +35,35 @@ class ParityTest(unittest.TestCase):
             self.assertEqual(rc, 0)
 
 
+class RenderCmdTest(unittest.TestCase):
+    def test_default_cmd_calls_render_engines_through_gemfile(self):
+        cmd = hp.build_render_cmd(hp.DEFAULT_RENDER_CMD, "iec", "document", "/tmp/my samples", "/tmp/o ut")
+        self.assertNotIn("METANORMA_HTML_ENGINE", cmd)
+        self.assertIn("PARITY_FLAVOR=iec", cmd)
+        self.assertIn("BUNDLE_GEMFILE=" + hp.RENDER_GEMFILE, cmd)
+        self.assertIn(hp.RENDER_SCRIPT, cmd)
+        self.assertIn("--engine document", cmd)
+        self.assertIn("--input '/tmp/my samples'", cmd)
+        self.assertIn("--out '/tmp/o ut'", cmd)
+        self.assertTrue(os.path.exists(hp.RENDER_SCRIPT))
+        self.assertTrue(os.path.exists(hp.RENDER_GEMFILE))
+
+    def test_custom_template_with_old_placeholders_still_works(self):
+        cmd = hp.build_render_cmd("x {engine} {flavor} {out}", "iso", "isodoc", ".", "/o")
+        self.assertEqual(cmd, "x isodoc iso /o")
+
+    def test_render_mode_runs_cmd_per_engine_in_samples_dir(self):
+        with tempfile.TemporaryDirectory() as samples, tempfile.TemporaryDirectory() as work, \
+                tempfile.TemporaryDirectory() as out:
+            for e in ("isodoc", "document"):
+                os.makedirs(os.path.join(work, "iso", e))
+            tpl = "mkdir -p {out} && echo '<p>{engine}</p>' > {out}/a.html"
+            rc = hp.main(["iso", "--samples-dir", samples, "--work-dir", work,
+                          "--render-cmd", tpl, "--out-dir", out])
+            self.assertEqual(rc, 1)  # engines differ -> divergent
+            self.assertTrue(os.path.exists(os.path.join(work, "iso", "document", "a.html")))
+
+
 class ContentParityTest(unittest.TestCase):
     def blocks(self, rel):
         with open(os.path.join(FX, "content", rel)) as fh:

@@ -1,0 +1,23 @@
+# frozen_string_literal: true
+
+# Gems for scripts/render_engines.rb (ci#507 html parity harness).
+# html_parity.py sets BUNDLE_GEMFILE to this file and PARITY_FLAVOR to the
+# flavor under test. No lockfile is committed: the point is to render with
+# whatever the flavor gem resolves to today.
+#
+#   PARITY_FLAVOR        flavor gem to load: metanorma-<flavor> (default: iso)
+#   METANORMA_CORE_PATH  use a local metanorma-core checkout instead of git
+#   METANORMA_CORE_REF   metanorma-core branch/tag when using git
+#                        (default: combine/engine-dispatch-682, core PR #38,
+#                        which adds Isodoc.create(html_engine:))
+source "https://rubygems.org"
+
+gem "metanorma-#{ENV.fetch('PARITY_FLAVOR', 'iso')}"
+gem "metanorma-document"
+
+if ENV["METANORMA_CORE_PATH"]
+  gem "metanorma-core", path: ENV["METANORMA_CORE_PATH"]
+else
+  gem "metanorma-core", git: "https://github.com/metanorma/metanorma-core",
+                        branch: ENV.fetch("METANORMA_CORE_REF", "combine/engine-dispatch-682")
+end

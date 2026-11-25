@@ -13,7 +13,7 @@ The ci#504 harness (render-baseline.yml) hashes raw bytes and has no HTML
 normalization; the normalization here (normalize_html) is the single
 implementation to share with it once its canonicalizers land.
 """
-import argparse, difflib, hashlib, json, os, re, subprocess, sys
+import argparse, difflib, hashlib, json, os, re, shlex, subprocess, sys
 from datetime import datetime, timezone
 from html.parser import HTMLParser
 
@@ -21,12 +21,18 @@ sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 import html_content
 
 ENGINES = ("isodoc", "document")
-# {engine} and {out} are substituted. The engine-selection mechanism is
-# metanorma/metanorma#680 (metanorma-core#31); override with --render-cmd
-# if it lands as something other than this env var.
+# Placeholders: {engine} {out} {flavor}, plus {samples} (abs samples dir),
+# {script} (scripts/render_engines.rb) and {gemfile} (gemfiles/html_parity.gemfile),
+# all shell-quoted. The default calls metanorma-core's engine factory through
+# render_engines.rb: no gem reads an engine env var and `metanorma site
+# generate` never calls the factory, so there is no CLI switch to use.
+_HERE = os.path.dirname(os.path.abspath(__file__))
+RENDER_SCRIPT = os.path.join(_HERE, "render_engines.rb")
+RENDER_GEMFILE = os.path.join(os.path.dirname(_HERE), "gemfiles", "html_parity.gemfile")
 DEFAULT_RENDER_CMD = (
-    "METANORMA_HTML_ENGINE={engine} "
-    "metanorma site generate --agree-to-terms -o {out}"
+    "PARITY_FLAVOR={flavor} BUNDLE_GEMFILE={gemfile} "
+    "bundle exec ruby {script} --flavor {flavor} --engine {engine} "
+    "--input {samples} --out {out}"
 )
 _TS = re.compile(r"\d{4}-\d{2}-\d{2}[T ]\d{2}:\d{2}:\d{2}(?:\.\d+)?(?:Z|[+-]\d{2}:?\d{2})?")
 _UUID = re.compile(r"[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}")
@@ -130,9 +136,16 @@ def conclusion(files):
     return "parity" if all(f["status"] == "identical" for f in files) else "divergent"
 
 
+def build_render_cmd(cmd_tpl, flavor, engine, samples_dir, out):
+    q = shlex.quote
+    return cmd_tpl.format(engine=engine, out=q(out), flavor=q(flavor),
+                          samples=q(os.path.abspath(samples_dir)),
+                          script=q(RENDER_SCRIPT), gemfile=q(RENDER_GEMFILE))
+
+
 def render(flavor, engine, samples_dir, out, cmd_tpl):
     os.makedirs(out, exist_ok=True)
-    cmd = cmd_tpl.format(engine=engine, out=out, flavor=flavor)
+    cmd = build_render_cmd(cmd_tpl, flavor, engine, samples_dir, out)
     r = subprocess.run(cmd, shell=True, cwd=samples_dir)
     if r.returncode != 0:
         raise SystemExit(f"render failed (engine={engine}, rc={r.returncode}): {cmd}")
