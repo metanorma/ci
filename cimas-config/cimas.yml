@@ -1360,20 +1360,22 @@ repositories:
       .github/workflows/docker.yml:
         if_public: gh-actions/samples/public-docker.yml
         if_private: gh-actions/samples/private-docker.yml.erb
+  # docker.yml mappings demoted 2026-11-25 — corpora cannot render today,
+  # exposed by the 2026-11-24 wave's docker legs:
+  #   iso-19626-1 — sources/sections/92-annex-c.adoc:9 includes
+  #     ../data/tcp-example.xml, which has never existed in the repo
+  #     (no data/ dir, no submodule) — render FATALs.
+  #   iso-tc184-sc4 — `metanorma site generate` exits 0 with no _site
+  #     (nothing renderable); artifact upload finds no files.
+  # Re-map the docker leg when the corpora are renderable.
   iso-19626-1:
     remote: ssh://git@github.com/metanorma/iso-19626-1
     branch: main
-    files:
-      .github/workflows/docker.yml:
-        if_public: gh-actions/samples/public-docker.yml
-        if_private: gh-actions/samples/private-docker.yml.erb
+    files: {}
   iso-tc184-sc4:
     remote: ssh://git@github.com/metanorma/iso-tc184-sc4
     branch: main
-    files:
-      .github/workflows/docker.yml:
-        if_public: gh-actions/samples/public-docker.yml
-        if_private: gh-actions/samples/private-docker.yml.erb
+    files: {}
   iso-10303-11:
     remote: ssh://git@github.com/metanorma/iso-10303-11
     branch: main
