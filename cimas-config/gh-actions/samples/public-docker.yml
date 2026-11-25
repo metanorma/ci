@@ -26,6 +26,10 @@ jobs:
         uses: actions/checkout@v6
         with:
           submodules: true
+          # Private submodules (e.g. the iso-10303-* docs repos'
+          # iso-10303-stepmod-wg12) need a PAT with repo scope; repos
+          # without the secret keep the default-token behavior.
+          token: ${{ secrets.pat_token || github.token }}
 
       - name: Metanorma generate site
         id: build-and-publish
