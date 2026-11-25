@@ -1,0 +1,193 @@
+name: ancora-candidate
+
+# Candidate stage of an ancora release wave (ci#508): publish the wave's
+# pre-release gems (X.Y.Z.pre.alpha.N) by dispatching each gem's OWN release
+# workflow, then wait until rubygems.org shows the version.
+#
+# Reusable and manual only: workflow_call / workflow_dispatch, never push.
+# This workflow adds no publish mechanics. The publish leg stays the
+# ci#515 release-PR flow inside rubygems-release.yml; this one only
+# dispatches it and watches the oracle (rubygems), as ancora's
+# run-action `dispatch_wave` does. Only pre.alpha versions are accepted:
+# a final version cannot enter through this workflow (see ancora-promote).
+#
+# `items` is the `items` array of the `dispatch_wave` action printed by
+# `ancora step --format json`: [{"gem":..,"repo":"owner/name","version":..}].
+# See docs/ancora-release-runbook.md.
+
+on:
+  workflow_dispatch:
+    inputs:
+      items:
+        description: 'JSON array of {gem, repo, version} from the dispatch_wave action'
+        required: true
+        type: string
+      release_workflow:
+        description: 'Release workflow file in each gem repo'
+        required: false
+        default: release.yml
+        type: string
+      ref:
+        description: 'Ref the release workflow is dispatched on'
+        required: false
+        default: main
+        type: string
+      wait_minutes:
+        description: 'Minutes to wait per gem for the version to appear on rubygems.org'
+        required: false
+        default: '90'
+        type: string
+      dry_run:
+        description: 'Validate and print what would be dispatched; dispatch nothing'
+        required: false
+        default: true
+        type: boolean
+  workflow_call:
+    inputs:
+      items:
+        description: 'JSON array of {gem, repo, version} from the dispatch_wave action'
+        required: true
+        type: string
+      release_workflow:
+        required: false
+        default: release.yml
+        type: string
+      ref:
+        required: false
+        default: main
+        type: string
+      wait_minutes:
+        required: false
+        default: '90'
+        type: string
+      dry_run:
+        description: 'Validate and print what would be dispatched; dispatch nothing'
+        required: false
+        default: false
+        type: boolean
+    secrets:
+      pat_token:
+        description: 'PAT with workflow scope on the gem repos (dispatches their release workflow)'
+        required: true
+    outputs:
+      published:
+        description: 'JSON array of {gem, version} visible on rubygems.org'
+        value: ${{ jobs.collect.outputs.published }}
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ancora-candidate-${{ github.repository }}
+  cancel-in-progress: false
+
+jobs:
+  plan:
+    runs-on: ubuntu-latest
+    outputs:
+      matrix: ${{ steps.validate.outputs.matrix }}
+    steps:
+      - name: Validate items (candidates only)
+        id: validate
+        env:
+          ITEMS: ${{ inputs.items }}
+          WAIT_MINUTES: ${{ inputs.wait_minutes }}
+        run: |
+          set -euo pipefail
+          [[ "$WAIT_MINUTES" =~ ^[1-9][0-9]{0,2}$ ]] \
+            || { echo "::error::wait_minutes must be an integer 1-999"; exit 1; }
+          # Each item needs gem, owner/name repo and a pre.alpha.N version.
+          # Anything else (a final, a malformed repo) fails the plan before
+          # any dispatch happens.
+          jq -e '
+            type == "array" and length > 0 and
+            all(.[];
+              (.gem | type == "string" and test("^[A-Za-z0-9_.-]+$")) and
+              (.repo | type == "string" and test("^[A-Za-z0-9_.-]+/[A-Za-z0-9_.-]+$")) and
+              (.version | type == "string" and test("^[0-9]+\\.[0-9]+\\.[0-9]+\\.pre\\.alpha\\.[0-9]+$")))
+          ' <<<"$ITEMS" >/dev/null \
+            || { echo "::error::items must be a non-empty array of {gem, repo, version} with version X.Y.Z.pre.alpha.N"; exit 1; }
+          echo "matrix=$(jq -c '{include: .}' <<<"$ITEMS")" >> "$GITHUB_OUTPUT"
+          {
+            echo "## ancora-candidate plan"
+            echo '| gem | repo | version |'
+            echo '|---|---|---|'
+            jq -r '.[] | "| \(.gem) | \(.repo) | \(.version) |"' <<<"$ITEMS"
+          } >> "$GITHUB_STEP_SUMMARY"
+
+  dispatch:
+    needs: plan
+    runs-on: ubuntu-latest
+    timeout-minutes: 240
+    strategy:
+      fail-fast: false
+      matrix: ${{ fromJSON(needs.plan.outputs.matrix) }}
+    steps:
+      - name: Skip when already published
+        id: oracle
+        env:
+          GEM: ${{ matrix.gem }}
+          VERSION: ${{ matrix.version }}
+        run: |
+          set -euo pipefail
+          if curl -fsS "https://rubygems.org/api/v1/versions/${GEM}.json" \
+              | jq -e --arg v "$VERSION" 'any(.[]; .number == $v)' >/dev/null; then
+            echo "already=true" >> "$GITHUB_OUTPUT"
+            echo "$GEM $VERSION is already on rubygems.org; nothing to dispatch"
+          else
+            echo "already=false" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Dispatch the gem's release workflow
+        if: steps.oracle.outputs.already != 'true' && !inputs.dry_run
+        env:
+          GH_TOKEN: ${{ secrets.pat_token }}
+          REPO: ${{ matrix.repo }}
+          VERSION: ${{ matrix.version }}
+          WORKFLOW: ${{ inputs.release_workflow }}
+          REF: ${{ inputs.ref }}
+        run: |
+          set -euo pipefail
+          echo "dispatching $WORKFLOW on $REPO@$REF next_version=$VERSION"
+          gh workflow run "$WORKFLOW" -R "$REPO" --ref "$REF" \
+            --field next_version="$VERSION"
+
+      - name: Dry run
+        if: inputs.dry_run
+        env:
+          REPO: ${{ matrix.repo }}
+          VERSION: ${{ matrix.version }}
+        run: 'echo "dry_run, would dispatch $REPO next_version=$VERSION"'
+
+      - name: Wait for the version on rubygems.org
+        if: steps.oracle.outputs.already != 'true' && !inputs.dry_run
+        env:
+          GEM: ${{ matrix.gem }}
+          VERSION: ${{ matrix.version }}
+          WAIT_MINUTES: ${{ inputs.wait_minutes }}
+        run: |
+          set -euo pipefail
+          deadline=$(( $(date +%s) + WAIT_MINUTES * 60 ))
+          while [ "$(date +%s)" -lt "$deadline" ]; do
+            if curl -fsS "https://rubygems.org/api/v1/versions/${GEM}.json" \
+                | jq -e --arg v "$VERSION" 'any(.[]; .number == $v)' >/dev/null; then
+              echo "$GEM $VERSION is on rubygems.org"
+              exit 0
+            fi
+            sleep 60
+          done
+          echo "::error::$GEM $VERSION not on rubygems.org after ${WAIT_MINUTES} minutes (release PR may be waiting on its checks)"
+          exit 1
+
+  collect:
+    needs: [plan, dispatch]
+    if: ${{ !inputs.dry_run }}
+    runs-on: ubuntu-latest
+    outputs:
+      published: ${{ steps.out.outputs.published }}
+    steps:
+      - id: out
+        env:
+          ITEMS: ${{ inputs.items }}
+        run: |
+          echo "published=$(jq -c '[.[] | {gem, version}]' <<<"$ITEMS")" >> "$GITHUB_OUTPUT"

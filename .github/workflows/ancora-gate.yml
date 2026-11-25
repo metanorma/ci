@@ -1,0 +1,394 @@
+name: ancora-gate
+
+# Gating stage of an ancora release wave (ci#508): run the wave's suites
+# and the canary corpus against ONE lock that pins the ENTIRE candidate set
+# (bundler never resolves prereleases implicitly, so every candidate is an
+# exact pin). A wave is not green on gem suites alone: every CONFIGURED
+# corpus must compile end-to-end (presentation + site rendering) against the
+# lock. The workflow computes no verdict of its own beyond green/red; the
+# manifest is recorded by ancora.
+#
+# Reusable and manual only: workflow_call / workflow_dispatch, never push.
+# Publishes nothing and needs no RubyGems credentials.
+#
+# The canary commands (chain.yml canary.commands) run in the caller checkout
+# against the same lock; they are part of the verdict.
+#
+# Inputs come from `ancora step --format json` (the `gate` action:
+# `corpora`) and the attempt's pins:
+#   pins    {"gem": "X.Y.Z.pre.alpha.N", ...}   the attempt's candidates
+#   suites  [{"gem":..,"repo":..,"version":..}] gems whose suite runs
+#   corpora [{"repo":..,"ref":..,"documents":[..],"budget":..,"gems":[..]}]
+# See docs/ancora-release-runbook.md.
+
+on:
+  workflow_dispatch:
+    inputs:
+      chain:
+        description: 'Path to chain.yml in the caller repository'
+        required: false
+        default: chain.yml
+        type: string
+      network:
+        description: 'Path to network.json (collector data) in the caller repository'
+        required: false
+        default: data/network.json
+        type: string
+      delta:
+        description: 'Path to delta.json in the caller repository'
+        required: false
+        default: data/delta.json
+        type: string
+      pins:
+        description: 'JSON object gem -> candidate version for the attempt'
+        required: true
+        type: string
+      suites:
+        description: 'JSON array of {gem, repo, version}: gems whose suite runs'
+        required: true
+        type: string
+      corpora:
+        description: 'JSON array of corpora from the gate action'
+        required: true
+        type: string
+      suite_command:
+        description: 'Suite command (chain.yml gate.commands)'
+        required: false
+        default: bundle exec rspec
+        type: string
+      canary_commands:
+        description: 'JSON array of chain.yml canary.commands, run in the caller checkout against the lock'
+        required: false
+        default: '[]'
+        type: string
+      ancora_ref:
+        description: 'metanorma/ancora ref providing the engine (todo/corpus-gate until it lands on main)'
+        required: false
+        default: todo/corpus-gate
+        type: string
+      ruby_version:
+        required: false
+        default: '3.4'
+        type: string
+  workflow_call:
+    inputs:
+      chain:
+        required: false
+        default: chain.yml
+        type: string
+      network:
+        required: false
+        default: data/network.json
+        type: string
+      delta:
+        required: false
+        default: data/delta.json
+        type: string
+      pins:
+        required: true
+        type: string
+      suites:
+        required: true
+        type: string
+      corpora:
+        required: true
+        type: string
+      suite_command:
+        required: false
+        default: bundle exec rspec
+        type: string
+      canary_commands:
+        description: 'JSON array of chain.yml canary.commands, run in the caller checkout against the lock'
+        required: false
+        default: '[]'
+        type: string
+      ancora_ref:
+        description: 'metanorma/ancora ref providing the engine (todo/corpus-gate until it lands on main)'
+        required: false
+        default: todo/corpus-gate
+        type: string
+      ruby_version:
+        required: false
+        default: '3.4'
+        type: string
+    secrets:
+      pat_token:
+        description: 'Token for private corpora (mn-samples-*-private) and gem repos'
+        required: false
+    outputs:
+      result:
+        description: 'green | red'
+        value: ${{ jobs.verdict.outputs.result }}
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ancora-gate-${{ github.repository }}-${{ github.run_id }}
+  cancel-in-progress: false
+
+jobs:
+  lock:
+    runs-on: ubuntu-latest
+    outputs:
+      suites: ${{ steps.matrix.outputs.suites }}
+      corpora: ${{ steps.matrix.outputs.corpora }}
+    steps:
+      - uses: actions/checkout@v6
+      - uses: actions/checkout@v6
+        with:
+          repository: metanorma/ancora
+          ref: ${{ inputs.ancora_ref }}
+          path: .ancora-engine
+      - uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: ${{ inputs.ruby_version }}
+          # No bundler cache: this job runs a caller-chosen ancora_ref, and a
+          # cache written from it could poison the default branch's cache.
+          bundler-cache: false
+      - name: Install the ancora engine
+        working-directory: .ancora-engine
+        run: bundle install --jobs 4 --retry 3
+
+      - name: Validate inputs
+        id: matrix
+        env:
+          PINS: ${{ inputs.pins }}
+          SUITES: ${{ inputs.suites }}
+          CORPORA: ${{ inputs.corpora }}
+          CANARY: ${{ inputs.canary_commands }}
+        run: |
+          set -euo pipefail
+          jq -e 'type == "object" and length > 0 and all(keys[]; test("^[A-Za-z0-9_.-]+$")) and all(.[]; type == "string" and test("^[0-9]+\\.[0-9]+\\.[0-9]+\\.pre\\.alpha\\.[0-9]+$"))' \
+            <<<"$PINS" >/dev/null \
+            || { echo "::error::pins must map gem -> X.Y.Z.pre.alpha.N"; exit 1; }
+          jq -e 'type == "array" and all(.[]; (.gem|type=="string") and (.repo|test("^[A-Za-z0-9_.-]+/[A-Za-z0-9_.-]+$")) and (.version|type=="string"))' \
+            <<<"$SUITES" >/dev/null || { echo "::error::bad suites"; exit 1; }
+          jq -e 'type == "array" and all(.[]; (.repo|test("^[A-Za-z0-9_.-]+/[A-Za-z0-9_.-]+$")) and (.budget|type=="number"))' \
+            <<<"$CORPORA" >/dev/null || { echo "::error::bad corpora"; exit 1; }
+          jq -e 'type == "array" and all(.[]; type == "string")' <<<"$CANARY" >/dev/null \
+            || { echo "::error::canary_commands must be an array of strings"; exit 1; }
+          echo "suites=$(jq -c '{include: .}' <<<"$SUITES")" >> "$GITHUB_OUTPUT"
+          echo "corpora=$(jq -c '{include: .}' <<<"$CORPORA")" >> "$GITHUB_OUTPUT"
+
+      # `ancora pin --externals` emits the complete lock (inventory at
+      # released versions, external chains at satisfying finals) and exits 1
+      # while an external need is awaiting a final. The attempt's candidates
+      # then override their inventory pins. (Planned: `ancora gate` emits
+      # the attempt lock directly; this override step then goes away.)
+      - name: Build the candidate lock
+        env:
+          PINS: ${{ inputs.pins }}
+          CHAIN: ${{ inputs.chain }}
+          NETWORK: ${{ inputs.network }}
+          DELTA: ${{ inputs.delta }}
+          BUNDLE_GEMFILE: ${{ github.workspace }}/.ancora-engine/Gemfile
+        run: |
+          set -euo pipefail
+          delta_args=()
+          [ -f "$DELTA" ] && delta_args=(--delta "$DELTA")
+          bundle exec .ancora-engine/exe/ancora pin --externals \
+            --chain "$CHAIN" --network "$NETWORK" "${delta_args[@]}" > base.gemfile
+          ruby -rjson -e '
+            pins = JSON.parse(ENV.fetch("PINS"))
+            lines = File.readlines("base.gemfile", chomp: true)
+            seen = {}
+            out = lines.map do |l|
+              if (m = l.match(/\Agem "([^"]+)", "([^"]+)"\z/)) && pins.key?(m[1])
+                seen[m[1]] = true
+                %(gem "#{m[1]}", "#{pins[m[1]]}")
+              else
+                l
+              end
+            end
+            (pins.keys - seen.keys).sort.each { |g| out << %(gem "#{g}", "#{pins[g]}") }
+            File.write("gate.gemfile", out.join("\n") + "\n")
+          '
+          cat gate.gemfile
+          grep -c '^gem ' gate.gemfile
+      - uses: actions/upload-artifact@v4
+        with:
+          name: gate-lock
+          path: gate.gemfile
+          if-no-files-found: error
+
+  suites:
+    needs: lock
+    runs-on: ubuntu-latest
+    timeout-minutes: 120
+    strategy:
+      fail-fast: false
+      matrix: ${{ fromJSON(needs.lock.outputs.suites) }}
+    steps:
+      - uses: actions/download-artifact@v4
+        with:
+          name: gate-lock
+          path: lock
+      - uses: actions/checkout@v6
+        with:
+          repository: ${{ matrix.repo }}
+          # the gem's candidate release commit is tagged v<version> by the publish leg
+          ref: v${{ matrix.version }}
+          token: ${{ secrets.pat_token || github.token }}
+          submodules: true
+          path: gem
+      - uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: ${{ inputs.ruby_version }}
+          bundler-cache: false
+      # The gem's own Gemfile is kept (development dependencies, `gemspec`),
+      # evaluated through a Bundler::Dsl shim that REPLACES the version
+      # requirement of any gem named in the lock with its exact pin (a plain
+      # second `gem` line would raise "specified twice with different
+      # requirements") and DROPS git/path sources so the candidate comes from
+      # rubygems; pins the Gemfile never mentions are appended. The gem
+      # under test is skipped: it comes from the checkout, not rubygems.
+      - name: Run the suite against the candidate lock
+        working-directory: gem
+        env:
+          SUITE_GEM: ${{ matrix.gem }}
+          SUITE_COMMAND: ${{ inputs.suite_command }}
+          LOCK_FILE: ${{ github.workspace }}/lock/gate.gemfile
+        run: |
+          set -euo pipefail
+          cat > ancora-gate.gemfile <<'RB'
+          require "set"
+          lock = File.readlines(ENV.fetch("LOCK_FILE"), chomp: true)
+          pins = {}
+          lock.each do |l|
+            m = l.match(/\Agem "([^"]+)", "([^"]+)"\z/) or next
+            pins[m[1]] = m[2] unless m[1] == ENV.fetch("SUITE_GEM")
+          end
+          $ancora_pins = pins
+          $ancora_seen = Set.new
+          module AncoraGatePins
+            def gem(name, *args)
+              pin = $ancora_pins[name]
+              return super unless pin
+
+              $ancora_seen << name
+              # keep non-source options (require:, group:, platforms:) only: a
+              # git/path source would test unpublished code, not the candidate
+              src = %i[git github gist bitbucket path glob branch ref tag submodules source]
+              opts = args.select { |a| a.is_a?(Hash) }.map { |h| h.reject { |k, _| src.include?(k.to_sym) } }
+              # a `git ... do` / `path ... do` / `source ... do` block sets the
+              # inherited source; clear it so the pin resolves from rubygems.org
+              inherited = @source
+              @source = nil
+              begin
+                super(name, pin, *opts)
+              ensure
+                @source = inherited
+              end
+            end
+          end
+          Bundler::Dsl.prepend(AncoraGatePins)
+          eval_gemfile File.expand_path("Gemfile", __dir__)
+          ($ancora_pins.keys - $ancora_seen.to_a).sort.each do |g|
+            gem g, $ancora_pins[g]
+          end
+          RB
+          export BUNDLE_GEMFILE="$PWD/ancora-gate.gemfile"
+          bundle install --jobs 4 --retry 3
+          bash -c "$SUITE_COMMAND"
+
+  corpora:
+    needs: lock
+    if: ${{ needs.lock.outputs.corpora != '{"include":[]}' }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 120
+    strategy:
+      fail-fast: false
+      matrix: ${{ fromJSON(needs.lock.outputs.corpora) }}
+    steps:
+      - uses: actions/download-artifact@v4
+        with:
+          name: gate-lock
+          path: lock
+      - uses: actions/checkout@v6
+        with:
+          repository: ${{ matrix.repo }}
+          ref: ${{ matrix.ref || 'main' }}
+          token: ${{ secrets.pat_token || github.token }}
+          submodules: true
+          path: corpus
+      - uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: ${{ inputs.ruby_version }}
+          bundler-cache: false
+      - name: Compile the corpus against the candidate lock
+        working-directory: corpus
+        env:
+          BUNDLE_GEMFILE: ${{ github.workspace }}/lock/gate.gemfile
+          BUDGET: ${{ matrix.budget }}
+          DOCUMENTS: ${{ toJSON(matrix.documents) }}
+        run: |
+          set -euo pipefail
+          bundle install --jobs 4 --retry 3
+          # Per-corpus time budget from chain.yml; exceeding it is red.
+          # Named documents are compiled one by one; the site is ALWAYS
+          # generated too, so presentation and site rendering (where the
+          # cg3 class failed) are exercised for every corpus.
+          if [ "$DOCUMENTS" != "null" ] && [ "$(jq 'length' <<<"$DOCUMENTS")" != "0" ]; then
+            while IFS= read -r doc; do
+              timeout "${BUDGET}s" bundle exec metanorma compile --agree-to-terms "$doc"
+            done < <(jq -r '.[]' <<<"$DOCUMENTS")
+          fi
+          timeout "${BUDGET}s" bundle exec metanorma site generate --agree-to-terms
+
+  canary:
+    needs: lock
+    runs-on: ubuntu-latest
+    timeout-minutes: 120
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          token: ${{ secrets.pat_token || github.token }}
+      - uses: actions/download-artifact@v4
+        with:
+          name: gate-lock
+          path: lock
+      - uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: ${{ inputs.ruby_version }}
+          bundler-cache: false
+      - name: Run the chain's canary commands against the candidate lock
+        env:
+          BUNDLE_GEMFILE: ${{ github.workspace }}/lock/gate.gemfile
+          CANARY: ${{ inputs.canary_commands }}
+        run: |
+          set -euo pipefail
+          bundle install --jobs 4 --retry 3
+          while IFS= read -r cmd; do
+            echo "canary: $cmd"
+            bash -c "$cmd"
+          done < <(jq -r '.[]' <<<"$CANARY")
+
+  verdict:
+    needs: [lock, suites, corpora, canary]
+    if: ${{ always() }}
+    runs-on: ubuntu-latest
+    outputs:
+      result: ${{ steps.v.outputs.result }}
+    steps:
+      - id: v
+        env:
+          LOCK: ${{ needs.lock.result }}
+          SUITES: ${{ needs.suites.result }}
+          CORPORA: ${{ needs.corpora.result }}
+          CANARY: ${{ needs.canary.result }}
+        run: |
+          # corpora is skipped only when the chain configures none, which
+          # the engine treats as its own call; skipped is not a failure here.
+          result=red
+          if [ "$LOCK" = success ] && [ "$SUITES" = success ] \
+             && [ "$CANARY" = success ] && { [ "$CORPORA" = success ] || [ "$CORPORA" = skipped ]; }; then
+            result=green
+          fi
+          echo "result=$result" >> "$GITHUB_OUTPUT"
+          {
+            echo "## ancora-gate: $result"
+            echo "lock=$LOCK suites=$SUITES canary=$CANARY corpora=$CORPORA"
+            echo "run: ${GITHUB_SERVER_URL}/${GITHUB_REPOSITORY}/actions/runs/${GITHUB_RUN_ID}"
+          } >> "$GITHUB_STEP_SUMMARY"
+          [ "$result" = green ]

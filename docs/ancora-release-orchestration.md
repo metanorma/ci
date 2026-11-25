@@ -5,6 +5,13 @@ document is the build spec). Depends on two landed foundations:
 the ci#515 release-PR pipeline and the ci#504–#507 render-baseline
 program.
 
+Implementation: [`ancora-candidate.yml`](../.github/workflows/ancora-candidate.yml),
+[`ancora-gate.yml`](../.github/workflows/ancora-gate.yml),
+[`ancora-promote.yml`](../.github/workflows/ancora-promote.yml); operator sequence in
+[`ancora-release-runbook.md`](ancora-release-runbook.md). These drive the
+wave model of the ancora engine (candidates `X.Y.Z.pre.alpha.N`, one lock over the
+candidate set), which supersedes the per-PR gate battery sketched below where they differ.
+
 ## The train
 
 A gem release moves through three stages; ancora owns the train state
