@@ -21,6 +21,34 @@ sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 import html_content
 
 ENGINES = ("isodoc", "document")
+PROFILE_DIR = os.path.join(os.path.dirname(os.path.abspath(__file__)), "parity_profiles")
+
+
+def load_profile(flavor, profile=None):
+    """Per-flavor content-mode skip lists: (classes, ids) added to the defaults.
+
+    `profile` is a profile name (parity_profiles/<name>.json) or a path to a
+    JSON file. None picks parity_profiles/<flavor>.json when it exists."""
+    if profile is None:
+        path = os.path.join(PROFILE_DIR, f"{flavor}.json")
+        if not os.path.isfile(path):
+            return [], []
+    elif os.path.isfile(profile):
+        path = profile
+    else:
+        path = os.path.join(PROFILE_DIR, f"{profile}.json")
+    with open(path) as fh:
+        doc = json.load(fh)
+    return list(doc.get("skip_classes", [])), list(doc.get("skip_ids", []))
+
+
+def resolve_skips(flavor, skip_class=None, skip_id=None, profile=None, use_profile=True):
+    """Explicit --skip-class/--skip-id replace the defaults (as before); otherwise
+    defaults plus the flavor profile."""
+    pc, pi = load_profile(flavor, profile) if use_profile else ([], [])
+    classes = skip_class if skip_class is not None else list(html_content.DEFAULT_SKIP_CLASSES) + pc
+    ids = skip_id if skip_id is not None else list(html_content.DEFAULT_SKIP_IDS) + pi
+    return classes, ids
 # Placeholders: {engine} {out} {flavor}, plus {samples} (abs samples dir),
 # {script} (scripts/render_engines.rb) and {gemfile} (gemfiles/html_parity.gemfile),
 # all shell-quoted. The default calls metanorma-core's engine factory through
@@ -186,7 +214,8 @@ sorted, timestamps and UUIDs masked.
 --mode content compares text, not markup (see html_content.py): both sides
 become ordered (block type, heading level, text) lists with class/id/style,
 scripts, head, svg and generated chrome (TOC, back-to-top, header brand;
---skip-class / --skip-id) dropped and math canonicalized. Output is
+--skip-class / --skip-id, plus the flavor profile in scripts/parity_profiles/
+unless --no-profile; --profile NAME|FILE picks another) dropped and math canonicalized. Output is
 <out-dir>/<flavor>.content.json with per-file and total counts:
   missing      isodoc text absent from document output (fails the gate)
   extra        document text with no isodoc counterpart
@@ -213,6 +242,10 @@ def main(argv=None):
                     help="content mode: drop elements with this class (repeatable; replaces defaults)")
     ap.add_argument("--skip-id", action="append", default=None, metavar="ID",
                     help="content mode: drop elements with this id (repeatable; replaces defaults)")
+    ap.add_argument("--profile", default=None, metavar="NAME|FILE",
+                    help="content mode: flavor profile of extra skip classes/ids "
+                         "(default: scripts/parity_profiles/<flavor>.json if present)")
+    ap.add_argument("--no-profile", action="store_true", help="content mode: ignore the flavor profile")
     ap.add_argument("--work-dir", default="parity-work")
     ap.add_argument("--out-dir", default="parity-signoff")
     a = ap.parse_args(argv)
@@ -225,9 +258,8 @@ def main(argv=None):
     else:
         ap.error("give --samples-dir (render) or both --isodoc-dir and --document-dir (diff only)")
     if a.mode == "content":
-        files = diff_dirs_content(d["isodoc"], d["document"],
-                                  a.skip_class if a.skip_class is not None else html_content.DEFAULT_SKIP_CLASSES,
-                                  a.skip_id if a.skip_id is not None else html_content.DEFAULT_SKIP_IDS)
+        classes, ids = resolve_skips(a.flavor, a.skip_class, a.skip_id, a.profile, not a.no_profile)
+        files = diff_dirs_content(d["isodoc"], d["document"], classes, ids)
         doc, path = write_signoff(a.flavor, files, a.out_dir, "content", a.max_missing)
         print(f"{a.flavor}: {doc['conclusion']} {doc['totals']} -> {path}")
         return 0 if doc["conclusion"] == "content-parity" else 1

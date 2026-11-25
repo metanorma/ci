@@ -136,6 +136,30 @@ class ContentParityTest(unittest.TestCase):
         self.assertEqual(len(hc.extract_blocks(h)), 2)
         self.assertEqual(len(hc.extract_blocks(h, skip_classes=["brand"])), 1)
 
+    def test_iec_profile_adds_to_defaults(self):
+        c, i = hp.resolve_skips("iec")
+        for k in ("fn-popup", "variant-title-toc", "coverpage_docnumber", "toc"):
+            self.assertIn(k, c)
+        self.assertIn("toc", i)
+        c2, _ = hp.resolve_skips("rice")          # no profile: defaults only
+        self.assertEqual(c2, list(hc.DEFAULT_SKIP_CLASSES))
+        c3, _ = hp.resolve_skips("iec", use_profile=False)
+        self.assertNotIn("fn-popup", c3)
+        self.assertEqual(hp.resolve_skips("iec", skip_class=["x"])[0], ["x"])
+
+    def test_profile_changes_cli_result(self):
+        with tempfile.TemporaryDirectory() as t:
+            a, b = os.path.join(t, "a"), os.path.join(t, "b")
+            os.makedirs(a); os.makedirs(b)
+            open(os.path.join(a, "d.html"), "w").write('<p>Body</p><p class="variant-title-toc">Hidden FR</p>')
+            open(os.path.join(b, "d.html"), "w").write("<p>Body</p>")
+            args = ["iec", "--mode", "content", "--isodoc-dir", a, "--document-dir", b, "--out-dir", t]
+            self.assertEqual(hp.main(args), 0)
+            self.assertEqual(hp.main(args + ["--no-profile"]), 1)
+            custom = os.path.join(t, "p.json")
+            open(custom, "w").write('{"skip_classes": ["variant-title-toc"]}')
+            self.assertEqual(hp.main(["rice"] + args[1:] + ["--profile", custom]), 0)
+
 
 if __name__ == "__main__":
     unittest.main()

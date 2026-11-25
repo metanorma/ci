@@ -81,6 +81,23 @@ reports `missing` (isodoc text absent from the document output), `extra`,
 `retyped`, `reflowed` and `out_of_order` counts. It passes when
 `missing <= --max-missing` (default 0): nothing lost against the legacy output.
 
+### Flavor profiles
+
+Chrome that is not content differs per flavor, so each flavor can carry a
+profile, `scripts/parity_profiles/<flavor>.json`, with extra `skip_classes`
+and `skip_ids`. Content mode adds them to the default skip lists
+automatically, so CI needs no long command line. `--profile NAME|FILE` picks
+another profile and `--no-profile` ignores it. An explicit `--skip-class` or
+`--skip-id` still replaces the defaults and the profile, as before.
+
+`iec.json` skips `fn-popup` (hidden footnote popup text that the document
+engine inlines next to each marker; the footnote text stays in the footnotes
+section), `coverpage_docnumber`, `coverpage_techcommittee`,
+`coverpage_docstage` and `coverpage_warning` (cover lines the document engine
+shows under `cover-*` classes and the header), `doctitle-en`/`doctitle-fr`
+(cover titles the document engine shows as `cover-title`) and
+`variant-title-toc` (`display:none` duplicate annex titles).
+
 ### Rendering both engines
 
 `html_parity.py` renders each engine through
