@@ -28,7 +28,7 @@ jobs:
           submodules: true
           # Private submodules need a PAT with repo scope; repos
           # without the secret keep the default-token behavior.
-          token: ${{ secrets.pat_token || github.token }}
+          token: ${{ secrets.METANORMA_CI_PAT_TOKEN || github.token }}
 
       - name: Setup Flavor
         uses: actions-mn/setup-flavors@main
