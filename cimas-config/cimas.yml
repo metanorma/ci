@@ -879,19 +879,11 @@ repositories:
       .github/workflows/docker.yml:
         if_public: gh-actions/samples/public-docker.yml
         if_private: gh-actions/samples/private-docker.yml.erb
-  # pdfa-iso-32000-2: transferred to `pdf-association/spec-pdf-core`
-  # (PDF Association took ownership as the spec's steward). Surfaced by
-  # cimas-drift-audit MVP (metanorma/ci#335) on 2026-07-02 as class (c)
-  # external transfer. Now lives at
-  # https://github.com/pdf-association/spec-pdf-core and is outside
-  # cimas-managed scope. Pre-transfer entry preserved in git history.
-  annotated-express:
-    remote: ssh://git@github.com/metanorma/annotated-express
-    branch: main
-    files:
-      .github/workflows/docker.yml:
-        if_public: gh-actions/samples/public-docker.yml
-        if_private: gh-actions/samples/private-docker.yml.erb
+  # annotated-express: transferred to `expresslang/expressdocs-reference`
+  # (2026-11-18 drift-audit, metanorma/ci#342, class (c) external
+  # transfer — repo now outside metanorma scope). Removed from the
+  # repository map and the docs group; pre-transfer entry preserved in
+  # git history.
   ogc-development-workshop:
     remote: ssh://git@github.com/metanorma/ogc-development-workshop
     branch: main
@@ -1634,7 +1626,8 @@ groups:
   - eccma-iso-scor-vocab
   - bs-202000
   - S-102-Product-Specification
-  - annotated-express
+  # - annotated-express        (stripped 2026-11-25: transferred to
+  #                              expresslang/expressdocs-reference, ci#342)
   - ogc-development-workshop
   - gmt-0009-2012
   - gmt-0010-2012
