@@ -891,6 +891,16 @@ repositories:
       .github/workflows/docker.yml:
         if_public: gh-actions/samples/public-docker.yml
         if_private: gh-actions/samples/private-docker.yml.erb
+  # sample-ogc-discussion-paper: mapped 2026-11-25 (ci#412 triage, run
+  # 45089622333 batch) — OGC discussion-paper sample with a live
+  # docker.yml leg; joins the docker samples/docs class.
+  sample-ogc-discussion-paper:
+    remote: ssh://git@github.com/metanorma/sample-ogc-discussion-paper
+    branch: main
+    files:
+      .github/workflows/docker.yml:
+        if_public: gh-actions/samples/public-docker.yml
+        if_private: gh-actions/samples/private-docker.yml.erb
   bipm-editor-guides:
     remote: ssh://git@github.com/metanorma/bipm-editor-guides
     branch: main
@@ -1221,6 +1231,52 @@ repositories:
     files: {}
   serialbench:
     remote: ssh://git@github.com/metanorma/serialbench
+    branch: main
+    files: {}
+  # ci-repo-watcher triage 2026-11-25 (ci#412 verdicts, run 45089622333
+  # batch): discovered repos whose CI is NOT cimas-managed — registered
+  # (files: {}) so the watcher stops listing them:
+  #   metanorma-csa / metanorma-un — processor-delivery repos; delegate
+  #     release.yml already carries the #515 release-PR shape
+  #     (2026-11-19 sweep).
+  #   lapidist — synchronized-gem-release tooling.
+  #   plantuml-install — installer scripts (shellcheck/test).
+  #   chocolatey-latexml / latexml-snap — LaTeXML packaging pipelines
+  #     with their own release machinery.
+  #   dashboard — internal gem-release dashboard (INTERNAL USE ONLY).
+  #   packed-metanorma — single-binary packaging pipeline (tebako).
+  #   metanorma-m3aawg: NOT re-added — deliberately removed 2026-06-29
+  #     as obsolete (see comment at its former repository entry above).
+  metanorma-csa:
+    remote: ssh://git@github.com/metanorma/metanorma-csa
+    branch: main
+    files: {}
+  metanorma-un:
+    remote: ssh://git@github.com/metanorma/metanorma-un
+    branch: main
+    files: {}
+  lapidist:
+    remote: ssh://git@github.com/metanorma/lapidist
+    branch: main
+    files: {}
+  plantuml-install:
+    remote: ssh://git@github.com/metanorma/plantuml-install
+    branch: main
+    files: {}
+  chocolatey-latexml:
+    remote: ssh://git@github.com/metanorma/chocolatey-latexml
+    branch: main
+    files: {}
+  latexml-snap:
+    remote: ssh://git@github.com/metanorma/latexml-snap
+    branch: main
+    files: {}
+  dashboard:
+    remote: ssh://git@github.com/metanorma/dashboard
+    branch: main
+    files: {}
+  packed-metanorma:
+    remote: ssh://git@github.com/metanorma/packed-metanorma
     branch: main
     files: {}
 
@@ -1629,6 +1685,7 @@ groups:
   # - annotated-express        (stripped 2026-11-25: transferred to
   #                              expresslang/expressdocs-reference, ci#342)
   - ogc-development-workshop
+  - sample-ogc-discussion-paper
   - gmt-0009-2012
   - gmt-0010-2012
   - gmt-0015-2012
