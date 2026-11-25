@@ -20,7 +20,8 @@ runs:
             "ffmpeg -version"
           ],
           "Ubuntu": [
-            "sudo apt install -y ffmpeg",
+            "sudo apt-get update",
+            "sudo apt-get install -y ffmpeg",
             "which ffmpeg",
             "ffmpeg -version"
           ],
