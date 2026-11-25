@@ -71,6 +71,12 @@ The managed samples family is listed in
 samples repo from the pinned image tag; `:latest` is only ever used on
 the compare (drift) side.
 
+After each weekly run, `scripts/render_drift_report.py` builds a per-repo
+verdict table (clean, drift-accepted, regression, or no report) from the
+uploaded `render-diff-report-*` artifacts, writes it to the run summary and
+posts it as a comment on the `render-drift-tracking` issue in this repo
+(created on first run). The run fails if any repo regressed or has no report.
+
 ## Content parity for the two-engine gate (ci#507)
 
 `scripts/html_parity.py --mode content` compares what the HTML says, not how
