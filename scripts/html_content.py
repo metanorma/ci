@@ -50,6 +50,12 @@ POPUP_CLASS = "fn-popup"
 MATH_SKIP = {"annotation", "annotation-xml"}
 
 
+# A paragraph that is only a typed run of underscores is a hand-drawn rule
+# (IEC cover filler under the organisation name); the document engine draws
+# it with <hr class="cover-separator">, so it carries no content.
+RULE_ONLY = re.compile(r"_{3,}$")
+
+
 def clean(text):
     text = unicodedata.normalize("NFKC", text)
     text = re.sub(r"[​-‍⁠﻿]", "", text)
@@ -74,7 +80,7 @@ class _Blocks(HTMLParser):
     def _flush(self):
         text = clean("".join(self.buf))
         self.buf = []
-        if text:
+        if text and not RULE_ONLY.match(text):
             self.blocks.append((*self.ctx[-1], text))
 
     def _kind(self, tag):
