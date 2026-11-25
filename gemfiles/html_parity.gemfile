@@ -5,14 +5,25 @@
 # flavor under test. No lockfile is committed: the point is to render with
 # whatever the flavor gem resolves to today.
 #
-#   PARITY_FLAVOR        flavor gem to load: metanorma-<flavor> (default: iso)
+#   PARITY_FLAVOR        flavor to load: metanorma-<flavor> (default: iso); a taste
+#                        such as iala or wmo loads its base flavor + metanorma-taste
+#   METANORMA_TASTE_PATH use a local metanorma-taste checkout instead of rubygems
 #   METANORMA_CORE_PATH  use a local metanorma-core checkout instead of git
 #   METANORMA_CORE_REF   metanorma-core branch/tag when using git
 #                        (default: combine/engine-dispatch-682, core PR #38,
 #                        which adds Isodoc.create(html_engine:))
 source "https://rubygems.org"
 
-gem "metanorma-#{ENV.fetch('PARITY_FLAVOR', 'iso')}"
+require_relative "../scripts/parity_flavor"
+
+# A taste (iala, wmo) is served by its base flavor gem plus metanorma-taste.
+ParityFlavor.gems(ENV.fetch("PARITY_FLAVOR", "iso")).each do |name|
+  if name == "metanorma-taste" && ENV["METANORMA_TASTE_PATH"]
+    gem name, path: ENV["METANORMA_TASTE_PATH"]
+  else
+    gem name
+  end
+end
 gem "metanorma-document"
 
 if ENV["METANORMA_CORE_PATH"]

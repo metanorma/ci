@@ -104,7 +104,8 @@ PARITY_FLAVOR={flavor} BUNDLE_GEMFILE=gemfiles/html_parity.gemfile \
   [`gemfiles/html_parity.gemfile`](../gemfiles/html_parity.gemfile):
   `metanorma-<flavor>` (chosen by `PARITY_FLAVOR`), `metanorma-document`, and
   `metanorma-core` from the `combine/engine-dispatch-682` branch until core#38
-  is released. Set `METANORMA_CORE_PATH` for a local core checkout or
+  is released. A taste (`iala`, `wmo`) loads its base flavor gem (`metanorma-iho`)
+  plus `metanorma-taste`; set `METANORMA_TASTE_PATH` to use a local checkout. Set `METANORMA_CORE_PATH` for a local core checkout or
   `METANORMA_CORE_REF` for another ref. Run `bundle install` once with the same
   two variables set; no lockfile is committed.
 - The command template accepts `{engine} {out} {flavor} {samples} {script} {gemfile}`.

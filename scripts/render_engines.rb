@@ -33,7 +33,10 @@ end.parse!
 
 require "asciidoctor"
 require "nokogiri"
-require "metanorma-#{opts[:flavor]}"
+require_relative "parity_flavor"
+# Tastes load their base flavor plus metanorma-taste, and are converted with the
+# base flavor's AsciiDoc backend (a taste has no backend of its own).
+ParityFlavor.gems(opts[:flavor]).each { |g| require g }
 require "metanorma-core"
 
 flavor = opts[:flavor].to_sym
@@ -56,7 +59,7 @@ def presentation_xml(file, kind, flavor, out)
   return File.read(file) if kind == :presxml
 
   xml = Dir.chdir(File.dirname(file)) do
-    Asciidoctor.convert(File.read(file), backend: flavor, safe: :unsafe,
+    Asciidoctor.convert(File.read(file), backend: ParityFlavor.base(flavor).to_sym, safe: :unsafe,
                                           header_footer: true, attributes: ["nodoc"],
                                           base_dir: File.dirname(file))
   end
