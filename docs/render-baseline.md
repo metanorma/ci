@@ -70,3 +70,13 @@ The managed samples family is listed in
 (keep in sync with cimas.yml's samples group). Baselines freeze per
 samples repo from the pinned image tag; `:latest` is only ever used on
 the compare (drift) side.
+
+## Content parity for the two-engine gate (ci#507)
+
+`scripts/html_parity.py --mode content` compares what the HTML says, not how
+it is marked up. The isodoc and document engines use different classes,
+wrappers, TOC and header chrome, so a markup diff is never empty. Content mode
+reduces each file to ordered `(block type, heading level, text)` blocks and
+reports `missing` (isodoc text absent from the document output), `extra`,
+`retyped`, `reflowed` and `out_of_order` counts. It passes when
+`missing <= --max-missing` (default 0): nothing lost against the legacy output.
