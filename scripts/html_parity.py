@@ -152,8 +152,10 @@ def diff_dirs_content(isodoc_dir, document_dir, skip_classes=html_content.DEFAUL
         elif rel not in a:
             res.append({"path": rel, "status": "only-document"})
         else:
+            new_html = _read(b[rel])
             r = html_content.compare_blocks(html_content.extract_blocks(_read(a[rel]), skip_classes, skip_ids),
-                                            html_content.extract_blocks(_read(b[rel]), skip_classes, skip_ids))
+                                            html_content.extract_blocks(new_html, skip_classes, skip_ids),
+                                            popups=html_content.extract_popups(new_html))
             res.append({"path": rel, "status": "content-missing" if r["missing"] else "content-ok", **r})
     return res
 

@@ -13,6 +13,11 @@ output, which are extra, which only changed block type (retyped), which are
 still present but split/merged/re-cased (reflowed), and whether the common
 blocks keep their order. Only "missing" fails the gate.
 
+Two known layout differences count as equal, not reflowed: a title-only block
+plus its body block equals legacy "LABEL — body" (merge_label_blocks), and a
+legacy footnote aside equals the document engine's inline fn-popup text
+(match_footnotes). Both need an exact text match.
+
 Dropped before comparison: class/id/style/other attributes, head, script,
 style, svg, button, noscript, and any subtree whose id or class matches the
 skip lists (generated TOC, back-to-top, brand chrome; see DEFAULT_SKIP_*).
@@ -41,6 +46,7 @@ BLOCK_TEXT = {"p", "div", "dt", "dd", "caption", "figcaption", "pre", "blockquot
               "section", "article", "aside", "header", "footer", "main", "nav",
               "ul", "ol", "dl", "table", "thead", "tbody", "tfoot", "tr", "figure",
               "details", "summary", "body", "html", "address", "fieldset", "form"}
+POPUP_CLASS = "fn-popup"
 MATH_SKIP = {"annotation", "annotation-xml"}
 
 
@@ -61,6 +67,8 @@ class _Blocks(HTMLParser):
         self.buf = []
         self.math = None         # token list while inside <math>
         self.math_depth = 0
+        self.popups = []         # texts of inline footnote popups (POPUP_CLASS)
+        self.pop_buf, self.pop_at = None, 0
 
     # -- block bookkeeping
     def _flush(self):
@@ -85,6 +93,8 @@ class _Blocks(HTMLParser):
                 self.buf.append(" ")
             return
         a = dict(attrs)
+        if self.pop_buf is None and POPUP_CLASS in (a.get("class") or "").split():
+            self.pop_buf, self.pop_at = [], len(self.stack)
         skipped = (self.skip > 0 or tag in ALWAYS_SKIP
                    or a.get("id") in self.skip_ids
                    or bool(self.skip_classes & set((a.get("class") or "").split()))
@@ -110,6 +120,11 @@ class _Blocks(HTMLParser):
             return
         while self.stack:                 # pop to the matching open tag
             t, skipped = self.stack.pop()
+            if self.pop_buf is not None and len(self.stack) == self.pop_at:
+                text = clean("".join(self.pop_buf))
+                if text:
+                    self.popups.append(text)
+                self.pop_buf = None
             if skipped:
                 self.skip -= 1
             elif t == "math" and self.math is not None and self.math_depth == 1:
@@ -125,6 +140,8 @@ class _Blocks(HTMLParser):
                 break
 
     def handle_data(self, data):
+        if self.pop_buf is not None:
+            self.pop_buf.append(data)
         if self.skip:
             return
         if self.math is not None:
@@ -143,12 +160,75 @@ def extract_blocks(html, skip_classes=DEFAULT_SKIP_CLASSES, skip_ids=DEFAULT_SKI
     return p.blocks
 
 
+def extract_popups(html):
+    """Texts of inline footnote popups (span.fn-popup), whether or not a skip
+    list hides them from the blocks."""
+    p = _Blocks((), ())
+    p.feed(html)
+    p.close()
+    return p.popups
+
+
+# Legacy writes "LABEL — body" as one block; the document engine emits the
+# label as its own block followed by the body block.
+LABEL_DELIM = " — "
+_FN_MARK = re.compile(r"^\d+\)\s*")
+BACKLINK = "↩"
+
+
+def merge_label_blocks(legacy, new):
+    """Join each title-only block of `new` with the block after it when the
+    result is exactly a legacy "LABEL — body" block. Only exact legacy twins
+    merge, so a body that differs stays unmatched."""
+    want = Counter(x for _, _, x in legacy if LABEL_DELIM in x)
+    out, i = [], 0
+    while i < len(new):
+        if i + 1 < len(new):
+            joined = f"{new[i][2]}{LABEL_DELIM}{new[i + 1][2]}"
+            if want.get(joined):
+                want[joined] -= 1
+                out.append((new[i + 1][0], new[i + 1][1], joined))
+                i += 2
+                continue
+        out.append(new[i])
+        i += 1
+    return out
+
+
+def match_footnotes(legacy, popups):
+    """Drop legacy footnote blocks ("N)text", plus its back-link) whose text
+    equals an unused inline popup text. Returns (remaining legacy, matched)."""
+    pool = Counter(popups)
+    keep, hit = [], 0
+    for b in legacy:
+        t, _, x = b
+        m = _FN_MARK.match(x) if t == "text" else None
+        body = x[m.end():].strip() if m else None
+        if body and pool.get(body):
+            pool[body] -= 1
+            hit += 1
+        else:
+            keep.append(b)
+    left = hit                                # back-links of the matched footnotes
+    out = []
+    for b in keep:
+        if left and b[2] == BACKLINK:
+            left -= 1
+        else:
+            out.append(b)
+    return out, hit
+
+
 def _squash(text):
     return re.sub(r"\W+", "", text.casefold())
 
 
-def compare_blocks(legacy, new, max_report=20):
-    """legacy/new: block lists. Returns the per-file content comparison."""
+def compare_blocks(legacy, new, max_report=20, popups=()):
+    """legacy/new: block lists; popups: inline footnote texts of the new side.
+    Returns the per-file content comparison."""
+    n_legacy, n_new = len(legacy), len(new)
+    new = merge_label_blocks(legacy, new)
+    legacy, fn_hit = match_footnotes(legacy, popups)
     ca, cb = Counter(legacy), Counter(new)
     left_a, left_b = ca - cb, cb - ca             # unmatched on each side
     by_text_b = defaultdict(list)
@@ -174,8 +254,8 @@ def compare_blocks(legacy, new, max_report=20):
     sa = [b for b in legacy if common.get(b)]
     sb = [b for b in new if common.get(b)]
     kept = sum(m.size for m in SequenceMatcher(None, sa, sb, autojunk=False).get_matching_blocks())
-    return {"legacy_blocks": len(legacy), "document_blocks": len(new),
-            "matched": sum(common.values()), "missing": len(missing),
+    return {"legacy_blocks": n_legacy, "document_blocks": n_new,
+            "matched": sum(common.values()) + fn_hit, "missing": len(missing),
             "extra": len(extra), "retyped": len(retyped),
             "reflowed": len(reflowed),
             "out_of_order": len(sa) - kept,
