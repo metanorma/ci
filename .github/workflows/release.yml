@@ -1,10 +1,3 @@
-# Reusable release workflow — filename alias of rubygems-release.yml.
-#
-# RubyGems Trusted Publishers match the reusable workflow's OWN path
-# (job_workflow_ref): a consumer whose TP entry names
-# `metanorma/ci` + `release.yml` must call THIS file, not
-# rubygems-release.yml. Keep the two files identical; see
-# metanorma/ci#451 for the empirical A/B validation.
 name: release
 
 on:
@@ -109,6 +102,22 @@ on:
         required: false
         type: boolean
         default: false
+      upload_artifact:
+        description: |
+          When true, upload the built .gem package(s) as a workflow artifact
+          (release-gem-artifacts) and ensure a GitHub Release exists for the
+          tag even when release_notes is set to 'manual', so a downstream
+          provenance job can scan, attest, and attach release assets.
+        required: false
+        type: boolean
+        default: false
+      support_until:
+        description: |
+          Optional declared support end date (YYYY-MM-DD) forwarded as a job
+          output for downstream provenance generation. Defaults to 2 years
+          from the release date when omitted or empty.
+        required: false
+        type: string
     secrets:
       rubygems-api-key:
         required: false
@@ -210,17 +219,35 @@ jobs:
 
   release:
     # Runs after preflight when preflight ran (workflow_dispatch path); runs
-    # directly when preflight was skipped (repository_dispatch / push paths).
-    # Do NOT run if preflight ran and failed.
+    # directly when preflight was skipped (repository_dispatch / push /
+    # pull_request paths). Do NOT run if preflight ran and failed.
+    #
+    # On `pull_request` (closed), run ONLY when the merged head branch is a
+    # release branch (`release/v*`): that merge is the publish trigger. Every
+    # other PR close is a neutral skip — no red noise on ordinary PR closes.
     needs: preflight
     if: |
       always() &&
-      (needs.preflight.result == 'success' || needs.preflight.result == 'skipped')
+      (needs.preflight.result == 'success' || needs.preflight.result == 'skipped') &&
+      (github.event_name != 'pull_request' ||
+        (github.event.pull_request.merged == true &&
+         startsWith(github.event.pull_request.head.ref, 'release/')))
     runs-on: ubuntu-latest
     environment: ${{ inputs.environment }}
+    outputs:
+      published: ${{ steps.provenance-meta.outputs.published }}
+      release_tag: ${{ steps.provenance-meta.outputs.release_tag }}
+      artifact_name: ${{ steps.provenance-meta.outputs.artifact_name }}
+      support_until: ${{ steps.provenance-meta.outputs.support_until }}
     permissions:
       contents: write
       id-token: write
+      # The release-PR leg (gh pr create / pr merge --auto) runs inside THIS
+      # job — a reusable's job-level permissions narrow the caller's grant,
+      # so the ceiling must be declared here, not only in the caller's stub
+      # (relaton/relaton: "Resource not accessible by integration" when the
+      # stub relied on its top-level grant alone).
+      pull-requests: write
     env:
       HAVE_PAT_TOKEN: ${{ secrets.pat_token != '' }}
       HAS_API_KEY: ${{ secrets.rubygems-api-key != '' }}
@@ -228,12 +255,28 @@ jobs:
     steps:
       - uses: actions/checkout@v6
         with:
-          ref: ${{ github.event.client_payload.ref || github.ref }}
+          # Publish-leg precedence: the merged release PR's commit, then the
+          # do-release payload ref, then the dispatch ref.
+          ref: ${{ github.event.pull_request.merge_commit_sha || github.event.client_payload.ref || github.ref }}
           submodules: ${{ inputs.submodules }}
           token: ${{ secrets.pat_token || github.token }}
 
-      - if: github.event_name == 'workflow_dispatch' || github.event_name == 'repository_dispatch'
+      - if: github.event_name == 'workflow_dispatch' || github.event_name == 'repository_dispatch' || github.event_name == 'pull_request'
         run: git fetch --tags origin
+
+      # The merge-triggered leg checks out the merge commit DETACHED, so
+      # Bundler's `rake release` (the API-key release_command) cannot run
+      # there — it pushes the CURRENT BRANCH, and there is none
+      # (lutaml/expressir v2.4.71: "src refspec refs/heads/HEAD does not
+      # match any", tag rolled back, gem never pushed). On this leg the
+      # API-key path uses the same generic build+push as the OIDC path.
+      - name: Set publish-leg flag
+        run: |
+          if [ "${{ github.event_name }}" = "pull_request" ]; then
+            echo "PUBLISH_LEG=true" >> "$GITHUB_ENV"
+          else
+            echo "PUBLISH_LEG=false" >> "$GITHUB_ENV"
+          fi
 
       - if: ${{ env.HAVE_PAT_TOKEN == 'true' }}
         uses: metanorma/ci/gh-rubygems-setup-action@main
@@ -252,11 +295,10 @@ jobs:
           # The bare github-actions@github.com identity renders as
           # "invalid-email-address" author on modern GitHub; the [bot]
           # noreply form attributes release-bump commits to
-          # github-actions[bot].
+          # github-actions[bot] under the GITHUB_TOKEN (matches the
+          # lock-refresh block below).
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
-
-      - run: gem install gem-release
 
       # Gemfile.lock NEVER enters git history for gems: delete it
       # unconditionally before the bump resolve and install fresh —
@@ -291,17 +333,33 @@ jobs:
         if: github.event_name == 'workflow_dispatch' && (inputs.next_version == 'prerelease' || inputs.next_version == 'pre')
         run: |
           # Same version-file resolution the Bump version step uses: gemspec
-          # files, not gem-release's lib/ path probing.
+          # files, not gem-release's lib/ path probing. The anchor prefers
+          # lib/<gem>/version.rb: consolidated gems carry nested version
+          # files (relaton's lib/relaton/cli/version.rb sorts before the
+          # root's) whose assignments don't drive the release version.
           GEMSPEC=$(ls *.gemspec | head -1)
           VERSION_FILE=$(ruby -Ilib - "$GEMSPEC" <<'RB'
-          # The hardened version-file resolution shared with
-          # rubygems-release.yml (ci#429): gemspec files, then git
-          # ls-files, then the lib/ glob; candidates are validated
-          # against the gemspec's own directory, never the process cwd.
+          # Version-file resolution survives a hostile spec.files: the
+          # intermittent "version file not found in gemspec" (ci#429 — three
+          # repos in one day, the same commands green locally) showed
+          # Gem::Specification.load coming back without usable files in CI,
+          # including on a Dir.glob gemspec that cannot lack the file. So:
+          # gemspec files first (with the count logged), then git ls-files,
+          # then the lib/ glob; the root gem's version file wins, and every
+          # candidate must still carry a VERSION assignment. Failures abort
+          # with the working-tree state the logs need.
           spec = Gem::Specification.load(ARGV[0])
+          # Candidate paths are gemspec-relative, so every VERSION check
+          # reads against the gemspec's own directory — not the process
+          # cwd (the resolution must not depend on where git ran).
           gemspec_dir = File.dirname(File.expand_path(ARGV[0]))
           has_version = lambda do |f|
-            (File.read(File.expand_path(f, gemspec_dir)) =~ /^\s*VERSION\s*=/) ? true : false
+            # Literal quoted assignment only: delegating stubs like
+            # `VERSION = Metanorma::Iso::VERSION` (metanorma-iso
+            # sts/version.rb, ci#511) match a bare VERSION check and,
+            # sorting before the primary file, hijack the fallback
+            # selection and abort the bump.
+            (File.read(File.expand_path(f, gemspec_dir)) =~ /^\s*VERSION\s*=\s*["']/) ? true : false
           rescue StandardError
             false
           end
@@ -347,26 +405,101 @@ jobs:
           echo "version=${NEXT}" >> "$GITHUB_OUTPUT"
           echo "Next prerelease: ${NEXT}"
 
+      - name: Resolve keyword version
+        id: keyword
+        if: github.event_name == 'workflow_dispatch' && (inputs.next_version == 'patch' || inputs.next_version == 'minor' || inputs.next_version == 'major')
+        env:
+          INPUT_KIND: ${{ inputs.next_version }}
+        run: |
+          # Restore the documented patch/minor/major keywords (ci#485):
+          # #477's direct version-file write dropped gem-release's keyword
+          # expansion, so the raw keyword reached the writer's x.y.z
+          # validation ("invalid version: \"patch\""). Expand against the
+          # highest x.y.z v-tag, skipping prerelease tags. Identical to the
+          # old gem-release behavior whenever the version file matches the
+          # latest tag — the state every keyword dispatch assumes.
+          TAG=""
+          for t in $(git tag --list 'v*' --sort=-v:refname | head -30); do
+            if [[ "${t#v}" =~ ^[0-9]+\.[0-9]+\.[0-9]+$ ]]; then TAG="$t"; break; fi
+          done
+          if [ -z "$TAG" ]; then
+            echo "::error::no x.y.z v-tag found to expand ${INPUT_KIND} against"
+            exit 1
+          fi
+          NEXT=$(ruby - "${TAG#v}" "${INPUT_KIND}" <<'RB'
+          major, minor, patch = ARGV[0].split(".").map(&:to_i)
+          puts case ARGV[1]
+               when "major" then "#{major + 1}.0.0"
+               when "minor" then "#{major}.#{minor + 1}.0"
+               else              "#{major}.#{minor}.#{patch + 1}"
+               end
+          RB
+          )
+          echo "version=${NEXT}" >> "$GITHUB_OUTPUT"
+          echo "Next version (${INPUT_KIND} from ${TAG}): ${NEXT}"
+
       - name: Bump version
         if: github.event_name == 'workflow_dispatch' && inputs.next_version != 'skip'
         env:
-          NEXT_VERSION: ${{ steps.prerelease.outputs.version || inputs.next_version }}
+          NEXT_VERSION: ${{ steps.prerelease.outputs.version || steps.keyword.outputs.version || inputs.next_version }}
+          # gh (pr create / pr merge --auto) acts as the PAT account: that
+          # account opening the PR is what makes the PR's own CI fire
+          # (rake tests + cla/ribose) — GITHUB_TOKEN-opened PRs do not
+          # trigger workflow runs.
+          GH_TOKEN: ${{ secrets.pat_token || github.token }}
         run: |
+          # Refuse to bump BELOW the highest published version (metanorma/ci#488):
+          # a stale re-dispatch would otherwise push a downgrade commit to the
+          # default branch (relaton/relaton 2026-11-07: a 3.1.0 re-run moved main
+          # behind its released 3.1.1 and the idempotency guard skipped the
+          # publish, so nothing on the run flagged it). Prerelease versions sort
+          # below their final via Gem::Version, so an alpha/pre bump of an
+          # unreleased line still passes.
+          GEMSPEC=$(ls *.gemspec | head -1)
+          GEM_NAME=$(ruby -e "puts Gem::Specification.load(ARGV[0]).name" "$GEMSPEC")
+          ruby -e '
+            require "rubygems"
+            require "net/http"
+            require "json"
+            name = ARGV[0]
+            next_version = Gem::Version.new(ARGV[1])
+            uri = URI("https://rubygems.org/api/v1/versions/#{name}.json")
+            versions = JSON.parse(Net::HTTP.get(uri)).map { |v| Gem::Version.new(v["number"]) rescue nil }.compact
+            highest = versions.max
+            exit 0 unless highest
+            abort "refusing to bump #{name}: requested #{next_version} is below the highest published #{highest} - cancel this dispatch (metanorma/ci#488)" if next_version < highest
+          ' "$GEM_NAME" "$NEXT_VERSION"
           # gem-release's auto-detection only probes lib/<name-with-dashes-
           # as-slashes>/version.rb and lib/<name>/version.rb, so gems whose
           # module path underscores the name (relaton_bib, relaton_itu, ...)
           # abort with "Version file ? not found". Resolve the real file
-          # from the gemspec instead.
+          # from the gemspec instead, anchored on lib/<gem>/version.rb —
+          # consolidated gems carry nested version files (relaton's
+          # lib/relaton/cli/version.rb sorts before the root's) whose
+          # assignments don't drive the release version.
           GEMSPEC=$(ls *.gemspec | head -1)
           VERSION_FILE=$(ruby -Ilib - "$GEMSPEC" <<'RB'
-          # The hardened version-file resolution shared with
-          # rubygems-release.yml (ci#429): gemspec files, then git
-          # ls-files, then the lib/ glob; candidates are validated
-          # against the gemspec's own directory, never the process cwd.
+          # Version-file resolution survives a hostile spec.files: the
+          # intermittent "version file not found in gemspec" (ci#429 — three
+          # repos in one day, the same commands green locally) showed
+          # Gem::Specification.load coming back without usable files in CI,
+          # including on a Dir.glob gemspec that cannot lack the file. So:
+          # gemspec files first (with the count logged), then git ls-files,
+          # then the lib/ glob; the root gem's version file wins, and every
+          # candidate must still carry a VERSION assignment. Failures abort
+          # with the working-tree state the logs need.
           spec = Gem::Specification.load(ARGV[0])
+          # Candidate paths are gemspec-relative, so every VERSION check
+          # reads against the gemspec's own directory — not the process
+          # cwd (the resolution must not depend on where git ran).
           gemspec_dir = File.dirname(File.expand_path(ARGV[0]))
           has_version = lambda do |f|
-            (File.read(File.expand_path(f, gemspec_dir)) =~ /^\s*VERSION\s*=/) ? true : false
+            # Literal quoted assignment only: delegating stubs like
+            # `VERSION = Metanorma::Iso::VERSION` (metanorma-iso
+            # sts/version.rb, ci#511) match a bare VERSION check and,
+            # sorting before the primary file, hijack the fallback
+            # selection and abort the bump.
+            (File.read(File.expand_path(f, gemspec_dir)) =~ /^\s*VERSION\s*=\s*["']/) ? true : false
           rescue StandardError
             false
           end
@@ -401,18 +534,103 @@ jobs:
           # bump commit stages ONLY the version file; a repo's tracked lock
           # keeps its committed content untouched.
           #
-          # Write the version file directly instead of `gem bump`: its
-          # clean-tree check counts any working-tree change, which a
-          # tracked gems/ directory rename or a lockfile drift turns into
-          # a stranded release (metanorma/ci#474). The file is already
-          # resolved above; the write is the whole job.
-          ruby -e 'path = ARGV[0]; version = ARGV[1]; abort "invalid version: #{version.inspect}" unless version.match?(/\A\d+\.\d+\.\d+(\.[A-Za-z0-9.]+)?\z/); text = File.read(path); updated = text.sub(/^(\s*)(VERSION\s*=\s*)(["\x27])[^"\x27]*\3/) { $1 + $2 + $3 + version + $3 }; abort "no VERSION assignment in #{path}" if updated == text; File.write(path, updated)' "$VERSION_FILE" "$NEXT_VERSION"
-          # Stage the version file EXPLICITLY: with the lock deleted above
-          # the bump commit would otherwise be empty and exit 1 with
-          # "no changes added" (ci#480 — lutaml-xsd releases blocked).
-          git add "$VERSION_FILE"
-          git commit -m "Bump version to ${NEXT_VERSION}"
-          git push origin "HEAD:${GITHUB_REF_NAME}"
+          # Write the version file directly instead of `gem bump`.
+          # gem-release has two behaviors this release cannot afford: its
+          # monorepo detection hijacks the bump when a gems/ directory
+          # exists (relaton#462), and the mv-to-stash trick that used to
+          # hide gems/ registers as mass tracked deletions, tripping
+          # gem-release's clean-tree check ("Uncommitted changes found")
+          # on every monogem that commits its shell gems
+          # (metanorma/ci#474 — relaton/relaton stranded). The version
+          # file is already resolved above; the write is the whole job.
+          # ci#493: `updated == text` fires both when the regex misses AND
+          # when the file already carries NEXT_VERSION (re-dispatch of a
+          # released version). Only the first is fatal; the second skips
+          # the bump commit and continues to the idempotent publish path.
+          rm -f /tmp/bump-skipped
+          ruby -e 'path = ARGV[0]; version = ARGV[1]; abort "invalid version: #{version.inspect}" unless version.match?(/\A\d+\.\d+\.\d+(\.[A-Za-z0-9.]+)?\z/); text = File.read(path); updated = text.sub(/^(\s*)(VERSION\s*=\s*)(["\x27])[^"\x27]*\3/) { $1 + $2 + $3 + version + $3 }; if updated == text; abort "no VERSION assignment in #{path}" unless text.match?(/^\s*VERSION\s*=\s*(["\x27])#{Regexp.escape(version)}\1/); warn "version file already at #{version} - skipping the bump (idempotent re-release; next_version=skip re-publishes as-is)"; File.write("/tmp/bump-skipped", "1"); exit; end; File.write(path, updated)' "$VERSION_FILE" "$NEXT_VERSION"
+          if [ -f /tmp/bump-skipped ]; then
+            echo "::notice title=Idempotent bump::version already at ${NEXT_VERSION}; bump commit skipped, publish proceeds."
+          else
+            # Stage explicitly: with the lock deleted above the bump commit
+            # would otherwise be empty and exit 1 "no changes added" (ci#480).
+            git add "$VERSION_FILE"
+            git commit -m "Bump version to ${NEXT_VERSION}"
+            # The bump NEVER pushes to main directly (ci#510, ci#515): a
+            # required cla/ribose check can never exist on a directly
+            # pushed commit, and the old warn-and-proceed left the release
+            # tag pointing at a commit unreachable from any branch. The
+            # bump lands on a release branch, a release PR carries it
+            # through the repo's own gates (tests + cla/ribose — the
+            # release PAT's account is allowlisted), auto-merge lands it,
+            # and the merge event triggers the publish leg, which tags the
+            # MERGE commit. A green dispatch run means: the release PR is
+            # open and merge-gated. A green merge leg means: published.
+            BRANCH="release/v${NEXT_VERSION}"
+            # Workflow-owned ephemeral branch: a re-dispatch after a failed
+            # leg must overwrite the stale branch, not refuse it.
+            git push --force origin "HEAD:refs/heads/${BRANCH}"
+            # Reuse the release PR when one is already open for the
+            # branch (re-dispatch after a partial failure); gh pr create
+            # would otherwise fail the step.
+            PR_URL=$(gh pr list --head "${BRANCH}" --state open --json url --jq '.[0].url')
+            if [ -z "${PR_URL}" ]; then
+              PR_URL=$(gh pr create \
+                --base "${GITHUB_REF_NAME}" --head "${BRANCH}" \
+                --title "Bump version to ${NEXT_VERSION}" \
+                --body "Release bump for ${NEXT_VERSION}. Merging this pull request is the release: the publish leg runs on merge, tags the merge commit, and pushes the gem to rubygems.org (Trusted Publishing). Opened by the release workflow (ci#515).")
+            fi
+            echo "Release PR: ${PR_URL}"
+            # Enable auto-merge (rebase keeps the bump a single commit on
+            # main). The PR is named EXPLICITLY: gh without an argument
+            # infers from the checkout branch, which here is the default
+            # branch — "no pull requests found for branch main"
+            # (expressir 2.4.73). Repos without the auto-merge setting
+            # (or with rebase merging disabled) degrade to a manual
+            # merge: the PR sits open, checks run, and the maintainer
+            # merges — the publish leg fires on that merge exactly the
+            # same.
+            PRNUM=$(basename "$PR_URL")
+            if ! gh pr merge "$PRNUM" --auto --rebase 2> /tmp/automerge-err.txt; then
+              cat /tmp/automerge-err.txt >&2 || true
+              echo "::warning title=Auto-merge unavailable::Merge the release PR manually — this run waits for the merge and publishes from it."
+            fi
+            {
+              echo "## Release PR opened — this run publishes on merge"
+              echo ""
+              echo "${PR_URL}"
+              echo ""
+              echo "This run waits for the release pull request to merge (up to 20 minutes), then tags the merge commit and publishes to rubygems.org. If the wait times out, merge the pull request and dispatch next_version=skip."
+            } >> "$GITHUB_STEP_SUMMARY"
+            # The publish happens IN THIS RUN after the merge: events created
+            # by the repository's own GITHUB_TOKEN do not trigger workflow
+            # runs, so an event-driven publish leg (pull_request: closed)
+            # never fires for PAT-less repos — the relaton family's 3.1.6
+            # dispatch opened and merged its release PR and nothing followed.
+            # Waiting here makes the chain event-independent and restores
+            # true atomicity: one green run = the gem is on rubygems.org.
+            echo "Waiting for the release PR to merge (max 20 minutes)..."
+            merged="false"
+            for i in $(seq 1 60); do
+              state=$(gh pr view "$PRNUM" --json state,mergedAt 2> /dev/null || true)
+              if printf '%s' "$state" | jq -e '.state == "MERGED" and .mergedAt != null' > /dev/null 2>&1; then
+                merged="true"
+                break
+              fi
+              sleep 20
+            done
+            if [ "$merged" != "true" ]; then
+              echo "::error::The release PR did not merge within 20 minutes. Merge ${PR_URL} once its checks are green, then dispatch next_version=skip to publish from main."
+              exit 1
+            fi
+            echo "Release PR merged — checking out the merge commit and publishing."
+            git fetch origin "+${GITHUB_REF_NAME}:refs/remotes/origin/${GITHUB_REF_NAME}"
+            MERGE_SHA=$(gh pr view "$PRNUM" --json mergeCommit --jq .mergeCommit.oid)
+            git checkout --force "$MERGE_SHA"
+            # The publish tail is gated on BUMP_VIA_PR; the merge completed,
+            # so clear it for the remaining steps of this run.
+            echo "BUMP_VIA_PR=false" >> "$GITHUB_ENV"
+          fi
 
       - name: Resolve gem identity
         id: gem-identity
@@ -426,13 +644,13 @@ jobs:
 
       # ============ Publish: API Key path ============
       - name: Idempotency guard (API key)
-        if: env.HAS_API_KEY == 'true'
+        if: env.HAS_API_KEY == 'true' && env.BUMP_VIA_PR != 'true'
         uses: metanorma/ci/gem-idempotent-push-guard-action@main
         with:
           gem-name: ${{ steps.gem-identity.outputs.name }}
           gem-version: ${{ steps.gem-identity.outputs.version }}
 
-      - if: env.HAS_API_KEY == 'true' && env.skip_push != 'true'
+      - if: env.HAS_API_KEY == 'true' && env.skip_push != 'true' && env.BUMP_VIA_PR != 'true' && env.PUBLISH_LEG != 'true'
         name: Publish to rubygems.org (API Key)
         env:
           RUBYGEMS_API_KEY: ${{ secrets.rubygems-api-key }}
@@ -457,21 +675,59 @@ jobs:
           fi
           echo "SHOULD_PUBLISH=true" >> "$GITHUB_ENV"
 
+      # Publish leg (merged release PR), API-key path: gem build + gem
+      # push with the already-configured credentials. No release_command,
+      # no bundler git machinery — the checkout is detached by design.
+      - if: env.HAS_API_KEY == 'true' && env.skip_push != 'true' && env.BUMP_VIA_PR != 'true' && env.PUBLISH_LEG == 'true'
+        name: Build and push gem (API key, publish leg)
+        env:
+          RUBYGEMS_API_KEY: ${{ secrets.rubygems-api-key }}
+        run: |
+          mkdir -p ~/.gem
+          envsubst << 'CREDS'
+          ---
+          :rubygems_api_key: ${RUBYGEMS_API_KEY}
+          CREDS
+          chmod 0600 ~/.gem/credentials
+          gem build *.gemspec
+          mkdir -p pkg
+          mv *.gem pkg/
+          set +e
+          push_rc=0
+          for f in pkg/*.gem; do
+            push_out=$(gem push "$f" 2>&1)
+            rc=$?
+            echo "$push_out"
+            if [ "$rc" -ne 0 ]; then
+              if printf '%s' "$push_out" | grep -qiE 'already been pushed|Repushing of gem versions is not allowed'; then
+                echo "::notice title=Idempotent publish::$f already on rubygems.org; treating as success."
+                continue
+              fi
+              push_rc="$rc"
+              break
+            fi
+          done
+          set -e
+          if [ "$push_rc" -eq 0 ]; then
+            echo "SHOULD_PUBLISH=true" >> "$GITHUB_ENV"
+          fi
+          exit "$push_rc"
+
       # ============ Publish: OIDC Trusted Publisher path ============
-      - if: env.USE_OIDC == 'true'
+      - if: env.USE_OIDC == 'true' && env.BUMP_VIA_PR != 'true'
         name: Configure RubyGems credentials for Trusted Publishing
         uses: rubygems/configure-rubygems-credentials@v2.1.0
         with:
           role-to-assume: ${{ inputs.role_to_assume }}
 
       - name: Idempotency guard (OIDC)
-        if: env.USE_OIDC == 'true'
+        if: env.USE_OIDC == 'true' && env.BUMP_VIA_PR != 'true'
         uses: metanorma/ci/gem-idempotent-push-guard-action@main
         with:
           gem-name: ${{ steps.gem-identity.outputs.name }}
           gem-version: ${{ steps.gem-identity.outputs.version }}
 
-      - if: env.USE_OIDC == 'true' && env.skip_push != 'true'
+      - if: env.USE_OIDC == 'true' && env.skip_push != 'true' && env.BUMP_VIA_PR != 'true'
         name: Build and push gem (OIDC)
         run: |
           # Quoted-variable + eval: with the input at its default (""),
@@ -511,12 +767,15 @@ jobs:
           fi
           exit "$push_rc"
 
-      - if: env.USE_OIDC == 'true' && env.skip_push != 'true'
-        name: Wait for release to propagate
-        run: |
-          for f in pkg/*.gem; do
-            gem exec rubygems-await "$f"
-          done
+      # rubygems-await (compact-index wait) REMOVED per #509/#512: it reads
+      # the laggy compact-index pipeline and both timed out (metanorma-iso
+      # 3.5.22, metanorma-taste 1.1.11, metanorma-iho 1.4.6 — gems live on
+      # rubygems the whole window) and crashed on 0.5.4's
+      # CompactIndexClient::Cache#dependencies NoMethodError
+      # (plugin-lutaml 0.7.75/0.7.76) — each failure orphaned the tag.
+      # The API-polling "Verify gem published" step below is the
+      # authoritative post-push verification; rubygems-await 0.5.4 is the
+      # newest release (2024) so there is no upgrade path.
 
       # Multi-gem repos (e.g. relaton/relaton ships relaton + relaton-cli):
       # a custom release_command names the secondary push steps, but it only
@@ -525,7 +784,22 @@ jobs:
       # (relaton-cli 3.0.0.pre.alpha.3/.4, 2026-09-25). Deliberately ignores
       # skip_push: each push inside is idempotent-tolerant, so a partially
       # published version can always be completed by re-dispatch.
-      - if: env.USE_OIDC == 'true' && inputs.release_command != '' && inputs.release_command != 'bundle exec rake release'
+      # On the publish leg the checkout is detached: any release_command
+      # that runs Bundler's release machinery (rake release) pushes a
+      # branch that does not exist and rolls the tag back (expressir
+      # v2.4.72). Push-only commands are fine detached; rake-release-style
+      # commands are skipped with a notice instead of failing the leg.
+      - if: env.PUBLISH_LEG == 'true' && env.USE_OIDC == 'true' && contains(inputs.release_command, 'rake release')
+        name: Notice — rake release skipped on the publish leg
+        run: |
+          echo "::notice title=rake release skipped on the publish leg::The release_command '${{ inputs.release_command }}' runs Bundler's release machinery, which pushes the current branch — impossible on the detached merge-commit checkout. The root gem is already published by the generic push above. Secondary gems needing this command: dispatch next_version=skip, or make the release_command push-only (gem push)."
+      # API-key multi-gem repos (relaton ships relaton + relaton-cli) run
+      # their push-only release_command here too on the publish leg: the
+      # generic push above shipped only the root gem, stranding secondary
+      # gems (the OIDC additional-gems path already ran it; the API-key
+      # path now matches). Rake-release-style commands stay skipped on the
+      # detached leg.
+      - if: (env.USE_OIDC == 'true' || env.PUBLISH_LEG == 'true') && inputs.release_command != '' && inputs.release_command != 'bundle exec rake release' && env.BUMP_VIA_PR != 'true' && !(env.PUBLISH_LEG == 'true' && contains(inputs.release_command, 'rake release'))
         name: Publish additional gems (OIDC, custom release_command)
         run: |
           set +e
@@ -542,12 +816,12 @@ jobs:
       # versions with no tag/Release). Sets the same flag the publish steps
       # set on a fresh push (ci#403).
       - name: Mark already-published version for release floor
-        if: env.skip_push == 'true'
+        if: env.skip_push == 'true' && env.BUMP_VIA_PR != 'true'
         run: echo "SHOULD_PUBLISH=true" >> "$GITHUB_ENV"
 
       # ============ Post-publish verification ============
       - name: Verify gem published on rubygems.org
-        if: env.skip_push != 'true'
+        if: env.skip_push != 'true' && env.BUMP_VIA_PR != 'true'
         env:
           GEM_NAME: ${{ steps.gem-identity.outputs.name }}
           GEM_VERSION: ${{ steps.gem-identity.outputs.version }}
@@ -579,13 +853,14 @@ jobs:
       # did not exist (lutaml/lutaml-lml v0.1.3). Idempotent: no-op when
       # the tag already exists.
       - name: Ensure release tag exists
+        if: env.BUMP_VIA_PR != 'true'
         env:
           TAG: v${{ steps.gem-identity.outputs.version }}
         run: |
           if git ls-remote --tags origin "refs/tags/${TAG}" | grep -q "refs/tags/${TAG}$"; then
             echo "✓ Tag ${TAG} already exists on origin."
           else
-            echo "Tag ${TAG} missing on origin — creating annotated tag at ${GITHUB_SHA}."
+            echo "Tag ${TAG} missing on origin — creating annotated tag at local HEAD (the bumped commit; refs/tags pushes pass protection even when the refs/heads bump was GH006-rejected, ci#510)."
             git tag -a "${TAG}" -m "Release ${TAG}"
             git push origin "refs/tags/${TAG}"
           fi
@@ -611,13 +886,22 @@ jobs:
       - name: Ensure GitHub Release for tag exists
         if: >-
           env.SHOULD_PUBLISH == 'true' &&
-          inputs.release_notes != 'manual'
+          (inputs.release_notes != 'manual' || inputs.upload_artifact == true) &&
+          env.BUMP_VIA_PR != 'true'
         env:
           GH_TOKEN: ${{ github.token }}
           TAG: v${{ steps.gem-identity.outputs.version }}
+          RELEASE_NOTES_MODE: ${{ inputs.release_notes }}
         run: |
           if gh release view "$TAG" --repo "${{ github.repository }}" > /dev/null 2>&1; then
             echo "✓ Release for $TAG already exists — leaving alone (never overwrite)."
+          elif [ "$RELEASE_NOTES_MODE" = "manual" ]; then
+            echo "Creating GitHub Release for $TAG (manual notes mode; empty body for provenance assets)..."
+            gh release create "$TAG" \
+              --repo "${{ github.repository }}" \
+              --title "$TAG" \
+              --notes ""
+            echo "✓ Release created."
           else
             echo "Creating GitHub Release for $TAG with auto-generated notes..."
             gh release create "$TAG" \
@@ -626,6 +910,57 @@ jobs:
               --generate-notes
             echo "✓ Release created."
           fi
+
+      - name: Stage built gem artifact for provenance
+        if: inputs.upload_artifact == true && env.SHOULD_PUBLISH == 'true' && env.BUMP_VIA_PR != 'true'
+        env:
+          GEM_NAME: ${{ steps.gem-identity.outputs.name }}
+          GEM_VERSION: ${{ steps.gem-identity.outputs.version }}
+        run: |
+          set -euo pipefail
+          rm -rf release-artifacts
+          mkdir -p release-artifacts
+          GEM_FILE="pkg/${GEM_NAME}-${GEM_VERSION}.gem"
+          if [ ! -f "$GEM_FILE" ]; then
+            pre_build='${{ inputs.pre_build_command }}'
+            if [ -n "$pre_build" ]; then
+              eval "$pre_build"
+            fi
+            gem build *.gemspec
+            mkdir -p pkg
+            mv *.gem pkg/
+          fi
+          cp "$GEM_FILE" release-artifacts/
+          ls -la release-artifacts/
+
+      - name: Upload built gem artifact for provenance
+        if: inputs.upload_artifact == true && env.SHOULD_PUBLISH == 'true' && env.BUMP_VIA_PR != 'true'
+        uses: actions/upload-artifact@v4
+        with:
+          name: release-gem-artifacts
+          path: release-artifacts/
+          if-no-files-found: error
+          retention-days: 1
+
+      - name: Resolve provenance outputs
+        id: provenance-meta
+        if: env.SHOULD_PUBLISH == 'true' && env.BUMP_VIA_PR != 'true'
+        env:
+          GEM_VERSION: ${{ steps.gem-identity.outputs.version }}
+          INPUT_SUPPORT_UNTIL: ${{ inputs.support_until }}
+        run: |
+          set -euo pipefail
+          SUPPORT_UNTIL="${INPUT_SUPPORT_UNTIL:-$(date -u -d '+2 years' +%Y-%m-%d)}"
+          if [[ ! "$SUPPORT_UNTIL" =~ ^[0-9]{4}-[0-9]{2}-[0-9]{2}$ ]]; then
+            echo "::error::Invalid support_until '${SUPPORT_UNTIL}'. Expected YYYY-MM-DD."
+            exit 1
+          fi
+          {
+            echo "published=true"
+            echo "release_tag=v${GEM_VERSION}"
+            echo "artifact_name=release-gem-artifacts"
+            echo "support_until=${SUPPORT_UNTIL}"
+          } >> "$GITHUB_OUTPUT"
 
       # ============ Post-release event ============
       # ============ Versions register annotation (ci#367) ============
@@ -639,7 +974,8 @@ jobs:
         if: >-
           env.SHOULD_PUBLISH == 'true' &&
           github.repository == 'metanorma/metanorma-cli' &&
-          env.HAVE_PAT_TOKEN == 'true'
+          env.HAVE_PAT_TOKEN == 'true' &&
+          env.BUMP_VIA_PR != 'true'
         continue-on-error: true
         env:
           GH_TOKEN: ${{ secrets.pat_token }}
@@ -702,29 +1038,10 @@ jobs:
         run: echo "value=refs/tags/v${{ steps.gem-identity.outputs.version }}" >> "$GITHUB_OUTPUT"
 
       - name: Dispatch release-passed
-        if: github.event_name == 'workflow_dispatch'
+        if: github.event_name == 'workflow_dispatch' && env.BUMP_VIA_PR != 'true'
         uses: peter-evans/repository-dispatch@v3
         with:
           token: ${{ secrets.pat_token || github.token }}
           repository: ${{ github.repository }}
           event-type: release-passed
           client-payload: '{"ref": "${{ steps.gem-tag-ref.outputs.value }}", "sha": "${{ github.sha }}", "type": "release-passed"}'
-
-      - name: Dispatch packed-metanorma payload sync (stable cli cuts)
-        # release-engineering#8: a stable metanorma-cli publish rolls the
-        # packed (tebako) channel automatically. packed-metanorma's build
-        # receives this dispatch, resolves the payload version from the
-        # tag ref, and lands the versions.yaml roll by PR; the merge
-        # then presses and cuts the packed release. Prereleases keep the
-        # manual packed flow (their payloads are cut on demand).
-        if: >-
-          env.SHOULD_PUBLISH == 'true' &&
-          github.event_name == 'workflow_dispatch' &&
-          github.repository == 'metanorma/metanorma-cli' &&
-          !contains(steps.gem-identity.outputs.version, '-')
-        uses: peter-evans/repository-dispatch@v3
-        with:
-          token: ${{ secrets.pat_token }}
-          repository: metanorma/packed-metanorma
-          event-type: metanorma/metanorma-cli
-          client-payload: '{"ref": "${{ steps.gem-tag-ref.outputs.value }}"}'
