@@ -11,11 +11,16 @@ against a frozen baseline; every diff is classified; regressions block.**
 | [`render-baseline.yml`](../.github/workflows/render-baseline.yml) | #504 | The harness: render a samples repo with a pinned `metanorma/metanorma` tag, hash every output file into a manifest, then **capture** (freeze the manifest on the `render-baselines` branch) or **compare** (diff against it) |
 | the compare step's classifier | #505 | The regression vocabulary: each diff is `accepted` (path matches the repo's acceptlist) or `regression` (blocks). No silent passes |
 | [`render-drift-weekly.yml`](../.github/workflows/render-drift-weekly.yml) | #506 | Weekly scheduled compare of the full samples family rendered with `:latest` against the frozen baselines — catches image-drift-induced render changes |
-| [`render-parity.yml`](../.github/workflows/render-parity.yml) | #507 | Cross-engine gate: render under both engine lines and diff the outputs per flavor |
+| [`render-parity.yml`](../.github/workflows/render-parity.yml) | #507 | Cross-engine gate: render under both engine lines and upload a sha256 manifest per engine. It does not yet diff them: the parity job only checks that both manifests exist (else reports N/A for single-engine flavors) and prints a notice; the per-file diff and the blocking rule follow once the ci#505 parity vocabulary is ratified |
 
 ## Usage
 
 ### Freeze a baseline (once per samples repo, and after every blessed change)
+
+Baselines live on the `render-baselines` branch of this repository (not
+in a separate repository). Capture is a manual dispatch of
+[`render-baseline-capture.yml`](../.github/workflows/render-baseline-capture.yml),
+which calls the reusable `render-baseline.yml` with `mode: capture`:
 
 ```sh
 gh workflow run render-baseline-capture.yml \
@@ -23,9 +28,12 @@ gh workflow run render-baseline-capture.yml \
   -f image_tag=metanorma-metanorma-<frozen-tag>
 ```
 
-The capture run commits `manifests/<repo>.ndjson` (sorted
-`sha256  path` lines) plus a `.meta.yaml` provenance sidecar to the
-[`render-baselines`](../../tree/render-baselines) branch.
+The optional `baseline_key` input overrides the file stem (default: the
+samples repo name). The capture run commits `manifests/<key>.ndjson`
+(sorted `sha256  path` lines) plus a `manifests/<key>.meta.yaml`
+provenance sidecar to the
+[`render-baselines`](https://github.com/metanorma/ci/tree/render-baselines)
+branch.
 
 ### Compare (CI gate or manual)
 
@@ -42,10 +50,12 @@ There are exactly **three conclusions** and **two diff classes**:
 
   ```yaml
   patterns:
-    # exact-path or glob, with a reason; reasons are load-bearing
+    # exact-path or glob, with a reason; reasons are load-bearing.
+    # An entry is either a bare string, or a one-key map of
+    # "<pattern>": "<reason>" (the compare step reads the map's first key
+    # as the pattern, so the pattern must be the key).
     - "documents/**/index.html"      # canonicalization pending (ci#505 follow-up)
-    - glob: "**/*.jsonld"
-      reason: "embedded build epoch — awaiting metanorma-side fix"
+    - "**/*.jsonld": "embedded build epoch — awaiting metanorma-side fix"
   ```
 
 - **Conclusions** — `clean` (no diffs), `drift-accepted` (diffs, all

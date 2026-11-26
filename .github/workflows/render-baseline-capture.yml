@@ -1,0 +1,38 @@
+name: render-baseline-capture
+
+# Thin manual entry point for ci#504 baseline capture. It only calls the
+# reusable render-baseline.yml with mode: capture; that workflow renders
+# the samples repo with the pinned image tag and commits
+# manifests/<key>.ndjson + <key>.meta.yaml to the `render-baselines`
+# branch of this repository (metanorma#678: baselines live on that
+# branch, not in a separate repository).
+
+on:
+  workflow_dispatch:
+    inputs:
+      samples_repo:
+        description: 'Samples repo (metanorma/NAME) to render, e.g. mn-samples-iso'
+        required: true
+        type: string
+      image_tag:
+        description: 'Frozen metanorma/metanorma tag or digest (not :latest)'
+        required: true
+        type: string
+      baseline_key:
+        description: 'Baseline file stem (optional; defaults to the samples repo name)'
+        required: false
+        type: string
+
+permissions:
+  contents: write
+
+jobs:
+  capture:
+    uses: ./.github/workflows/render-baseline.yml
+    with:
+      samples_repo: ${{ inputs.samples_repo }}
+      image_tag: ${{ inputs.image_tag }}
+      mode: capture
+      baseline_key: ${{ inputs.baseline_key }}
+    secrets:
+      pat_token: ${{ secrets.METANORMA_CI_PAT_TOKEN }}
