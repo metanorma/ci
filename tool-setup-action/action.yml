@@ -2,15 +2,15 @@ name: 'tool-setup-action'
 description: >-
   Installs CI tools specified by a comma-separated list.
   Supported tools: graphviz, libreoffice,
-  xml2rfc, exiftool, ffmpeg, imagemagick, yq.
-  (inkscape and ghostscript were retired 2026-11-12: no fleet consumer
-  invokes them; their setup actions live in git history.)
+  xml2rfc, exiftool, imagemagick, yq.
+  (inkscape and ghostscript were retired 2026-11-12 and ffmpeg 2026-11-26:
+  no fleet consumer invokes them; their setup actions live in git history.)
   To add a new tool: create its *-setup-action, then add a step here.
 inputs:
   setup-tools:
     description: >-
       Comma-separated list of tools to install (no spaces):
-      graphviz,libreoffice,xml2rfc,exiftool,ffmpeg,imagemagick,yq
+      graphviz,libreoffice,xml2rfc,exiftool,imagemagick,yq
     default: ''
 runs:
   using: "composite"
@@ -27,8 +27,6 @@ runs:
     - if: contains(format(',{0},', inputs.setup-tools), ',exiftool,')
       uses: metanorma/ci/exiftool-setup-action@main
 
-    - if: contains(format(',{0},', inputs.setup-tools), ',ffmpeg,')
-      uses: metanorma/ci/ffmpeg-setup-action@main
 
     - if: contains(format(',{0},', inputs.setup-tools), ',imagemagick,')
       uses: metanorma/ci/imagemagick-setup-action@main

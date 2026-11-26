@@ -316,7 +316,9 @@ repositories:
       # (metanorma/ci#300 Gap 1); byte-identical output with `with:` empty.
       .github/workflows/rake.yml: gh-actions/master/rake.yml.erb
       .github/workflows/release.yml: gh-actions/master/release_manual_notes.yml
-      .github/workflows/integration.yml: gh-actions/inkscape/rake-daily.yml
+      # .github/workflows/integration.yml: unmapped 2026-11-26 — built on the
+      # retired inkscape/ghostscript toolchain (gh-actions/inkscape/ template
+      # removed with ffmpeg-setup-action); the file is consumer-owned from here.
   html2doc:
     remote: ssh://git@github.com/metanorma/html2doc
     branch: main
