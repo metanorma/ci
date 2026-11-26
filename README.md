@@ -48,7 +48,6 @@ Shared GitHub Actions workflows and composite actions for building, testing, and
 | [`graphviz-setup-action`](graphviz-setup-action/) | Install Graphviz |
 | [`imagemagick-setup-action`](imagemagick-setup-action/) | Install ImageMagick |
 | [`libreoffice-setup-action`](libreoffice-setup-action/) | Install LibreOffice |
-| [`ffmpeg-setup-action`](ffmpeg-setup-action/) | Install FFmpeg |
 | [`exiftool-setup-action`](exiftool-setup-action/) | Install ExifTool |
 | [`xml2rfc-setup-action`](xml2rfc-setup-action/) | Install xml2rfc |
 | [`yq-setup-action`](yq-setup-action/) | Install yq |
@@ -166,9 +165,10 @@ jobs:
 
 ## Retired actions
 
-[`inkscape-setup-action`](https://github.com/metanorma/ci/tree/main/inkscape-setup-action)
-and [`ghostscript-setup-action`](https://github.com/metanorma/ci/tree/main/ghostscript-setup-action)
-(linked in git history) are **retired and unused** as of 2026-11-12: no
+[`inkscape-setup-action`](https://github.com/metanorma/ci/tree/main/inkscape-setup-action),
+[`ghostscript-setup-action`](https://github.com/metanorma/ci/tree/main/ghostscript-setup-action)
+and [`ffmpeg-setup-action`](https://github.com/metanorma/ci/tree/main/ffmpeg-setup-action)
+(linked in git history) are **retired and unused** (2026-11-12 / 2026-11-26): no
 workflow in the fleet requests them, and nothing in the metanorma Ruby
 stack invokes either tool. Their directories remain for reference; the
 last functional versions are in git history.

@@ -17,7 +17,7 @@ jobs:
   rake:
     uses: metanorma/ci/.github/workflows/generic-rake.yml@main
     with:
-      setup-tools: inkscape,ghostscript
+      setup-tools: graphviz
     secrets:
       pat_token: ${{ secrets.METANORMA_CI_PAT_TOKEN }}
 ```
@@ -32,8 +32,7 @@ jobs:
 | `before-setup-ruby` | no | `''` | Command to run before Ruby setup |
 | `after-setup-ruby` | no | `''` | Command to run after Ruby setup |
 | `shell` | no | `bash` | Shell for running commands |
-| `setup-inkscape` | no | `false` | Legacy — use `setup-tools` instead |
-| `setup-tools` | no | `''` | Comma-separated tools: `inkscape,ghostscript,graphviz,libreoffice,xml2rfc,exiftool,ffmpeg,imagemagick,yq` |
+| `setup-tools` | no | `''` | Comma-separated tools: `graphviz,libreoffice,xml2rfc,exiftool,imagemagick,yq` |
 | `submodules` | no | `recursive` | Checkout submodules: `true`, `false`, or `recursive` |
 | `private-fonts` | no | `false` | Enable private fonts via fontist-repo-setup |
 | `private-fonts-username` | no | `metanorma-ci` | Username for private fonts repository |

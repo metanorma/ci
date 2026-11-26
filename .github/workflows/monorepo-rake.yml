@@ -49,14 +49,10 @@ on:
       setup-tools:
         description: >-
           Comma-separated list of tools to install (no spaces):
-          inkscape,ghostscript,graphviz,libreoffice,xml2rfc,exiftool,ffmpeg,imagemagick,yq
+          graphviz,libreoffice,xml2rfc,exiftool,imagemagick,yq
         type: string
         default: ''
         required: false
-      setup-inkscape:
-        description: 'Legacy flag — use setup-tools instead'
-        type: boolean
-        default: false
       submodules:
         description: 'Checkout submodules: true, false, or recursive'
         type: string
@@ -128,7 +124,6 @@ jobs:
       - uses: metanorma/ci/tool-setup-action@main
         with:
           setup-tools: ${{ inputs.setup-tools }}
-          setup-inkscape: ${{ inputs.setup-inkscape }}
 
       - name: Run specs for each gem
         shell: bash

@@ -330,10 +330,6 @@ jobs:
         use-bundler: 'true'
         working-directory: samples
 
-    - uses: metanorma/ci/tool-setup-action@main
-      with:
-        setup-tools: 'inkscape'
-
     - if: matrix.flavor.id == 'ietf'
       uses: metanorma/ci/tool-setup-action@main
       with:

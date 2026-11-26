@@ -36,14 +36,10 @@ on:
         type: string
         default: 'bash'
         required: false
-      setup-inkscape:
-        description: 'Legacy flag — use setup-tools instead'
-        type: boolean
-        default: false
       setup-tools:
         description: >-
           Comma-separated list of tools to install (no spaces):
-          inkscape,ghostscript,graphviz,libreoffice,xml2rfc,exiftool,ffmpeg,imagemagick,yq
+          graphviz,libreoffice,xml2rfc,exiftool,imagemagick,yq
         type: string
         default: ''
         required: false
@@ -138,7 +134,6 @@ jobs:
       - uses: metanorma/ci/tool-setup-action@main
         with:
           setup-tools: ${{ inputs.setup-tools }}
-          setup-inkscape: ${{ inputs.setup-inkscape }}
 
       - if: inputs.private-fonts == 'true'
         uses: metanorma/ci/fontist-repo-setup@main
