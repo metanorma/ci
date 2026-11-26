@@ -159,15 +159,20 @@ jobs:
           CANARY: ${{ inputs.canary_commands }}
         run: |
           set -euo pipefail
-          jq -e 'type == "object" and length > 0 and all(keys[]; test("^[A-Za-z0-9_.-]+$")) and all(.[]; type == "string" and test("^[0-9]+\\.[0-9]+\\.[0-9]+\\.pre\\.alpha\\.[0-9]+$"))' \
+          # Repos are checked out with the caller's token, so they must be
+          # metanorma repos. Anchors are \z, not $: jq's $ also matches before
+          # a final newline. A budget of 0 disables the GNU timeout, so >= 1.
+          jq -e 'type == "object" and length > 0 and all(keys[]; test("^[A-Za-z0-9_.-]+\\z")) and all(.[]; type == "string" and test("^[0-9]+\\.[0-9]+\\.[0-9]+\\.pre\\.alpha\\.[0-9]+\\z"))' \
             <<<"$PINS" >/dev/null \
             || { echo "::error::pins must map gem -> X.Y.Z.pre.alpha.N"; exit 1; }
-          jq -e 'type == "array" and all(.[]; (.gem|type=="string") and (.repo|test("^[A-Za-z0-9_.-]+/[A-Za-z0-9_.-]+$")) and (.version|type=="string"))' \
-            <<<"$SUITES" >/dev/null || { echo "::error::bad suites"; exit 1; }
-          jq -e 'type == "array" and all(.[]; (.repo|test("^[A-Za-z0-9_.-]+/[A-Za-z0-9_.-]+$")) and (.budget|type=="number"))' \
-            <<<"$CORPORA" >/dev/null || { echo "::error::bad corpora"; exit 1; }
-          jq -e 'type == "array" and all(.[]; type == "string")' <<<"$CANARY" >/dev/null \
-            || { echo "::error::canary_commands must be an array of strings"; exit 1; }
+          jq -e 'type == "array" and length > 0 and all(.[]; (.gem|type=="string" and test("^[A-Za-z0-9_.-]+\\z")) and (.repo|type=="string" and test("^metanorma/[A-Za-z0-9_.-]+\\z")) and (.version|type=="string" and test("^[0-9]+\\.[0-9]+\\.[0-9]+(\\.pre\\.alpha\\.[0-9]+)?\\z")))' \
+            <<<"$SUITES" >/dev/null || { echo "::error::suites must be a non-empty array of {gem, repo, version} with metanorma repos"; exit 1; }
+          jq -e 'type == "array" and all(.[]; (.repo|type=="string" and test("^metanorma/[A-Za-z0-9_.-]+\\z")) and (.budget|type=="number" and . >= 1))' \
+            <<<"$CORPORA" >/dev/null || { echo "::error::corpora must name metanorma repos with a budget of at least 1 second"; exit 1; }
+          # Each canary command is one string, NUL-separated so that a
+          # multi-line command reaches bash whole. A NUL cannot be carried.
+          jq -e 'type == "array" and all(.[]; type == "string" and (contains("\u0000") | not))' <<<"$CANARY" >/dev/null \
+            || { echo "::error::canary_commands must be an array of strings without NUL"; exit 1; }
           echo "suites=$(jq -c '{include: .}' <<<"$SUITES")" >> "$GITHUB_OUTPUT"
           echo "corpora=$(jq -c '{include: .}' <<<"$CORPORA")" >> "$GITHUB_OUTPUT"
 
@@ -359,10 +364,13 @@ jobs:
         run: |
           set -euo pipefail
           bundle install --jobs 4 --retry 3
-          while IFS= read -r cmd; do
+          # NUL-separated so a multi-line command stays one bash -c. Stdin is
+          # /dev/null so a command that reads stdin cannot consume the rest of
+          # the loop's input.
+          while IFS= read -r -d '' cmd; do
             echo "canary: $cmd"
-            bash -c "$cmd"
-          done < <(jq -r '.[]' <<<"$CANARY")
+            bash -c "$cmd" </dev/null
+          done < <(jq -j '.[] + "\u0000"' <<<"$CANARY")
 
   verdict:
     needs: [lock, suites, corpora, canary]
