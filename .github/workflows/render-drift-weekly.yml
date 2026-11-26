@@ -19,6 +19,7 @@ on:
 
 permissions:
   contents: write
+  issues: write
 
 jobs:
   drift:
@@ -50,6 +51,21 @@ jobs:
           - mn-samples-pdfa
           - mn-samples-oiml
           - mn-samples-plateau-cg3
+          # Remaining public mn-samples-* repos (ci#506: all public flavors).
+          - mn-samples-csa
+          - mn-samples-elf
+          - mn-samples-enosema
+          - mn-samples-expressdocs
+          - mn-samples-gb
+          - mn-samples-iala
+          - mn-samples-iho-pdf
+          - mn-samples-iso-10303
+          - mn-samples-m3aawg
+          - mn-samples-plateau-firelight-demo
+          - mn-samples-plateau-html
+          - mn-samples-swf
+          - mn-samples-tex-iso
+          - mn-samples-wmo
     uses: ./.github/workflows/render-baseline.yml
     with:
       samples_repo: ${{ matrix.samples_repo }}
@@ -62,7 +78,61 @@ jobs:
     needs: drift
     if: always()
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      issues: write
+    env:
+      TRACKING_LABEL: render-drift-tracking
+      TRACKING_TITLE: "render-drift-weekly: rolling report"
     steps:
-      - name: Aggregate drift verdicts
+      - uses: actions/checkout@v6
+
+      - uses: actions/download-artifact@v4
+        with:
+          pattern: render-diff-report-*
+          path: /tmp/reports
+        continue-on-error: true
+
+      - name: Aggregate per-repo verdicts
+        id: agg
         run: |
-          echo "Aggregation of the matrix verdicts lands in the run summary; the tracking-issue comment is posted once the verdict shape stabilizes (ci#506)."
+          mkdir -p /tmp/reports
+          if python3 -I scripts/render_drift_report.py /tmp/reports \
+              .github/workflows/render-drift-weekly.yml \
+              --run-url "${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}" \
+              > /tmp/drift-summary.md; then
+            echo "bad=false" >> "$GITHUB_OUTPUT"
+          else
+            echo "bad=true" >> "$GITHUB_OUTPUT"
+          fi
+          {
+            echo "## Render drift — $(date -u +'%Y-%m-%d %H:%M UTC')"
+            echo ""
+            cat /tmp/drift-summary.md
+          } | tee "$GITHUB_STEP_SUMMARY" > /tmp/drift-comment.md
+
+      - name: Post to the tracking issue
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          num=$(gh issue list --repo "${{ github.repository }}" \
+            --label "$TRACKING_LABEL" --state open \
+            --json number --jq '.[0].number // empty')
+          if [ -z "$num" ]; then
+            gh label create "$TRACKING_LABEL" --repo "${{ github.repository }}" \
+              --description "Rolling render-drift-weekly report (ci#506)" \
+              --color "0e8a16" 2>/dev/null || true
+            printf '%s\n' "Rolling tracking issue for render-drift-weekly (ci#506). Each run posts one comment with the per-repo verdict table. Do not close; the workflow finds it by label." > /tmp/tracking-body.md
+            url=$(gh issue create --repo "${{ github.repository }}" \
+              --title "$TRACKING_TITLE" --label "$TRACKING_LABEL" \
+              --body-file /tmp/tracking-body.md)
+            num="${url##*/}"
+          fi
+          gh issue comment "$num" --repo "${{ github.repository }}" --body-file /tmp/drift-comment.md
+
+      - name: Fail when any repo regressed or has no report
+        if: steps.agg.outputs.bad == 'true'
+        run: |
+          echo "::error::Render drift: at least one samples repo regressed or produced no report (see the summary table)."
+          exit 1
