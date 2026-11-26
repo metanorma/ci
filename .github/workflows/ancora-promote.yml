@@ -100,18 +100,27 @@ jobs:
           GATE_RESULT: ${{ inputs.gate_result }}
           GATE_RUN_URL: ${{ inputs.gate_run_url }}
           WAIT_MINUTES: ${{ inputs.wait_minutes }}
+          RELEASE_WORKFLOW: ${{ inputs.release_workflow }}
+          REF: ${{ inputs.ref }}
         run: |
           set -euo pipefail
           [[ "$WAIT_MINUTES" =~ ^[1-9][0-9]{0,2}$ ]] \
             || { echo "::error::wait_minutes must be an integer 1-999"; exit 1; }
           [ "$GATE_RESULT" = "green" ] \
             || { echo "::error::gate_result must be 'green', got '$GATE_RESULT'"; exit 1; }
+          # The workflow file and the ref are passed to gh as a positional and
+          # a flag value: a leading dash would be read as a gh flag.
+          [[ "$RELEASE_WORKFLOW" =~ ^[A-Za-z0-9_][A-Za-z0-9._-]*\.ya?ml$ ]] \
+            || { echo "::error::release_workflow must be a workflow file name such as release.yml"; exit 1; }
+          [[ "$REF" =~ ^[A-Za-z0-9_][A-Za-z0-9._/-]*$ ]] \
+            || { echo "::error::ref must be a branch or tag name"; exit 1; }
+          # Anchors are \z, not $: jq's $ also matches before a final newline.
           jq -e '
             type == "array" and length > 0 and
             all(.[];
-              (.gem | type == "string" and test("^[A-Za-z0-9_.-]+$")) and
-              (.repo | type == "string" and test("^[A-Za-z0-9_.-]+/[A-Za-z0-9_.-]+$")) and
-              (.version | type == "string" and test("^[0-9]+\\.[0-9]+\\.[0-9]+$")))
+              (.gem | type == "string" and test("^[A-Za-z0-9_.-]+\\z")) and
+              (.repo | type == "string" and test("^metanorma/[A-Za-z0-9_.-]+\\z")) and
+              (.version | type == "string" and test("^[0-9]+\\.[0-9]+\\.[0-9]+\\z")))
           ' <<<"$ITEMS" >/dev/null \
             || { echo "::error::items must be a non-empty array of {gem, repo, version} with a FINAL version X.Y.Z"; exit 1; }
           {
