@@ -600,7 +600,7 @@ jobs:
               echo ""
               echo "${PR_URL}"
               echo ""
-              echo "This run waits for the release pull request to merge (up to 20 minutes), then tags the merge commit and publishes to rubygems.org. If the wait times out, merge the pull request and dispatch next_version=skip."
+              echo "This run waits for the release pull request to merge (up to 90 minutes), then tags the merge commit and publishes to rubygems.org. If the wait times out, merge the pull request and dispatch next_version=skip."
             } >> "$GITHUB_STEP_SUMMARY"
             # The publish happens IN THIS RUN after the merge: events created
             # by the repository's own GITHUB_TOKEN do not trigger workflow
@@ -609,9 +609,9 @@ jobs:
             # dispatch opened and merged its release PR and nothing followed.
             # Waiting here makes the chain event-independent and restores
             # true atomicity: one green run = the gem is on rubygems.org.
-            echo "Waiting for the release PR to merge (max 20 minutes)..."
+            echo "Waiting for the release PR to merge (max 90 minutes)..."
             merged="false"
-            for i in $(seq 1 60); do
+            for i in $(seq 1 270); do
               state=$(gh pr view "$PRNUM" --json state,mergedAt 2> /dev/null || true)
               if printf '%s' "$state" | jq -e '.state == "MERGED" and .mergedAt != null' > /dev/null 2>&1; then
                 merged="true"
@@ -620,7 +620,7 @@ jobs:
               sleep 20
             done
             if [ "$merged" != "true" ]; then
-              echo "::error::The release PR did not merge within 20 minutes. Merge ${PR_URL} once its checks are green, then dispatch next_version=skip to publish from main."
+              echo "::error::The release PR did not merge within 90 minutes. Merge ${PR_URL} once its checks are green, then dispatch next_version=skip to publish from main."
               exit 1
             fi
             echo "Release PR merged — checking out the merge commit and publishing."
