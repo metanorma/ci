@@ -160,6 +160,12 @@ class ContentParityTest(unittest.TestCase):
             open(custom, "w").write('{"skip_classes": ["variant-title-toc"]}')
             self.assertEqual(hp.main(["rice"] + args[1:] + ["--profile", custom]), 0)
 
+    def test_underscore_only_paragraph_is_a_rule_not_content(self):
+        html = ('<p class="zzSTDTitle1">INTERNATIONAL ELECTROTECHNICAL COMMISSION</p>'
+                '<p class="zzSTDTitle1">____________</p><p>snake_case__name</p>')
+        texts = [b[2] for b in hc.extract_blocks(html)]
+        self.assertEqual(texts, ["INTERNATIONAL ELECTROTECHNICAL COMMISSION", "snake_case__name"])
+
     def test_title_block_plus_body_equals_legacy_label_body(self):
         legacy = [("text", 0, "WARNING — Direct contact can cause lesions.")]
         new = [("text", 0, "WARNING"), ("text", 0, "Direct contact can cause lesions.")]
