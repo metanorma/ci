@@ -34,7 +34,8 @@ jobs:
           git reset --hard cvs/master
           git remote remove cvs
 
-          stepmod-annotate-all .
+          mkdir -p schemas documents
+          stepmod-annotate-all --stepmod-dir . --schemas schemas --documents documents
           git add -u
           git commit -m "Add stepmod annotations" || echo "Nothing to commit"
 
