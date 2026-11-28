@@ -286,9 +286,37 @@ jobs:
           mv *.gem pkg/
           gem push pkg/*.gem
 
-      - if: env.USE_OIDC == 'true' && env.skip_push != 'true'
-        name: Wait for release to propagate
-        run: gem exec rubygems-await pkg/*.gem
+      # rubygems-await (compact-index wait) REMOVED, porting the #509/#512
+      # fix from release.yml/rubygems-release.yml: it reads the laggy
+      # compact-index pipeline, times out on live gems, and crashes on
+      # 0.5.4's CompactIndexClient::Cache#dependencies NoMethodError
+      # (ceradoc-adoc 2.0.40 pushed successfully and the run still went
+      # red on 2026-11-28). The API-polling step below is the
+      # authoritative post-push verification; rubygems-await 0.5.4 is
+      # the newest release (2024) so there is no upgrade path.
+      - name: Verify gem published on rubygems.org
+        if: env.skip_push != 'true'
+        env:
+          GEM_NAME: ${{ steps.gem-identity.outputs.name }}
+          GEM_VERSION: ${{ steps.gem-identity.outputs.version }}
+        run: |
+          echo "Polling rubygems.org for ${GEM_NAME} version ${GEM_VERSION}..."
+          for i in $(seq 1 24); do
+            status=$(curl -sf -o /dev/null -w "%{http_code}" \
+              "https://rubygems.org/api/v1/versions/${GEM_NAME}.json" || true)
+            if [[ "$status" == "200" ]]; then
+              if curl -s "https://rubygems.org/api/v1/versions/${GEM_NAME}.json" \
+                   | jq -e --arg v "$GEM_VERSION" '.[] | select(.number == $v) | .number' > /dev/null; then
+                echo "OK ${GEM_NAME} ${GEM_VERSION} confirmed live on rubygems.org"
+                exit 0
+              fi
+            fi
+            echo "  attempt $i/24: not yet visible, sleeping 5s..."
+            sleep 5
+          done
+          echo "::error::${GEM_NAME} ${GEM_VERSION} was not visible on rubygems.org after 120s of polling."
+          echo "::error::Either the publish step failed silently or rubygems propagation is unusually slow."
+          exit 1
 
       # ============ Ensure release tag (ci#403 defect 1, monorepo) ============
       # The OIDC publish path (gem build + gem push) never tags, and gem
